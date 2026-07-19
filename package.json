@@ -1,0 +1,66 @@
+{
+  "name": "@nonito/ui",
+  "version": "0.1.0",
+  "description": "Librería personal de componentes Vue basada en shadcn-vue",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit",
+    "check": "npm run lint \u0026\u0026 npm run format:check \u0026\u0026 npm run typecheck \u0026\u0026 npm run build \u0026\u0026 npm run build -w @nonito/playground-vue",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "playground:dev": "npm run build \u0026\u0026 npm run dev -w @nonito/playground-vue",
+    "playground:build": "npm run build \u0026\u0026 npm run build -w @nonito/playground-vue"
+  },
+  "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "reka-ui": "^2.8.0",
+    "tailwind-merge": "^3.5.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^25.0.0",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "eslint": "^10.7.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^10.9.2",
+    "globals": "^17.7.0",
+    "prettier": "^3.9.5",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "tailwindcss": "^4.3.3",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.64.0",
+    "vite": "^8.1.1",
+    "vite-plugin-dts": "^4.5.4",
+    "vue": "^3.5.39",
+    "vue-tsc": "^3.2.5"
+  },
+  "workspaces": [
+    "playground/*"
+  ]
+}

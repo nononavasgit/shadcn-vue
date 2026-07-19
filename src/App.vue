@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button } from './components/ui/button'
+import { Boton } from '@/components/base/Boton'
 </script>
 <template>
   <main class="min-h-screen bg-background text-foreground">
@@ -12,9 +12,13 @@ import { Button } from './components/ui/button'
         </p>
       </div>
       <div class="flex flex-wrap gap-3">
-        <Button>Default</Button><Button variant="secondary">Secondary</Button
-        ><Button variant="outline">Outline</Button><Button variant="destructive">Destructive</Button
-        ><Button variant="ghost">Ghost</Button>
+          <Boton titulo="hola" variante="delineado"></Boton>
+                    <Boton titulo="hola" variante="destructivo"></Boton>
+
+                              <Boton titulo="hola" variante="plano"></Boton>
+
+                                        <Boton cargando titulo="hola" variante="primario" redondeado></Boton>
+
       </div>
     </section>
   </main>

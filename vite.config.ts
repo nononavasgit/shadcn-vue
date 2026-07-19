@@ -13,7 +13,7 @@ export default defineConfig({
     tailwindcss(),
     dts({
       tsconfigPath: './tsconfig.app.json',
-      include: ['src/**/*.ts', 'src/**/*.vue'],
+      include: ['src/**/*.ts', 'src/**/*.js', 'src/**/*.vue'],
       exclude: ['src/App.vue', 'src/main.ts'],
       rollupTypes: true,
     }),

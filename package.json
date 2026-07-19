@@ -24,15 +24,16 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
-    "check": "npm run lint \u0026\u0026 npm run format:check \u0026\u0026 npm run typecheck \u0026\u0026 npm run build \u0026\u0026 npm run build -w @nonito/playground-vue",
+    "check": "npm run lint && npm run format:check && npm run typecheck && npm run build && npm run build -w @nonito/playground-vue",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "playground:dev": "npm run build \u0026\u0026 npm run dev -w @nonito/playground-vue",
-    "playground:build": "npm run build \u0026\u0026 npm run build -w @nonito/playground-vue"
+    "playground:dev": "npm run build && npm run dev -w @nonito/playground-vue",
+    "playground:build": "npm run build && npm run build -w @nonito/playground-vue"
   },
   "dependencies": {
+    "@lucide/vue": "^1.25.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "reka-ui": "^2.8.0",

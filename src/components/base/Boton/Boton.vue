@@ -1,34 +1,73 @@
-<script setup lang="ts">
-import type { HTMLAttributes } from 'vue'
-import type { PrimitiveProps } from 'reka-ui'
-import type { ButtonVariants } from '@/components/ui/button'
-import { Button } from '@/components/ui/button'
-
-defineOptions({ inheritAttrs: false })
-
-interface Props extends PrimitiveProps {
-  variant?: ButtonVariants['variant']
-  size?: ButtonVariants['size']
-  class?: HTMLAttributes['class']
-}
-
-withDefaults(defineProps<Props>(), {
-  as: 'button',
-  variant: 'default',
-  size: 'default',
-  class: undefined,
-})
-</script>
-
-<template>
+﻿<template>
   <Button
-    v-bind="$attrs"
-    :as="as"
-    :as-child="asChild"
-    :variant="variant"
-    :size="size"
-    :class="$props.class"
+    v-bind="attrs"
+    :variant="variante"
+    :size="tamano"
+    :disabled="attrs?.disabled"
+    :aria-busy="ariaBusy"
+    :aria-disabled="ariaDisabled"
+    :class="[redondeadoCSS, ariaDisabledCSS, attrs?.class]"
   >
-    <slot />
+    <Icono
+      v-if="cargando"
+      nombre="spinner"
+      role="status"
+      aria-label="Cargando"
+      class="size-4 animate-spin"
+    />
+
+
+    <slot v-if="$slots.default"></slot>
+    <template v-else>
+      {{ titulo }}
+    </template>
+
+    <slot v-if="$slots.iconoDerecho"></slot>
   </Button>
 </template>
+
+<script setup lang="ts">
+import { computed, useAttrs } from 'vue'
+import { Button } from '@/components/ui/button'
+import type { ButtonVariants as BotonVariantes } from '@/components/ui/button'
+
+// Components
+import Icono from '@/components/base/Icono/Icono.vue'
+
+defineOptions({
+  inheritAttrs: false,
+})
+const attrs = useAttrs();
+
+interface Props {
+  como?: string,
+  variante?: BotonVariantes['variant']
+  tamano?: BotonVariantes['size']
+  cargando?: boolean,
+  titulo?: string,
+  redondeado?: boolean,
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  como: 'button',
+  variante: 'primario',
+  tamano: 'default',
+  cargando: false,
+  titulo: undefined,
+  redondeado: false,
+})
+
+const ariaBusy = computed(() => {
+  return props.cargando || attrs['aria-busy'] 
+});
+
+const ariaDisabled = computed(() => {
+  return props.cargando || attrs['aria-disabled']
+});
+
+const ariaDisabledCSS = 'aria-disabled:cursor-not-allowed aria-disabled:opacity-50'
+
+const redondeadoCSS = computed(() => {
+  return props.redondeado ? 'rounded-full' : undefined
+})
+</script>

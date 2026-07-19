@@ -28,11 +28,11 @@
 
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { Button } from '@/components/ui/button'
-import type { ButtonVariants as BotonVariantes } from '@/components/ui/button'
+import { Button } from '@/components/shadcn/button'
+import type { ButtonVariants as BotonVariantes } from '@/components/shadcn/button'
 
 // Components
-import Icono from '@/components/base/Icono/Icono.vue'
+import Icono from '@/components/ui/Icono/Icono.vue'
 
 defineOptions({
   inheritAttrs: false,
@@ -71,3 +71,4 @@ const redondeadoCSS = computed(() => {
   return props.redondeado ? 'rounded-full' : undefined
 })
 </script>
+

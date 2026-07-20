@@ -1,2 +1,5 @@
 export { default as Icono } from './Icono.vue'
+export { iconoVariantes } from './variantes'
 export type { NombreIcono } from '@/assets/iconos'
+export type { IconoProps } from './types'
+export type { IconoVariantes } from './variantes'

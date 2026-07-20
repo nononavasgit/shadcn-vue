@@ -12,13 +12,19 @@ import { Boton } from '@/components/app/Boton'
         </p>
       </div>
       <div class="flex flex-wrap gap-3">
-        <Boton titulo="solido" :fluido="true" variante="solido" paleta="alerta"></Boton>
+        <Boton titulo="solido" :fluido="true" variante="solido" paleta="secundario"></Boton>
 
         <br />
 
-        <Boton titulo="solido" fluido variante="solido" paleta="alerta"></Boton>
-        <Boton titulo="hola" redondeado variante="delineado" paleta="alerta"></Boton>
-        <Boton titulo="hola" variante="plano" paleta="alerta"></Boton>
+        <Boton icono="spinner" titulo="solido" fluido variante="solido" paleta="alerta"></Boton>
+        <Boton titulo="hola" redondeado variante="delineado" paleta="alerta" cargando
+          :icono="{ nombre: 'spinner', color: '#fff000', }">
+
+          <template #izquierda>holaa</template>
+        </Boton>
+        <Boton icono="spinner" tamano="lg" variante="plano" paleta="alerta"></Boton>
+        <Boton icono="spinner" tamano="md" variante="plano" paleta="alerta"></Boton>
+        <Boton icono="spinner" tamano="sm" variante="plano" paleta="alerta"></Boton>
 
 
       </div>

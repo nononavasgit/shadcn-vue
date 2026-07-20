@@ -1,20 +1,24 @@
 <script setup lang="ts">
-import type { NombreIcono } from '@/assets/iconos'
-import { computed } from 'vue'
+import type { IconoBaseProps } from './types'
+import { computed, useAttrs } from 'vue'
 import { ICONOS } from '@/assets/iconos'
+import { cn } from '@/lib/utils'
+import { iconoVariantes } from './variantes'
 
-interface Props {
-  nombre: NombreIcono
-  color?: string
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  color: 'currentColor',
+defineOptions({
+  inheritAttrs: false,
 })
 
+const props = withDefaults(defineProps<IconoBaseProps>(), {
+  color: 'currentColor',
+  tamano: 'md',
+})
+
+const attrs = useAttrs()
 const componente = computed(() => ICONOS[props.nombre])
+const classCSS = computed(() => cn(iconoVariantes({ tamano: props.tamano }), attrs.class))
 </script>
 
 <template>
-  <component :is="componente" :color="color" />
+  <component :is="componente" v-bind="{ ...attrs }" aria-hidden="true" :color="color" :class="classCSS" />
 </template>

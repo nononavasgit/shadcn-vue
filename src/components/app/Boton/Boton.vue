@@ -1,82 +1,105 @@
 <template>
-    <Button v-bind="attrs" :aria-busy="ariaBusy" :aria-disabled="ariaDisabled" :class="classCSS" @click="handleClick">
-        <template #default>
-            {{ titulo }}
-            {{ fluido }}
-        </template>
-    </Button>
+  <Button v-bind="attrs" :aria-busy="ariaBusy" :aria-disabled="ariaDisabled" :class="classCSS" @click="handleClick">
+    <slot name="default">
+      <template v-if="!cargando">
+        <slot v-if="slots.izquierda" name="izquierda"></slot>
+        <Icono v-else-if="iconoProps" v-bind="iconoProps" />
+      </template>
+
+      <template v-else-if="cargando">
+        <slot v-if="slots.cargando"></slot>
+        <Icono v-else v-bind="{ nombre: 'spinner', class: 'animate-spin', tamano: tamano }" />
+      </template>
+
+      {{ titulo }}
+
+      <slot v-if="slots.derecha" name="derecha"></slot>
+      <Icono v-else-if="iconoDerechoProps" v-bind="iconoDerechoProps" />
+    </slot>
+  </Button>
 </template>
 
 <script setup lang="ts">
-import { useAttrs, computed } from "vue";
+import { computed, useAttrs } from 'vue'
+
+// Components
+import type { IconoProps } from '@/components/app/Icono'
+import { Icono } from '@/components/app/Icono'
 import { Button } from '@/components/ui/button'
-import { cn } from "@/lib/utils"
-import {
-    appBotonVariants,
-    type AppBotonVariantes,
-} from "./variantes.ts"
+
+// Boton
+import type { BotonBaseProps } from './types'
+import { appBotonVariants } from './variantes.ts'
+
+// Libs
+import { cn } from '@/lib/utils'
 
 defineOptions({
-    inheritAttrs: false
+  inheritAttrs: false,
 })
 
-interface Props {
-    titulo?: string,
-    variante?: AppBotonVariantes["variante"]
-    paleta?: AppBotonVariantes["paleta"]
-    tamano?: AppBotonVariantes["tamano"]
-    fluido?: AppBotonVariantes["fluido"]
-    redondeado?: boolean,
-    cargando?: boolean
-}
-
-
+const slots = defineSlots<{
+  default?(): unknown
+  izquierda?(): unknown
+  cargando?(): unknown
+  derecha?(): unknown
+}>()
 const emit = defineEmits<{
-    click: [event: MouseEvent]
-}>();
-const attrs = useAttrs();
-const props = withDefaults(defineProps<Props>(), {
-    titulo: "",
-    variante: "solido",
-    paleta: 'primario',
-    tamano: "md",
-    fluido: false,
-    redondeado: false,
-    cargando: false,
+  click: [event: MouseEvent]
+}>()
+
+const attrs = useAttrs()
+const props = withDefaults(defineProps<BotonBaseProps>(), {
+  titulo: '',
+  icono: undefined,
+  iconoDerecho: undefined,
+  variante: 'solido',
+  paleta: 'primario',
+  tamano: 'md',
+  fluido: false,
+  redondeado: false,
+  cargando: false,
 })
 
+const iconoProps = computed<IconoProps | undefined>(() => {
+  if (!props.icono) return undefined
+  return typeof props.icono === 'string' ? { nombre: props.icono, tamano: props.tamano } : props.icono
+})
 
+const iconoDerechoProps = computed<IconoProps | undefined>(() => {
+  if (!props.iconoDerecho) return undefined
+  return typeof props.iconoDerecho === 'string'
+    ? { nombre: props.iconoDerecho, tamano: props.tamano }
+    : props.iconoDerecho
+})
 const ariaBusy = computed(() => {
-    return props.cargando || attrs['aria-busy']
+  return props.cargando || attrs['aria-busy']
 })
 
 const ariaDisabled = computed(() => {
-    return props.cargando || attrs['aria-disabled']
+  return props.cargando || attrs['aria-disabled']
 })
 
 const classCSS = computed(() => {
-    const x = cn(
-        appBotonVariants({
-            variante: props.variante,
-            tamano: props.tamano,
-            fluido: props.fluido,
-            redondeado: props?.redondeado,
-            paleta: props?.paleta
-        }),
-        attrs.class,
-    )
-    console.log(x)
-    return x
+  return cn(
+    appBotonVariants({
+      variante: props.variante,
+      tamano: props.tamano,
+      fluido: props.fluido,
+      redondeado: props.redondeado,
+      paleta: props.paleta,
+    }),
+    attrs.class,
+  )
 })
 
-
 const handleClick = ($evt: MouseEvent) => {
-    if (ariaDisabled.value) {
-        $evt.stopPropagation();
-        $evt.preventDefault();
-        return
-    }
+  if (ariaDisabled.value) {
+    $evt.stopPropagation()
+    $evt.preventDefault()
+    return
+  }
 
-    emit('click', $evt)
+  emit('click', $evt)
 }
 </script>

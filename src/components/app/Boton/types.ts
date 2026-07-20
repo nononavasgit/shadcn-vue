@@ -13,6 +13,7 @@ export interface BotonBaseProps {
   redondeado?: BotonVariantes['redondeado'] | boolean
   cuadrado?: BotonVariantes['cuadrado'] | boolean
   cargando?: boolean
+  color?: string
 }
 
 export type BotonProps = BotonBaseProps & ButtonHTMLAttributes

@@ -1,5 +1,12 @@
 <template>
-  <Button v-bind="attrs" :aria-busy="ariaBusy" :aria-disabled="ariaDisabled" :class="classCSS" @click="handleClick">
+  <Button
+    v-bind="attrs"
+    :aria-busy="ariaBusy"
+    :aria-disabled="ariaDisabled"
+    :class="classCSS"
+    :style="[attrs.style, variablesColor]"
+    @click="handleClick"
+  >
     <slot name="default">
       <template v-if="!cargando">
         <slot v-if="slots.izquierda" name="izquierda"></slot>
@@ -20,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
+import { computed, toRef, useAttrs } from 'vue'
 
 // Components
 import { Icono, type IconoProps } from '@/components/app/Icono'
@@ -31,6 +38,7 @@ import type { BotonBaseProps } from './types'
 import { botonVariantes } from './variantes.ts'
 
 // Libs
+import { useColor } from '@/composables'
 import { cn } from '@/lib/utils'
 
 defineOptions({
@@ -59,6 +67,11 @@ const props = withDefaults(defineProps<BotonBaseProps>(), {
   redondeado: false,
   cuadrado: false,
   cargando: false,
+  color: undefined,
+})
+
+const { variablesColor } = useColor(toRef(props, 'color'), {
+  prefijo: 'boton',
 })
 
 const iconoProps = computed<IconoProps | undefined>(() => {
@@ -91,6 +104,7 @@ const classCSS = computed(() => {
       redondeado: props.redondeado,
       cuadrado: props.cuadrado,
       paleta: props.paleta,
+      personalizado: Boolean(props.color),
     }),
     attrs.class,
   )

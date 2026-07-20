@@ -91,8 +91,10 @@ export function useColor(
       [`--${prefijo}-color`]: valor,
       [`--${prefijo}-contraste`]: contraste,
       [`--${prefijo}-hover`]: `color-mix(in srgb, ${valor} 88%, ${ajusteHover})`,
+      [`--${prefijo}-active`]: `color-mix(in srgb, ${valor} 76%, ${ajusteHover})`,
       [`--${prefijo}-suave`]: `color-mix(in srgb, ${valor} 16%, transparent)`,
       [`--${prefijo}-suave-hover`]: `color-mix(in srgb, ${valor} 24%, transparent)`,
+      [`--${prefijo}-suave-active`]: `color-mix(in srgb, ${valor} 32%, transparent)`,
     }
   })
 

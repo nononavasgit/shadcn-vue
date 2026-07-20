@@ -15,3 +15,11 @@ export {
   type IconoVariantes,
   type NombreIcono,
 } from '@/components/app/Icono'
+
+export {
+  Etiqueta,
+  etiquetaVariantes,
+  type EtiquetaProps,
+  type EtiquetaVariantes,
+} from '@/components/app/Etiqueta'
+export { obtenerColorContraste, useColor, type UseColorOptions } from '@/composables'

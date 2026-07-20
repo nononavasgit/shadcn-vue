@@ -1,11 +1,5 @@
 <template>
-  <Button
-    v-bind="attrs"
-    :aria-busy="ariaBusy"
-    :aria-disabled="ariaDisabled"
-    :class="classCSS"
-    @click="handleClick"
-  >
+  <Button v-bind="attrs" :aria-busy="ariaBusy" :aria-disabled="ariaDisabled" :class="classCSS" @click="handleClick">
     <slot name="default">
       <template v-if="!cargando">
         <slot v-if="slots.izquierda" name="izquierda"></slot>
@@ -29,13 +23,12 @@
 import { computed, useAttrs } from 'vue'
 
 // Components
-import type { IconoProps } from '@/components/app/Icono'
-import { Icono } from '@/components/app/Icono'
+import { Icono, type IconoProps } from '@/components/app/Icono'
 import { Button } from '@/components/ui/button'
 
 // Boton
 import type { BotonBaseProps } from './types'
-import { appBotonVariants } from './variantes.ts'
+import { botonVariantes } from './variantes.ts'
 
 // Libs
 import { cn } from '@/lib/utils'
@@ -91,7 +84,7 @@ const ariaDisabled = computed(() => {
 
 const classCSS = computed(() => {
   return cn(
-    appBotonVariants({
+    botonVariantes({
       variante: props.variante,
       tamano: props.tamano,
       fluido: props.fluido,

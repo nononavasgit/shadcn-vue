@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 
-export const appBotonVariants = cva('gap-2', {
+export const botonVariantes = cva('gap-2', {
   variants: {
     variante: {
       solido: '',
@@ -119,4 +119,4 @@ export const appBotonVariants = cva('gap-2', {
   },
 })
 
-export type BotonVariantes = VariantProps<typeof appBotonVariants>
+export type BotonVariantes = VariantProps<typeof botonVariantes>

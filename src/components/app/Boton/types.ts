@@ -1,5 +1,4 @@
-import type { NombreIcono } from '@/assets/iconos'
-import type { IconoProps } from '@/components/app/Icono'
+import type { NombreIcono, IconoProps } from '@/components/app/Icono'
 import type { ButtonHTMLAttributes } from 'vue'
 import type { BotonVariantes } from './variantes'
 
@@ -10,9 +9,9 @@ export interface BotonBaseProps {
   variante?: BotonVariantes['variante']
   paleta?: BotonVariantes['paleta']
   tamano?: BotonVariantes['tamano']
-  fluido?: BotonVariantes['fluido']
-  redondeado?: boolean
-  cuadrado?: BotonVariantes['cuadrado']
+  fluido?: BotonVariantes['fluido'] | boolean
+  redondeado?: BotonVariantes['redondeado'] | boolean
+  cuadrado?: BotonVariantes['cuadrado'] | boolean
   cargando?: boolean
 }
 

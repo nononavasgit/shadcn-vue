@@ -22,10 +22,42 @@ import { Boton } from '@/components/app/Boton'
 
           <template #izquierda>holaa</template>
         </Boton>
-        <Boton icono="spinner" tamano="lg" variante="plano" paleta="alerta"></Boton>
-        <Boton icono="spinner" tamano="md" variante="plano" paleta="alerta"></Boton>
-        <Boton icono="spinner" tamano="sm" variante="plano" paleta="alerta"></Boton>
 
+
+        <Boton titulo="spinner" tamano="lg" variante="delineado" paleta="alerta" :cuadrado="true"></Boton>
+        <Boton titulo="spinner" tamano="md" variante="delineado" paleta="alerta" :cuadrado="true"></Boton>
+        <Boton titulo="spinner" tamano="sm" variante="delineado" paleta="alerta" :cuadrado="true"></Boton>
+        <Boton titulo="spinner" tamano="xs" variante="delineado" paleta="alerta" :cuadrado="true"></Boton>
+
+        <br />
+
+
+        <Boton tamano="lg" variante="delineado" paleta="alerta" :cuadrado="true" :icono="{
+          nombre: 'spinner',
+          class: 'animate spin'
+        }"></Boton>
+        <Boton tamano="md" variante="delineado" paleta="alerta" :cuadrado="true" :icono="{
+          nombre: 'spinner',
+          class: 'animate spin'
+        }"></Boton>
+        <Boton tamano="sm" variante="delineado" paleta="alerta" :cuadrado="true" :icono="{
+          nombre: 'spinner',
+          class: 'animate spin'
+        }"></Boton>
+        <Boton tamano="xs" variante="delineado" paleta="alerta" :cuadrado="true" :icono="{
+          nombre: 'spinner',
+          class: 'animate spin'
+        }"></Boton>
+
+        <br />
+        <Boton icono="spinner" titulo="spinner" tamano="lg" variante="delineado" paleta="alerta" :cuadrado="false">
+        </Boton>
+        <Boton icono="spinner" titulo="spinner" tamano="md" variante="delineado" paleta="alerta" :cuadrado="false">
+        </Boton>
+        <Boton icono="spinner" titulo="spinner" tamano="sm" variante="delineado" paleta="alerta" :cuadrado="false">
+        </Boton>
+        <Boton icono="spinner" titulo="spinner" tamano="xs" variante="delineado" paleta="alerta" :cuadrado="false">
+        </Boton>
 
       </div>
     </section>

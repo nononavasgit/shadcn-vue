@@ -1,5 +1,11 @@
 <template>
-  <Button v-bind="attrs" :aria-busy="ariaBusy" :aria-disabled="ariaDisabled" :class="classCSS" @click="handleClick">
+  <Button
+    v-bind="attrs"
+    :aria-busy="ariaBusy"
+    :aria-disabled="ariaDisabled"
+    :class="classCSS"
+    @click="handleClick"
+  >
     <slot name="default">
       <template v-if="!cargando">
         <slot v-if="slots.izquierda" name="izquierda"></slot>
@@ -58,12 +64,15 @@ const props = withDefaults(defineProps<BotonBaseProps>(), {
   tamano: 'md',
   fluido: false,
   redondeado: false,
+  cuadrado: false,
   cargando: false,
 })
 
 const iconoProps = computed<IconoProps | undefined>(() => {
   if (!props.icono) return undefined
-  return typeof props.icono === 'string' ? { nombre: props.icono, tamano: props.tamano } : props.icono
+  return typeof props.icono === 'string'
+    ? { nombre: props.icono, tamano: props.tamano }
+    : props.icono
 })
 
 const iconoDerechoProps = computed<IconoProps | undefined>(() => {
@@ -87,6 +96,7 @@ const classCSS = computed(() => {
       tamano: props.tamano,
       fluido: props.fluido,
       redondeado: props.redondeado,
+      cuadrado: props.cuadrado,
       paleta: props.paleta,
     }),
     attrs.class,

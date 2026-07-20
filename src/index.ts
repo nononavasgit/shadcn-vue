@@ -1,5 +1,9 @@
 import './assets/css/styles.css'
 
-export { Boton } from '@/components/app/Boton'
-export { Icono, iconoVariantes } from '@/components/app/Icono'
-export type { IconoProps, IconoVariantes, NombreIcono } from '@/components/app/Icono'
+export { Boton, type BotonProps, type BotonVariantes } from '@/components/app/Boton'
+export {
+  Icono,
+  type IconoProps,
+  type IconoVariantes,
+  type NombreIcono,
+} from '@/components/app/Icono'

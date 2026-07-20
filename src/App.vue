@@ -1,148 +1,134 @@
 <script setup lang="ts">
-import { Boton } from '@/components/app/Boton'
-import { Etiqueta } from '@/components/app/Etiqueta'
+import { Alerta } from '@/components/app/Alerta'
 
-const variantesBoton = ['solido', 'delineado', 'plano', 'suave', 'sutil'] as const
-const paletasBoton = ['primario', 'secundario', 'alerta'] as const
-const tamanosBoton = ['xs', 'sm', 'md', 'lg'] as const
+const variantes = ['solido', 'delineado', 'suave', 'sutil'] as const
+const paletas = ['primario', 'secundario', 'alerta'] as const
 </script>
 
 <template>
   <main class="min-h-screen bg-background text-foreground">
-    <div class="mx-auto max-w-3xl space-y-10 px-6 py-12">
-      <section class="space-y-4">
-        <div>
-          <h2 class="text-xl font-semibold">Etiquetas</h2>
-          <p class="text-sm text-muted-foreground">
-            Variantes, tamaños, iconos y colores dinámicos.
-          </p>
-        </div>
+    <div class="mx-auto max-w-4xl space-y-12 px-6 py-12">
+      <header class="space-y-2">
+        <p class="text-sm font-medium text-muted-foreground">@nonito/ui</p>
+        <h1 class="text-3xl font-bold tracking-tight">Alertas</h1>
+        <p class="max-w-2xl text-muted-foreground">
+          Ejemplos de variantes, paletas, colores personalizados, iconos y cierre.
+        </p>
+      </header>
 
-        <div class="flex flex-wrap items-center gap-3">
-          <Etiqueta titulo="solido" variante="solido" />
-          <Etiqueta titulo="Delineado" variante="delineado" />
-          <Etiqueta titulo="Suave" variante="suave" />
-          <Etiqueta titulo="sutil" variante="sutil" />
-        </div>
-
-        <br />
-
-        <div class="flex flex-wrap items-center gap-3">
-          <Etiqueta titulo="Primario" paleta="primario" />
-          <Etiqueta titulo="Secundario" paleta="secundario" />
-          <Etiqueta titulo="Alerta" paleta="alerta" />
-        </div>
-
-        <br />
-
-        <Etiqueta titulo="Extra pequeña" tamano="xs" />
-        <Etiqueta titulo="Pequeña" tamano="sm" />
-        <Etiqueta titulo="Mediana" tamano="md" />
-        <Etiqueta titulo="Grande" tamano="lg" />
-
-        <br />
-
-        <Etiqueta titulo="Extra pequeña" tamano="xs" paleta="secundario" />
-        <Etiqueta titulo="Pequeña" tamano="sm" paleta="secundario" />
-        <Etiqueta titulo="Mediana" tamano="md" paleta="secundario" />
-        <Etiqueta titulo="Grande" tamano="lg" paleta="secundario" />
-
-        <br />
-
-        <Etiqueta titulo="Extra pequeña" tamano="xs" paleta="alerta" />
-        <Etiqueta titulo="Pequeña" tamano="sm" paleta="alerta" />
-        <Etiqueta titulo="Mediana" tamano="md" paleta="alerta" />
-        <Etiqueta titulo="Grande" tamano="lg" paleta="alerta" />
-
-        <br />
-        <Etiqueta titulo="spinner" variante="delineado" paleta="alerta" />
-        <Etiqueta titulo="spinner" variante="suave" paleta="alerta" />
-        <Etiqueta titulo="spinner" variante="sutil" paleta="alerta" />
-
-        <br />
-        <Etiqueta titulo="spinner" variante="delineado" paleta="primario" />
-        <Etiqueta titulo="spinner" variante="suave" paleta="primario" />
-        <Etiqueta titulo="spinner" variante="sutil" paleta="primario" />
-
-        <br />
-        <Etiqueta titulo="spinner" variante="delineado" paleta="secundario" />
-        <Etiqueta titulo="spinner" variante="suave" paleta="secundario" />
-        <Etiqueta titulo="spinner" variante="sutil" paleta="secundario" />
-
-        <br />
-
-        <Etiqueta titulo="Extra pequeña" icono="spinner" tamano="xs" paleta="alerta" />
-        <Etiqueta titulo="Pequeña" icono="spinner" tamano="sm" paleta="alerta" />
-        <Etiqueta titulo="Mediana" icono="spinner" tamano="md" paleta="alerta" />
-        <Etiqueta titulo="Grande" icono="spinner" tamano="lg" paleta="alerta" />
-
-        <br />
-        <br />
-        <br />
-
-        <div class="flex flex-wrap items-center gap-3">
-          <Etiqueta titulo="Violeta" color="#7c3aed" />
-          <Etiqueta titulo="Violeta" color="#7c3aed" variante="delineado" />
-          <Etiqueta titulo="Violeta" color="#7c3aed" variante="suave" />
-          <Etiqueta titulo="Violeta" color="#7c3aed" variante="sutil" />
-
-          <br />
-
-          <Etiqueta titulo="Verde" color="#16a34a" variante="delineado" />
-          <Etiqueta titulo="Verde" color="#16a34a" variante="solido" />
-          <Etiqueta titulo="Verde" color="#16a34a" variante="suave" />
-
-          <!-- <Etiqueta titulo="Ámbar suave" color="#f59e0b" variante="suave" />
-          <Etiqueta titulo="Verde delineado" color="#16a34a" variante="delineado" />
-          <Etiqueta titulo="Variable CSS" color="var(--destructive)" color-contraste="#ffffff" /> -->
-        </div>
-
-        <div class="flex flex-wrap items-center gap-3">
-          <Etiqueta titulo="Cargando" icono="spinner" />
-          <Etiqueta titulo="A la derecha" icono-derecho="spinner" variante="suave" />
-
-          <Etiqueta color="#0369a1" variante="sutil" titulo="aaa" />
-          <Etiqueta color="#0369a1" variante="suave" titulo="aaa" />
-          <Etiqueta color="#0369a1" variante="delineado">
-            <template #izquierda> eyy esto q es </template>
-            Con slot
-          </Etiqueta>
-          <Etiqueta titulo="Sin píldora" :redondeado="false" paleta="secundario" />
-        </div>
-      </section>
       <section class="space-y-6">
         <div>
-          <h2 class="text-xl font-semibold">Botones</h2>
+          <h2 class="text-xl font-semibold">Variantes y paletas</h2>
           <p class="text-sm text-muted-foreground">
-            Todas las variantes, paletas y tamaños disponibles.
+            Todas las combinaciones de variante y paleta semántica.
           </p>
         </div>
 
-        <div class="space-y-5">
-          <div v-for="variante in variantesBoton" :key="variante" class="space-y-2">
-            <p class="text-sm font-medium capitalize">{{ variante }}</p>
-            <div class="flex flex-wrap items-center gap-3">
-              <Boton v-for="paleta in paletasBoton" :key="paleta" :titulo="`${variante} · ${paleta}`"
-                :variante="variante" :paleta="paleta" />
-            </div>
+        <div v-for="variante in variantes" :key="variante" class="space-y-3">
+          <h3 class="text-sm font-semibold capitalize">{{ variante }}</h3>
+
+          <div class="grid gap-3">
+            <Alerta
+              v-for="paleta in paletas"
+              :key="paleta"
+              :titulo="`${variante} · ${paleta}`"
+              descripcion="Este es un mensaje de ejemplo para comprobar el aspecto de la alerta."
+              :variante="variante"
+              :paleta="paleta"
+            />
           </div>
         </div>
+      </section>
 
-        <div class="space-y-5 border-t pt-6">
-          <div v-for="paleta in paletasBoton" :key="paleta" class="space-y-2">
-            <p class="text-sm font-medium capitalize">Tamaños · {{ paleta }}</p>
-            <div class="flex flex-wrap items-center gap-3">
-              <Boton v-for="tamano in tamanosBoton" :key="tamano" :titulo="tamano" icono="spinner" :tamano="tamano"
-                :paleta="paleta" />
-            </div>
-          </div>
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-xl font-semibold">Colores personalizados</h2>
+          <p class="text-sm text-muted-foreground">
+            El contraste y los fondos derivados se calculan automáticamente.
+          </p>
         </div>
 
-        <Boton color="#7c3aed" variante="solido" titulo="Sólido" />
-        <Boton color="#7c3aed" variante="delineado" titulo="Delineado" />
-        <Boton color="#7c3aed" variante="plano" titulo="Plano" />
-        <Boton color="#7c3aed" variante="suave" titulo="Suave" />
-        <Boton color="#7c3aed" variante="sutil" titulo="Sutil" />
+        <div class="grid gap-3">
+          <Alerta
+            v-for="variante in variantes"
+            :key="variante"
+            :titulo="`Color violeta · ${variante}`"
+            descripcion="La prop color prevalece sobre la paleta seleccionada."
+            :variante="variante"
+            color="#7c3aed"
+          />
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-xl font-semibold">Iconos y contenido</h2>
+          <p class="text-sm text-muted-foreground">
+            Uso mediante la prop icono y mediante el slot izquierda.
+          </p>
+        </div>
+
+        <Alerta
+          titulo="Procesando información"
+          descripcion="El icono se ha proporcionado mediante la prop icono."
+          icono="spinner"
+          variante="suave"
+          paleta="primario"
+        />
+
+        <Alerta
+          titulo="Contenido personalizado"
+          descripcion="El elemento de la izquierda procede de un slot."
+          variante="sutil"
+          paleta="alerta"
+        >
+          <template #izquierda>
+            <span
+              class="mt-0.5 inline-flex size-4 items-center justify-center rounded-full border border-current text-[10px] font-bold"
+            >
+              !
+            </span>
+          </template>
+        </Alerta>
+
+        <Alerta titulo="Descripción mediante slot" variante="delineado" paleta="secundario">
+          Este contenido sustituye la prop <code>descripcion</code> mediante el slot por defecto.
+        </Alerta>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-xl font-semibold">Alertas cerrables</h2>
+          <p class="text-sm text-muted-foreground">
+            Cierre predeterminado y cierre personalizado mediante slot.
+          </p>
+        </div>
+
+        <Alerta
+          titulo="Cierre predeterminado"
+          descripcion="Pulsa el botón situado a la derecha para ocultar esta alerta."
+          variante="sutil"
+          paleta="primario"
+          cerrable
+        />
+
+        <Alerta
+          titulo="Cierre personalizado"
+          descripcion="Esta alerta utiliza el slot cerrar y la función expuesta por el componente."
+          variante="suave"
+          paleta="alerta"
+          cerrable
+        >
+          <template #cerrar="{ cerrar }">
+            <button
+              type="button"
+              class="rounded-md px-2 py-1 text-xs font-medium text-current transition-colors hover:bg-current/10 focus-visible:ring-2 focus-visible:ring-current/30 focus-visible:outline-none"
+              @click="cerrar"
+            >
+              Entendido
+            </button>
+          </template>
+        </Alerta>
       </section>
     </div>
   </main>

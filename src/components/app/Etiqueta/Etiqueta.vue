@@ -1,21 +1,14 @@
 <template>
-  <Badge
-    v-bind="attrs"
-    :as="como"
-    :as-child="comoHijo"
-    :class="classCSS"
-    :style="[attrs.style, variablesColor]"
-  >
-    <slot v-if="slots.izquierda" name="izquierda" />
-    <Icono v-else-if="icono" :nombre="icono" />
+  <Badge v-bind="uiCalculado.root">
+    <slot v-if="slots.icono" name="icono" />
+    <Icono v-else-if="uiCalculado.icono" v-bind="uiCalculado.icono" />
 
     <slot>{{ titulo }}</slot>
 
-    <slot v-if="slots.derecha" name="derecha" />
-    <Icono v-else-if="iconoDerecho" :nombre="iconoDerecho" />
+    <slot v-if="slots.iconoDerecho" name="iconoDerecho" />
+    <Icono v-else-if="uiCalculado.iconoDerecho" v-bind="uiCalculado.iconoDerecho" />
   </Badge>
 </template>
-
 <script setup lang="ts">
 import { computed, toRef, useAttrs } from 'vue'
 import { Badge } from '@/components/ui/badge'
@@ -32,8 +25,8 @@ defineOptions({
 const attrs = useAttrs()
 const slots = defineSlots<{
   default?(): unknown
-  izquierda?(): unknown
-  derecha?(): unknown
+  icono?(): unknown
+  iconoDerecho?(): unknown
 }>()
 
 const props = withDefaults(defineProps<EtiquetaBaseProps>(), {
@@ -47,6 +40,7 @@ const props = withDefaults(defineProps<EtiquetaBaseProps>(), {
   tamano: 'md',
   redondeado: false,
   color: undefined,
+  ui: undefined,
 })
 
 const { variablesColor } = useColor(toRef(props, 'color'), {
@@ -65,5 +59,29 @@ const classCSS = computed(() =>
     attrs.class,
   ),
 )
-
+const uiCalculado = computed(() => {
+  return {
+    root: {
+      'data-slot': 'root',
+      ...attrs,
+      ...props.ui?.root,
+      as: props.como,
+      asChild: props.comoHijo,
+      class: [classCSS.value, props.ui?.root?.class],
+      style: [attrs.style, variablesColor.value, props.ui?.root?.style],
+    },
+    icono: props.icono
+      ? {
+          ...props.ui?.icono,
+          nombre: props.icono,
+        }
+      : undefined,
+    iconoDerecho: props.iconoDerecho
+      ? {
+          ...props.ui?.iconoDerecho,
+          nombre: props.iconoDerecho,
+        }
+      : undefined,
+  }
+})
 </script>

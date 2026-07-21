@@ -6,5 +6,6 @@ export * from '@/components/app/Boton'
 export * from '@/components/app/Icono'
 export * from '@/components/app/Kbd'
 export * from '@/components/app/Etiqueta'
+export * from '@/components/app/Tarjeta'
 
 export { obtenerColorContraste } from '@/composables'

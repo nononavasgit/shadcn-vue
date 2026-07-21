@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Avatar } from '@/components/app/Avatar'
 import { Kbd } from '@/components/app/Kbd'
 </script>
 
@@ -16,35 +15,6 @@ import { Kbd } from '@/components/app/Kbd'
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-xl font-semibold">Avatares</h2>
-          <p class="text-sm text-muted-foreground">
-            Imagen, fallback de texto, icono, color personalizado y slot fallback.
-          </p>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-4">
-          <Avatar imagen="https://github.com/shadcn.png" alt="hola" titulo="Shadcn" />
-
-          <Avatar titulo="NP" paleta="secundario" alt="hola" />
-
-          <Avatar
-            icono="x"
-            paleta="alerta"
-            :ui="{ icono: { tamano: 'sm', class: 'opacity-80' } }"
-          />
-
-          <Avatar titulo="UI" color="#7c3aed" tamano="sm" />
-
-          <Avatar paleta="primario">
-            <template #fallback>
-              <span class="font-bold">+3</span>
-            </template>
-          </Avatar>
-        </div>
-      </section>
-
-      <section class="space-y-4">
-        <div>
           <h2 class="text-xl font-semibold">Teclas</h2>
           <p class="text-sm text-muted-foreground">
             Teclas mediante la prop titulo y el slot predeterminado.
@@ -58,9 +28,9 @@ import { Kbd } from '@/components/app/Kbd'
             <Kbd titulo="k" />
           </div>
 
-          <Kbd titulo="Enter" />
-          <Kbd titulo="Esc" />
-          <Kbd titulo="?" />
+          <Kbd titulo="Enter" variante="delineado" />
+          <Kbd titulo="Esc" variante="suave" tamano="sm" />
+          <Kbd titulo="?" variante="sutil" tamano="md"></Kbd>
           <Kbd tamano="lg">Fn</Kbd>
         </div>
       </section>

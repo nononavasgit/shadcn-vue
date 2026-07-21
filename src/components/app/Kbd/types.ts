@@ -7,6 +7,7 @@ interface KbdUI {
 
 export interface KbdBaseProps {
   titulo?: string
+  variante?: KbdVariantes['variante']
   tamano?: KbdVariantes['tamano']
   ui?: KbdUI
 }

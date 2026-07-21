@@ -17,12 +17,12 @@ export const avatarVariantes = cva('font-medium', {
 export const avatarFallbackVariantes = cva('', {
   variants: {
     paleta: {
-      primario: 'bg-primary text-primary-foreground',
-      secundario: 'bg-secondary text-secondary-foreground',
-      alerta: 'bg-alerta text-alerta-foreground',
+      primario: 'text-primary',
+      secundario: 'text-secondary-foreground',
+      alerta: 'text-alerta',
     },
     personalizado: {
-      true: 'bg-(--avatar-color) text-(--avatar-contraste)',
+      true: 'text-(--avatar-color)',
       false: '',
     },
   },

@@ -3,7 +3,7 @@ import type { AvatarFallbackProps, AvatarImageProps } from 'reka-ui'
 import type { HTMLAttributes, ImgHTMLAttributes } from 'vue'
 import type { AvatarVariantes } from './variantes'
 
-export interface AvatarUI {
+interface AvatarUI {
   root?: { class?: HTMLAttributes['class'] }
   imagen?: Omit<AvatarImageProps, 'src'> & Omit<ImgHTMLAttributes, 'src'>
   icono?: Omit<IconoProps, 'nombre'>

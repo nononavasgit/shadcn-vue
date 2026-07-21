@@ -1,6 +1,13 @@
-import type { NombreIcono } from '@/components/app/Icono'
+import type { IconoProps, NombreIcono } from '@/components/app/Icono'
 import type { ButtonHTMLAttributes } from 'vue'
 import type { BotonVariantes } from './variantes'
+
+interface BotonUI {
+  root?: ButtonHTMLAttributes
+  cargando?: Omit<IconoProps, 'nombre'>
+  icono?: Omit<IconoProps, 'nombre'>
+  iconoDerecho?: Omit<IconoProps, 'nombre'>
+}
 
 export interface BotonBaseProps {
   titulo?: string
@@ -14,6 +21,7 @@ export interface BotonBaseProps {
   cuadrado?: BotonVariantes['cuadrado'] | boolean
   cargando?: boolean
   color?: string
+  ui?: BotonUI
 }
 
 export type BotonProps = BotonBaseProps & ButtonHTMLAttributes

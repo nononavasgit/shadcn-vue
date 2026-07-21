@@ -1,31 +1,23 @@
 <template>
-  <Button
-    v-bind="attrs"
-    :aria-busy="ariaBusy"
-    :aria-disabled="ariaDisabled"
-    :class="classCSS"
-    :style="[attrs.style, variablesColor]"
-    @click="handleClick"
-  >
+  <Button v-bind="uiCalculado.root" @click="handleClick">
     <slot name="default">
       <template v-if="!cargando">
-        <slot v-if="slots.izquierda" name="izquierda"></slot>
-        <Icono v-else-if="icono" :nombre="icono" :tamano="tamano" />
+        <slot v-if="slots.icono" name="icono"></slot>
+        <Icono v-else-if="uiCalculado.icono" v-bind="uiCalculado.icono" />
       </template>
 
-      <template v-else-if="cargando">
-        <slot v-if="slots.cargando"></slot>
-        <Icono v-else v-bind="{ nombre: 'spinner', class: 'animate-spin', tamano: tamano }" />
+      <template v-else>
+        <slot v-if="slots.cargando" name="cargando"></slot>
+        <Icono v-else v-bind="uiCalculado.cargando" />
       </template>
 
       {{ titulo }}
 
-      <slot v-if="slots.derecha" name="derecha"></slot>
-      <Icono v-else-if="iconoDerecho" :nombre="iconoDerecho" :tamano="tamano" />
+      <slot v-if="slots.iconoDerecho" name="iconoDerecho"></slot>
+      <Icono v-else-if="uiCalculado.iconoDerecho" v-bind="uiCalculado.iconoDerecho" />
     </slot>
   </Button>
 </template>
-
 <script setup lang="ts">
 import { computed, toRef, useAttrs } from 'vue'
 
@@ -47,9 +39,9 @@ defineOptions({
 
 const slots = defineSlots<{
   default?(): unknown
-  izquierda?(): unknown
+  icono?(): unknown
   cargando?(): unknown
-  derecha?(): unknown
+  iconoDerecho?(): unknown
 }>()
 const emit = defineEmits<{
   click: [event: MouseEvent]
@@ -68,6 +60,7 @@ const props = withDefaults(defineProps<BotonBaseProps>(), {
   cuadrado: false,
   cargando: false,
   color: undefined,
+  ui: undefined,
 })
 
 const { variablesColor } = useColor(toRef(props, 'color'), {
@@ -97,6 +90,39 @@ const classCSS = computed(() => {
   )
 })
 
+const uiCalculado = computed(() => {
+  return {
+    root: {
+      'data-slot': 'root',
+      ...attrs,
+      ...props.ui?.root,
+      'aria-busy': ariaBusy.value,
+      'aria-disabled': ariaDisabled.value,
+      class: [classCSS.value, props.ui?.root?.class],
+      style: [attrs.style, variablesColor.value, props.ui?.root?.style],
+    },
+    cargando: {
+      tamano: props.tamano,
+      nombre: 'spinner' as const,
+      ...props.ui?.cargando,
+      class: ['animate-spin', props.ui?.cargando?.class],
+    },
+    icono: props.icono
+      ? {
+        tamano: props.tamano,
+        ...props.ui?.icono,
+        nombre: props.icono,
+      }
+      : undefined,
+    iconoDerecho: props.iconoDerecho
+      ? {
+        tamano: props.tamano,
+        ...props.ui?.iconoDerecho,
+        nombre: props.iconoDerecho,
+      }
+      : undefined,
+  }
+})
 const handleClick = ($evt: MouseEvent) => {
   if (ariaDisabled.value) {
     $evt.stopPropagation()

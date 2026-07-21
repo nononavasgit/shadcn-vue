@@ -1,30 +1,10 @@
 import './assets/css/styles.css'
-export {
-  Alerta,
-  alertaVariantes,
-  type AlertaProps,
-  type AlertaVariantes,
-} from '@/components/app/Alerta'
 
-export {
-  Avatar,
-  avatarVariantes,
-  type AvatarProps,
-  type AvatarVariantes,
-} from '@/components/app/Avatar'
+export * from '@/components/app/Alerta'
+export * from '@/components/app/Avatar'
+export * from '@/components/app/Boton'
+export * from '@/components/app/Icono'
+export * from '@/components/app/Kbd'
+export * from '@/components/app/Etiqueta'
 
-export { Boton, type BotonProps, type BotonVariantes } from '@/components/app/Boton'
-export {
-  Icono,
-  type IconoProps,
-  type IconoVariantes,
-  type NombreIcono,
-} from '@/components/app/Icono'
-
-export {
-  Etiqueta,
-  etiquetaVariantes,
-  type EtiquetaProps,
-  type EtiquetaVariantes,
-} from '@/components/app/Etiqueta'
-export { obtenerColorContraste, useColor, type UseColorOptions } from '@/composables'
+export { obtenerColorContraste } from '@/composables'

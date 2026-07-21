@@ -7,19 +7,19 @@
     :style="[attrs.style, variablesColor]"
   >
     <slot v-if="slots.izquierda" name="izquierda" />
-    <Icono v-else-if="iconoProps" v-bind="iconoProps" />
+    <Icono v-else-if="icono" :nombre="icono" />
 
     <slot>{{ titulo }}</slot>
 
     <slot v-if="slots.derecha" name="derecha" />
-    <Icono v-else-if="iconoDerechoProps" v-bind="iconoDerechoProps" />
+    <Icono v-else-if="iconoDerecho" :nombre="iconoDerecho" />
   </Badge>
 </template>
 
 <script setup lang="ts">
 import { computed, toRef, useAttrs } from 'vue'
 import { Badge } from '@/components/ui/badge'
-import { Icono, type IconoProps } from '@/components/app/Icono'
+import { Icono } from '@/components/app/Icono'
 import { useColor } from '@/composables'
 import { cn } from '@/lib/utils'
 import type { EtiquetaBaseProps } from './types'
@@ -66,15 +66,4 @@ const classCSS = computed(() =>
   ),
 )
 
-const iconoProps = computed<IconoProps | undefined>(() => {
-  if (!props.icono) return undefined
-  return typeof props.icono === 'string' ? { nombre: props.icono } : props.icono
-})
-
-const iconoDerechoProps = computed<IconoProps | undefined>(() => {
-  if (!props.iconoDerecho) return undefined
-  return typeof props.iconoDerecho === 'string'
-    ? { nombre: props.iconoDerecho }
-    : props.iconoDerecho
-})
 </script>

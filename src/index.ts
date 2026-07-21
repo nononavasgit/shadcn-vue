@@ -6,6 +6,13 @@ export {
   type AlertaVariantes,
 } from '@/components/app/Alerta'
 
+export {
+  Avatar,
+  avatarVariantes,
+  type AvatarProps,
+  type AvatarVariantes,
+} from '@/components/app/Avatar'
+
 export { Boton, type BotonProps, type BotonVariantes } from '@/components/app/Boton'
 export {
   Icono,

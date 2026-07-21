@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Kbd } from '@/components/app/Kbd'
+import { Tarjeta } from '@/components/app/Tarjeta'
 </script>
 
 <template>
@@ -33,6 +34,34 @@ import { Kbd } from '@/components/app/Kbd'
           <Kbd titulo="?" variante="sutil" tamano="md"></Kbd>
           <Kbd tamano="lg">Fn</Kbd>
         </div>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-xl font-semibold">Tarjetas</h2>
+          <p class="text-sm text-muted-foreground">
+            Cabecera mediante props y contenido personalizado mediante slots.
+          </p>
+        </div>
+
+        <Tarjeta titulo="Preferencias" descripcion="Configura el comportamiento de tu cuenta." class="max-w-md" :ui="{
+          cabecera: { class: 'border-b' },
+          contenido: { class: 'space-y-2' },
+          pie: { class: 'justify-end border-t' },
+        }">
+          <template #contenido>
+            <p class="text-sm">Los cambios realizados se aplicar�n a todos tus dispositivos.</p>
+            <p class="text-sm text-muted-foreground">
+              Puedes volver a modificar estas preferencias cuando quieras.
+            </p>
+          </template>
+
+          <template #pie>
+            <button type="button" class="rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground">
+              Guardar cambios
+            </button>
+          </template>
+        </Tarjeta>
       </section>
     </div>
   </main>

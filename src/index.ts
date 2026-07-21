@@ -1,4 +1,10 @@
 import './assets/css/styles.css'
+export {
+  Alerta,
+  alertaVariantes,
+  type AlertaProps,
+  type AlertaVariantes,
+} from '@/components/app/Alerta'
 
 export {
   Acordeon,

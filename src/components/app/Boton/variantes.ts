@@ -48,22 +48,22 @@ export const botonVariantes = cva('gap-2 transition-colors', {
     {
       tamano: 'xs',
       cuadrado: true,
-      class: 'p-1',
+      class: 'size-6 p-0',
     },
     {
       tamano: 'sm',
       cuadrado: true,
-      class: 'p-1.5 ',
+      class: 'size-8 p-0',
     },
     {
       tamano: 'md',
       cuadrado: true,
-      class: 'p-1.5',
+      class: 'size-9 p-0',
     },
     {
       tamano: 'lg',
       cuadrado: true,
-      class: 'p-2 ',
+      class: 'size-10 p-0',
     },
     {
       variante: 'solido',

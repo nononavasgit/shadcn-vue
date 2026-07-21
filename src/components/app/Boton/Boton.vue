@@ -10,7 +10,7 @@
     <slot name="default">
       <template v-if="!cargando">
         <slot v-if="slots.izquierda" name="izquierda"></slot>
-        <Icono v-else-if="iconoProps" v-bind="iconoProps" />
+        <Icono v-else-if="icono" :nombre="icono" :tamano="tamano" />
       </template>
 
       <template v-else-if="cargando">
@@ -21,7 +21,7 @@
       {{ titulo }}
 
       <slot v-if="slots.derecha" name="derecha"></slot>
-      <Icono v-else-if="iconoDerechoProps" v-bind="iconoDerechoProps" />
+      <Icono v-else-if="iconoDerecho" :nombre="iconoDerecho" :tamano="tamano" />
     </slot>
   </Button>
 </template>
@@ -30,7 +30,7 @@
 import { computed, toRef, useAttrs } from 'vue'
 
 // Components
-import { Icono, type IconoProps } from '@/components/app/Icono'
+import { Icono } from '@/components/app/Icono'
 import { Button } from '@/components/ui/button'
 
 // Boton
@@ -74,19 +74,6 @@ const { variablesColor } = useColor(toRef(props, 'color'), {
   prefijo: 'boton',
 })
 
-const iconoProps = computed<IconoProps | undefined>(() => {
-  if (!props.icono) return undefined
-  return typeof props.icono === 'string'
-    ? { nombre: props.icono, tamano: props.tamano }
-    : props.icono
-})
-
-const iconoDerechoProps = computed<IconoProps | undefined>(() => {
-  if (!props.iconoDerecho) return undefined
-  return typeof props.iconoDerecho === 'string'
-    ? { nombre: props.iconoDerecho, tamano: props.tamano }
-    : props.iconoDerecho
-})
 const ariaBusy = computed(() => {
   return props.cargando || attrs['aria-busy']
 })

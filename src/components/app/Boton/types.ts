@@ -1,11 +1,11 @@
-import type { NombreIcono, IconoProps } from '@/components/app/Icono'
+import type { NombreIcono } from '@/components/app/Icono'
 import type { ButtonHTMLAttributes } from 'vue'
 import type { BotonVariantes } from './variantes'
 
 export interface BotonBaseProps {
   titulo?: string
-  icono?: NombreIcono | IconoProps
-  iconoDerecho?: NombreIcono | IconoProps
+  icono?: NombreIcono
+  iconoDerecho?: NombreIcono
   variante?: BotonVariantes['variante']
   paleta?: BotonVariantes['paleta']
   tamano?: BotonVariantes['tamano']

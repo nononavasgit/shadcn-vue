@@ -1,7 +1,14 @@
 <template>
-  <Switch v-bind="uiCalculado.root" v-model="activo" :value="valor?.toString()" @update:model-value="handleCambio">
-    <template v-if="true || slots.pulgar">
-      <slot name="pulgar"></slot>
+  <Switch
+    v-bind="uiCalculado.root"
+    v-model="activo"
+    :value="valor?.toString()"
+    @update:model-value="handleCambio"
+  >
+    <template v-if="slots.pulgar" #thumb="{ checked }">
+      <span class="flex size-full items-center justify-center text-[9px] leading-none font-bold">
+        <slot name="pulgar" :activo="checked"></slot>
+      </span>
     </template>
   </Switch>
 </template>
@@ -17,13 +24,13 @@ defineOptions({
 })
 
 const slots = defineSlots<{
-  pulgar?: unknown
+  pulgar?(props: { activo: boolean }): unknown
 }>()
 
 const valor = defineModel<ValorSwitch>({ default: 0 })
 const attrs = useAttrs()
 const emit = defineEmits<{
-  cambio: [valor: ValorSwitch]
+  cambio: [evt: boolean]
 }>()
 const props = withDefaults(defineProps<SwitchBaseProps>(), {
   valorVerdadero: 1,
@@ -38,7 +45,7 @@ const activo = computed({
   },
 })
 
-const handleCambio = (evt: ValorSwitch) => {
+const handleCambio = (evt: boolean) => {
   emit('cambio', evt)
 }
 

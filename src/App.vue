@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Icono } from '@/components/app/Icono'
 import { Label } from '@/components/app/Label'
 import { Switch, type ValorSwitch } from '@/components/app/Switch'
 
 const notificaciones = ref(1)
 const modoOscuro = ref(false)
 const estadoCuenta = ref<'activa' | 'inactiva'>('inactiva')
-const ultimoCambio = ref<ValorSwitch | null>(null)
 
 function registrarCambio(valor: ValorSwitch) {
   console.log(valor)
@@ -28,7 +28,7 @@ function registrarCambio(valor: ValorSwitch) {
           <div class="space-y-1">
             <Label for="notificaciones" titulo="Notificaciones" />
             <p class="text-sm text-muted-foreground">Valor actual: {{ notificaciones }}</p>
-            <p class="text-sm text-muted-foreground">Evento cambio: {{ ultimoCambio }}</p>
+            <p class="text-sm text-muted-foreground">Evento cambio:</p>
           </div>
           <Switch id="notificaciones" v-model="notificaciones" @cambio="registrarCambio" />
         </div>
@@ -48,7 +48,12 @@ function registrarCambio(valor: ValorSwitch) {
             <p class="text-sm text-muted-foreground">Valor actual: {{ estadoCuenta }}</p>
           </div>
           <Switch id="estado-cuenta" v-model="estadoCuenta" valor-verdadero="activa" valor-falso="inactiva"
-            @cambio="registrarCambio" />
+            @cambio="registrarCambio">
+            <template #pulgar="{ activo }">
+              <span v-if="activo">O</span>
+              <span v-else>x</span>
+            </template>
+          </Switch>
         </div>
 
         <div class="flex items-center justify-between gap-4">

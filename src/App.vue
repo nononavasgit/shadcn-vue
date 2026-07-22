@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Checkbox, type ValorCheckbox } from '@/components/app/Checkbox'
 import { Icono } from '@/components/app/Icono'
 import { Label } from '@/components/app/Label'
 import { Switch, type ValorSwitch } from '@/components/app/Switch'
@@ -7,10 +8,16 @@ import { Switch, type ValorSwitch } from '@/components/app/Switch'
 const notificaciones = ref(1)
 const modoOscuro = ref(false)
 const estadoCuenta = ref<'activa' | 'inactiva'>('inactiva')
+const terminos = ref(0)
+const avisos = ref(false)
+const seleccionParcial = ref<ValorCheckbox>('indeterminate')
+const opcionPersonalizada = ref<'si' | 'no'>('no')
 
 function registrarCambio(valor: ValorSwitch) {
   console.log(valor)
 }
+
+
 </script>
 
 <template>
@@ -62,6 +69,57 @@ function registrarCambio(valor: ValorSwitch) {
             <p class="text-sm text-muted-foreground">No admite interacción.</p>
           </div>
           <Switch id="deshabilitado" :model-value="0" />
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto mt-10 max-w-xl space-y-6">
+      <div>
+        <h2 class="text-2xl font-semibold">Checkbox</h2>
+        <p class="text-sm text-muted-foreground">
+          Ejemplos con valores numéricos, booleanos, estado indeterminado y un indicador
+          personalizado.
+        </p>
+      </div>
+
+      <div class="space-y-5 rounded-lg border p-4">
+
+
+        <div class="flex items-start gap-3">
+          <Checkbox id="avisos" v-model="avisos" :valor-verdadero="true" :valor-falso="false" />
+          <div class="space-y-1">
+            <Label for="avisos" titulo="Recibir avisos" />
+            <p class="text-sm text-muted-foreground">Valor booleano: {{ avisos }}</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <Checkbox id="seleccion-parcial" v-model="seleccionParcial" />
+          <div class="space-y-1">
+            <Label for="seleccion-parcial" titulo="Selección parcial" />
+            <p class="text-sm text-muted-foreground">Valor actual: {{ seleccionParcial }}</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <Checkbox id="personalizado" v-model="opcionPersonalizada" valor-verdadero="si" valor-falso="no">
+            <template #indicador="{ activo, estado }">
+              <span v-if="estado === 'indeterminado'" class="leading-none font-bold">−</span>
+              <Icono v-else-if="activo" nombre="x" tamano="xs" />
+            </template>
+          </Checkbox>
+          <div class="space-y-1">
+            <Label for="personalizado" titulo="Indicador personalizado" />
+            <p class="text-sm text-muted-foreground">Valor actual: {{ opcionPersonalizada }}</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <Checkbox id="checkbox-deshabilitado" :model-value="1" disabled />
+          <div class="space-y-1">
+            <Label for="checkbox-deshabilitado" titulo="Checkbox deshabilitado" />
+            <p class="text-sm text-muted-foreground">No admite interacción.</p>
+          </div>
         </div>
       </div>
     </section>

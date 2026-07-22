@@ -1,10 +1,5 @@
 <template>
-  <Switch
-    v-bind="uiCalculado.root"
-    v-model="activo"
-    :value="valor?.toString()"
-    @update:model-value="handleCambio"
-  >
+  <Switch v-bind="uiCalculado.root" v-model="activo" :value="valor?.toString()" @update:model-value="handleCambio">
     <template v-if="slots.pulgar" #thumb="{ checked }">
       <span class="flex size-full items-center justify-center text-[9px] leading-none font-bold">
         <slot name="pulgar" :activo="checked"></slot>

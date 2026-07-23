@@ -1,21 +1,21 @@
 <template>
   <Button v-bind="uiCalculado.root" @click="handleClick">
+    <template v-if="!cargando">
+      <slot v-if="slots.icono" name="icono"></slot>
+      <Icono v-else-if="uiCalculado.icono" v-bind="uiCalculado.icono" />
+    </template>
+
+    <template v-else>
+      <slot v-if="slots.cargando" name="cargando"></slot>
+      <Icono v-else v-bind="uiCalculado.cargando" />
+    </template>
+
     <slot name="default">
-      <template v-if="!cargando">
-        <slot v-if="slots.icono" name="icono"></slot>
-        <Icono v-else-if="uiCalculado.icono" v-bind="uiCalculado.icono" />
-      </template>
-
-      <template v-else>
-        <slot v-if="slots.cargando" name="cargando"></slot>
-        <Icono v-else v-bind="uiCalculado.cargando" />
-      </template>
-
       {{ titulo }}
-
-      <slot v-if="slots.iconoDerecho" name="iconoDerecho"></slot>
-      <Icono v-else-if="uiCalculado.iconoDerecho" v-bind="uiCalculado.iconoDerecho" />
     </slot>
+
+    <slot v-if="slots.iconoDerecho" name="iconoDerecho"></slot>
+    <Icono v-else-if="uiCalculado.iconoDerecho" v-bind="uiCalculado.iconoDerecho" />
   </Button>
 </template>
 <script setup lang="ts">
@@ -49,6 +49,8 @@ const emit = defineEmits<{
 
 const attrs = useAttrs()
 const props = withDefaults(defineProps<BotonBaseProps>(), {
+  como: 'button',
+  comoHijo: false,
   titulo: '',
   icono: undefined,
   iconoDerecho: undefined,
@@ -96,6 +98,8 @@ const uiCalculado = computed(() => {
       'data-slot': 'root',
       ...attrs,
       ...props.ui?.root,
+      as: props.como,
+      asChild: props.comoHijo,
       'aria-busy': ariaBusy.value,
       'aria-disabled': ariaDisabled.value,
       class: [classCSS.value, props.ui?.root?.class],

@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 
-export const botonVariantes = cva('gap-2 transition-colors', {
+export const botonVariantes = cva('gap-1 transition-colors', {
   variants: {
     variante: {
       solido: '',
@@ -8,6 +8,7 @@ export const botonVariantes = cva('gap-2 transition-colors', {
       plano: 'border-transparent bg-transparent shadow-none',
       suave: 'border-transparent shadow-none',
       sutil: 'border shadow-none',
+      link: 'h-auto border-transparent bg-transparent p-0! underline shadow-none hover:bg-transparent hover:no-underline active:bg-transparent',
     },
 
     paleta: {
@@ -150,6 +151,21 @@ export const botonVariantes = cva('gap-2 transition-colors', {
       paleta: 'alerta',
       class: 'text-alerta hover:bg-alerta/10 active:bg-alerta/20',
     },
+    {
+      variante: 'link',
+      paleta: 'primario',
+      class: 'text-primary',
+    },
+    {
+      variante: 'link',
+      paleta: 'secundario',
+      class: 'text-secondary-foreground',
+    },
+    {
+      variante: 'link',
+      paleta: 'alerta',
+      class: 'text-alerta',
+    },
 
     // Color personalizado. Se declara al final para que prevalezca sobre la paleta.
     {
@@ -181,6 +197,11 @@ export const botonVariantes = cva('gap-2 transition-colors', {
       personalizado: true,
       class:
         'border-(--boton-color) bg-(--boton-suave) text-(--boton-color) hover:bg-(--boton-suave-hover) active:bg-(--boton-suave-active)',
+    },
+    {
+      variante: 'link',
+      personalizado: true,
+      class: 'text-(--boton-color)',
     },
   ],
 

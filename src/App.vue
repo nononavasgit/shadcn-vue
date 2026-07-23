@@ -1,22 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Boton } from '@/components/app/Button'
+import { Badge } from '@/components/app/Badge'
 import { Icon } from '@/components/app/Icon'
 
 const variants = ['solid', 'outlined', 'plain', 'subtle', 'soft'] as const
 const severities = ['primary', 'secondary', 'warning', 'success', 'error'] as const
-const sizes = ['xs', 'sm', 'md', 'lg'] as const
-
-const saving = ref(false)
-
-function save() {
-  if (saving.value) return
-
-  saving.value = true
-  window.setTimeout(() => {
-    saving.value = false
-  }, 1500)
-}
 </script>
 
 <template>
@@ -24,35 +11,75 @@ function save() {
     <div class="mx-auto max-w-6xl space-y-12">
       <header class="space-y-2">
         <p class="text-sm font-medium text-primary">@nonito/ui</p>
-        <h1 class="text-3xl font-semibold tracking-tight">Button</h1>
-        <p class="max-w-2xl text-muted-foreground">
-          Ejemplos actualizados con las props y slots en inglés.
-        </p>
+        <h1 class="text-3xl font-semibold tracking-tight">Badge</h1>
+        <p class="max-w-2xl text-muted-foreground">Variants y severities del componente Badge.</p>
       </header>
 
       <section class="space-y-5">
         <div>
-          <h2 class="text-lg font-semibold">Basic API</h2>
+          <h2 class="text-lg font-semibold">Basic examples</h2>
           <p class="text-sm text-muted-foreground">
-            Label, leading icon, trailing icon y configuración completa del icono.
+            Uso mediante label, slot, iconos y elementos personalizados.
           </p>
         </div>
 
         <div class="flex flex-row items-center gap-3 overflow-x-auto pb-2">
-          <Boton label="Default button" />
-          <Boton label="Custom violet" color="#7c3aed" />
-          <Boton label="Custom soft" color="#e11d48" variant="soft" />
-          <Boton label="Save" icon="guardar" />
-          <Boton label="Continue" trailing-icon="chevronRight" />
-          <Boton
+          <Badge label="Default" />
+          <Badge label="Secondary" severity="secondary" />
+          <Badge label="Warning" severity="warning" />
+          <Badge label="Success" severity="success" />
+          <Badge label="Error" severity="error" />
+          <Badge label="Custom color" color="#7c3aed" />
+
+          <Badge label="Small" size="sm" variant="soft" />
+          <Badge label="Medium" size="md" variant="soft" />
+          <Badge label="Large" size="lg" variant="soft" />
+
+          <Badge label="Verified" variant="soft" severity="success" icon="check" />
+
+          <Badge
+            as="a"
+            href="#linked-badge"
+            label="Linked badge"
+            variant="outlined"
+            severity="primary"
+            trailing-icon="chevronRight"
+          />
+        </div>
+      </section>
+
+      <section class="space-y-5">
+        <div>
+          <h2 class="text-lg font-semibold">Icons</h2>
+          <p class="text-sm text-muted-foreground">
+            Iconos mediante props, objetos de configuraci�n y slots.
+          </p>
+        </div>
+
+        <div class="flex flex-row flex-wrap items-center gap-3">
+          <Badge label="Information" icon="info" variant="soft" />
+          <Badge label="Completed" icon="check" severity="success" />
+          <Badge label="Attention" trailing-icon="alert" severity="warning" variant="outlined" />
+          <Badge
+            label="Search"
+            icon="search"
+            trailing-icon="chevronRight"
+            severity="secondary"
+          />
+          <Badge
             label="Configured icon"
-            :icon="{ name: 'info', size: 'lg', color: 'oklch(0.55 0.2 255)' }"
+            :icon="{ name: 'info', color: '#7c3aed', 'aria-hidden': true }"
+            variant="outlined"
           />
-          <Boton
-            label="Both icons"
-            icon="guardar"
-            :trailing-icon="{ name: 'chevronRight', size: 'sm' }"
-          />
+
+          <Badge label="Slots" variant="subtle" severity="error">
+            <template #leading>
+              <Icon name="error" size="sm" />
+            </template>
+            <template #trailing>
+              <Icon name="x" size="sm" />
+            </template>
+          </Badge>
         </div>
       </section>
 
@@ -65,7 +92,7 @@ function save() {
         </div>
 
         <div class="overflow-x-auto rounded-xl border">
-          <div class="grid min-w-5xl grid-cols-[8rem_repeat(5,minmax(9rem,1fr))]">
+          <div class="grid min-w-5xl grid-cols-[8rem_repeat(5,minmax(8rem,1fr))]">
             <div class="border-b bg-muted/50 p-4 text-sm font-medium">Severity</div>
             <div
               v-for="variant in variants"
@@ -84,84 +111,33 @@ function save() {
                 :key="`${severity}-${variant}`"
                 class="flex items-center border-b p-4"
               >
-                <Boton :label="severity" :variant="variant" :severity="severity" />
+                <Badge :label="severity" :variant="variant" :severity="severity" />
               </div>
             </template>
           </div>
         </div>
       </section>
 
-      <section class="space-y-5">
+      <section id="linked-badge" class="space-y-5">
         <div>
-          <h2 class="text-lg font-semibold">Sizes and shapes</h2>
-          <p class="text-sm text-muted-foreground">Sizes, rounded buttons y square icon buttons.</p>
-        </div>
-
-        <div class="flex flex-row items-center gap-3 overflow-x-auto pb-2">
-          <Boton v-for="size in sizes" :key="`size-${size}`" :label="size" :size="size" />
-          <Boton label="Rounded" rounded variant="outlined" />
-          <Boton
-            v-for="size in sizes"
-            :key="`square-${size}`"
-            icon="guardar"
-            square
-            rounded
-            :size="size"
-            :aria-label="`Save, size ${size}`"
-          />
-        </div>
-      </section>
-
-      <section class="space-y-5">
-        <div>
-          <h2 class="text-lg font-semibold">Loading and states</h2>
+          <h2 class="text-lg font-semibold">Content and attributes</h2>
           <p class="text-sm text-muted-foreground">
-            Loading automático, loading personalizado y aria-disabled.
+            Contenido personalizado y atributos reenviados al elemento raíz.
           </p>
         </div>
 
         <div class="flex flex-row items-center gap-3 overflow-x-auto pb-2">
-          <Boton
-            :label="saving ? 'Saving…' : 'Save changes'"
-            icon="guardar"
-            :loading="saving"
-            @click="save"
-          />
+          <Badge variant="subtle" severity="warning" title="Pending review">
+            <Icon name="alert" />
+            Pending review
+          </Badge>
 
-          <Boton label="Custom loading" loading severity="secondary">
-            <template #loading>
-              <Icon name="cargando" size="lg" color="currentColor" class="animate-spin" />
-            </template>
-          </Boton>
+          <Badge variant="outlined" severity="error" aria-label="Three errors">
+            <Icon name="error" />
+            3 errors
+          </Badge>
 
-          <Boton label="Unavailable" aria-disabled="true" variant="soft" severity="error" />
-        </div>
-      </section>
-
-      <section class="space-y-5">
-        <div>
-          <h2 class="text-lg font-semibold">Slots</h2>
-          <p class="text-sm text-muted-foreground">
-            Los slots leading y trailing sustituyen los iconos de las props.
-          </p>
-        </div>
-
-        <div class="flex flex-row items-center gap-3 overflow-x-auto pb-2">
-          <Boton label="Slot icons" icon="guardar" trailing-icon="cerrar" variant="subtle">
-            <template #leading>
-              <Icon name="buscar" color="oklch(0.6 0.2 260)" />
-            </template>
-            <template #trailing>
-              <Icon name="chevronAbajo" size="sm" />
-            </template>
-          </Boton>
-
-          <Boton variant="soft" severity="success">
-            <template #leading>
-              <Icon name="exito" />
-            </template>
-            Custom default slot
-          </Boton>
+          <Badge class="rounded-full px-3" severity="success"> Custom classes </Badge>
         </div>
       </section>
     </div>

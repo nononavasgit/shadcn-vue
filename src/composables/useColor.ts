@@ -2,8 +2,7 @@ import { computed, toValue, type CSSProperties, type MaybeRefOrGetter } from 'vu
 
 type RGB = [number, number, number]
 type ColorStyle = CSSProperties & {
-  '--button-color': string
-  '--button-color-foreground': string
+  [key: `--${string}`]: string | number | undefined
 }
 
 function parseHex(color: string): RGB | undefined {
@@ -64,7 +63,7 @@ export function getContrastColor(color: string, light = '#ffffff', dark = '#0909
   return contrastWithLight >= contrastWithDark ? light : dark
 }
 
-export function useColor(color: MaybeRefOrGetter<string | undefined>) {
+export function useColor(color: MaybeRefOrGetter<string | undefined>, prefix = 'button') {
   const contrastColor = computed(() => {
     const value = toValue(color)
     return value ? getContrastColor(value) : undefined
@@ -75,8 +74,8 @@ export function useColor(color: MaybeRefOrGetter<string | undefined>) {
     if (!value || !contrastColor.value) return undefined
 
     return {
-      '--button-color': value,
-      '--button-color-foreground': contrastColor.value,
+      [`--${prefix}-color`]: value,
+      [`--${prefix}-color-foreground`]: contrastColor.value,
     }
   })
 

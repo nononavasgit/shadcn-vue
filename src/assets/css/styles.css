@@ -46,6 +46,10 @@
   /* Propios */
   --color-alerta: var(--alerta);
   --color-alerta-foreground: var(--alerta-foreground);
+  --color-exito: var(--exito);
+  --color-exito-foreground: var(--exito-foreground);
+  --color-error: var(--error);
+  --color-error-foreground: var(--error-foreground);
   --color-enlace: var(--enlace);
 }
 
@@ -86,6 +90,10 @@
   /* Propios */
   --alerta: oklch(56.3% 0.159 45.85);
   --alerta-foreground: oklch(0.145 0 0);
+  --exito: oklch(0.596 0.145 163.225);
+  --exito-foreground: oklch(0.985 0 0);
+  --error: oklch(0.577 0.245 27.325);
+  --error-foreground: oklch(0.985 0 0);
   --enlace: oklch(0.546 0.245 262.881);
 }
 
@@ -124,6 +132,10 @@
 
   /*Propios*/
   --alerta: oklch(70% 0.17 48);
+  --exito: oklch(0.696 0.17 162.48);
+  --exito-foreground: oklch(0.145 0 0);
+  --error: oklch(0.704 0.191 22.216);
+  --error-foreground: oklch(0.985 0 0);
   --alerta-foreground: oklch(0.145 0 0);
   --enlace: oklch(0.707 0.165 254.624);
 }

@@ -46,6 +46,7 @@
   /* Propios */
   --color-alerta: var(--alerta);
   --color-alerta-foreground: var(--alerta-foreground);
+  --color-enlace: var(--enlace);
 }
 
 :root {
@@ -85,6 +86,7 @@
   /* Propios */
   --alerta: oklch(56.3% 0.159 45.85);
   --alerta-foreground: oklch(0.145 0 0);
+  --enlace: oklch(0.546 0.245 262.881);
 }
 
 .dark {
@@ -123,9 +125,15 @@
   /*Propios*/
   --alerta: oklch(70% 0.17 48);
   --alerta-foreground: oklch(0.145 0 0);
+  --enlace: oklch(0.707 0.165 254.624);
 }
 
 @layer base {
+  a {
+    min-width: 24px;
+    min-height: 24px;
+  }
+
   button:not(:disabled),
   [role='button']:not(:disabled) {
     cursor: pointer;

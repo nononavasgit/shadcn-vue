@@ -37,17 +37,19 @@ defineOptions({
   inheritAttrs: false,
 })
 
+const attrs = useAttrs()
+
 const slots = defineSlots<{
   default?(): unknown
   icono?(): unknown
   cargando?(): unknown
   iconoDerecho?(): unknown
 }>()
+
 const emit = defineEmits<{
   click: [event: MouseEvent]
 }>()
 
-const attrs = useAttrs()
 const props = withDefaults(defineProps<BotonBaseProps>(), {
   como: 'button',
   comoHijo: false,
@@ -69,66 +71,62 @@ const { variablesColor } = useColor(toRef(props, 'color'), {
   prefijo: 'boton',
 })
 
-const ariaBusy = computed(() => {
-  return props.cargando || attrs['aria-busy']
-})
-
-const ariaDisabled = computed(() => {
-  return props.cargando || attrs['aria-disabled']
-})
-
-const classCSS = computed(() => {
-  return cn(
-    botonVariantes({
-      variante: props.variante,
-      tamano: props.tamano,
-      fluido: props.fluido,
-      redondeado: props.redondeado,
-      cuadrado: props.cuadrado,
-      paleta: props.paleta,
-      personalizado: Boolean(props.color),
-    }),
-    attrs.class,
-  )
+const estaDeshabilitado = computed(() => {
+  if (props.cargando || attrs['aria-disabled'] || attrs.disabled) return true
+  return false
 })
 
 const uiCalculado = computed(() => {
   return {
     root: {
-      'data-slot': 'root',
       ...attrs,
       ...props.ui?.root,
       as: props.como,
       asChild: props.comoHijo,
-      'aria-busy': ariaBusy.value,
-      'aria-disabled': ariaDisabled.value,
-      class: [classCSS.value, props.ui?.root?.class],
+      'aria-busy': props.cargando || attrs['aria-busy'],
+      'aria-disabled': props.cargando || attrs['aria-disabled'],
+      class: cn(
+        botonVariantes({
+          variante: props.variante,
+          tamano: props.tamano,
+          fluido: props.fluido,
+          redondeado: props.redondeado,
+          cuadrado: props.cuadrado,
+          paleta: props.paleta,
+          personalizado: Boolean(props.color),
+        }),
+        attrs.class,
+        props.ui?.root?.class,
+      ),
       style: [attrs.style, variablesColor.value, props.ui?.root?.style],
+      'data-slot': 'root',
+      'data-variante': props.variante,
     },
     cargando: {
       tamano: props.tamano,
       nombre: 'spinner' as const,
       ...props.ui?.cargando,
       class: ['animate-spin', props.ui?.cargando?.class],
+      'data-slot': 'cargando',
     },
     icono: props.icono
       ? {
-        tamano: props.tamano,
-        ...props.ui?.icono,
         nombre: props.icono,
+        ...props.ui?.icono,
+        'data-slot': 'icono',
       }
       : undefined,
     iconoDerecho: props.iconoDerecho
       ? {
-        tamano: props.tamano,
-        ...props.ui?.iconoDerecho,
         nombre: props.iconoDerecho,
+        ...props.ui?.iconoDerecho,
+        'data-slot': 'iconoDerecho',
       }
       : undefined,
   }
 })
 const handleClick = ($evt: MouseEvent) => {
-  if (ariaDisabled.value) {
+  if (estaDeshabilitado.value) {
     $evt.stopPropagation()
     $evt.preventDefault()
     return

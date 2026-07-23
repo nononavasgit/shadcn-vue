@@ -20,5 +20,5 @@ const classCSS = computed(() => cn(iconoVariantes({ tamano: props.tamano }), att
 </script>
 
 <template>
-  <component :is="componente" v-bind="{ ...attrs }" aria-hidden="true" :color="color" :class="classCSS" />
+  <component :is="componente" v-bind="{ 'aria-hidden': true, ...attrs, }" :color="color" :class="classCSS" />
 </template>

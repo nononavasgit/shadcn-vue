@@ -1,5 +1,5 @@
 <template>
-  <Boton v-bind="attrsBoton" :href="destino" :como="'a'">
+  <Boton v-bind="attrsBoton" :href="destino">
     <template v-for="(_, nombre) in $slots" #[nombre]="slotProps">
       <slot :name="nombre" v-bind="slotProps ?? {}" />
     </template>
@@ -18,6 +18,7 @@ const attrs = useAttrs()
 const props = withDefaults(defineProps<EnlaceBaseProps>(), {
   destino: undefined,
   variante: 'link',
+  como: 'a'
 })
 
 const propsBoton = reactiveOmit(props, 'destino')

@@ -44,10 +44,10 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 
   /* Propios */
-  --color-alerta: var(--alerta);
-  --color-alerta-foreground: var(--alerta-foreground);
-  --color-exito: var(--exito);
-  --color-exito-foreground: var(--exito-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
   --color-error: var(--error);
   --color-error-foreground: var(--error-foreground);
   --color-enlace: var(--enlace);
@@ -88,10 +88,10 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   /* Propios */
-  --alerta: oklch(56.3% 0.159 45.85);
-  --alerta-foreground: oklch(0.145 0 0);
-  --exito: oklch(0.596 0.145 163.225);
-  --exito-foreground: oklch(0.985 0 0);
+  --warning: oklch(56.3% 0.159 45.85);
+  --warning-foreground: oklch(0.145 0 0);
+  --success: oklch(0.596 0.145 163.225);
+  --success-foreground: oklch(0.985 0 0);
   --error: oklch(0.577 0.245 27.325);
   --error-foreground: oklch(0.985 0 0);
   --enlace: oklch(0.546 0.245 262.881);
@@ -131,12 +131,12 @@
   --sidebar-ring: oklch(0.556 0 0);
 
   /*Propios*/
-  --alerta: oklch(70% 0.17 48);
-  --exito: oklch(0.696 0.17 162.48);
-  --exito-foreground: oklch(0.145 0 0);
+  --warning: oklch(70% 0.17 48);
+  --success: oklch(0.696 0.17 162.48);
+  --success-foreground: oklch(0.145 0 0);
   --error: oklch(0.704 0.191 22.216);
   --error-foreground: oklch(0.985 0 0);
-  --alerta-foreground: oklch(0.145 0 0);
+  --warning-foreground: oklch(0.145 0 0);
   --enlace: oklch(0.707 0.165 254.624);
 }
 

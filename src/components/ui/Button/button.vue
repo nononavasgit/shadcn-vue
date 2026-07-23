@@ -4,13 +4,11 @@ import type { PrimitiveProps } from 'reka-ui'
 import { Primitive } from 'reka-ui'
 import { cn } from '@/lib/utils'
 
-type Props = PrimitiveProps
-
 defineOptions({ inheritAttrs: false })
 
 const attrs = useAttrs()
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<PrimitiveProps>(), {
   as: 'button',
 })
 </script>
@@ -18,7 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
 <template>
   <Primitive
     v-bind="attrs"
-    data-slot="boton"
+    data-slot="button"
     :as="props.as"
     :as-child="props.asChild"
     :class="

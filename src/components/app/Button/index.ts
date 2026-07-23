@@ -1,0 +1,201 @@
+import { cva, type VariantProps } from 'class-variance-authority'
+import type { SVGAttributes } from 'vue'
+import type { IconProps, IconName } from '@/components/app/Icon'
+
+export { default as Boton } from './Button.vue'
+
+export const buttonVariants = cva('', {
+  variants: {
+    variant: {
+      solid: '',
+      outlined: 'border bg-transparent',
+      plain: 'bg-transparent',
+      subtle: 'border',
+      soft: '',
+    },
+    severity: {
+      primary: 'focus-visible:border-primary focus-visible:ring-primary/30',
+      secondary:
+        'focus-visible:border-secondary-foreground focus-visible:ring-secondary-foreground/20',
+      warning: 'focus-visible:border-warning focus-visible:ring-warning/30',
+      success: 'focus-visible:border-success focus-visible:ring-success/30',
+      error: 'focus-visible:border-error focus-visible:ring-error/30',
+    },
+    size: {
+      xs: 'h-7 gap-1 px-2.5 text-xs has-[>svg]:px-2',
+      sm: 'h-8 gap-1.5 px-3 text-sm has-[>svg]:px-2.5',
+      md: 'h-9 px-4 py-2 text-base has-[>svg]:px-3',
+      lg: 'h-10 px-6 text-lg has-[>svg]:px-4',
+    },
+    rounded: {
+      true: 'rounded-full',
+      false: '',
+    },
+    square: {
+      true: '',
+      false: '',
+    },
+  },
+  compoundVariants: [
+    { square: true, size: 'xs', class: 'size-7 p-0' },
+    { square: true, size: 'sm', class: 'size-8 p-0' },
+    { square: true, size: 'md', class: 'size-9 p-0' },
+    { square: true, size: 'lg', class: 'size-10 p-0' },
+    {
+      variant: 'solid',
+      severity: 'primary',
+      class: 'bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80',
+    },
+    {
+      variant: 'outlined',
+      severity: 'primary',
+      class:
+        'border-primary/40 text-primary hover:bg-primary/10 active:border-primary/60 active:bg-primary/20',
+    },
+    {
+      variant: 'plain',
+      severity: 'primary',
+      class: 'text-primary hover:bg-primary/10 active:bg-primary/20',
+    },
+    {
+      variant: 'subtle',
+      severity: 'primary',
+      class:
+        'border-primary/20 bg-primary/10 text-primary hover:bg-primary/15 active:bg-primary/25',
+    },
+    {
+      variant: 'soft',
+      severity: 'primary',
+      class: 'bg-primary/10 text-primary hover:bg-primary/20 active:bg-primary/30',
+    },
+    {
+      variant: 'solid',
+      severity: 'secondary',
+      class: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70',
+    },
+    {
+      variant: 'outlined',
+      severity: 'secondary',
+      class:
+        'border-secondary-foreground/30 text-secondary-foreground hover:bg-secondary active:bg-secondary/70',
+    },
+    {
+      variant: 'plain',
+      severity: 'secondary',
+      class: 'text-secondary-foreground hover:bg-secondary active:bg-secondary/70',
+    },
+    {
+      variant: 'subtle',
+      severity: 'secondary',
+      class:
+        'border-secondary-foreground/15 bg-secondary/60 text-secondary-foreground hover:bg-secondary/80 active:bg-secondary',
+    },
+    {
+      variant: 'soft',
+      severity: 'secondary',
+      class: 'bg-secondary/60 text-secondary-foreground hover:bg-secondary/80 active:bg-secondary',
+    },
+    {
+      variant: 'solid',
+      severity: 'warning',
+      class: 'bg-warning text-warning-foreground hover:bg-warning/90 active:bg-warning/80',
+    },
+    {
+      variant: 'outlined',
+      severity: 'warning',
+      class:
+        'border-warning/40 text-warning hover:bg-warning/10 active:border-warning/60 active:bg-warning/20',
+    },
+    {
+      variant: 'plain',
+      severity: 'warning',
+      class: 'text-warning hover:bg-warning/10 active:bg-warning/20',
+    },
+    {
+      variant: 'subtle',
+      severity: 'warning',
+      class:
+        'border-warning/20 bg-warning/10 text-warning hover:bg-warning/15 active:bg-warning/25',
+    },
+    {
+      variant: 'soft',
+      severity: 'warning',
+      class: 'bg-warning/10 text-warning hover:bg-warning/20 active:bg-warning/30',
+    },
+    {
+      variant: 'solid',
+      severity: 'success',
+      class: 'bg-success text-success-foreground hover:bg-success/90 active:bg-success/80',
+    },
+    {
+      variant: 'outlined',
+      severity: 'success',
+      class:
+        'border-success/40 text-success hover:bg-success/10 active:border-success/60 active:bg-success/20',
+    },
+    {
+      variant: 'plain',
+      severity: 'success',
+      class: 'text-success hover:bg-success/10 active:bg-success/20',
+    },
+    {
+      variant: 'subtle',
+      severity: 'success',
+      class:
+        'border-success/20 bg-success/10 text-success hover:bg-success/15 active:bg-success/25',
+    },
+    {
+      variant: 'soft',
+      severity: 'success',
+      class: 'bg-success/10 text-success hover:bg-success/20 active:bg-success/30',
+    },
+    {
+      variant: 'solid',
+      severity: 'error',
+      class: 'bg-error text-error-foreground hover:bg-error/90 active:bg-error/80',
+    },
+    {
+      variant: 'outlined',
+      severity: 'error',
+      class:
+        'border-error/40 text-error hover:bg-error/10 active:border-error/60 active:bg-error/20',
+    },
+    {
+      variant: 'plain',
+      severity: 'error',
+      class: 'text-error hover:bg-error/10 active:bg-error/20',
+    },
+    {
+      variant: 'subtle',
+      severity: 'error',
+      class: 'border-error/20 bg-error/10 text-error hover:bg-error/15 active:bg-error/25',
+    },
+    {
+      variant: 'soft',
+      severity: 'error',
+      class: 'bg-error/10 text-error hover:bg-error/20 active:bg-error/30',
+    },
+  ],
+  defaultVariants: {
+    variant: 'solid',
+    severity: 'primary',
+    size: 'md',
+    rounded: false,
+    square: false,
+  },
+})
+
+export type ButtonVariants = VariantProps<typeof buttonVariants>
+export type ButtonIcon = IconName | (IconProps & SVGAttributes)
+
+export interface ButtonProps {
+  label?: string
+  variant?: ButtonVariants['variant']
+  severity?: ButtonVariants['severity']
+  size?: ButtonVariants['size']
+  rounded?: ButtonVariants['rounded'] | boolean
+  square?: ButtonVariants['square'] | boolean
+  loading?: boolean
+  icon?: ButtonIcon
+  trailingIcon?: ButtonIcon
+}

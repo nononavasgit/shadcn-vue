@@ -16,20 +16,20 @@ import {
 } from '@lucide/vue'
 
 export const ICONS = {
-  alerta: AlertTriangle,
+  alert: AlertTriangle,
   check: Check,
-  chevronAbajo: ChevronDown,
-  chevronArriba: ChevronUp,
-  chevronDerecha: ChevronRight,
-  chevronIzquierda: ChevronLeft,
+  chevronDown: ChevronDown,
+  chevronUp: ChevronUp,
+  chevronRight: ChevronRight,
+  chevronLeft: ChevronLeft,
   error: CircleAlert,
-  exito: CircleCheck,
+  success: CircleCheck,
   info: Info,
-  cargando: LoaderCircle,
-  guardar: Save,
-  buscar: Search,
-  eliminar: Trash2,
-  cerrar: X,
+  spinner: LoaderCircle,
+  save: Save,
+  search: Search,
+  trash2: Trash2,
+  x: X,
 } as const
 
 export type IconName = keyof typeof ICONS

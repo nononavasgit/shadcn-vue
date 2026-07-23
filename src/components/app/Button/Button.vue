@@ -57,27 +57,20 @@ function handleClick(evt: MouseEvent) {
 </script>
 
 <template>
-  <Button
-    v-bind="attrs"
-    :aria-busy="ariaBusy"
-    :aria-disabled="ariaDisabled"
-    :class="
-      cn(
-        buttonVariants({
-          variant: props.variant,
-          severity: props.severity,
-          size: props.size,
-          rounded: props.rounded,
-          square: props.square,
-        }),
-        attrs.class,
-      )
-    "
-    @click="handleClick"
-  >
+  <Button v-bind="attrs" :aria-busy="ariaBusy" :aria-disabled="ariaDisabled" :class="cn(
+    buttonVariants({
+      variant: props.variant,
+      severity: props.severity,
+      size: props.size,
+      rounded: props.rounded,
+      square: props.square,
+    }),
+    attrs.class,
+  )
+    " @click="handleClick">
     <template v-if="props.loading">
       <slot name="loading">
-        <Icon name="cargando" class="animate-spin" />
+        <Icon name="spinner" class="animate-spin" />
       </slot>
     </template>
     <slot v-else name="leading">

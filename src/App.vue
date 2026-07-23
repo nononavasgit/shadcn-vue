@@ -41,16 +41,9 @@ function save() {
         <div class="flex flex-row items-center gap-3 overflow-x-auto pb-2">
           <Boton label="Default button" />
           <Boton label="Save" icon="guardar" />
-          <Boton label="Continue" trailing-icon="chevronDerecha" />
-          <Boton
-            label="Configured icon"
-            :icon="{ name: 'info', size: 'lg', color: 'oklch(0.55 0.2 255)' }"
-          />
-          <Boton
-            label="Both icons"
-            icon="guardar"
-            :trailing-icon="{ name: 'chevronDerecha', size: 'sm' }"
-          />
+          <Boton label="Continue" trailing-icon="chevronRight" />
+          <Boton label="Configured icon" :icon="{ name: 'info', size: 'lg', color: 'oklch(0.55 0.2 255)' }" />
+          <Boton label="Both icons" icon="guardar" :trailing-icon="{ name: 'chevronRight', size: 'sm' }" />
         </div>
       </section>
 
@@ -65,11 +58,8 @@ function save() {
         <div class="overflow-x-auto rounded-xl border">
           <div class="grid min-w-5xl grid-cols-[8rem_repeat(5,minmax(9rem,1fr))]">
             <div class="border-b bg-muted/50 p-4 text-sm font-medium">Severity</div>
-            <div
-              v-for="variant in variants"
-              :key="variant"
-              class="border-b bg-muted/50 p-4 text-sm font-medium capitalize"
-            >
+            <div v-for="variant in variants" :key="variant"
+              class="border-b bg-muted/50 p-4 text-sm font-medium capitalize">
               {{ variant }}
             </div>
 
@@ -77,11 +67,7 @@ function save() {
               <div class="flex items-center border-b p-4 text-sm font-medium capitalize">
                 {{ severity }}
               </div>
-              <div
-                v-for="variant in variants"
-                :key="`${severity}-${variant}`"
-                class="flex items-center border-b p-4"
-              >
+              <div v-for="variant in variants" :key="`${severity}-${variant}`" class="flex items-center border-b p-4">
                 <Boton :label="severity" :variant="variant" :severity="severity" />
               </div>
             </template>
@@ -98,15 +84,8 @@ function save() {
         <div class="flex flex-row items-center gap-3 overflow-x-auto pb-2">
           <Boton v-for="size in sizes" :key="`size-${size}`" :label="size" :size="size" />
           <Boton label="Rounded" rounded variant="outlined" />
-          <Boton
-            v-for="size in sizes"
-            :key="`square-${size}`"
-            icon="guardar"
-            square
-            rounded
-            :size="size"
-            :aria-label="`Save, size ${size}`"
-          />
+          <Boton v-for="size in sizes" :key="`square-${size}`" icon="guardar" square rounded :size="size"
+            :aria-label="`Save, size ${size}`" />
         </div>
       </section>
 
@@ -119,12 +98,7 @@ function save() {
         </div>
 
         <div class="flex flex-row items-center gap-3 overflow-x-auto pb-2">
-          <Boton
-            :label="saving ? 'Saving…' : 'Save changes'"
-            icon="guardar"
-            :loading="saving"
-            @click="save"
-          />
+          <Boton :label="saving ? 'Saving…' : 'Save changes'" icon="guardar" :loading="saving" @click="save" />
 
           <Boton label="Custom loading" loading severity="secondary">
             <template #loading>

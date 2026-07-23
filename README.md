@@ -1,40 +1,25 @@
 # @nonito/ui
 
-Librería personal de componentes Vue 3 basada en shadcn-vue, Tailwind CSS 4 y Vite.
+Base personal para construir componentes Vue 3 con Reka UI, Tailwind CSS 4 y los iconos de `@lucide/vue`.
+
+El proyecto no incluye componentes preconstruidos. `src/index.js` es la entrada pública donde puedes exportar los componentes que vayas creando.
+
+## Utilidades públicas
+
+```js
+import { cn, cv, cva } from '@nonito/ui'
+import '@nonito/ui/style.css'
+```
+
+- `cn` y `cv` combinan clases condicionales y resuelven conflictos de Tailwind.
+- `cva` crea variantes tipadas mediante `class-variance-authority`.
 
 ## Desarrollo
 
 ```bash
 npm install
 npm run dev
+npm run check
 ```
 
-`src/App.vue` es únicamente el escaparate local. La API pública está en `src/index.ts`.
-
-## Añadir componentes
-
-```bash
-npx shadcn-vue@latest add button
-```
-
-Después de añadir uno, expórtalo desde `src/index.ts`. Revisa el componente antes de sobrescribir uno personalizado.
-
-## Consumir desde otra app
-
-```bash
-npm install ../ruta/a/shadcn-vue
-```
-
-```ts
-import { Button } from '@nonito/ui'
-import '@nonito/ui/style.css'
-```
-
-Para publicar, cambia `name` por tu scope real y usa `npm publish --access public`.
-
-## Comandos
-
-- `npm run dev`: escaparate con HMR.
-- `npm run typecheck`: comprueba TypeScript y Vue.
-- `npm run build`: genera `dist`.
-- `npm run check`: ejecuta typecheck y build.
+Los componentes nuevos pueden usar los primitivos de `reka-ui` y los iconos de `@lucide/vue` directamente.

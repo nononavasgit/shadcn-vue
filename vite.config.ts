@@ -22,7 +22,7 @@ export default defineConfig({
   publicDir: false,
   build: {
     lib: {
-      entry: path.resolve(__dirname, 'src/index.ts'),
+      entry: path.resolve(__dirname, 'src/index.js'),
       formats: ['es'],
       fileName: 'index',
       cssFileName: 'style',

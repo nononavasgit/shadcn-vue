@@ -35,6 +35,10 @@ export const buttonVariants = cva('', {
       true: '',
       false: '',
     },
+    color: {
+      true: 'focus-visible:border-(--button-color) focus-visible:ring-(--button-color)/30',
+      false: '',
+    },
   },
   compoundVariants: [
     { square: true, size: 'xs', class: 'size-7 p-0' },
@@ -175,6 +179,35 @@ export const buttonVariants = cva('', {
       severity: 'error',
       class: 'bg-error/10 text-error hover:bg-error/20 active:bg-error/30',
     },
+    {
+      color: true,
+      variant: 'solid',
+      class:
+        'bg-(--button-color) text-(--button-color-foreground) hover:bg-(--button-color)/90 active:bg-(--button-color)/80',
+    },
+    {
+      color: true,
+      variant: 'outlined',
+      class:
+        'border-(--button-color)/40 text-(--button-color) hover:bg-(--button-color)/10 active:border-(--button-color)/60 active:bg-(--button-color)/20',
+    },
+    {
+      color: true,
+      variant: 'plain',
+      class: 'text-(--button-color) hover:bg-(--button-color)/10 active:bg-(--button-color)/20',
+    },
+    {
+      color: true,
+      variant: 'subtle',
+      class:
+        'border-(--button-color)/20 bg-(--button-color)/10 text-(--button-color) hover:bg-(--button-color)/15 active:bg-(--button-color)/25',
+    },
+    {
+      color: true,
+      variant: 'soft',
+      class:
+        'bg-(--button-color)/10 text-(--button-color) hover:bg-(--button-color)/20 active:bg-(--button-color)/30',
+    },
   ],
   defaultVariants: {
     variant: 'solid',
@@ -182,6 +215,7 @@ export const buttonVariants = cva('', {
     size: 'md',
     rounded: false,
     square: false,
+    color: false,
   },
 })
 
@@ -196,6 +230,7 @@ export interface ButtonProps {
   rounded?: ButtonVariants['rounded'] | boolean
   square?: ButtonVariants['square'] | boolean
   loading?: boolean
+  color?: string
   icon?: ButtonIcon
   trailingIcon?: ButtonIcon
 }

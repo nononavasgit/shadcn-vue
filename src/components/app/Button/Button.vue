@@ -3,6 +3,7 @@ import { computed, useAttrs } from 'vue'
 import { button as Button } from '@/components/ui/Button'
 import { Icon } from '@/components/app/Icon'
 import { cn } from '@/lib/utils'
+import { useColor } from '@/composables'
 import { buttonVariants, type ButtonProps } from '.'
 
 const attrs = useAttrs()
@@ -26,6 +27,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   rounded: false,
   square: false,
   loading: false,
+  color: undefined,
   icon: undefined,
   trailingIcon: undefined,
 })
@@ -36,6 +38,8 @@ const iconLeading = computed(() =>
 const iconTrailing = computed(() =>
   typeof props.trailingIcon === 'string' ? { name: props.trailingIcon } : props.trailingIcon,
 )
+
+const { colorStyle } = useColor(computed(() => props.color))
 
 const ariaDisabled = computed(() => {
   return props.loading || attrs['aria-disabled']
@@ -57,17 +61,26 @@ function handleClick(evt: MouseEvent) {
 </script>
 
 <template>
-  <Button v-bind="attrs" :aria-busy="ariaBusy" :aria-disabled="ariaDisabled" :class="cn(
-    buttonVariants({
-      variant: props.variant,
-      severity: props.severity,
-      size: props.size,
-      rounded: props.rounded,
-      square: props.square,
-    }),
-    attrs.class,
-  )
-    " @click="handleClick">
+  <Button
+    v-bind="attrs"
+    :aria-busy="ariaBusy"
+    :aria-disabled="ariaDisabled"
+    :class="
+      cn(
+        buttonVariants({
+          variant: props.variant,
+          severity: props.severity,
+          size: props.size,
+          rounded: props.rounded,
+          square: props.square,
+          color: Boolean(props.color),
+        }),
+        attrs.class,
+      )
+    "
+    :style="[colorStyle, attrs.style]"
+    @click="handleClick"
+  >
     <template v-if="props.loading">
       <slot name="loading">
         <Icon name="spinner" class="animate-spin" />

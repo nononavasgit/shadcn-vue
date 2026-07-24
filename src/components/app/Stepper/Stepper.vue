@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/Stepper'
 import { Icon } from '@/components/app/Icon'
 import { cn } from '@/lib/utils'
+import { useColor } from '@/composables'
 import type {
   StepperEmits,
   StepperEntry,
@@ -49,6 +50,11 @@ const attrs = useAttrs()
 const slots = useSlots()
 const modelValue = defineModel<number>()
 
+const { colorStyle } = useColor(
+  computed(() => props.color),
+  'stepper',
+)
+
 type ItemUINode = Exclude<keyof StepperUI, 'list' | 'separator'>
 type ItemUIAttributes = HTMLAttributes | SVGAttributes
 
@@ -56,6 +62,7 @@ const uiCalculado = computed(() => ({
   root: {
     ...attrs,
     class: cn('block w-full', attrs.class),
+    style: [colorStyle.value, attrs.style],
   },
   list: {
     ...props.ui?.list,
@@ -142,13 +149,29 @@ function itemClasses() {
 }
 
 function triggerClasses() {
-  return props.orientation === 'vertical' ? 'z-10 flex-row items-start gap-3 p-0 text-left' : 'z-10'
+  return cn(
+    'z-10 border border-transparent outline-none focus-visible:ring-3',
+    props.color
+      ? 'focus-visible:border-(--stepper-color) focus-visible:ring-(--stepper-color)/50'
+      : 'focus-visible:border-primary focus-visible:ring-primary/50',
+    props.orientation === 'vertical' && 'flex-row items-start gap-3 p-0 text-left',
+  )
+}
+
+function indicatorClasses() {
+  return (
+    props.color &&
+    'group-data-[state=active]:bg-(--stepper-color) group-data-[state=active]:text-(--stepper-color-foreground) group-data-[state=completed]:bg-(--stepper-color) group-data-[state=completed]:text-(--stepper-color-foreground)'
+  )
 }
 
 function separatorClasses() {
-  return props.orientation === 'vertical'
-    ? 'absolute top-10 left-5 h-[calc(100%+1.5rem)] w-0.5 -translate-x-1/2 rounded-full'
-    : 'absolute top-5 right-[calc(-50%+10px)] left-[calc(50%+20px)] h-0.5 shrink-0 rounded-full'
+  return cn(
+    props.orientation === 'vertical'
+      ? 'absolute top-10 left-5 h-[calc(100%+1.5rem)] w-0.5 -translate-x-1/2 rounded-full'
+      : 'absolute top-5 right-[calc(-50%+10px)] left-[calc(50%+20px)] h-0.5 shrink-0 rounded-full',
+    props.color && 'group-data-[state=completed]:bg-(--stepper-color)',
+  )
 }
 
 function slotProps(
@@ -208,7 +231,7 @@ function hasContent(stepper: StepperEntry) {
                 v-bind="slotProps(stepper, index, state, rootState)"
               >
                 <slot name="header" v-bind="slotProps(stepper, index, state, rootState)">
-                  <StepperIndicator v-bind="itemUi(stepper, 'indicator')">
+                  <StepperIndicator v-bind="itemUi(stepper, 'indicator', indicatorClasses())">
                     <slot
                       :name="slotName('indicator', stepper)"
                       v-bind="slotProps(stepper, index, state, rootState)"

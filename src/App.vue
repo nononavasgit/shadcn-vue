@@ -237,6 +237,7 @@ const stateSteps: StepperEntry[] = [
         </div>
 
         <Stepper
+          color="#7c3aed"
           :steppers="[
             {
               step: 1,

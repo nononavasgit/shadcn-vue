@@ -49,6 +49,7 @@ export interface StepperProps {
   orientation?: StepperRootProps['orientation']
   dir?: StepperRootProps['dir']
   linear?: boolean
+  color?: string
   as?: string | Component
   asChild?: boolean
   ui?: StepperUI

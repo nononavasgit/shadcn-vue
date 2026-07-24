@@ -7,8 +7,6 @@ export type AvatarLoadingStatus = 'idle' | 'loading' | 'loaded' | 'error'
 export type AvatarIcon = IconName | (IconProps & SVGAttributes)
 
 export interface AvatarProps {
-  src?: string
-  alt?: string
   icon?: AvatarIcon
   label?: string
 }

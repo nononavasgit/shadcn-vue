@@ -95,7 +95,6 @@ const loadingStatus = ref<AvatarLoadingStatus>('idle')
           <template #fallback>
             <span class="flex items-center gap-1 text-xs">
               <Icon name="success" class="size-3" aria-hidden="true" />
-              OK
             </span>
           </template>
         </Avatar>

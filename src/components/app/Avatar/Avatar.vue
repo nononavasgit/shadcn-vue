@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
+import type { ImgHTMLAttributes } from 'vue'
 import { Avatar as AvatarBase, AvatarFallback, AvatarImage } from '@/components/ui/Avatar'
 import { Icon } from '@/components/app/Icon'
 import type { AvatarEmits, AvatarProps, AvatarSlotProps } from '.'
@@ -12,24 +13,24 @@ defineSlots<{
 
 const props = defineProps<AvatarProps>()
 const emits = defineEmits<AvatarEmits>()
-const attrs = useAttrs()
+const attrs = useAttrs() as ImgHTMLAttributes
 
 const icon = computed(() => (typeof props.icon === 'string' ? { name: props.icon } : props.icon))
 const slotProps = computed<AvatarSlotProps>(() => ({
-  src: props.src,
-  alt: props.alt,
   icon: props.icon,
   label: props.label,
+  src: attrs?.src,
+  alt: attrs?.alt,
 }))
 </script>
 
 <template>
   <AvatarBase>
     <AvatarImage
-      v-if="props.src"
+      v-if="attrs.src"
       v-bind="attrs"
-      :src="props.src"
-      :alt="props.alt"
+      :src="attrs.src"
+      :alt="attrs.alt"
       @loading-status-change="emits('loadingStatusChange', $event)"
     />
 

@@ -1,122 +1,100 @@
 <script setup lang="ts">
-import { Time } from '@/components/app/Time'
-import { useDate } from '@/composables'
+import { ref } from 'vue'
+import { Textarea } from '@/components/app/Textarea'
 
-const exampleDate = '2026-07-24T18:30:00Z'
-const { formatDate } = useDate()
-
-const shortDate = formatDate(exampleDate, {
-  locale: 'es-ES',
-  format: {
-    dateStyle: 'short',
-  },
-})
+const message = ref('')
+const feedback = ref('La experiencia ha sido muy buena.')
 </script>
 
 <template>
   <main class="min-h-screen bg-background p-6 text-foreground md:p-10">
-    <div class="mx-auto max-w-4xl space-y-10">
+    <div class="mx-auto max-w-3xl space-y-10">
       <header class="space-y-2">
         <p class="text-sm font-medium text-primary">@nonito/ui</p>
-        <h1 class="text-3xl font-semibold tracking-tight">Time</h1>
+        <h1 class="text-3xl font-semibold tracking-tight">Textarea</h1>
         <p class="max-w-2xl text-sm text-muted-foreground">
-          Ejemplos de fechas localizadas mediante el componente Time y el composable useDate.
+          Ejemplos con v-model, valores iniciales y atributos HTML nativos.
         </p>
       </header>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Formato básico</h2>
-          <p class="text-sm text-muted-foreground">Fecha completa localizada en español.</p>
+          <h2 class="text-lg font-semibold">Básico</h2>
+          <p class="text-sm text-muted-foreground">
+            Placeholder y rows se reenvían directamente mediante attrs.
+          </p>
         </div>
 
-        <Time
-          :datetime="exampleDate"
-          locale="es-ES"
-          :format="{
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric',
-          }"
-          class="font-medium"
-        />
+        <Textarea placeholder="Escribe tu mensaje..." :rows="4" />
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Fecha y hora</h2>
+          <h2 class="text-lg font-semibold">Modelo controlado</h2>
           <p class="text-sm text-muted-foreground">
-            El formato puede incluir las partes de hora necesarias.
+            El valor se sincroniza mediante v-model y puede utilizarse fuera del componente.
           </p>
         </div>
 
-        <Time
-          :datetime="exampleDate"
-          locale="es-ES"
-          :format="{
-            dateStyle: 'long',
-            timeStyle: 'short',
-          }"
-        />
-      </section>
-
-      <section class="space-y-4">
-        <div>
-          <h2 class="text-lg font-semibold">Locales</h2>
-          <p class="text-sm text-muted-foreground">
-            Una misma fecha se representa según el locale indicado.
-          </p>
-        </div>
-
-        <div class="grid gap-3 sm:grid-cols-3">
-          <div
-            v-for="locale in ['es-ES', 'en-US', 'ja-JP']"
-            :key="locale"
-            class="rounded-lg border p-4"
-          >
-            <p class="mb-2 text-xs font-medium text-muted-foreground">{{ locale }}</p>
-            <Time
-              :datetime="exampleDate"
-              :locale="locale"
-              :format="{
-                dateStyle: 'medium',
-              }"
-            />
+        <div class="space-y-2">
+          <Textarea
+            v-model="message"
+            placeholder="Máximo 160 caracteres"
+            :maxlength="160"
+            :rows="3"
+          />
+          <div class="flex justify-between text-xs text-muted-foreground">
+            <span>{{ message || 'Todavía no has escrito nada.' }}</span>
+            <span>{{ message.length }}/160</span>
           </div>
         </div>
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Slot personalizado</h2>
+          <h2 class="text-lg font-semibold">Valor inicial</h2>
           <p class="text-sm text-muted-foreground">
-            El slot recibe la fecha ya formateada mediante la propiedad date.
+            defaultValue permite iniciar el textarea sin controlar su estado.
           </p>
         </div>
 
-        <Time
-          v-slot="{ date }"
-          :datetime="exampleDate"
-          locale="es-ES"
-          :format="{
-            day: 'numeric',
-            month: 'long',
-          }"
-          class="inline-flex rounded-full bg-muted px-3 py-1 text-sm"
-        >
-          Publicado el {{ date }}
-        </Time>
+        <Textarea default-value="Contenido inicial editable." :rows="3" />
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Composable</h2>
+          <h2 class="text-lg font-semibold">Formulario</h2>
+          <p class="text-sm text-muted-foreground">Ejemplo con etiqueta y texto de ayuda.</p>
+        </div>
+
+        <div class="grid gap-2">
+          <label for="feedback" class="text-sm font-medium">Comentarios</label>
+          <Textarea
+            id="feedback"
+            v-model="feedback"
+            name="feedback"
+            required
+            aria-describedby="feedback-help"
+            :rows="4"
+          />
+          <p id="feedback-help" class="text-xs text-muted-foreground">
+            Cuéntanos qué podríamos mejorar.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Estados</h2>
           <p class="text-sm text-muted-foreground">
-            useDate también permite formatear fechas fuera del template.
+            Disabled y aria-invalid son atributos nativos.
           </p>
         </div>
 
-        <code class="inline-flex rounded-md bg-muted px-3 py-2 text-sm">{{ shortDate }}</code>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <Textarea disabled default-value="Este campo está deshabilitado." :rows="3" />
+          <Textarea aria-invalid="true" default-value="Contenido no válido." :rows="3" />
+        </div>
       </section>
     </div>
   </main>

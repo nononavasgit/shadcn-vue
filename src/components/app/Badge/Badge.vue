@@ -34,7 +34,10 @@ const iconTrailing = computed(() =>
   typeof props.trailingIcon === 'string' ? { name: props.trailingIcon } : props.trailingIcon,
 )
 
-const { colorStyle } = useColor(computed(() => props.color), 'badge')
+const { colorStyle } = useColor(
+  computed(() => props.color),
+  'badge',
+)
 </script>
 
 <template>

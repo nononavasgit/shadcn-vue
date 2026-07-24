@@ -22,6 +22,10 @@ const { colorStyle } = useColor(
   computed(() => props.color),
   'progress',
 )
+const { colorStyle: trackColorStyle } = useColor(
+  computed(() => props.trackColor),
+  'progress-track',
+)
 
 const percentage = computed(() => {
   if (props.value === null) return 0
@@ -40,12 +44,17 @@ const uiCalculado = computed(() => ({
     ...attrs,
     'aria-label': attrs['aria-label'],
     'aria-valuetext': attrs['aria-valuetext'] || props.label,
-    class: cn((props.label || slots.label) && 'h-4', attrs.class),
+    class: cn(
+      (props.label || slots.label) && 'h-4',
+      props.trackColor ? 'bg-(--progress-track-color)' : props.color && 'bg-(--progress-color)/20',
+      attrs.class,
+    ),
+    style: [colorStyle.value, trackColorStyle.value, attrs.style],
   },
   indicator: {
     ...props.ui?.indicator,
     class: cn(props.color && 'bg-(--progress-color)', props.ui?.indicator?.class),
-    style: [colorStyle.value, props.ui?.indicator?.style],
+    style: props.ui?.indicator?.style,
   },
   label: {
     ...props.ui?.label,

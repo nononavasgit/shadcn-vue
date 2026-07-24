@@ -13,6 +13,7 @@ export interface ProgressProps {
   max?: number
   label?: string
   color?: string
+  trackColor?: string
   getValueLabel?: ProgressRootProps['getValueLabel']
   getValueText?: ProgressRootProps['getValueText']
   ui?: ProgressUI

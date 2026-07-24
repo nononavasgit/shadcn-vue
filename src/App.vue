@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import { Separator } from '@/components/app/Separator'
 import { Switch } from '@/components/app/Switch'
+import { Icon } from '@/components/app/Icon'
+import { Label } from '@/components/app/Label'
 
 const notifications = ref(true)
 const airplaneMode = ref(false)
@@ -42,7 +44,7 @@ const compactMode = ref(false)
       </div>
 
       <div class="flex items-center justify-between gap-4">
-        <label for="notifications" class="text-sm">Notifications</label>
+        <Label for="notifications">Notifications</Label>
         <Switch id="notifications" v-model="notifications" required />
       </div>
       <p class="text-xs text-muted-foreground">
@@ -50,7 +52,7 @@ const compactMode = ref(false)
       </p>
 
       <div class="flex items-center justify-between gap-4">
-        <label for="airplane-mode" class="text-sm">Airplane mode</label>
+        <Label for="airplane-mode">Airplane mode</Label>
         <Switch id="airplane-mode" v-model="airplaneMode" />
       </div>
 
@@ -64,11 +66,11 @@ const compactMode = ref(false)
 
       <form class="space-y-2" @submit.prevent>
         <div class="flex items-center justify-between gap-4">
-          <label for="compact-mode" class="text-sm">Compact mode</label>
+          <Label for="compact-mode">Compact mode</Label>
           <Switch id="compact-mode" v-model="compactMode" name="compactMode" required>
             <template #thumb="{ checked }">
               <span class="flex size-full items-center justify-center text-[7px] font-semibold">
-                {{ checked ? 'ON' : '' }}
+                <Icon :name="checked ? 'success' : 'error'" color="red" />
               </span>
             </template>
           </Switch>

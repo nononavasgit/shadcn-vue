@@ -9,3 +9,4 @@ export * from './components/app/Separator'
 export * from './components/app/Switch'
 
 export * from './composables'
+export * from './components/app/Label'

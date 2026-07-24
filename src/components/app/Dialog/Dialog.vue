@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
+import { computed, useAttrs, useSlots } from 'vue'
 import {
   Dialog as DialogBase,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogScrollContent,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/Dialog'
 import { Icon } from '@/components/app/Icon'
+import { cn } from '@/lib/utils'
 import type { DialogEmits, DialogProps, DialogSlotProps } from '.'
 
 defineOptions({ inheritAttrs: false })
@@ -28,72 +29,108 @@ defineSlots<{
 const props = withDefaults(defineProps<DialogProps>(), {
   modal: true,
   unmountOnHide: true,
-  scrollable: false,
   showCloseButton: true,
   closeLabel: 'Cerrar',
 })
 defineEmits<DialogEmits>()
 
+const slots = useSlots()
 const attrs = useAttrs()
 const open = defineModel<boolean>('open')
-const contentComponent = computed(() => (props.scrollable ? DialogScrollContent : DialogContent))
+const iconCalculado = computed(() =>
+  typeof props.icon === 'string' ? { name: props.icon } : props.icon,
+)
+
+const uiCalculado = computed(() => {
+  return {
+    root: {
+      ...attrs,
+      defaultOpen: props.defaultOpen,
+      modal: props.modal,
+      unmountOnHide: props.unmountOnHide,
+    },
+    trigger: {
+      ...props.ui?.trigger,
+      asChild: props.ui?.trigger?.asChild ?? true,
+    },
+    container: {
+      ...props.ui?.container,
+      forceMount: props.forceMount,
+    },
+    header: {
+      ...props.ui?.header,
+    },
+    title: {
+      ...props.ui?.title,
+      class: cn('flex items-center gap-2', props.ui?.title?.class),
+    },
+    icon: {
+      'aria-hidden': true,
+      ...props.ui?.icon,
+      ...iconCalculado.value,
+      class: cn(props.ui?.icon?.class, iconCalculado.value?.class),
+    },
+    description: {
+      ...props.ui?.description,
+    },
+    content: {
+      ...props.ui?.content,
+      class: cn('min-h-0 overflow-y-auto', props.ui?.content?.class),
+    },
+    footer: {
+      ...props.ui?.footer,
+    },
+    close: {
+      ...props.ui?.footer,
+      'aria-label': props.closeLabel,
+    },
+  }
+})
 </script>
 
 <template>
-  <DialogBase
-    v-slot="slotProps"
-    v-bind="attrs"
-    v-model:open="open"
-    :default-open="props.defaultOpen"
-    :modal="props.modal"
-    :unmount-on-hide="props.unmountOnHide"
-  >
-    <DialogTrigger v-bind="props.ui?.trigger" :as-child="props.ui?.trigger?.asChild ?? true">
-      <slot v-bind="slotProps" />
+  <DialogBase v-slot="slotProps" v-bind="uiCalculado.root" v-model:open="open">
+    <DialogTrigger v-bind="uiCalculado.trigger">
+      <slot v-bind="slotProps" :icon="props.icon" />
     </DialogTrigger>
 
-    <component
-      :is="contentComponent"
-      v-bind="props.ui?.content"
-      :force-mount="props.forceMount ?? props.ui?.content?.forceMount"
-      :show-close-button="props.showCloseButton"
-      :close-label="props.closeLabel"
-    >
-      <template #close>
-        <slot name="close" v-bind="slotProps">
-          <Icon name="x" size="sm" />
-          <span class="sr-only">{{ props.closeLabel }}</span>
+    <DialogContent v-bind="uiCalculado.container">
+      <template v-if="props.showCloseButton" #close>
+        <slot name="close" v-bind="slotProps" :icon="props.icon">
+          <DialogClose
+            v-bind="uiCalculado.close"
+            class="absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+          >
+            <Icon name="x" />
+          </DialogClose>
         </slot>
       </template>
 
-      <slot
-        v-if="
-          props.label || props.description || $slots.header || $slots.title || $slots.description
-        "
-        name="header"
-        v-bind="slotProps"
-      >
-        <DialogHeader v-bind="props.ui?.header">
-          <DialogTitle v-if="props.label || $slots.title" v-bind="props.ui?.title">
-            <slot name="title" v-bind="slotProps">{{ props.label }}</slot>
+      <DialogHeader v-bind="uiCalculado.header">
+        <slot name="header" v-bind="slotProps" :icon="props.icon">
+          <DialogTitle v-if="props.label || slots.title" v-bind="uiCalculado.title">
+            <Icon v-if="iconCalculado" v-bind="uiCalculado.icon" :name="iconCalculado.name" />
+            <slot name="title" v-bind="slotProps" :icon="props.icon">{{ props.label }}</slot>
           </DialogTitle>
 
           <DialogDescription
-            v-if="props.description || $slots.description"
-            v-bind="props.ui?.description"
+            v-if="props.description || slots.description"
+            v-bind="uiCalculado.description"
           >
-            <slot name="description" v-bind="slotProps">{{ props.description }}</slot>
+            <slot name="description" v-bind="slotProps" :icon="props.icon">
+              {{ props.description }}
+            </slot>
           </DialogDescription>
-        </DialogHeader>
-      </slot>
+        </slot>
+      </DialogHeader>
 
-      <div v-if="$slots.content" v-bind="props.ui?.body">
-        <slot name="content" v-bind="slotProps" />
+      <div v-if="slots.content" v-bind="uiCalculado.content">
+        <slot name="content" v-bind="slotProps" :icon="props.icon" />
       </div>
 
-      <DialogFooter v-if="$slots.footer" v-bind="props.ui?.footer">
-        <slot name="footer" v-bind="slotProps" />
+      <DialogFooter v-if="slots.footer" v-bind="uiCalculado.footer">
+        <slot name="footer" v-bind="slotProps" :icon="props.icon" />
       </DialogFooter>
-    </component>
+    </DialogContent>
   </DialogBase>
 </template>

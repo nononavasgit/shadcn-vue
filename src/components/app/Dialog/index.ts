@@ -1,4 +1,5 @@
-import type { Component, HTMLAttributes } from 'vue'
+import type { ButtonHTMLAttributes, Component, HTMLAttributes, SVGAttributes } from 'vue'
+import type { IconName, IconProps } from '@/components/app/Icon'
 
 export { default as Dialog } from './Dialog.vue'
 
@@ -8,6 +9,7 @@ export type DialogNodeUI = Omit<HTMLAttributes, 'dir'> & {
   dir?: 'ltr' | 'rtl'
 }
 
+export type DialogIcon = IconName | (IconProps & SVGAttributes)
 export type DialogContentEvent = Event
 
 export type DialogContentUI = DialogNodeUI & {
@@ -23,12 +25,14 @@ export type DialogContentUI = DialogNodeUI & {
 
 export interface DialogUI {
   trigger?: DialogNodeUI
-  content?: DialogContentUI
+  container?: DialogContentUI
   header?: HTMLAttributes
   title?: DialogNodeUI
+  icon?: SVGAttributes
   description?: DialogNodeUI
-  body?: HTMLAttributes
+  content?: HTMLAttributes
   footer?: HTMLAttributes
+  close?: HTMLAttributes & ButtonHTMLAttributes
 }
 
 export interface DialogProps {
@@ -38,7 +42,7 @@ export interface DialogProps {
   unmountOnHide?: boolean
   label?: string
   description?: string
-  scrollable?: boolean
+  icon?: DialogIcon
   showCloseButton?: boolean
   closeLabel?: string
   forceMount?: boolean
@@ -52,4 +56,5 @@ export interface DialogEmits {
 export interface DialogSlotProps {
   open: boolean
   close: () => void
+  icon?: DialogIcon
 }

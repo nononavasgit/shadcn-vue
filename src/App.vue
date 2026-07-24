@@ -7,9 +7,9 @@ import { Icon } from '@/components/app/Icon'
 const controlledOpen = ref(false)
 const saved = ref(false)
 const paragraphs = Array.from(
-  { length: 8 },
+  { length: 30 },
   (_, index) =>
-    `Sección ${index + 1}. Este contenido permite comprobar el desplazamiento interno del diálogo sin ampliar la página.`,
+    `Sección ${index + 1}. Este es un párrafo deliberadamente largo para comprobar el desplazamiento interno del diálogo. El contenido continúa dentro de la misma ventana modal y permite verificar que la cabecera y las acciones permanecen visibles mientras se desplaza únicamente el cuerpo.`,
 )
 
 function save(close: () => void) {
@@ -38,6 +38,7 @@ function save(close: () => void) {
         </div>
 
         <Dialog
+          icon="info"
           label="Editar perfil"
           description="Realiza cambios en tu perfil y guarda cuando hayas terminado."
         >
@@ -111,12 +112,12 @@ function save(close: () => void) {
         <div>
           <h2 class="text-lg font-semibold">Contenido desplazable</h2>
           <p class="text-sm text-muted-foreground">
-            Scrollable utiliza DialogScrollContent y limita la altura del contenido.
+            El desplazamiento aparece automáticamente cuando el contenido supera la altura
+            disponible.
           </p>
         </div>
 
         <Dialog
-          scrollable
           label="Términos del servicio"
           description="Lee el documento completo antes de continuar."
         >
@@ -134,6 +135,53 @@ function save(close: () => void) {
         </Dialog>
       </section>
 
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Diálogos anidados</h2>
+          <p class="text-sm text-muted-foreground">
+            Un diálogo puede abrir otro diálogo sin compartir su estado ni su función de cierre.
+          </p>
+        </div>
+
+        <Dialog
+          label="Diálogo principal"
+          description="Este diálogo permanece abierto mientras interactúas con el diálogo interno."
+        >
+          <Boton label="Abrir diálogo principal" variant="outlined" />
+
+          <template #content>
+            <div class="space-y-4">
+              <p class="text-sm text-muted-foreground">
+                Desde este contenido puedes abrir un segundo diálogo con su propio contexto.
+              </p>
+
+              <Dialog
+                label="Diálogo interno"
+                description="Cerrar este nivel devuelve el foco al diálogo principal."
+              >
+                <Boton label="Abrir diálogo interno" size="sm" />
+
+                <template #content>
+                  <p class="text-sm">Este contenido pertenece exclusivamente al diálogo anidado.</p>
+                </template>
+
+                <template #footer="{ close }">
+                  <Boton label="Cerrar diálogo interno" size="sm" @click="close" />
+                </template>
+              </Dialog>
+            </div>
+          </template>
+
+          <template #footer="{ close }">
+            <Boton
+              label="Cerrar diálogo principal"
+              variant="outlined"
+              severity="secondary"
+              @click="close"
+            />
+          </template>
+        </Dialog>
+      </section>
       <section class="space-y-4">
         <div>
           <h2 class="text-lg font-semibold">Slots personalizados</h2>
@@ -158,9 +206,15 @@ function save(close: () => void) {
             <p class="text-sm">El contenido conserva la estructura accesible de Dialog.</p>
           </template>
 
-          <template #close>
-            <Icon name="x" size="sm" />
-            <span class="sr-only">Cerrar aviso</span>
+          <template #close="{ close }">
+            <Boton
+              square
+              icon="x"
+              variant="plain"
+              aria-label="Cerrar aviso"
+              class="absolute top-4 right-4"
+              @click="close"
+            />
           </template>
         </Dialog>
       </section>
@@ -201,11 +255,12 @@ function save(close: () => void) {
 
         <Dialog
           label="Diálogo personalizado"
-          description="Content, title y body reciben estilos mediante ui."
+          description="Container, title, icon y content reciben estilos mediante ui."
           :ui="{
-            content: { class: 'border-primary/40 sm:max-w-xl' },
+            container: { class: 'border-primary/40 sm:max-w-xl' },
             title: { class: 'text-primary' },
-            body: { class: 'rounded-md bg-muted p-4' },
+            icon: { class: 'text-primary' },
+            content: { class: 'rounded-md bg-muted p-4' },
           }"
         >
           <Boton label="Personalizado" color="#7c3aed" />

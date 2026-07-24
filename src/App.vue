@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Textarea } from '@/components/app/Textarea'
+import { Checkbox } from '@/components/app/Checkbox'
+import { Label } from '@/components/app/Label'
 
-const message = ref('')
-const feedback = ref('La experiencia ha sido muy buena.')
+const accepted = ref(false)
+const notifications = ref(true)
+const selection = ref<boolean | 'indeterminate'>('indeterminate')
+const permission = ref<'yes' | 'no'>('no')
+const customIndicator = ref(false)
 </script>
 
 <template>
@@ -11,42 +15,21 @@ const feedback = ref('La experiencia ha sido muy buena.')
     <div class="mx-auto max-w-3xl space-y-10">
       <header class="space-y-2">
         <p class="text-sm font-medium text-primary">@nonito/ui</p>
-        <h1 class="text-3xl font-semibold tracking-tight">Textarea</h1>
+        <h1 class="text-3xl font-semibold tracking-tight">Checkbox</h1>
         <p class="max-w-2xl text-sm text-muted-foreground">
-          Ejemplos con v-model, valores iniciales y atributos HTML nativos.
+          Ejemplos de estados, modelos controlados, valores personalizados e indicadores.
         </p>
       </header>
 
       <section class="space-y-4">
         <div>
           <h2 class="text-lg font-semibold">Básico</h2>
-          <p class="text-sm text-muted-foreground">
-            Placeholder y rows se reenvían directamente mediante attrs.
-          </p>
+          <p class="text-sm text-muted-foreground">Checkbox asociado a una etiqueta.</p>
         </div>
 
-        <Textarea placeholder="Escribe tu mensaje..." :rows="4" />
-      </section>
-
-      <section class="space-y-4">
-        <div>
-          <h2 class="text-lg font-semibold">Modelo controlado</h2>
-          <p class="text-sm text-muted-foreground">
-            El valor se sincroniza mediante v-model y puede utilizarse fuera del componente.
-          </p>
-        </div>
-
-        <div class="space-y-2">
-          <Textarea
-            v-model="message"
-            placeholder="Máximo 160 caracteres"
-            :maxlength="160"
-            :rows="3"
-          />
-          <div class="flex justify-between text-xs text-muted-foreground">
-            <span>{{ message || 'Todavía no has escrito nada.' }}</span>
-            <span>{{ message.length }}/160</span>
-          </div>
+        <div class="flex items-center gap-3">
+          <Checkbox id="terms" v-model="accepted" />
+          <Label for="terms">Aceptar términos y condiciones</Label>
         </div>
       </section>
 
@@ -54,47 +37,116 @@ const feedback = ref('La experiencia ha sido muy buena.')
         <div>
           <h2 class="text-lg font-semibold">Valor inicial</h2>
           <p class="text-sm text-muted-foreground">
-            defaultValue permite iniciar el textarea sin controlar su estado.
+            defaultValue establece el estado inicial sin controlar el componente.
           </p>
         </div>
 
-        <Textarea default-value="Contenido inicial editable." :rows="3" />
-      </section>
-
-      <section class="space-y-4">
-        <div>
-          <h2 class="text-lg font-semibold">Formulario</h2>
-          <p class="text-sm text-muted-foreground">Ejemplo con etiqueta y texto de ayuda.</p>
-        </div>
-
-        <div class="grid gap-2">
-          <label for="feedback" class="text-sm font-medium">Comentarios</label>
-          <Textarea
-            id="feedback"
-            v-model="feedback"
-            name="feedback"
-            required
-            aria-describedby="feedback-help"
-            :rows="4"
-          />
-          <p id="feedback-help" class="text-xs text-muted-foreground">
-            Cuéntanos qué podríamos mejorar.
-          </p>
+        <div class="flex items-start gap-3">
+          <Checkbox id="updates" :default-value="true" />
+          <div class="grid gap-1">
+            <Label for="updates">Recibir actualizaciones</Label>
+            <p class="text-sm text-muted-foreground">
+              Te enviaremos información sobre nuevas versiones.
+            </p>
+          </div>
         </div>
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Estados</h2>
+          <h2 class="text-lg font-semibold">Modelo controlado</h2>
+          <p class="text-sm text-muted-foreground">El estado se sincroniza mediante v-model.</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <Checkbox id="notifications" v-model="notifications" />
+          <Label for="notifications">Activar notificaciones</Label>
+          <span class="text-sm text-muted-foreground">{{ notifications }}</span>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Indeterminate</h2>
           <p class="text-sm text-muted-foreground">
-            Disabled y aria-invalid son atributos nativos.
+            Representa una selección parcial dentro de un grupo.
           </p>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-2">
-          <Textarea disabled default-value="Este campo está deshabilitado." :rows="3" />
-          <Textarea aria-invalid="true" default-value="Contenido no válido." :rows="3" />
+        <div class="flex items-center gap-3">
+          <Checkbox id="selection" v-model="selection" />
+          <Label for="selection">Seleccionar todos</Label>
+          <span class="text-sm text-muted-foreground">{{ selection }}</span>
         </div>
+
+        <button
+          type="button"
+          class="rounded-md border bg-background px-3 py-2 text-sm font-medium shadow-xs hover:bg-muted"
+          @click="selection = selection === 'indeterminate' ? false : 'indeterminate'"
+        >
+          Cambiar estado indeterminado
+        </button>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Valores personalizados</h2>
+          <p class="text-sm text-muted-foreground">
+            trueValue y falseValue permiten utilizar valores diferentes de boolean.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <Checkbox id="permission" v-model="permission" true-value="yes" false-value="no" />
+          <Label for="permission">Conceder permiso</Label>
+          <span class="text-sm text-muted-foreground">{{ permission }}</span>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Indicador personalizado</h2>
+          <p class="text-sm text-muted-foreground">
+            El slot indicator sustituye el icono predeterminado.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <Checkbox id="custom" v-model="customIndicator" class="size-6 rounded-md">
+            <template #indicator>
+              <span class="text-xs font-bold">OK</span>
+            </template>
+          </Checkbox>
+          <Label for="custom">Indicador personalizado</Label>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Disabled</h2>
+          <p class="text-sm text-muted-foreground">
+            disabled se reenvía como atributo mediante attrs.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <Checkbox id="disabled" disabled />
+          <Label for="disabled" class="opacity-50">Opción no disponible</Label>
+        </div>
+      </section>
+
+      <section class="rounded-xl border bg-card p-5 text-card-foreground">
+        <h2 class="font-semibold">Estado del formulario</h2>
+        <dl class="mt-3 grid gap-2 text-sm">
+          <div class="flex gap-2">
+            <dt class="font-medium">Aceptado:</dt>
+            <dd class="text-muted-foreground">{{ accepted }}</dd>
+          </div>
+          <div class="flex gap-2">
+            <dt class="font-medium">Permiso:</dt>
+            <dd class="text-muted-foreground">{{ permission }}</dd>
+          </div>
+        </dl>
       </section>
     </div>
   </main>

@@ -13,8 +13,7 @@ const loadingStatus = ref<AvatarLoadingStatus>('idle')
         <p class="text-sm font-medium text-primary">@nonito/ui</p>
         <h1 class="text-3xl font-semibold tracking-tight">Avatar</h1>
         <p class="max-w-2xl text-sm text-muted-foreground">
-          Imágenes de usuario con contenido alternativo mientras cargan o cuando no están
-          disponibles.
+          Imágenes de usuario con texto, icono o contenido personalizado como fallback.
         </p>
       </header>
 
@@ -22,119 +21,64 @@ const loadingStatus = ref<AvatarLoadingStatus>('idle')
         <div>
           <h2 class="text-lg font-semibold">Básico</h2>
           <p class="text-sm text-muted-foreground">
-            Si la imagen carga correctamente, sustituye automáticamente al fallback.
+            Label aparece automáticamente cuando la imagen está cargando o no está disponible.
           </p>
         </div>
 
-        <Avatar src="https://github.com/shadcn.png" alt="Avatar de shadcn" fallback="CN" />
+        <Avatar src="https://github.com/shadcn.png" alt="Avatar de shadcn" label="CN" />
       </section>
 
       <section class="space-y-4">
         <div>
           <h2 class="text-lg font-semibold">Varios usuarios</h2>
           <p class="text-sm text-muted-foreground">
-            Cada avatar mantiene su propio estado de carga y fallback.
+            Cada avatar mantiene de forma independiente el estado de su imagen.
           </p>
         </div>
 
         <div class="flex flex-wrap items-center gap-4">
-          <Avatar src="https://github.com/shadcn.png" alt="Avatar de shadcn" fallback="CN" />
-          <Avatar src="https://github.com/leerob.png" alt="Avatar de Lee Robinson" fallback="LR" />
-          <Avatar
-            src="https://github.com/evilrabbit.png"
-            alt="Avatar de evilrabbit"
-            fallback="ER"
-          />
+          <Avatar src="https://github.com/shadcn.png" alt="Avatar de shadcn" label="CN" />
+          <Avatar src="https://github.com/leerob.png" alt="Avatar de Lee Robinson" label="LR" />
+          <Avatar src="https://github.com/evilrabbit.png" alt="Avatar de evilrabbit" label="ER" />
         </div>
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Fallback</h2>
+          <h2 class="text-lg font-semibold">Fallback de texto</h2>
           <p class="text-sm text-muted-foreground">
-            También puede usarse sin imagen o como respaldo cuando la URL falla.
+            Puede utilizarse sin src o como respaldo de una dirección que falla.
           </p>
         </div>
 
         <div class="flex items-center gap-4">
           <Avatar
-            fallback="NN"
+            label="NN"
             aria-label="Usuario sin imagen"
-            :ui="{ fallback: { class: 'bg-primary text-primary-foreground' } }"
+            class="bg-primary text-primary-foreground"
           />
           <Avatar
             src="/imagen-que-no-existe.png"
             alt="Imagen no disponible"
-            fallback="404"
-            :ui="{ fallback: { class: 'bg-error text-error-foreground text-xs' } }"
+            label="404"
+            class="bg-error text-xs text-error-foreground"
           />
         </div>
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Tamaños</h2>
+          <h2 class="text-lg font-semibold">Fallback con icono</h2>
           <p class="text-sm text-muted-foreground">
-            Los atributos class personalizan el contenedor sin perder los estilos base.
+            Icon acepta el nombre directamente o un objeto con IconProps y atributos SVG.
           </p>
         </div>
 
-        <div class="flex items-end gap-4">
+        <div class="flex items-center gap-4">
+          <Avatar icon="info" aria-label="Información del usuario" />
           <Avatar
-            class="size-7"
-            src="https://github.com/shadcn.png"
-            alt="Avatar pequeño de shadcn"
-            fallback="CN"
-            :ui="{ fallback: { class: 'text-xs' } }"
-          />
-          <Avatar
-            class="size-10"
-            src="https://github.com/leerob.png"
-            alt="Avatar mediano de Lee Robinson"
-            fallback="LR"
-          />
-          <Avatar
-            class="size-16"
-            src="https://github.com/evilrabbit.png"
-            alt="Avatar grande de evilrabbit"
-            fallback="ER"
-            :ui="{ fallback: { class: 'text-lg font-semibold' } }"
-          />
-        </div>
-      </section>
-
-      <section class="space-y-4">
-        <div>
-          <h2 class="text-lg font-semibold">Grupo</h2>
-          <p class="text-sm text-muted-foreground">
-            Los avatares pueden solaparse para representar miembros de un equipo.
-          </p>
-        </div>
-
-        <div class="flex -space-x-2">
-          <Avatar
-            class="ring-2 ring-background"
-            src="https://github.com/shadcn.png"
-            alt="shadcn"
-            fallback="CN"
-          />
-          <Avatar
-            class="ring-2 ring-background"
-            src="https://github.com/leerob.png"
-            alt="Lee Robinson"
-            fallback="LR"
-          />
-          <Avatar
-            class="ring-2 ring-background"
-            src="https://github.com/evilrabbit.png"
-            alt="evilrabbit"
-            fallback="ER"
-          />
-          <Avatar
-            class="ring-2 ring-background"
-            fallback="+3"
-            aria-label="Tres usuarios más"
-            :ui="{ fallback: { class: 'bg-secondary text-xs font-medium' } }"
+            :icon="{ name: 'search', size: 'sm', class: 'text-primary' }"
+            aria-label="Buscar usuario"
           />
         </div>
       </section>
@@ -143,22 +87,42 @@ const loadingStatus = ref<AvatarLoadingStatus>('idle')
         <div>
           <h2 class="text-lg font-semibold">Slot fallback</h2>
           <p class="text-sm text-muted-foreground">
-            El contenido de respaldo admite cualquier nodo, no solamente texto.
+            El slot tiene prioridad sobre icon y label y admite cualquier contenido.
           </p>
         </div>
 
-        <Avatar class="size-12" aria-label="Perfil sin fotografía">
+        <Avatar icon="info" label="Perfil" aria-label="Perfil sin fotografía">
           <template #fallback>
-            <Icon name="info" class="size-5" aria-hidden="true" />
+            <span class="flex items-center gap-1 text-xs">
+              <Icon name="success" class="size-3" aria-hidden="true" />
+              OK
+            </span>
           </template>
         </Avatar>
       </section>
 
       <section class="space-y-4">
         <div>
+          <h2 class="text-lg font-semibold">Atributos HTML</h2>
+          <p class="text-sm text-muted-foreground">
+            Los atributos adicionales se aplican tanto a AvatarImage como a AvatarFallback.
+          </p>
+        </div>
+
+        <Avatar
+          src="https://github.com/vuejs.png"
+          alt="Avatar de Vue"
+          label="VU"
+          class="grayscale"
+          title="Vue"
+        />
+      </section>
+
+      <section class="space-y-4">
+        <div>
           <h2 class="text-lg font-semibold">Estado de carga</h2>
           <p class="text-sm text-muted-foreground">
-            LoadingStatusChange permite conocer el estado actual de la imagen.
+            LoadingStatusChange permite reaccionar a la carga, aunque el fallback no lo necesita.
           </p>
         </div>
 
@@ -166,8 +130,7 @@ const loadingStatus = ref<AvatarLoadingStatus>('idle')
           <Avatar
             src="https://github.com/vuejs.png"
             alt="Avatar de Vue"
-            fallback="VU"
-            :delay-ms="200"
+            label="VU"
             @loading-status-change="loadingStatus = $event"
           />
           <code class="rounded bg-muted px-2 py-1 text-sm">{{ loadingStatus }}</code>

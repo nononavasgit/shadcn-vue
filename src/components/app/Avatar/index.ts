@@ -1,35 +1,16 @@
-import type { Component, HTMLAttributes, ImgHTMLAttributes } from 'vue'
+import type { SVGAttributes } from 'vue'
+import type { IconName, IconProps } from '@/components/app/Icon'
 
 export { default as Avatar } from './Avatar.vue'
 
 export type AvatarLoadingStatus = 'idle' | 'loading' | 'loaded' | 'error'
-
-export type AvatarNodeUI = HTMLAttributes & {
-  as?: string | Component
-  asChild?: boolean
-}
-
-export type AvatarImageUI = Omit<ImgHTMLAttributes, 'src'> & {
-  as?: string | Component
-  asChild?: boolean
-}
-
-export type AvatarFallbackUI = AvatarNodeUI & {
-  delayMs?: number
-}
-
-export interface AvatarUI {
-  root?: AvatarNodeUI
-  image?: AvatarImageUI
-  fallback?: AvatarFallbackUI
-}
+export type AvatarIcon = IconName | (IconProps & SVGAttributes)
 
 export interface AvatarProps {
   src?: string
   alt?: string
-  fallback?: string
-  delayMs?: number
-  ui?: AvatarUI
+  icon?: AvatarIcon
+  label?: string
 }
 
 export interface AvatarEmits {
@@ -39,5 +20,6 @@ export interface AvatarEmits {
 export interface AvatarSlotProps {
   src?: string
   alt?: string
-  fallback?: string
+  icon?: AvatarIcon
+  label?: string
 }

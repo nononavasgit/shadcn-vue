@@ -1,18 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Boton } from '@/components/app/Button'
-import { Input } from '@/components/app/Input'
-import { Label } from '@/components/app/Label'
+import { Avatar, type AvatarLoadingStatus } from '@/components/app/Avatar'
+import { Icon } from '@/components/app/Icon'
 
-const name = ref('')
-const email = ref('usuario@ejemplo.com')
-const age = ref<string | number>(25)
-const subscriptionEmail = ref('')
-const submittedEmail = ref('')
-
-function subscribe() {
-  submittedEmail.value = subscriptionEmail.value
-}
+const loadingStatus = ref<AvatarLoadingStatus>('idle')
 </script>
 
 <template>
@@ -20,9 +11,9 @@ function subscribe() {
     <div class="mx-auto max-w-3xl space-y-10">
       <header class="space-y-2">
         <p class="text-sm font-medium text-primary">@nonito/ui</p>
-        <h1 class="text-3xl font-semibold tracking-tight">Input</h1>
+        <h1 class="text-3xl font-semibold tracking-tight">Avatar</h1>
         <p class="max-w-2xl text-sm text-muted-foreground">
-          Campos nativos con v-model, atributos HTML, estados de validación y foco primary.
+          Imágenes de usuario con texto, icono o contenido personalizado como fallback.
         </p>
       </header>
 
@@ -30,162 +21,119 @@ function subscribe() {
         <div>
           <h2 class="text-lg font-semibold">Básico</h2>
           <p class="text-sm text-muted-foreground">
-            Type, placeholder y el resto de opciones se reciben como atributos HTML.
+            Label aparece automáticamente cuando la imagen está cargando o no está disponible.
           </p>
         </div>
 
-        <Input type="text" placeholder="Escribe tu nombre" />
+        <Avatar src="https://github.com/shadcn.png" alt="Avatar de shadcn" label="CN" />
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">V-model</h2>
+          <h2 class="text-lg font-semibold">Varios usuarios</h2>
           <p class="text-sm text-muted-foreground">
-            El valor se sincroniza mediante modelValue y update:modelValue.
+            Cada avatar mantiene de forma independiente el estado de su imagen.
           </p>
         </div>
 
-        <Input v-model="name" placeholder="Nombre completo" />
-        <p class="text-sm text-muted-foreground">Valor: {{ name || 'Vacío' }}</p>
-      </section>
-
-      <section class="space-y-4">
-        <div>
-          <h2 class="text-lg font-semibold">Default value</h2>
-          <p class="text-sm text-muted-foreground">
-            Permite establecer un valor inicial sin controlar el componente.
-          </p>
-        </div>
-
-        <Input default-value="Contenido inicial" />
-      </section>
-
-      <section class="space-y-4">
-        <div>
-          <h2 class="text-lg font-semibold">Tipos HTML</h2>
-          <p class="text-sm text-muted-foreground">
-            El componente conserva el comportamiento del input nativo.
-          </p>
-        </div>
-
-        <div class="grid gap-4 sm:grid-cols-2">
-          <Input v-model="email" type="email" autocomplete="email" placeholder="Email" />
-          <Input type="password" autocomplete="current-password" placeholder="Contraseña" />
-          <Input type="search" placeholder="Buscar…" />
-          <Input v-model="age" type="number" min="0" max="120" placeholder="Edad" />
-          <Input type="date" />
-          <Input type="tel" autocomplete="tel" placeholder="Teléfono" />
+        <div class="flex flex-wrap items-center gap-4">
+          <Avatar src="https://github.com/shadcn.png" alt="Avatar de shadcn" label="CN" />
+          <Avatar src="https://github.com/leerob.png" alt="Avatar de Lee Robinson" label="LR" />
+          <Avatar src="https://github.com/evilrabbit.png" alt="Avatar de evilrabbit" label="ER" />
         </div>
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Con Label</h2>
+          <h2 class="text-lg font-semibold">Fallback de texto</h2>
           <p class="text-sm text-muted-foreground">
-            For e id asocian correctamente la etiqueta visible con el campo.
+            Puede utilizarse sin src o como respaldo de una dirección que falla.
           </p>
         </div>
 
-        <div class="grid gap-1.5">
-          <Label for="company-email">Email de empresa</Label>
-          <Input
-            id="company-email"
-            type="email"
-            name="companyEmail"
-            autocomplete="work email"
-            placeholder="nombre@empresa.com"
+        <div class="flex items-center gap-4">
+          <Avatar
+            label="NN"
+            aria-label="Usuario sin imagen"
+            class="bg-primary text-primary-foreground"
+          />
+          <Avatar
+            src="/imagen-que-no-existe.png"
+            alt="Imagen no disponible"
+            label="404"
+            class="bg-error text-xs text-error-foreground"
           />
         </div>
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Archivo</h2>
+          <h2 class="text-lg font-semibold">Fallback con icono</h2>
           <p class="text-sm text-muted-foreground">
-            Los estilos file también forman parte del componente de UI.
+            Icon acepta el nombre directamente o un objeto con IconProps y atributos SVG.
           </p>
         </div>
 
-        <div class="grid gap-1.5">
-          <Label for="picture">Imagen de perfil</Label>
-          <Input id="picture" type="file" accept="image/*" />
-        </div>
-      </section>
-
-      <section class="space-y-4">
-        <div>
-          <h2 class="text-lg font-semibold">Disabled y readonly</h2>
-          <p class="text-sm text-muted-foreground">
-            Ambos estados se aplican mediante atributos nativos.
-          </p>
-        </div>
-
-        <div class="grid gap-4 sm:grid-cols-2">
-          <Input disabled default-value="Campo deshabilitado" />
-          <Input readonly default-value="Campo de solo lectura" />
-        </div>
-      </section>
-
-      <section class="space-y-4">
-        <div>
-          <h2 class="text-lg font-semibold">Inválido</h2>
-          <p class="text-sm text-muted-foreground">
-            Aria-invalid activa el estilo de error y aria-describedby enlaza el mensaje.
-          </p>
-        </div>
-
-        <div class="grid gap-1.5">
-          <Label for="invalid-email">Email</Label>
-          <Input
-            id="invalid-email"
-            type="email"
-            default-value="email-invalido"
-            aria-invalid="true"
-            aria-describedby="invalid-email-message"
+        <div class="flex items-center gap-4">
+          <Avatar icon="info" aria-label="Información del usuario" />
+          <Avatar
+            :icon="{ name: 'search', size: 'sm', class: 'text-primary' }"
+            aria-label="Buscar usuario"
           />
-          <p id="invalid-email-message" class="text-sm text-destructive">
-            Introduce una dirección de correo válida.
-          </p>
         </div>
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Con Button</h2>
+          <h2 class="text-lg font-semibold">Slot fallback</h2>
           <p class="text-sm text-muted-foreground">
-            Puede componerse con otros componentes sin añadir estructura interna.
+            El slot tiene prioridad sobre icon y label y admite cualquier contenido.
           </p>
         </div>
 
-        <form class="flex items-center gap-2" @submit.prevent="subscribe">
-          <Input
-            v-model="subscriptionEmail"
-            type="email"
-            required
-            autocomplete="email"
-            placeholder="Email"
-          />
-          <Boton type="submit" label="Suscribirse" />
-        </form>
-
-        <p v-if="submittedEmail" class="text-sm text-success">
-          Suscripción registrada para {{ submittedEmail }}.
-        </p>
+        <Avatar icon="info" label="Perfil" aria-label="Perfil sin fotografía">
+          <template #fallback>
+            <span class="flex items-center gap-1 text-xs">
+              <Icon name="success" class="size-3" aria-hidden="true" />
+            </span>
+          </template>
+        </Avatar>
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Atributos personalizados</h2>
+          <h2 class="text-lg font-semibold">Atributos HTML</h2>
           <p class="text-sm text-muted-foreground">
-            Class y style se combinan con los estilos predeterminados.
+            Los atributos adicionales se aplican tanto a AvatarImage como a AvatarFallback.
           </p>
         </div>
 
-        <Input
-          placeholder="Input personalizado"
-          class="h-11 rounded-full border-dashed px-5"
-          style="letter-spacing: 0.02em"
+        <Avatar
+          src="https://github.com/vuejs.png"
+          alt="Avatar de Vue"
+          label="VU"
+          class="grayscale"
+          title="Vue"
         />
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Estado de carga</h2>
+          <p class="text-sm text-muted-foreground">
+            LoadingStatusChange permite reaccionar a la carga, aunque el fallback no lo necesita.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <Avatar
+            src="https://github.com/vuejs.png"
+            alt="Avatar de Vue"
+            label="VU"
+            @loading-status-change="loadingStatus = $event"
+          />
+          <code class="rounded bg-muted px-2 py-1 text-sm">{{ loadingStatus }}</code>
+        </div>
       </section>
     </div>
   </main>

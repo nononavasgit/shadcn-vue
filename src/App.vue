@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { ChevronsUpDown } from '@lucide/vue'
-import { Collapsible } from '@/components/app/Collapsible'
+import { Progress } from '@/components/app/Progress'
 
-const controlledOpen = ref(false)
-const persistentOpen = ref(false)
+const progress = ref(42)
 </script>
 
 <template>
@@ -12,9 +10,9 @@ const persistentOpen = ref(false)
     <div class="mx-auto max-w-3xl space-y-10">
       <header class="space-y-2">
         <p class="text-sm font-medium text-primary">@nonito/ui</p>
-        <h1 class="text-3xl font-semibold tracking-tight">Collapsible</h1>
+        <h1 class="text-3xl font-semibold tracking-tight">Progress</h1>
         <p class="max-w-2xl text-sm text-muted-foreground">
-          Ejemplos de paneles desplegables controlados y no controlados.
+          Barras de progreso con etiqueta centrada y contenido personalizable mediante slots.
         </p>
       </header>
 
@@ -22,156 +20,97 @@ const persistentOpen = ref(false)
         <div>
           <h2 class="text-lg font-semibold">Básico</h2>
           <p class="text-sm text-muted-foreground">
-            El slot por defecto es el trigger y el slot content contiene el panel.
+            Sin etiqueta mantiene la altura compacta del componente de UI.
           </p>
         </div>
 
-        <Collapsible class="w-full max-w-md space-y-2">
-          <button
-            type="button"
-            class="flex w-full items-center justify-between rounded-md border bg-background px-4 py-3 text-left text-sm font-medium shadow-xs hover:bg-muted"
-          >
-            ¿Puedo utilizar esta librería en mi proyecto?
-            <ChevronsUpDown class="size-4" />
-          </button>
-
-          <template #content>
-            <div class="rounded-md border px-4 py-3 text-sm text-muted-foreground">
-              Sí. Puedes utilizarla en proyectos personales y comerciales.
-            </div>
-          </template>
-        </Collapsible>
+        <Progress :value="35" aria-label="hola" />
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Abierto inicialmente</h2>
+          <h2 class="text-lg font-semibold">Con label</h2>
           <p class="text-sm text-muted-foreground">
-            defaultOpen establece el estado inicial sin controlar el componente.
+            Al indicar label, la barra aumenta su altura y centra el texto.
           </p>
         </div>
 
-        <Collapsible default-open class="w-full max-w-md space-y-2">
-          <button
-            type="button"
-            class="flex w-full items-center justify-between rounded-md border bg-background px-4 py-3 text-left text-sm font-medium shadow-xs hover:bg-muted"
-          >
-            Repositorios destacados
-            <ChevronsUpDown class="size-4" />
-          </button>
-
-          <template #content>
-            <div class="grid gap-2">
-              <div class="rounded-md border px-4 py-2 font-mono text-sm">@unovue/reka-ui</div>
-              <div class="rounded-md border px-4 py-2 font-mono text-sm">shadcn-vue</div>
-            </div>
-          </template>
-        </Collapsible>
+        <Progress :value="60" label="60%" />
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Estado controlado</h2>
+          <h2 class="text-lg font-semibold">Progreso reactivo</h2>
           <p class="text-sm text-muted-foreground">
-            v-model:open permite consultar y modificar el estado desde fuera.
+            El valor y la etiqueta se actualizan al mover el control.
           </p>
         </div>
 
-        <Collapsible v-model:open="controlledOpen" class="w-full max-w-md space-y-2">
-          <button
-            type="button"
-            class="flex w-full items-center justify-between rounded-md bg-primary px-4 py-3 text-left text-sm font-medium text-primary-foreground"
-          >
-            {{ controlledOpen ? 'Ocultar detalles' : 'Mostrar detalles' }}
-            <ChevronsUpDown class="size-4" />
-          </button>
+        <Progress :value="progress" :label="`${progress}%`" />
 
-          <template #content="{ open }">
-            <div class="rounded-md border bg-card px-4 py-3 text-sm">
-              El panel está {{ open ? 'abierto' : 'cerrado' }} y su estado se sincroniza con el
-              modelo.
-            </div>
-          </template>
-        </Collapsible>
-
-        <p class="text-sm text-muted-foreground">open: {{ controlledOpen }}</p>
+        <input
+          v-model.number="progress"
+          type="range"
+          min="0"
+          max="100"
+          class="w-full accent-primary"
+        />
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Contenido persistente</h2>
+          <h2 class="text-lg font-semibold">Max personalizado</h2>
           <p class="text-sm text-muted-foreground">
-            Con unmountOnHide=false, el contenido permanece en el DOM cuando está cerrado.
+            El porcentaje se calcula respecto al valor de max.
           </p>
         </div>
 
-        <Collapsible
-          v-model:open="persistentOpen"
-          :unmount-on-hide="false"
-          class="w-full max-w-md space-y-2"
-        >
-          <button
-            type="button"
-            class="flex w-full items-center justify-between rounded-md border bg-background px-4 py-3 text-left text-sm font-medium shadow-xs hover:bg-muted"
-          >
-            Preferencias avanzadas
-            <ChevronsUpDown class="size-4" />
-          </button>
+        <Progress :value="3" :max="5" label="3 de 5 tareas" />
+      </section>
 
-          <template #content>
-            <div class="rounded-md border border-dashed px-4 py-3 text-sm text-muted-foreground">
-              Este contenido puede encontrarse con la búsqueda del navegador incluso cerrado.
-            </div>
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Slot label</h2>
+          <p class="text-sm text-muted-foreground">
+            El slot recibe value, max y percentage para construir la etiqueta.
+          </p>
+        </div>
+
+        <Progress :value="7" :max="10">
+          <template #label="{ value, max, percentage }">
+            {{ value }}/{{ max }} · {{ Math.round(percentage) }}%
           </template>
-        </Collapsible>
+        </Progress>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Indeterminado</h2>
+          <p class="text-sm text-muted-foreground">
+            Un valor null comunica que todavía no se conoce el progreso.
+          </p>
+        </div>
+
+        <Progress :value="null" label="Preparando…" />
       </section>
 
       <section class="space-y-4">
         <div>
           <h2 class="text-lg font-semibold">Custom UI</h2>
           <p class="text-sm text-muted-foreground">
-            Los atributos de trigger y content se personalizan mediante ui.
+            Los nodos root y label pueden personalizarse mediante el objeto ui.
           </p>
         </div>
 
-        <Collapsible
-          class="w-full max-w-md"
+        <Progress
+          :value="75"
+          label="Instalando dependencias"
+          color="#7c3aed"
           :ui="{
-            trigger: {
-              class:
-                'flex w-full items-center justify-between rounded-t-lg border border-primary/30 bg-primary/10 px-4 py-3 text-left text-sm font-medium text-primary',
-            },
-            content: {
-              class: 'rounded-b-lg border border-t-0 border-primary/30 bg-primary/5 p-4 text-sm',
-            },
+            root: { class: 'h-8 rounded-md bg-secondary/20' },
+            label: { class: 'text-sm font-semibold' },
           }"
-        >
-          <button type="button">
-            Configuración personalizada
-            <ChevronsUpDown class="size-4" />
-          </button>
-
-          <template #content> Estas clases se aplican desde ui.trigger y ui.content. </template>
-        </Collapsible>
-      </section>
-
-      <section class="space-y-4">
-        <div>
-          <h2 class="text-lg font-semibold">Disabled</h2>
-          <p class="text-sm text-muted-foreground">El trigger no puede cambiar el estado.</p>
-        </div>
-
-        <Collapsible disabled class="w-full max-w-md">
-          <button
-            type="button"
-            class="flex w-full items-center justify-between rounded-md border bg-muted px-4 py-3 text-left text-sm font-medium opacity-50"
-          >
-            Sección no disponible
-            <ChevronsUpDown class="size-4" />
-          </button>
-
-          <template #content>Contenido deshabilitado.</template>
-        </Collapsible>
+        />
       </section>
     </div>
   </main>

@@ -1,274 +1,190 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Boton } from '@/components/app/Button'
-import { Stepper, type StepperEntry } from '@/components/app/Stepper'
+import { Input } from '@/components/app/Input'
+import { Label } from '@/components/app/Label'
 
-const basicStep = ref(1)
-const controlledStep = ref(1)
-const verticalStep = ref(1)
+const name = ref('')
+const email = ref('usuario@ejemplo.com')
+const age = ref<string | number>(25)
+const subscriptionEmail = ref('')
+const submittedEmail = ref('')
 
-const basicSteps: StepperEntry[] = [
-  {
-    key: 'account',
-    step: 1,
-    title: 'Cuenta',
-    description: 'Datos personales',
-    icon: 'info',
-    content: 'Introduce tu nombre, correo electrónico y datos de contacto.',
-  },
-  {
-    key: 'shipping',
-    step: 2,
-    title: 'Envío',
-    description: 'Dirección de entrega',
-    icon: 'chevronRight',
-    content: 'Selecciona la dirección y el método de envío del pedido.',
-  },
-  {
-    key: 'confirmation',
-    step: 3,
-    title: 'Confirmación',
-    description: 'Revisa los datos',
-    icon: 'save',
-    content: 'Comprueba toda la información antes de confirmar el pedido.',
-  },
-]
-
-const slotSteps: StepperEntry[] = [
-  {
-    key: 'profile',
-    step: 1,
-    title: 'Perfil',
-    description: 'Información pública',
-  },
-  {
-    key: 'security',
-    step: 2,
-    title: 'Seguridad',
-    description: 'Contraseña y acceso',
-  },
-  {
-    key: 'finish',
-    step: 3,
-    title: 'Finalizar',
-    description: 'Guardar cambios',
-  },
-]
-
-const verticalSteps: StepperEntry[] = [
-  {
-    key: 'created',
-    step: 1,
-    title: 'Pedido creado',
-    description: 'Hemos recibido correctamente el pedido.',
-    content: 'El pedido se ha registrado y está pendiente de preparación.',
-  },
-  {
-    key: 'prepared',
-    step: 2,
-    title: 'En preparación',
-    description: 'El almacén está preparando los productos.',
-    content: 'Los artículos se están empaquetando para su envío.',
-  },
-  {
-    key: 'sent',
-    step: 3,
-    title: 'Enviado',
-    description: 'El paquete está en camino.',
-    content: 'Pronto recibirás la información de seguimiento.',
-  },
-]
-
-const stateSteps: StepperEntry[] = [
-  {
-    step: 1,
-    title: 'Completado',
-    description: 'Paso marcado manualmente',
-    completed: true,
-  },
-  {
-    step: 2,
-    title: 'Deshabilitado',
-    description: 'No admite interacción',
-    disabled: true,
-  },
-  {
-    step: 3,
-    title: 'Disponible',
-    description: 'Navegación no lineal',
-  },
-]
+function subscribe() {
+  submittedEmail.value = subscriptionEmail.value
+}
 </script>
 
 <template>
   <main class="min-h-screen bg-background p-6 text-foreground md:p-10">
-    <div class="mx-auto max-w-5xl space-y-12">
+    <div class="mx-auto max-w-3xl space-y-10">
       <header class="space-y-2">
         <p class="text-sm font-medium text-primary">@nonito/ui</p>
-        <h1 class="text-3xl font-semibold tracking-tight">Stepper</h1>
+        <h1 class="text-3xl font-semibold tracking-tight">Input</h1>
         <p class="max-w-2xl text-sm text-muted-foreground">
-          Procesos divididos en pasos con navegación, contenido, iconos y slots personalizables.
+          Campos nativos con v-model, atributos HTML, estados de validación y foco primary.
         </p>
       </header>
 
-      <section class="space-y-5">
+      <section class="space-y-4">
         <div>
           <h2 class="text-lg font-semibold">Básico</h2>
           <p class="text-sm text-muted-foreground">
-            El array steppers proporciona cabecera, icono y contenido de cada paso.
+            Type, placeholder y el resto de opciones se reciben como atributos HTML.
           </p>
         </div>
 
-        <Stepper v-model="basicStep" :steppers="basicSteps" />
-        <p class="text-sm text-muted-foreground">Paso activo: {{ basicStep }}</p>
+        <Input type="text" placeholder="Escribe tu nombre" />
       </section>
 
-      <section class="space-y-5">
+      <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Contenido y navegación</h2>
+          <h2 class="text-lg font-semibold">V-model</h2>
           <p class="text-sm text-muted-foreground">
-            El slot por defecto recibe el paso activo y todos los controles de navegación de Reka.
+            El valor se sincroniza mediante modelValue y update:modelValue.
           </p>
         </div>
 
-        <Stepper v-model="controlledStep" :steppers="slotSteps" linear>
-          <template
-            #default="{ stepper, isPrevDisabled, isNextDisabled, isLastStep, prevStep, nextStep }"
-          >
-            <div class="rounded-lg border bg-card p-5 text-card-foreground">
-              <h3 class="font-semibold">Contenido de {{ stepper.title }}</h3>
-              <p class="mt-1 text-sm text-muted-foreground">
-                Este panel pertenece al paso {{ stepper.step }}.
-              </p>
-
-              <div class="mt-5 flex items-center justify-between gap-3">
-                <Boton
-                  label="Anterior"
-                  variant="outlined"
-                  :disabled="isPrevDisabled"
-                  @click="prevStep"
-                />
-                <Boton
-                  :label="isLastStep ? 'Finalizar' : 'Siguiente'"
-                  :disabled="isNextDisabled"
-                  @click="nextStep"
-                />
-              </div>
-            </div>
-          </template>
-        </Stepper>
+        <Input v-model="name" placeholder="Nombre completo" />
+        <p class="text-sm text-muted-foreground">Valor: {{ name || 'Vacío' }}</p>
       </section>
 
-      <section class="space-y-5">
+      <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Slots globales y específicos</h2>
+          <h2 class="text-lg font-semibold">Default value</h2>
           <p class="text-sm text-muted-foreground">
-            Los slots globales afectan a todos los pasos y los slots con key solo a uno.
+            Permite establecer un valor inicial sin controlar el componente.
           </p>
         </div>
 
-        <Stepper :steppers="slotSteps" :linear="false">
-          <template #title="{ stepper, state }">
-            <span :class="state === 'active' && 'text-primary'">
-              {{ stepper.title }}
-            </span>
-          </template>
-
-          <template #icon-security>
-            <span class="text-lg">🔒</span>
-          </template>
-
-          <template #description-finish> Todo listo para guardar </template>
-
-          <template #content-profile>
-            <div class="rounded-md border p-4 text-sm">Formulario de información del perfil.</div>
-          </template>
-
-          <template #content-security="{ goToStep }">
-            <div class="space-y-3 rounded-md border p-4 text-sm">
-              <p>Configuración de contraseña y autenticación.</p>
-              <Boton label="Ir a finalizar" size="sm" @click="goToStep(3)" />
-            </div>
-          </template>
-
-          <template #content-finish>
-            <div class="rounded-md border p-4 text-sm">Resumen final de la configuración.</div>
-          </template>
-        </Stepper>
+        <Input default-value="Contenido inicial" />
       </section>
 
-      <section class="space-y-5">
+      <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Vertical</h2>
+          <h2 class="text-lg font-semibold">Tipos HTML</h2>
           <p class="text-sm text-muted-foreground">
-            Orientation también adapta la disposición de elementos y separadores.
+            El componente conserva el comportamiento del input nativo.
           </p>
         </div>
 
-        <Stepper
-          v-model="verticalStep"
-          :steppers="verticalSteps"
-          orientation="vertical"
-          :linear="false"
-          :ui="{
-            list: { class: 'max-w-xl' },
-            content: { class: 'max-w-xl rounded-lg bg-muted/40 p-4 text-sm' },
-          }"
-        />
+        <div class="grid gap-4 sm:grid-cols-2">
+          <Input v-model="email" type="email" autocomplete="email" placeholder="Email" />
+          <Input type="password" autocomplete="current-password" placeholder="Contraseña" />
+          <Input type="search" placeholder="Buscar…" />
+          <Input v-model="age" type="number" min="0" max="120" placeholder="Edad" />
+          <Input type="date" />
+          <Input type="tel" autocomplete="tel" placeholder="Teléfono" />
+        </div>
       </section>
 
-      <section class="space-y-5">
+      <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Estados</h2>
+          <h2 class="text-lg font-semibold">Con Label</h2>
           <p class="text-sm text-muted-foreground">
-            Cada elemento puede declararse como completed o disabled.
+            For e id asocian correctamente la etiqueta visible con el campo.
           </p>
         </div>
 
-        <Stepper :steppers="stateSteps" :linear="false" />
+        <div class="grid gap-1.5">
+          <Label for="company-email">Email de empresa</Label>
+          <Input
+            id="company-email"
+            type="email"
+            name="companyEmail"
+            autocomplete="work email"
+            placeholder="nombre@empresa.com"
+          />
+        </div>
       </section>
 
-      <section class="space-y-5">
+      <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Custom UI</h2>
+          <h2 class="text-lg font-semibold">Archivo</h2>
           <p class="text-sm text-muted-foreground">
-            Cada nodo admite un objeto o una función que recibe el contexto del paso.
+            Los estilos file también forman parte del componente de UI.
           </p>
         </div>
 
-        <Stepper
-          color="#7c3aed"
-          :steppers="[
-            {
-              step: 1,
-              title: 'Diseño',
-              description: 'Estilos personalizados',
-              content: 'Primer paso personalizado.',
-            },
-            {
-              step: 2,
-              title: 'Desarrollo',
-              description: 'Implementación',
-              content: 'Segundo paso personalizado.',
-            },
-            {
-              step: 3,
-              title: 'Entrega',
-              description: 'Publicación',
-              content: 'Último paso personalizado.',
-            },
-          ]"
-          :ui="{
-            indicator: ({ stepper }) => {
-              return {
-                'aria-label': stepper?.step + ' se puedeee',
-              }
-            },
-            title: { class: 'text-sm' },
-            description: { class: 'text-xs' },
-            separator: { class: 'top-6' },
-            content: { class: 'rounded-xl border border-dashed p-5' },
-          }"
+        <div class="grid gap-1.5">
+          <Label for="picture">Imagen de perfil</Label>
+          <Input id="picture" type="file" accept="image/*" />
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Disabled y readonly</h2>
+          <p class="text-sm text-muted-foreground">
+            Ambos estados se aplican mediante atributos nativos.
+          </p>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <Input disabled default-value="Campo deshabilitado" />
+          <Input readonly default-value="Campo de solo lectura" />
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Inválido</h2>
+          <p class="text-sm text-muted-foreground">
+            Aria-invalid activa el estilo de error y aria-describedby enlaza el mensaje.
+          </p>
+        </div>
+
+        <div class="grid gap-1.5">
+          <Label for="invalid-email">Email</Label>
+          <Input
+            id="invalid-email"
+            type="email"
+            default-value="email-invalido"
+            aria-invalid="true"
+            aria-describedby="invalid-email-message"
+          />
+          <p id="invalid-email-message" class="text-sm text-destructive">
+            Introduce una dirección de correo válida.
+          </p>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Con Button</h2>
+          <p class="text-sm text-muted-foreground">
+            Puede componerse con otros componentes sin añadir estructura interna.
+          </p>
+        </div>
+
+        <form class="flex items-center gap-2" @submit.prevent="subscribe">
+          <Input
+            v-model="subscriptionEmail"
+            type="email"
+            required
+            autocomplete="email"
+            placeholder="Email"
+          />
+          <Boton type="submit" label="Suscribirse" />
+        </form>
+
+        <p v-if="submittedEmail" class="text-sm text-success">
+          Suscripción registrada para {{ submittedEmail }}.
+        </p>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Atributos personalizados</h2>
+          <p class="text-sm text-muted-foreground">
+            Class y style se combinan con los estilos predeterminados.
+          </p>
+        </div>
+
+        <Input
+          placeholder="Input personalizado"
+          class="h-11 rounded-full border-dashed px-5"
+          style="letter-spacing: 0.02em"
         />
       </section>
     </div>

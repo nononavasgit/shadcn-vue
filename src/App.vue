@@ -1,6 +1,6 @@
-﻿<script setup lang="ts">
+<script setup lang="ts">
 import { ref } from 'vue'
-import { Popover } from '@/components/app/Popover'
+import { Tooltip } from '@/components/app/Tooltip'
 
 const controlledOpen = ref(false)
 </script>
@@ -10,147 +10,126 @@ const controlledOpen = ref(false)
     <div class="mx-auto max-w-4xl space-y-10">
       <header class="space-y-2">
         <p class="text-sm font-medium text-primary">@nonito/ui</p>
-        <h1 class="text-3xl font-semibold tracking-tight">Popover</h1>
+        <h1 class="text-3xl font-semibold tracking-tight">Tooltip</h1>
         <p class="max-w-2xl text-sm text-muted-foreground">
-          Ejemplos de contenido flotante, estado controlado, posicionamiento y personalizacion.
+          Ejemplos con contenido por prop o slot, posiciones, estado controlado y estilos
+          personalizados.
         </p>
       </header>
 
       <section class="space-y-4">
         <div>
           <h2 class="text-lg font-semibold">Basic</h2>
-          <p class="text-sm text-muted-foreground">Trigger mediante prop y contenido por slot.</p>
+          <p class="text-sm text-muted-foreground">
+            El slot por defecto es el trigger y la prop content contiene el mensaje.
+          </p>
         </div>
 
-        <Popover>
-          <template #trigger>
-            <button
-              type="button"
-              class="rounded-md border bg-background px-4 py-2 text-sm font-medium shadow-xs hover:bg-muted"
-            >
-              Account settings
-            </button>
-          </template>
-
-          <div class="space-y-2">
-            <h3 class="font-medium">Dimensions</h3>
-            <p class="text-sm text-muted-foreground">Set the dimensions for the layer.</p>
-          </div>
-        </Popover>
+        <Tooltip content="Añadir a favoritos">
+          <button
+            type="button"
+            class="rounded-md border bg-background px-4 py-2 text-sm font-medium shadow-xs hover:bg-muted"
+          >
+            Favorito
+          </button>
+        </Tooltip>
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Custom trigger</h2>
+          <h2 class="text-lg font-semibold">Content slot</h2>
           <p class="text-sm text-muted-foreground">
-            Un elemento propio se integra automáticamente mediante asChild.
+            El slot content permite utilizar contenido enriquecido.
           </p>
         </div>
 
-        <Popover side="bottom" align="start" :side-offset="8">
-          <template #trigger>
+        <Tooltip side="bottom" :side-offset="8">
+          <button
+            type="button"
+            class="rounded-md border bg-background px-4 py-2 text-sm font-medium shadow-xs hover:bg-muted"
+          >
+            Ver información
+          </button>
+
+          <template #content>
+            <div class="space-y-1">
+              <p class="font-medium">Información</p>
+              <p class="text-zinc-500">Este contenido procede del slot.</p>
+            </div>
+          </template>
+        </Tooltip>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Placement</h2>
+          <p class="text-sm text-muted-foreground">
+            El contenido puede aparecer en cualquier lado.
+          </p>
+        </div>
+
+        <div
+          class="flex min-h-40 flex-wrap items-center justify-center gap-4 rounded-xl border border-dashed p-6"
+        >
+          <Tooltip
+            v-for="side in ['top', 'right', 'bottom', 'left'] as const"
+            :key="side"
+            :content="side"
+            :side="side"
+          >
             <button
               type="button"
-              class="rounded-md border bg-background px-4 py-2 text-sm font-medium shadow-xs hover:bg-muted"
+              class="min-w-20 rounded-md border bg-background px-3 py-2 text-sm capitalize shadow-xs hover:bg-muted"
             >
-              Account settings
+              {{ side }}
             </button>
-          </template>
-
-          <div class="space-y-3">
-            <div>
-              <h3 class="font-medium">Account settings</h3>
-              <p class="text-sm text-muted-foreground">Manage your public profile.</p>
-            </div>
-
-            <div class="grid gap-2">
-              <label for="popover-name" class="text-sm font-medium">Name</label>
-              <input
-                id="popover-name"
-                value="Nonito"
-                class="h-9 rounded-md border bg-transparent px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              />
-            </div>
-          </div>
-        </Popover>
+          </Tooltip>
+        </div>
       </section>
 
       <section class="space-y-4">
         <div>
           <h2 class="text-lg font-semibold">Controlled state</h2>
-          <p class="text-sm text-muted-foreground">
-            Estado gestionado mediante v-model:open y cierre programático.
-          </p>
+          <p class="text-sm text-muted-foreground">Estado gestionado mediante v-model:open.</p>
         </div>
 
         <div class="flex items-center gap-4">
-          <Popover v-model:open="controlledOpen" align="center">
-            <template #trigger>
-              <button
-                type="button"
-                class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
-              >
-                {{ controlledOpen ? 'Popover open' : 'Open controlled popover' }}
-              </button>
-            </template>
+          <Tooltip v-model:open="controlledOpen" content="Tooltip controlado">
+            <button
+              type="button"
+              class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+            >
+              Pasa el cursor
+            </button>
+          </Tooltip>
 
-            <template #default="{ close }">
-              <div class="space-y-4">
-                <div class="space-y-1">
-                  <h3 class="font-medium">Controlled popover</h3>
-                  <p class="text-sm text-muted-foreground">
-                    El contenido puede cerrar el popover desde los slot props.
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  class="w-full rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted"
-                  @click="close"
-                >
-                  Close
-                </button>
-              </div>
-            </template>
-          </Popover>
-
-          <span class="text-sm text-muted-foreground"> open: {{ controlledOpen }} </span>
+          <span class="text-sm text-muted-foreground">open: {{ controlledOpen }}</span>
         </div>
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Placement and UI</h2>
+          <h2 class="text-lg font-semibold">Custom UI</h2>
           <p class="text-sm text-muted-foreground">
-            Posición lateral y atributos personalizados para trigger y content.
+            El contenido se personaliza desde el objeto ui.
           </p>
         </div>
 
-        <div class="flex min-h-40 items-center justify-center rounded-xl border border-dashed">
-          <Popover
-            side="right"
-            align="center"
-            :side-offset="12"
-            :ui="{
-              trigger: {
-                class: 'rounded-full border bg-background px-4 py-2 text-sm font-medium shadow-xs',
-              },
-              content: {
-                class: 'w-64 border-primary/30 bg-card',
-              },
-            }"
+        <Tooltip
+          content="Tooltip personalizado"
+          :ui="{
+            content: {
+              class: 'border-blue-200 bg-blue-50 text-blue-950',
+            },
+          }"
+        >
+          <button
+            type="button"
+            class="rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-950"
           >
-            <template #trigger>
-              <button>hola</button>
-            </template>
-            <div class="space-y-2">
-              <h3 class="font-medium text-primary">Custom content</h3>
-              <p class="text-sm text-muted-foreground">
-                Estas clases se aplican mediante ui.content.
-              </p>
-            </div>
-          </Popover>
-        </div>
+            Personalizado
+          </button>
+        </Tooltip>
       </section>
     </div>
   </main>

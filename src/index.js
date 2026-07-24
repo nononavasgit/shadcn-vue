@@ -10,3 +10,4 @@ export * from './components/app/Switch'
 
 export * from './composables'
 export * from './components/app/Label'
+export * from './components/app/Card'

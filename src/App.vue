@@ -4,6 +4,7 @@ import { Separator } from '@/components/app/Separator'
 import { Switch } from '@/components/app/Switch'
 import { Icon } from '@/components/app/Icon'
 import { Label } from '@/components/app/Label'
+import { Card } from '@/components/app/Card'
 
 const notifications = ref(true)
 const airplaneMode = ref(false)
@@ -79,6 +80,49 @@ const compactMode = ref(false)
           Incluye name, required y un thumb personalizado.
         </p>
       </form>
+    </div>
+
+    <Separator class="my-4" />
+
+    <div class="space-y-4">
+      <div>
+        <h2 class="text-sm font-semibold text-stone-700 dark:text-white">Card</h2>
+        <p class="text-xs text-muted-foreground">Props, slots y personalizacion por nodos.</p>
+      </div>
+
+      <Card label="Card title" description="Card description">
+        <p class="text-sm">Card content rendered through the default slot.</p>
+      </Card>
+
+      <Card
+        label="Project settings"
+        description="Manage the preferences for this project."
+        :ui="{
+          root: { class: 'border-primary/30' },
+          header: { class: 'border-b' },
+          title: { class: 'text-primary' },
+          content: { class: 'space-y-3' },
+          footer: { class: 'justify-end border-t' },
+        }"
+      >
+        <template #action>
+          <span class="rounded-md bg-primary/10 px-2 py-1 text-xs text-primary">Active</span>
+        </template>
+
+        <div class="flex items-center justify-between gap-4">
+          <Label for="card-notifications">Notifications</Label>
+          <Switch id="card-notifications" v-model="notifications" />
+        </div>
+
+        <template #footer>
+          <button
+            type="button"
+            class="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground"
+          >
+            Save changes
+          </button>
+        </template>
+      </Card>
     </div>
   </div>
 </template>

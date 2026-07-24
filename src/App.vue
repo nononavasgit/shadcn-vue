@@ -1,9 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Avatar, type AvatarLoadingStatus } from '@/components/app/Avatar'
+import { Boton } from '@/components/app/Button'
+import { Dialog } from '@/components/app/Dialog'
 import { Icon } from '@/components/app/Icon'
 
-const loadingStatus = ref<AvatarLoadingStatus>('idle')
+const controlledOpen = ref(false)
+const saved = ref(false)
+const paragraphs = Array.from(
+  { length: 8 },
+  (_, index) =>
+    `Sección ${index + 1}. Este contenido permite comprobar el desplazamiento interno del diálogo sin ampliar la página.`,
+)
+
+function save(close: () => void) {
+  saved.value = true
+  close()
+}
 </script>
 
 <template>
@@ -11,9 +23,9 @@ const loadingStatus = ref<AvatarLoadingStatus>('idle')
     <div class="mx-auto max-w-3xl space-y-10">
       <header class="space-y-2">
         <p class="text-sm font-medium text-primary">@nonito/ui</p>
-        <h1 class="text-3xl font-semibold tracking-tight">Avatar</h1>
+        <h1 class="text-3xl font-semibold tracking-tight">Dialog</h1>
         <p class="max-w-2xl text-sm text-muted-foreground">
-          Imágenes de usuario con texto, icono o contenido personalizado como fallback.
+          Ventanas modales accesibles con trigger, cabecera, contenido, footer y cierre controlable.
         </p>
       </header>
 
@@ -21,119 +33,189 @@ const loadingStatus = ref<AvatarLoadingStatus>('idle')
         <div>
           <h2 class="text-lg font-semibold">Básico</h2>
           <p class="text-sm text-muted-foreground">
-            Label aparece automáticamente cuando la imagen está cargando o no está disponible.
+            El slot por defecto es el trigger y el slot content contiene el cuerpo del diálogo.
           </p>
         </div>
 
-        <Avatar src="https://github.com/shadcn.png" alt="Avatar de shadcn" label="CN" />
+        <Dialog
+          label="Editar perfil"
+          description="Realiza cambios en tu perfil y guarda cuando hayas terminado."
+        >
+          <Boton label="Abrir diálogo" />
+
+          <template #content>
+            <p class="text-sm">
+              Aquí puede colocarse cualquier formulario, información o componente de la aplicación.
+            </p>
+          </template>
+        </Dialog>
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Varios usuarios</h2>
+          <h2 class="text-lg font-semibold">V-model</h2>
           <p class="text-sm text-muted-foreground">
-            Cada avatar mantiene de forma independiente el estado de su imagen.
+            Open puede controlarse desde el padre mediante v-model:open.
           </p>
         </div>
 
-        <div class="flex flex-wrap items-center gap-4">
-          <Avatar src="https://github.com/shadcn.png" alt="Avatar de shadcn" label="CN" />
-          <Avatar src="https://github.com/leerob.png" alt="Avatar de Lee Robinson" label="LR" />
-          <Avatar src="https://github.com/evilrabbit.png" alt="Avatar de evilrabbit" label="ER" />
-        </div>
-      </section>
+        <div class="flex items-center gap-3">
+          <Dialog
+            v-model:open="controlledOpen"
+            label="Diálogo controlado"
+            description="El estado abierto se sincroniza con la aplicación."
+          >
+            <Boton label="Mostrar" variant="outlined" />
 
-      <section class="space-y-4">
-        <div>
-          <h2 class="text-lg font-semibold">Fallback de texto</h2>
-          <p class="text-sm text-muted-foreground">
-            Puede utilizarse sin src o como respaldo de una dirección que falla.
-          </p>
-        </div>
+            <template #content="{ open }">
+              <p class="text-sm">
+                Estado recibido por el slot: {{ open ? 'abierto' : 'cerrado' }}.
+              </p>
+            </template>
+          </Dialog>
 
-        <div class="flex items-center gap-4">
-          <Avatar
-            label="NN"
-            aria-label="Usuario sin imagen"
-            class="bg-primary text-primary-foreground"
-          />
-          <Avatar
-            src="/imagen-que-no-existe.png"
-            alt="Imagen no disponible"
-            label="404"
-            class="bg-error text-xs text-error-foreground"
-          />
-        </div>
-      </section>
-
-      <section class="space-y-4">
-        <div>
-          <h2 class="text-lg font-semibold">Fallback con icono</h2>
-          <p class="text-sm text-muted-foreground">
-            Icon acepta el nombre directamente o un objeto con IconProps y atributos SVG.
-          </p>
-        </div>
-
-        <div class="flex items-center gap-4">
-          <Avatar icon="info" aria-label="Información del usuario" />
-          <Avatar
-            :icon="{ name: 'search', size: 'sm', class: 'text-primary' }"
-            aria-label="Buscar usuario"
-          />
+          <code class="rounded bg-muted px-2 py-1 text-sm">open: {{ controlledOpen }}</code>
         </div>
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Slot fallback</h2>
+          <h2 class="text-lg font-semibold">Footer y cierre programático</h2>
           <p class="text-sm text-muted-foreground">
-            El slot tiene prioridad sobre icon y label y admite cualquier contenido.
+            Los slots reciben close para cerrar el diálogo después de completar una acción.
           </p>
         </div>
 
-        <Avatar icon="info" label="Perfil" aria-label="Perfil sin fotografía">
-          <template #fallback>
-            <span class="flex items-center gap-1 text-xs">
-              <Icon name="success" class="size-3" aria-hidden="true" />
+        <Dialog
+          label="Guardar cambios"
+          description="Confirma si quieres guardar la configuración actual."
+        >
+          <Boton label="Configurar" />
+
+          <template #content>
+            <p class="text-sm text-muted-foreground">
+              Los cambios se aplicarán inmediatamente a tu cuenta.
+            </p>
+          </template>
+
+          <template #footer="{ close }">
+            <Boton label="Cancelar" variant="outlined" severity="secondary" @click="close" />
+            <Boton label="Guardar" icon="save" @click="save(close)" />
+          </template>
+        </Dialog>
+
+        <p v-if="saved" class="text-sm text-success">Cambios guardados correctamente.</p>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Contenido desplazable</h2>
+          <p class="text-sm text-muted-foreground">
+            Scrollable utiliza DialogScrollContent y limita la altura del contenido.
+          </p>
+        </div>
+
+        <Dialog
+          scrollable
+          label="Términos del servicio"
+          description="Lee el documento completo antes de continuar."
+        >
+          <Boton label="Leer términos" variant="outlined" />
+
+          <template #content>
+            <div class="space-y-4 text-sm text-muted-foreground">
+              <p v-for="paragraph in paragraphs" :key="paragraph">{{ paragraph }}</p>
+            </div>
+          </template>
+
+          <template #footer="{ close }">
+            <Boton label="Aceptar" @click="close" />
+          </template>
+        </Dialog>
+      </section>
+
+      <section class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Slots personalizados</h2>
+          <p class="text-sm text-muted-foreground">
+            La cabecera, el título, la descripción y el icono de cierre pueden sustituirse.
+          </p>
+        </div>
+
+        <Dialog close-label="Cerrar aviso">
+          <Boton label="Ver aviso" variant="soft" />
+
+          <template #title>
+            <span class="flex items-center gap-2">
+              <Icon name="info" class="text-primary" />
+              Información importante
             </span>
           </template>
-        </Avatar>
+
+          <template #description>Este título y esta descripción proceden de slots.</template>
+
+          <template #content>
+            <p class="text-sm">El contenido conserva la estructura accesible de Dialog.</p>
+          </template>
+
+          <template #close>
+            <Icon name="x" size="sm" />
+            <span class="sr-only">Cerrar aviso</span>
+          </template>
+        </Dialog>
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Atributos HTML</h2>
+          <h2 class="text-lg font-semibold">Sin botón de cierre</h2>
           <p class="text-sm text-muted-foreground">
-            Los atributos adicionales se aplican tanto a AvatarImage como a AvatarFallback.
+            ShowCloseButton oculta el cierre superior; puede cerrarse desde cualquier slot.
           </p>
         </div>
 
-        <Avatar
-          src="https://github.com/vuejs.png"
-          alt="Avatar de Vue"
-          label="VU"
-          class="grayscale"
-          title="Vue"
-        />
+        <Dialog
+          :show-close-button="false"
+          label="Confirmación"
+          description="Este diálogo solamente muestra las acciones del footer."
+        >
+          <Boton label="Eliminar elemento" severity="error" variant="outlined" />
+
+          <template #content>
+            <p class="text-sm">¿Seguro que quieres continuar con esta acción?</p>
+          </template>
+
+          <template #footer="{ close }">
+            <Boton label="No, cancelar" variant="outlined" severity="secondary" @click="close" />
+            <Boton label="Sí, continuar" severity="error" @click="close" />
+          </template>
+        </Dialog>
       </section>
 
       <section class="space-y-4">
         <div>
-          <h2 class="text-lg font-semibold">Estado de carga</h2>
+          <h2 class="text-lg font-semibold">Personalización con UI</h2>
           <p class="text-sm text-muted-foreground">
-            LoadingStatusChange permite reaccionar a la carga, aunque el fallback no lo necesita.
+            Cada nodo estructural puede recibir atributos y clases propios.
           </p>
         </div>
 
-        <div class="flex items-center gap-4">
-          <Avatar
-            src="https://github.com/vuejs.png"
-            alt="Avatar de Vue"
-            label="VU"
-            @loading-status-change="loadingStatus = $event"
-          />
-          <code class="rounded bg-muted px-2 py-1 text-sm">{{ loadingStatus }}</code>
-        </div>
+        <Dialog
+          label="Diálogo personalizado"
+          description="Content, title y body reciben estilos mediante ui."
+          :ui="{
+            content: { class: 'border-primary/40 sm:max-w-xl' },
+            title: { class: 'text-primary' },
+            body: { class: 'rounded-md bg-muted p-4' },
+          }"
+        >
+          <Boton label="Personalizado" color="#7c3aed" />
+
+          <template #content>
+            <p class="text-sm">
+              El contenido mantiene sus estilos sin modificar los nodos UI base.
+            </p>
+          </template>
+        </Dialog>
       </section>
     </div>
   </main>

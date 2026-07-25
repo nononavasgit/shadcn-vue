@@ -22,7 +22,7 @@ Opciones:
   --cwd <directorio>       Proyecto consumidor
   --package <nombre>       Paquete real (por defecto: @nononavas/shadcn-vue)
   --alias <nombre>         Prefijo usado en imports
-  --app-dir <directorio>   Destino (por defecto: src/components/app)
+  --app-dir <directorio>   Destino (por defecto: src/components/ui)
   --skip-install           No instala paquete ni Tailwind
   --force                  Reemplaza archivos aunque estén modificados`)
 }

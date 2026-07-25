@@ -110,7 +110,7 @@ async function context(options, requireConfig = false) {
   }
   const packageName = options.packageName ?? previous?.package ?? ownPackage.name
   const importAlias = options.importAlias ?? previous?.alias ?? packageName
-  const appDirectory = options.appDirectory ?? previous?.appDirectory ?? 'src/components/app'
+  const appDirectory = options.appDirectory ?? previous?.appDirectory ?? 'src/components/ui'
   const appRoot = path.resolve(cwd, appDirectory)
   return { cwd, configPath, previous, packageName, importAlias, appDirectory, appRoot }
 }

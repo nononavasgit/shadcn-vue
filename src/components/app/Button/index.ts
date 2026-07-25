@@ -2,7 +2,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import type { SVGAttributes } from 'vue'
 import type { IconProps, IconName } from '@/components/app/Icon'
 
-export { default as Boton } from './Button.vue'
+export { default as Button } from './Button.vue'
 
 export const buttonVariants = cva('', {
   variants: {
@@ -222,6 +222,14 @@ export const buttonVariants = cva('', {
 export type ButtonVariants = VariantProps<typeof buttonVariants>
 export type ButtonIcon = IconName | (IconProps & SVGAttributes)
 
+export type ButtonIconUI = IconProps & SVGAttributes
+
+export interface ButtonUI {
+  icon?: ButtonIconUI
+  trailingIcon?: ButtonIconUI
+  loadingIcon?: ButtonIconUI
+}
+
 export interface ButtonProps {
   label?: string
   variant?: ButtonVariants['variant']
@@ -233,4 +241,16 @@ export interface ButtonProps {
   color?: string
   icon?: ButtonIcon
   trailingIcon?: ButtonIcon
+  ui?: ButtonUI
+}
+
+export interface ButtonEmits {
+  click: [evt: MouseEvent]
+}
+
+export interface ButtonSlots {
+  default?(): unknown
+  leading?(): unknown
+  loading?(): unknown
+  trailing?(): unknown
 }

@@ -4,20 +4,15 @@ import { button as Button } from '@/components/ui/Button'
 import { Icon } from '@/components/app/Icon'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
-import { buttonVariants, type ButtonProps } from '.'
+import { buttonVariants, type ButtonEmits, type ButtonProps, type ButtonSlots } from '.'
+
+defineOptions({ inheritAttrs: false })
 
 const attrs = useAttrs()
 
-const emit = defineEmits<{
-  click: [evt: MouseEvent]
-}>()
+const emit = defineEmits<ButtonEmits>()
 
-defineSlots<{
-  default?(): unknown
-  leading?(): unknown
-  loading?(): unknown
-  trailing?(): unknown
-}>()
+defineSlots<ButtonSlots>()
 
 const props = withDefaults(defineProps<ButtonProps>(), {
   label: undefined,
@@ -30,6 +25,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   color: undefined,
   icon: undefined,
   trailingIcon: undefined,
+  ui: undefined,
 })
 
 const iconLeading = computed(() =>
@@ -52,6 +48,40 @@ const ariaBusy = computed(() => {
   return props.loading || attrs['aria-busy']
 })
 
+const uiCalculado = computed(() => ({
+  root: {
+    ...attrs,
+    'aria-busy': ariaBusy.value,
+    'aria-disabled': ariaDisabled.value,
+    class: cn(
+      buttonVariants({
+        variant: props.variant,
+        severity: props.severity,
+        size: props.size,
+        rounded: props.rounded,
+        square: props.square,
+        color: Boolean(props.color),
+      }),
+      attrs.class,
+    ),
+    style: [colorStyle.value, attrs.style],
+  },
+  icon: {
+    ...props.ui?.icon,
+    ...iconLeading.value,
+    class: cn(props.ui?.icon?.class, iconLeading.value?.class),
+  },
+  trailingIcon: {
+    ...props.ui?.trailingIcon,
+    ...iconTrailing.value,
+    class: cn(props.ui?.trailingIcon?.class, iconTrailing.value?.class),
+  },
+  loadingIcon: {
+    ...props.ui?.loadingIcon,
+    class: cn('animate-spin', props.ui?.loadingIcon?.class),
+  },
+}))
+
 function handleClick(evt: MouseEvent) {
   if (ariaDisabled.value === true || ariaDisabled.value === 'true') {
     evt.preventDefault()
@@ -64,39 +94,26 @@ function handleClick(evt: MouseEvent) {
 </script>
 
 <template>
-  <Button
-    v-bind="attrs"
-    :aria-busy="ariaBusy"
-    :aria-disabled="ariaDisabled"
-    :class="
-      cn(
-        buttonVariants({
-          variant: props.variant,
-          severity: props.severity,
-          size: props.size,
-          rounded: props.rounded,
-          square: props.square,
-          color: Boolean(props.color),
-        }),
-        attrs.class,
-      )
-    "
-    :style="[colorStyle, attrs.style]"
-    @click="handleClick"
-  >
+  <Button v-bind="uiCalculado.root" @click="handleClick">
     <template v-if="props.loading">
       <slot name="loading">
-        <Icon name="spinner" class="animate-spin" />
+        <Icon v-bind="uiCalculado.loadingIcon" name="spinner" />
       </slot>
     </template>
     <slot v-else name="leading">
-      <Icon v-if="iconLeading" v-bind="iconLeading" />
+      <Icon
+        v-if="uiCalculado.icon?.name"
+        v-bind="{ ...uiCalculado?.icon, name: uiCalculado?.icon?.name }"
+      />
     </slot>
 
     <slot>{{ label }}</slot>
 
     <slot name="trailing">
-      <Icon v-if="iconTrailing" v-bind="iconTrailing" />
+      <Icon
+        v-if="uiCalculado.trailingIcon?.name"
+        v-bind="{ ...uiCalculado.trailingIcon, name: uiCalculado?.trailingIcon?.name }"
+      />
     </slot>
   </Button>
 </template>

@@ -107,7 +107,7 @@ import '@nononavas/shadcn-vue/style.css'
 
 ```vue
 <script setup lang="ts">
-import { Boton } from './components/app/Button'
+import { Boton } from './components/ui/Button'
 </script>
 
 <template>
@@ -118,7 +118,7 @@ import { Boton } from './components/app/Button'
 Si tu aplicación ya tiene configurado `@` como alias de `src`, también puedes usar:
 
 ```ts
-import { Boton } from '@/components/app/Button'
+import { Boton } from '@/components/ui/Button'
 ```
 
 ## Nuxt 4
@@ -201,7 +201,7 @@ export default defineNuxtConfig({
 --cwd <directorio>       Proyecto consumidor
 --package <nombre>       Paquete real
 --alias <nombre>         Prefijo usado en los imports
---app-dir <directorio>   Destino de components/app
+--app-dir <directorio>   Destino de los componentes (por defecto: src/components/ui)
 --skip-install           No instala el paquete ni Tailwind
 --force                  Reemplaza archivos existentes
 ```
@@ -311,7 +311,7 @@ El CLI genera:
 {
   "package": "@nononavas/shadcn-vue",
   "alias": "@nononavas/shadcn-vue",
-  "appDirectory": "src/components/app",
+  "appDirectory": "src/components/ui",
   "version": "0.1.1",
   "files": {
     "Button/Button.vue": "hash-sha256",

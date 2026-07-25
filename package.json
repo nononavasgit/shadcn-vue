@@ -22,7 +22,27 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./style.css": "./dist/style.css"
+    "./style.css": "./dist/style.css",
+    "./components/ui/*": {
+      "types": "./dist/components/ui/*/index.d.ts",
+      "import": "./dist/components/ui/*/index.js"
+    },
+    "./composables": {
+      "types": "./dist/composables/index.d.ts",
+      "import": "./dist/composables/index.js"
+    },
+    "./composables/*": {
+      "types": "./dist/composables/*.d.ts",
+      "import": "./dist/composables/*.js"
+    },
+    "./lib/*": {
+      "types": "./dist/lib/*.d.ts",
+      "import": "./dist/lib/*.js"
+    },
+    "./assets/icons": {
+      "types": "./dist/assets/icons/index.d.ts",
+      "import": "./dist/assets/icons/index.js"
+    }
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -30,23 +50,22 @@
     "doc": "docs"
   },
   "files": [
-    "dist"
-  ],
-  "workspaces": [
-    "playground/*"
+    "bin",
+    "dist",
+    "scripts",
+    "src/components/app"
   ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
-    "check": "npm run lint && npm run format:check && npm run typecheck && npm run build && npm run build -w @nonito/playground-vue",
+    "check": "npm run lint && npm run format:check && npm run typecheck && npm run build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "playground:dev": "npm run build && npm run dev -w @nonito/playground-vue",
-    "playground:build": "npm run build && npm run build -w @nonito/playground-vue"
+    "cli": "node ./bin/shadcn-vue.mjs"
   },
   "dependencies": {
     "@lucide/vue": "^1.25.0",
@@ -80,5 +99,8 @@
   "module": "./dist/index.js",
   "sideEffects": [
     "**/*.css"
-  ]
+  ],
+  "bin": {
+    "shadcn-vue": "./bin/shadcn-vue.mjs"
+  }
 }

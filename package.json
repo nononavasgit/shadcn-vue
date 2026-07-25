@@ -1,14 +1,22 @@
 {
-  "name": "@nonito/ui",
+  "name": "@nononavas/ui",
   "version": "0.1.0",
   "description": "Librería personal de componentes Vue con Reka UI y Tailwind CSS",
-  "type": "module",
-  "files": [
-    "dist"
+  "keywords": [
+    "shadcn-vue",
+    "vue"
   ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "homepage": "https://github.com/nononavasgit/shadcn-vue#readme",
+  "bugs": {
+    "url": "https://github.com/nononavasgit/shadcn-vue/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nononavasgit/shadcn-vue.git"
+  },
+  "license": "ISC",
+  "author": "José Antonio Navas",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -16,21 +24,29 @@
     },
     "./style.css": "./dist/style.css"
   },
-  "sideEffects": [
-    "**/*.css"
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "directories": {
+    "doc": "docs"
+  },
+  "files": [
+    "dist"
+  ],
+  "workspaces": [
+    "playground/*"
   ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
-    "check": "npm run lint \u0026\u0026 npm run format:check \u0026\u0026 npm run typecheck \u0026\u0026 npm run build \u0026\u0026 npm run build -w @nonito/playground-vue",
+    "check": "npm run lint && npm run format:check && npm run typecheck && npm run build && npm run build -w @nonito/playground-vue",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "playground:dev": "npm run build \u0026\u0026 npm run dev -w @nonito/playground-vue",
-    "playground:build": "npm run build \u0026\u0026 npm run build -w @nonito/playground-vue"
+    "playground:dev": "npm run build && npm run dev -w @nonito/playground-vue",
+    "playground:build": "npm run build && npm run build -w @nonito/playground-vue"
   },
   "dependencies": {
     "@lucide/vue": "^1.25.0",
@@ -38,9 +54,6 @@
     "clsx": "^2.1.1",
     "reka-ui": "^2.10.1",
     "tailwind-merge": "^3.5.0"
-  },
-  "peerDependencies": {
-    "vue": "^3.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -61,7 +74,11 @@
     "vue": "^3.5.39",
     "vue-tsc": "^3.2.5"
   },
-  "workspaces": [
-    "playground/*"
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "module": "./dist/index.js",
+  "sideEffects": [
+    "**/*.css"
   ]
 }

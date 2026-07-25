@@ -26,15 +26,23 @@ defineSlots<{
 const props = defineProps<CardProps>()
 const attrs = useAttrs()
 
-const rootProps = computed(() => ({
-  ...props.ui?.root,
-  ...attrs,
-  class: cn(props.ui?.root?.class, attrs.class),
+const uiCalculado = computed(() => ({
+  root: {
+    ...props.ui?.root,
+    ...attrs,
+    class: cn(props.ui?.root?.class, attrs.class),
+  },
+  header: props.ui?.header,
+  title: props.ui?.title,
+  description: props.ui?.description,
+  action: props.ui?.action,
+  content: props.ui?.content,
+  footer: props.ui?.footer,
 }))
 </script>
 
 <template>
-  <CardBase v-bind="rootProps">
+  <CardBase v-bind="uiCalculado.root">
     <CardHeader
       v-if="
         props.label ||
@@ -44,31 +52,31 @@ const rootProps = computed(() => ({
         $slots.description ||
         $slots.action
       "
-      v-bind="props.ui?.header"
+      v-bind="uiCalculado.header"
     >
       <slot name="header">
-        <CardTitle v-if="props.label || $slots.title" v-bind="props.ui?.title">
+        <CardTitle v-if="props.label || $slots.title" v-bind="uiCalculado.title">
           <slot name="title">{{ props.label }}</slot>
         </CardTitle>
 
         <CardDescription
           v-if="props.description || $slots.description"
-          v-bind="props.ui?.description"
+          v-bind="uiCalculado.description"
         >
           <slot name="description">{{ props.description }}</slot>
         </CardDescription>
       </slot>
 
-      <CardAction v-if="$slots.action" v-bind="props.ui?.action">
+      <CardAction v-if="$slots.action" v-bind="uiCalculado.action">
         <slot name="action" />
       </CardAction>
     </CardHeader>
 
-    <CardContent v-if="$slots.default" v-bind="props.ui?.content">
+    <CardContent v-if="$slots.default" v-bind="uiCalculado.content">
       <slot />
     </CardContent>
 
-    <CardFooter v-if="$slots.footer" v-bind="props.ui?.footer">
+    <CardFooter v-if="$slots.footer" v-bind="uiCalculado.footer">
       <slot name="footer" />
     </CardFooter>
   </CardBase>

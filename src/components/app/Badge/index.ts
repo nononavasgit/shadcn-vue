@@ -194,6 +194,12 @@ export const badgeVariants = cva('', {
 
 export type BadgeVariants = VariantProps<typeof badgeVariants>
 export type BadgeIcon = IconName | (IconProps & SVGAttributes)
+export type BadgeIconUI = IconProps & SVGAttributes
+
+export interface BadgeUI {
+  icon?: BadgeIconUI
+  trailingIcon?: BadgeIconUI
+}
 
 export interface BadgeProps extends PrimitiveProps {
   label?: string
@@ -203,4 +209,11 @@ export interface BadgeProps extends PrimitiveProps {
   color?: string
   icon?: BadgeIcon
   trailingIcon?: BadgeIcon
+  ui?: BadgeUI
+}
+
+export interface BadgeSlots {
+  default?(): unknown
+  leading?(): unknown
+  trailing?(): unknown
 }

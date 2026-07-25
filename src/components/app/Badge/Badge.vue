@@ -4,15 +4,10 @@ import { Badge as BadgeBase } from '@/components/ui/Badge'
 import { Icon } from '@/components/app/Icon'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
-import { badgeVariants, type BadgeProps } from '.'
+import { badgeVariants, type BadgeProps, type BadgeSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
-
-defineSlots<{
-  default?(): unknown
-  leading?(): unknown
-  trailing?(): unknown
-}>()
+defineSlots<BadgeSlots>()
 
 const props = withDefaults(defineProps<BadgeProps>(), {
   as: 'span',
@@ -23,6 +18,7 @@ const props = withDefaults(defineProps<BadgeProps>(), {
   color: undefined,
   icon: undefined,
   trailingIcon: undefined,
+  ui: undefined,
 })
 
 const attrs = useAttrs()
@@ -38,34 +34,46 @@ const { colorStyle } = useColor(
   computed(() => props.color),
   'badge',
 )
+
+const uiCalculado = computed(() => ({
+  root: {
+    ...attrs,
+    as: props.as,
+    asChild: props.asChild,
+    class: cn(
+      badgeVariants({
+        size: props.size,
+        variant: props.variant,
+        severity: props.severity,
+        color: Boolean(props.color),
+      }),
+      attrs.class,
+    ),
+    style: [colorStyle.value, attrs.style],
+  },
+  icon: {
+    ...props.ui?.icon,
+    ...iconLeading.value,
+    class: cn(props.ui?.icon?.class, iconLeading.value?.class),
+  },
+  trailingIcon: {
+    ...props.ui?.trailingIcon,
+    ...iconTrailing.value,
+    class: cn(props.ui?.trailingIcon?.class, iconTrailing.value?.class),
+  },
+}))
 </script>
 
 <template>
-  <BadgeBase
-    v-bind="attrs"
-    :as="props.as"
-    :as-child="props.asChild"
-    :class="
-      cn(
-        badgeVariants({
-          size: props.size,
-          variant: props.variant,
-          severity: props.severity,
-          color: Boolean(props.color),
-        }),
-        attrs.class,
-      )
-    "
-    :style="[colorStyle, attrs.style]"
-  >
+  <BadgeBase v-bind="uiCalculado.root">
     <slot name="leading">
-      <Icon v-if="iconLeading" v-bind="iconLeading" />
+      <Icon v-if="iconLeading" v-bind="uiCalculado.icon" :name="iconLeading.name" />
     </slot>
 
     <slot>{{ props.label }}</slot>
 
     <slot name="trailing">
-      <Icon v-if="iconTrailing" v-bind="iconTrailing" />
+      <Icon v-if="iconTrailing" v-bind="uiCalculado.trailingIcon" :name="iconTrailing.name" />
     </slot>
   </BadgeBase>
 </template>

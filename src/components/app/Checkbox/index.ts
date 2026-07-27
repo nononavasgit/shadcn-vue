@@ -2,23 +2,27 @@ import type { Component } from 'vue'
 
 export { default as Checkbox } from './Checkbox.vue'
 
-export type CheckboxValue = boolean | string | number | bigint | Record<string, unknown>
-export type CheckboxState = boolean | 'indeterminate'
+export type ValorCheckbox = boolean | string | number | bigint | Record<string, unknown>
+export type EstadoCheckbox = boolean | 'indeterminate'
 
 export interface CheckboxProps {
-  modelValue?: CheckboxValue | 'indeterminate' | null
-  defaultValue?: CheckboxValue | 'indeterminate'
-  trueValue?: CheckboxValue
-  falseValue?: CheckboxValue
+  modelValue?: ValorCheckbox | 'indeterminate' | null
+  valorPredeterminado?: ValorCheckbox | 'indeterminate'
+  valorVerdadero?: ValorCheckbox
+  valorFalso?: ValorCheckbox
   as?: string | Component
   asChild?: boolean
 }
 
 export interface CheckboxEmits {
-  'update:modelValue': [value: CheckboxValue | 'indeterminate']
+  'update:modelValue': [valor: ValorCheckbox | 'indeterminate']
 }
 
 export interface CheckboxSlotProps {
-  modelValue: CheckboxValue | 'indeterminate'
-  state: CheckboxState
+  valor: ValorCheckbox | 'indeterminate'
+  estado: EstadoCheckbox
+}
+
+export interface CheckboxSlots {
+  indicador?(props: CheckboxSlotProps): unknown
 }

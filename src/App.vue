@@ -6,11 +6,13 @@ import { Tooltip } from '@/components/app/Tooltip'
 import { Textarea } from '@/components/app/Textarea'
 import { Switch } from '@/components/app/Switch'
 import { Separator } from '@/components/app/Separator'
+import { Popover } from '@/components/app/Popover'
 
 const hoverCardAbierto = ref(false)
 const tooltipAbierto = ref(false)
 const texto = ref('Texto inicial')
 const switchActivado = ref(false)
+const popoverAbierto = ref(false)
 </script>
 
 <template>
@@ -126,5 +128,45 @@ const switchActivado = ref(false)
       <Separator orientacion="vertical" :decorativo="true" />
       <span>Derecha</span>
     </div>
+  </section>
+
+  <section class="mt-10 flex flex-wrap items-start gap-8 p-6">
+    <Popover>
+      <button class="rounded-md border px-4 py-2">Popover basico</button>
+
+      <template #contenido="{ cerrar }">
+        <div class="w-64 space-y-3">
+          <p class="font-semibold">Contenido del popover</p>
+          <p class="text-sm text-muted-foreground">
+            Puede contener botones, formularios o cualquier otro contenido.
+          </p>
+          <button class="rounded-md border px-3 py-1" @click="cerrar">Cerrar</button>
+        </div>
+      </template>
+    </Popover>
+
+    <Popover>
+      <button class="rounded-md border px-4 py-2">Posicion y colisiones</button>
+
+      <template #contenido="{ abierto, cerrar }">
+        <div class="space-y-3">
+          <p>Estado: {{ abierto ? 'abierto' : 'cerrado' }}</p>
+          <button class="rounded-md border px-3 py-1" @click="cerrar">Aceptar</button>
+        </div>
+      </template>
+    </Popover>
+
+    <Popover v-model:abierto="popoverAbierto" lado="abajo" alineacion="centro">
+      <button class="rounded-md border px-4 py-2">
+        {{ popoverAbierto ? 'Popover abierto' : 'Apertura controlada' }}
+      </button>
+
+      <template #contenido="{ cerrar }">
+        <div class="space-y-3">
+          <p>Este ejemplo utiliza <code>v-model:abierto</code>.</p>
+          <button class="rounded-md border px-3 py-1" @click="cerrar">Cerrar</button>
+        </div>
+      </template>
+    </Popover>
   </section>
 </template>

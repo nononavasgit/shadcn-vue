@@ -1,52 +1,76 @@
 <script setup lang="ts">
-import { useAttrs } from 'vue'
+import { computed, useAttrs } from 'vue'
 import { Popover as PopoverBase, PopoverContent, PopoverTrigger } from '@/components/ui/Popover'
-import type { PopoverEmits, PopoverProps, PopoverSlotProps } from '.'
+import {
+  ADHERENCIAS,
+  ALINEACIONES,
+  ESTRATEGIAS_ACTUALIZACION_POSICION,
+  ESTRATEGIAS_POSICION,
+  LADOS,
+  mapearRellenoColision,
+} from '.'
+import type { PopoverEmits, PopoverProps, PopoverSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-defineSlots<{
-  default?(props: PopoverSlotProps): unknown
-  content?(props: PopoverSlotProps): unknown
-}>()
+defineSlots<PopoverSlots>()
 
-const props = defineProps<PopoverProps>()
+const props = withDefaults(defineProps<PopoverProps>(), {
+  lado: 'abajo',
+  desplazamientoLado: 4,
+  alineacion: 'centro',
+  evitarColisiones: true,
+})
 defineEmits<PopoverEmits>()
 
 const attrs = useAttrs()
-const open = defineModel<boolean>('open')
+const abierto = defineModel<boolean>('abierto')
+
+const uiCalculado = computed(() => {
+  const { montajeForzado: montajeForzadoContenido, ...contenidoUI } = props.ui?.contenido ?? {}
+
+  return {
+    raiz: {
+      ...attrs,
+      defaultOpen: props.abiertoPredeterminado,
+      modal: props.modal,
+    },
+    activador: {
+      ...props.ui?.activador,
+      asChild: props.ui?.activador?.asChild ?? true,
+    },
+    contenido: {
+      ...contenidoUI,
+      align: ALINEACIONES[props.alineacion],
+      alignOffset: props.desplazamientoAlineacion,
+      alignFlip: props.invertirAlineacion,
+      avoidCollisions: props.evitarColisiones,
+      collisionPadding: mapearRellenoColision(props.rellenoColision),
+      forceMount: props.montajeForzado ?? montajeForzadoContenido,
+      hideWhenDetached: props.ocultarAlSeparar,
+      positionStrategy: props.estrategiaPosicion
+        ? ESTRATEGIAS_POSICION[props.estrategiaPosicion]
+        : undefined,
+      side: LADOS[props.lado],
+      sideFlip: props.invertirLado,
+      sideOffset: props.desplazamientoLado,
+      sticky: props.adherencia ? ADHERENCIAS[props.adherencia] : undefined,
+      updatePositionStrategy: props.estrategiaActualizacionPosicion
+        ? ESTRATEGIAS_ACTUALIZACION_POSICION[props.estrategiaActualizacionPosicion]
+        : undefined,
+    },
+  }
+})
 </script>
 
 <template>
-  <PopoverBase
-    v-slot="slotProps"
-    v-bind="attrs"
-    v-model:open="open"
-    :default-open="props.defaultOpen"
-    :modal="props.modal"
-  >
-    <PopoverTrigger v-bind="props.ui?.trigger" :as-child="props.ui?.trigger?.asChild ?? true">
-      <slot v-bind="slotProps" />
+  <PopoverBase v-slot="slotProps" v-model:open="abierto" v-bind="uiCalculado.raiz">
+    <PopoverTrigger v-bind="uiCalculado.activador">
+      <slot :abierto="slotProps.open" :cerrar="slotProps.close" />
     </PopoverTrigger>
 
-    <PopoverContent
-      v-if="$slots.content"
-      v-bind="props.ui?.content"
-      :align="props.align"
-      :align-offset="props.alignOffset"
-      :align-flip="props.alignFlip"
-      :avoid-collisions="props.avoidCollisions"
-      :collision-padding="props.collisionPadding"
-      :force-mount="props.forceMount"
-      :hide-when-detached="props.hideWhenDetached"
-      :position-strategy="props.positionStrategy"
-      :side="props.side"
-      :side-flip="props.sideFlip"
-      :side-offset="props.sideOffset"
-      :sticky="props.sticky"
-      :update-position-strategy="props.updatePositionStrategy"
-    >
-      <slot name="content" v-bind="slotProps" />
+    <PopoverContent v-if="$slots.contenido" v-bind="uiCalculado.contenido">
+      <slot name="contenido" :abierto="slotProps.open" :cerrar="slotProps.close" />
     </PopoverContent>
   </PopoverBase>
 </template>

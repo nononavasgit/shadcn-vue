@@ -1,16 +1,27 @@
-﻿<script setup lang="ts">
-import { useAttrs } from 'vue'
+<script setup lang="ts">
+import { computed, useAttrs } from 'vue'
 import { Label as LabelBase } from '@/components/ui/Label'
-import type { LabelProps } from '.'
+import type { LabelProps, LabelSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
+defineSlots<LabelSlots>()
+
 const props = defineProps<LabelProps>()
 const attrs = useAttrs()
+
+const uiCalculado = computed(() => ({
+  raiz: {
+    ...attrs,
+    as: props.as,
+    asChild: props.asChild,
+    for: props.for,
+  },
+}))
 </script>
 
 <template>
-  <LabelBase v-bind="attrs" :as="props.as" :as-child="props.asChild" :for="props.for">
+  <LabelBase v-bind="uiCalculado.raiz">
     <slot />
   </LabelBase>
 </template>

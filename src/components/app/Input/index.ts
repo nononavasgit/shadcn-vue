@@ -1,10 +1,10 @@
 export { default as Input } from './Input.vue'
 
 export interface InputProps {
-  modelValue?: string | number
-  defaultValue?: string | number
+  modelValue?: string
+  valorPredeterminado?: string
 }
 
 export interface InputEmits {
-  'update:modelValue': [value: string | number]
+  'update:modelValue': [valor: string]
 }

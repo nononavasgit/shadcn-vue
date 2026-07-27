@@ -1,11 +1,11 @@
 import type { StepperRootProps, StepperSeparatorProps } from 'reka-ui'
 import type { Component, HTMLAttributes, SVGAttributes } from 'vue'
-import type { IconName, IconProps } from '@/components/app/Icon'
+import type { IconoNombre, IconProps } from '@/components/app/Icon'
 
 export { default as Stepper } from './Stepper.vue'
 
 export type StepperState = 'completed' | 'active' | 'inactive'
-export type StepperIcon = IconName | (IconProps & SVGAttributes)
+export type StepperIcon = IconoNombre | (IconProps & SVGAttributes)
 export type StepperSeparatorUI = Omit<HTMLAttributes, 'orientation'> & StepperSeparatorProps
 export type StepperUIValue<T> = T | ((context: StepperUIContext) => T)
 

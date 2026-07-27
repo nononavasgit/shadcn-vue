@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { SVGAttributes } from 'vue'
-import type { IconProps, IconName } from '@/components/app/Icon'
+import type { IconProps, IconoNombre } from '@/components/app/Icon'
 
 export { default as Button } from './Button.vue'
 
@@ -220,7 +220,7 @@ export const buttonVariants = cva('', {
 })
 
 export type ButtonVariants = VariantProps<typeof buttonVariants>
-export type ButtonIcon = IconName | (IconProps & SVGAttributes)
+export type ButtonIcon = IconoNombre | (IconProps & SVGAttributes)
 
 export type ButtonIconUI = IconProps & SVGAttributes
 

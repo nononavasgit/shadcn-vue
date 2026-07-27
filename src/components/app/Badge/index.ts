@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { PrimitiveProps } from 'reka-ui'
 import type { SVGAttributes } from 'vue'
-import type { IconName, IconProps } from '@/components/app/Icon'
+import type { IconoNombre, IconProps } from '@/components/app/Icon'
 
 export { default as Badge } from './Badge.vue'
 
@@ -193,7 +193,7 @@ export const badgeVariants = cva('', {
 })
 
 export type BadgeVariants = VariantProps<typeof badgeVariants>
-export type BadgeIcon = IconName | (IconProps & SVGAttributes)
+export type BadgeIcon = IconoNombre | (IconProps & SVGAttributes)
 export type BadgeIconUI = IconProps & SVGAttributes
 
 export interface BadgeUI {

@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, Component, HTMLAttributes, SVGAttributes } from 'vue'
-import type { IconName, IconProps } from '@/components/app/Icon'
+import type { IconoNombre, IconProps } from '@/components/app/Icon'
 
 export { default as Dialog } from './Dialog.vue'
 
@@ -9,7 +9,7 @@ export type DialogNodeUI = Omit<HTMLAttributes, 'dir'> & {
   dir?: 'ltr' | 'rtl'
 }
 
-export type DialogIcon = IconName | (IconProps & SVGAttributes)
+export type DialogIcon = IconoNombre | (IconProps & SVGAttributes)
 export type DialogContentEvent = Event
 
 export type DialogContentUI = DialogNodeUI & {

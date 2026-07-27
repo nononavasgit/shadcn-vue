@@ -15,21 +15,21 @@ import {
   X,
 } from '@lucide/vue'
 
-export const ICONS = {
-  alert: AlertTriangle,
+export const ICONOS = {
+  alerta: AlertTriangle,
   check: Check,
   chevronDown: ChevronDown,
   chevronUp: ChevronUp,
   chevronRight: ChevronRight,
   chevronLeft: ChevronLeft,
   error: CircleAlert,
-  success: CircleCheck,
+  exito: CircleCheck,
   info: Info,
   spinner: LoaderCircle,
-  save: Save,
-  search: Search,
-  trash2: Trash2,
+  guardar: Save,
+  buscar: Search,
+  papelera2: Trash2,
   x: X,
 } as const
 
-export type IconName = keyof typeof ICONS
+export type IconoNombre = keyof typeof ICONOS

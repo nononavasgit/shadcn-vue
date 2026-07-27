@@ -1,30 +1,35 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { Time as TimeBase } from '@/components/ui/Time'
-import { useDate } from '@/composables/useDate'
-import type { TimeProps, TimeSlotProps } from '.'
+import { useFechas } from '@/composables/useFechas'
+import type { TimeProps, TimeSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-defineSlots<{
-  default?(props: TimeSlotProps): unknown
-}>()
+defineSlots<TimeSlots>()
 
 const props = defineProps<TimeProps>()
 const attrs = useAttrs()
-const { formatDate, toDateTime } = useDate()
+const { formatearFecha, aDatetime } = useFechas()
 
-const formattedDate = computed(() =>
-  formatDate(props.datetime, {
+const fechaFormateada = computed(() =>
+  formatearFecha(props.datetime, {
     locale: props.locale,
-    format: props.format,
+    formato: props.formato,
   }),
 )
-const dateTime = computed(() => toDateTime(props.datetime))
+
+const uiCalculado = computed(() => ({
+  raiz: {
+    ...attrs,
+    datetime: aDatetime(props.datetime),
+    'data-allow-mismatch': true,
+  },
+}))
 </script>
 
 <template>
-  <TimeBase v-bind="attrs" :datetime="dateTime" data-allow-mismatch>
-    <slot :date="formattedDate">{{ formattedDate }}</slot>
+  <TimeBase v-bind="uiCalculado.raiz">
+    <slot :fecha="fechaFormateada">{{ fechaFormateada }}</slot>
   </TimeBase>
 </template>

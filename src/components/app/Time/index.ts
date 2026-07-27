@@ -1,13 +1,17 @@
-import type { DateValue } from '@/composables/useDate'
+import type { ValorFecha } from '@/composables/useFechas'
 
 export { default as Time } from './Time.vue'
 
 export interface TimeProps {
-  datetime: DateValue
+  datetime: ValorFecha
   locale?: string | string[]
-  format?: Intl.DateTimeFormatOptions
+  formato?: Intl.DateTimeFormatOptions
 }
 
 export interface TimeSlotProps {
-  date: string
+  fecha: string
+}
+
+export interface TimeSlots {
+  default?(props: TimeSlotProps): unknown
 }

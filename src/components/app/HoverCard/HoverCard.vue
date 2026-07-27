@@ -1,63 +1,114 @@
 <script setup lang="ts">
-import { useAttrs } from 'vue'
-import {
-  HoverCard as HoverCardBase,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@/components/ui/HoverCard'
-import type { HoverCardEmits, HoverCardProps, HoverCardSlotProps } from '.'
+import { computed, useAttrs } from 'vue'
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/HoverCard'
+import type {
+  HoverCardAlineacion,
+  HoverCardEmits,
+  HoverCardLado,
+  HoverCardProps,
+  HoverCardSlots,
+} from '.'
 
 defineOptions({ inheritAttrs: false })
 
-defineSlots<{
-  default?(props: HoverCardSlotProps): unknown
-  content?(props: HoverCardSlotProps): unknown
-}>()
+defineSlots<HoverCardSlots>()
 
 const props = withDefaults(defineProps<HoverCardProps>(), {
-  openDelay: 700,
-  closeDelay: 300,
-  side: 'bottom',
-  sideOffset: 4,
-  align: 'center',
+  retrasoApertura: 700,
+  retrasoCierre: 300,
+  lado: 'abajo',
+  desplazamientoLado: 4,
+  alineacion: 'centro',
+  evitarColisiones: true,
 })
 defineEmits<HoverCardEmits>()
 
 const attrs = useAttrs()
-const open = defineModel<boolean>('open')
+const abierto = defineModel<boolean>('abierto')
+
+const mapaLado = {
+  arriba: 'top',
+  derecha: 'right',
+  abajo: 'bottom',
+  izquierda: 'left',
+} as const
+
+const mapaAlineacion = {
+  inicio: 'start',
+  centro: 'center',
+  final: 'end',
+} as const
+
+const mapaAdherencia = {
+  parcial: 'partial',
+  siempre: 'always',
+} as const
+
+const mapaEstrategiaPosicion = {
+  absoluta: 'absolute',
+  fija: 'fixed',
+} as const
+
+const mapaEstrategiaActualizacionPosicion = {
+  optimizada: 'optimized',
+  siempre: 'always',
+} as const
+
+function calcularRellenoColision(
+  relleno: number | Partial<Record<HoverCardLado, number>> | undefined,
+) {
+  if (relleno === undefined || typeof relleno === 'number') return relleno
+
+  return Object.fromEntries(
+    Object.entries(relleno).map(([lado, valor]) => [mapaLado[lado as HoverCardLado], valor]),
+  ) as Partial<Record<(typeof mapaLado)[HoverCardLado], number>>
+}
+
+const uiCalculado = computed(() => ({
+  raiz: {
+    ...attrs,
+    defaultOpen: props.abiertoPredeterminado,
+    openDelay: props.retrasoApertura,
+    closeDelay: props.retrasoCierre,
+    enableTouch: props.habilitarTactil,
+  },
+  activador: {
+    ...props.ui?.activador,
+    asChild: props.ui?.activador?.asChild ?? true,
+  },
+  contenido: {
+    ...props.ui?.contenido,
+    align: mapaAlineacion[props.alineacion as HoverCardAlineacion],
+    alignOffset: props.desplazamientoAlineacion,
+    arrowPadding: props.rellenoFlecha,
+    avoidCollisions: props.evitarColisiones,
+    collisionPadding: calcularRellenoColision(props.rellenoColision),
+    forceMount: props.montajeForzado,
+    hideWhenDetached: props.ocultarAlSeparar,
+    positionStrategy: props.estrategiaPosicion
+      ? mapaEstrategiaPosicion[props.estrategiaPosicion]
+      : undefined,
+    side: mapaLado[props.lado as HoverCardLado],
+    sideOffset: props.desplazamientoLado,
+    sticky: props.adherencia ? mapaAdherencia[props.adherencia] : undefined,
+    updatePositionStrategy: props.estrategiaActualizacionPosicion
+      ? mapaEstrategiaActualizacionPosicion[props.estrategiaActualizacionPosicion]
+      : undefined,
+  },
+}))
 </script>
 
 <template>
-  <HoverCardBase
-    v-slot="slotProps"
-    v-bind="attrs"
-    v-model:open="open"
-    :close-delay="props.closeDelay"
-    :default-open="props.defaultOpen"
-    :enable-touch="props.enableTouch"
-    :open-delay="props.openDelay"
-  >
-    <HoverCardTrigger v-bind="props.ui?.trigger" :as-child="props.ui?.trigger?.asChild ?? true">
-      <slot v-bind="slotProps" />
+  <HoverCard v-slot="slotProps" v-model:open="abierto" v-bind="uiCalculado.raiz">
+    <HoverCardTrigger v-bind="uiCalculado.activador">
+      <slot :abierto="slotProps.open" />
     </HoverCardTrigger>
 
     <HoverCardContent
-      v-if="$slots.content || props.content !== undefined"
-      v-bind="props.ui?.content"
-      :align="props.align"
-      :align-offset="props.alignOffset"
-      :arrow-padding="props.arrowPadding"
-      :avoid-collisions="props.avoidCollisions"
-      :collision-padding="props.collisionPadding"
-      :force-mount="props.forceMount"
-      :hide-when-detached="props.hideWhenDetached"
-      :position-strategy="props.positionStrategy"
-      :side="props.side"
-      :side-offset="props.sideOffset"
-      :sticky="props.sticky"
-      :update-position-strategy="props.updatePositionStrategy"
+      v-if="$slots.contenido || props.contenido !== undefined"
+      v-bind="uiCalculado.contenido"
     >
-      <slot name="content" v-bind="slotProps">{{ props.content }}</slot>
+      <slot name="contenido" :abierto="slotProps.open">{{ props.contenido }}</slot>
     </HoverCardContent>
-  </HoverCardBase>
+  </HoverCard>
 </template>

@@ -2,50 +2,58 @@ import type { Component, HTMLAttributes } from 'vue'
 
 export { default as HoverCard } from './HoverCard.vue'
 
-export type HoverCardSide = 'top' | 'right' | 'bottom' | 'left'
-export type HoverCardAlign = 'start' | 'center' | 'end'
+export type HoverCardLado = 'arriba' | 'derecha' | 'abajo' | 'izquierda'
+export type HoverCardAlineacion = 'inicio' | 'centro' | 'final'
+export type HoverCardAdherencia = 'parcial' | 'siempre'
+export type HoverCardEstrategiaPosicion = 'absoluta' | 'fija'
+export type HoverCardEstrategiaActualizacionPosicion = 'optimizada' | 'siempre'
 
-export type HoverCardNodeUI = Omit<HTMLAttributes, 'dir'> & {
+export type HoverCardNodoUI = Omit<HTMLAttributes, 'dir'> & {
   as?: string | Component
   asChild?: boolean
   dir?: 'ltr' | 'rtl'
 }
 
-export type HoverCardContentUI = HoverCardNodeUI & {
+export type HoverCardContenidoUI = HoverCardNodoUI & {
   forceMount?: boolean
 }
 
 export interface HoverCardUI {
-  trigger?: HoverCardNodeUI
-  content?: HoverCardContentUI
+  activador?: HoverCardNodoUI
+  contenido?: HoverCardContenidoUI
 }
 
 export interface HoverCardProps {
-  open?: boolean
-  defaultOpen?: boolean
-  content?: string
-  openDelay?: number
-  closeDelay?: number
-  enableTouch?: boolean
-  side?: HoverCardSide
-  sideOffset?: number
-  align?: HoverCardAlign
-  alignOffset?: number
-  avoidCollisions?: boolean
-  collisionPadding?: number | Partial<Record<HoverCardSide, number>>
-  arrowPadding?: number
-  sticky?: 'partial' | 'always'
-  hideWhenDetached?: boolean
-  positionStrategy?: 'absolute' | 'fixed'
-  updatePositionStrategy?: 'optimized' | 'always'
-  forceMount?: boolean
+  abierto?: boolean
+  abiertoPredeterminado?: boolean
+  contenido?: string
+  retrasoApertura?: number
+  retrasoCierre?: number
+  habilitarTactil?: boolean
+  lado?: HoverCardLado
+  desplazamientoLado?: number
+  alineacion?: HoverCardAlineacion
+  desplazamientoAlineacion?: number
+  evitarColisiones?: boolean
+  rellenoColision?: number | Partial<Record<HoverCardLado, number>>
+  rellenoFlecha?: number
+  adherencia?: HoverCardAdherencia
+  ocultarAlSeparar?: boolean
+  estrategiaPosicion?: HoverCardEstrategiaPosicion
+  estrategiaActualizacionPosicion?: HoverCardEstrategiaActualizacionPosicion
+  montajeForzado?: boolean
   ui?: HoverCardUI
 }
 
 export interface HoverCardEmits {
-  'update:open': [value: boolean]
+  'update:abierto': [valor: boolean]
 }
 
 export interface HoverCardSlotProps {
-  open: boolean
+  abierto: boolean
+}
+
+export interface HoverCardSlots {
+  default?(props: HoverCardSlotProps): unknown
+  contenido?(props: HoverCardSlotProps): unknown
 }

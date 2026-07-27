@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAttrs } from 'vue'
+import { computed, useAttrs } from 'vue'
 import {
   Tooltip as TooltipBase,
   TooltipArrow,
@@ -8,72 +8,97 @@ import {
   TooltipTrigger,
 } from '@/components/ui/Tooltip'
 import { cn } from '@/lib/utils'
-import type { TooltipEmits, TooltipProps, TooltipSlotProps } from '.'
+import {
+  mapearRellenoColision,
+  ADHERENCIAS,
+  ALINEACIONES,
+  ESTRATEGIAS_ACTUALIZACION_POSICION,
+  ESTRATEGIAS_POSICION,
+  LADOS,
+} from '.'
+import type { TooltipEmits, TooltipProps, TooltipSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-defineSlots<{
-  default?(props: TooltipSlotProps): unknown
-  content?(props: TooltipSlotProps): unknown
-}>()
+defineSlots<TooltipSlots>()
 
 const props = withDefaults(defineProps<TooltipProps>(), {
-  delayDuration: 0,
-  side: 'top',
-  sideOffset: 2,
-  align: 'center',
+  retrasoApertura: 0,
+  lado: 'arriba',
+  desplazamientoLado: 2,
+  alineacion: 'centro',
 })
 defineEmits<TooltipEmits>()
 
 const attrs = useAttrs()
-const open = defineModel<boolean>('open')
+const abierto = defineModel<boolean>('abierto')
+
+const uiCalculado = computed(() => {
+  const { montajeForzado: montajeForzadoContenido, ...contenidoUI } = props.ui?.contenido ?? {}
+  const flechaUI = props.ui?.flecha ?? {}
+
+  return {
+    proveedor: {
+      delayDuration: props.retrasoApertura,
+      disableClosingTrigger: props.deshabilitarCierreActivador,
+      disableHoverableContent: props.deshabilitarContenidoInteractivo,
+      disabled: props.deshabilitado,
+      ignoreNonKeyboardFocus: props.ignorarFocoNoTeclado,
+      skipDelayDuration: props.retrasoEntreTooltips,
+    },
+    raiz: {
+      ...attrs,
+      defaultOpen: props.abiertoPredeterminado,
+      disableClosingTrigger: props.deshabilitarCierreActivador,
+      disableHoverableContent: props.deshabilitarContenidoInteractivo,
+      disabled: props.deshabilitado,
+      ignoreNonKeyboardFocus: props.ignorarFocoNoTeclado,
+    },
+    activador: {
+      ...props.ui?.activador,
+      asChild: props.ui?.activador?.asChild ?? true,
+    },
+    contenido: {
+      ...contenidoUI,
+      align: ALINEACIONES[props.alineacion],
+      alignOffset: props.desplazamientoAlineacion,
+      arrowPadding: props.rellenoFlecha,
+      avoidCollisions: props.evitarColisiones,
+      class: cn('border border-zinc-200 bg-white text-zinc-950 shadow-md', contenidoUI.class),
+      collisionPadding: mapearRellenoColision(props.rellenoColision),
+      forceMount: props.montajeForzado ?? montajeForzadoContenido,
+      hideWhenDetached: props.ocultarAlSeparar,
+      positionStrategy: props.estrategiaPosicion
+        ? ESTRATEGIAS_POSICION[props.estrategiaPosicion]
+        : undefined,
+      side: LADOS[props.lado],
+      sideOffset: props.desplazamientoLado,
+      sticky: props.adherencia ? ADHERENCIAS[props.adherencia] : undefined,
+      updatePositionStrategy: props.estrategiaActualizacionPosicion
+        ? ESTRATEGIAS_ACTUALIZACION_POSICION[props.estrategiaActualizacionPosicion]
+        : undefined,
+    },
+    flecha: {
+      ...flechaUI,
+      width: props.anchoFlecha,
+      height: props.altoFlecha,
+      class: cn('', flechaUI.class),
+    },
+  }
+})
 </script>
 
 <template>
-  <TooltipProvider
-    :delay-duration="props.delayDuration"
-    :disable-closing-trigger="props.disableClosingTrigger"
-    :disable-hoverable-content="props.disableHoverableContent"
-    :disabled="props.disabled"
-    :ignore-non-keyboard-focus="props.ignoreNonKeyboardFocus"
-    :skip-delay-duration="props.skipDelayDuration"
-  >
-    <TooltipBase
-      v-slot="slotProps"
-      v-bind="attrs"
-      v-model:open="open"
-      :default-open="props.defaultOpen"
-      :disable-closing-trigger="props.disableClosingTrigger"
-      :disable-hoverable-content="props.disableHoverableContent"
-      :disabled="props.disabled"
-      :ignore-non-keyboard-focus="props.ignoreNonKeyboardFocus"
-    >
-      <TooltipTrigger v-bind="props.ui?.trigger" :as-child="props.ui?.trigger?.asChild ?? true">
-        <slot v-bind="slotProps" />
+  <TooltipProvider v-bind="uiCalculado.proveedor">
+    <TooltipBase v-slot="slotProps" v-model:open="abierto" v-bind="uiCalculado.raiz">
+      <TooltipTrigger v-bind="uiCalculado.activador">
+        <slot :abierto="slotProps.open" />
       </TooltipTrigger>
 
-      <TooltipContent
-        v-bind="props.ui?.content"
-        :align="props.align"
-        :align-offset="props.alignOffset"
-        :aria-label="props.ariaLabel"
-        :arrow-padding="props.arrowPadding"
-        :avoid-collisions="props.avoidCollisions"
-        :class="
-          cn('border border-zinc-200 bg-white text-zinc-950 shadow-md', props.ui?.content?.class)
-        "
-        :collision-padding="props.collisionPadding"
-        :force-mount="props.forceMount"
-        :hide-when-detached="props.hideWhenDetached"
-        :position-strategy="props.positionStrategy"
-        :side="props.side"
-        :side-offset="props.sideOffset"
-        :sticky="props.sticky"
-        :update-position-strategy="props.updatePositionStrategy"
-      >
-        <slot name="content" v-bind="slotProps">{{ props.content }}</slot>
+      <TooltipContent v-bind="uiCalculado.contenido">
+        <slot name="contenido" :abierto="slotProps.open">{{ props.contenido }}</slot>
 
-        <TooltipArrow v-bind="props.ui?.arrow" :class="cn(props.ui?.arrow?.class)" />
+        <TooltipArrow v-bind="uiCalculado.flecha" />
       </TooltipContent>
     </TooltipBase>
   </TooltipProvider>

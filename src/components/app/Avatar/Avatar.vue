@@ -1,38 +1,35 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import type { ImgHTMLAttributes } from 'vue'
+import type { AvatarImageEmits } from 'reka-ui'
 import { Avatar as AvatarBase, AvatarFallback, AvatarImage } from '@/components/ui/Avatar'
 import { Icon } from '@/components/app/Icon'
 import { cn } from '@/lib/utils'
-import type { AvatarEmits, AvatarProps, AvatarSlotProps } from '.'
+import type { AvatarEmits, AvatarEstadoCarga, AvatarProps } from '.'
 
 defineOptions({ inheritAttrs: false })
 
 defineSlots<{
-  fallback?(props: AvatarSlotProps): unknown
+  alternativo?(): unknown
 }>()
 
 const props = defineProps<AvatarProps>()
 const emits = defineEmits<AvatarEmits>()
 const attrs = useAttrs() as ImgHTMLAttributes
 
-const icon = computed(() => (typeof props.icon === 'string' ? { name: props.icon } : props.icon))
-const slotProps = computed<AvatarSlotProps>(() => ({
-  icon: props.icon,
-  label: props.label,
-  src: attrs?.src,
-  alt: attrs?.alt,
-}))
+const icono = computed(() =>
+  typeof props.icono === 'string' ? { nombre: props.icono } : props.icono,
+)
 
 const uiCalculado = computed(() => ({
-  root: props.ui?.root,
-  image: props.src
+  raiz: props.ui?.raiz,
+  imagen: props.src
     ? {
-        ...props.ui?.image,
+        ...props.ui?.imagen,
         ...attrs,
         src: props.src,
         alt: props.alt,
-        class: cn(props.ui?.image?.class, attrs.class),
+        class: cn(props.ui?.imagen?.class, attrs.class),
       }
     : undefined,
   fallback: {
@@ -40,29 +37,42 @@ const uiCalculado = computed(() => ({
     ...attrs,
     class: cn(props.ui?.fallback?.class, attrs.class),
   },
-  icon: {
-    ...props.ui?.icon,
-    ...icon.value,
-    class: cn(props.ui?.icon?.class, icon.value?.class),
+  icono: {
+    ...props.ui?.icono,
+    ...icono.value,
+    class: cn(props.ui?.icono?.class, icono.value?.class),
   },
 }))
+
+type EstadoCargaOriginal = AvatarImageEmits['loadingStatusChange'][0]
+
+const mapaEstadoCarga: Record<EstadoCargaOriginal, AvatarEstadoCarga> = {
+  idle: false,
+  loading: true,
+  loaded: false,
+  error: false,
+}
+
+const handleCambioEstadoCarga = (estado: EstadoCargaOriginal) => {
+  emits('cambioEstadoCarga', mapaEstadoCarga[estado])
+}
 </script>
 
 <template>
-  <AvatarBase v-bind="uiCalculado.root">
+  <AvatarBase v-bind="uiCalculado.raiz">
     <AvatarImage
-      v-if="uiCalculado.image"
-      v-bind="uiCalculado.image"
-      @loading-status-change="emits('loadingStatusChange', $event)"
+      v-if="uiCalculado.imagen"
+      v-bind="uiCalculado.imagen"
+      @loading-status-change="handleCambioEstadoCarga"
     />
 
     <AvatarFallback v-bind="uiCalculado.fallback">
-      <slot name="fallback" v-bind="slotProps">
+      <slot name="alternativo">
         <Icon
-          v-if="uiCalculado?.icon?.name"
-          v-bind="{ name: uiCalculado?.icon?.name, ...uiCalculado.icon }"
+          v-if="uiCalculado.icono?.nombre"
+          v-bind="{ ...uiCalculado.icono, nombre: uiCalculado.icono.nombre }"
         />
-        <template v-else>{{ props.label }}</template>
+        <template v-else>{{ props.titulo }}</template>
       </slot>
     </AvatarFallback>
   </AvatarBase>

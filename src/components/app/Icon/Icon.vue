@@ -12,15 +12,17 @@ const props = withDefaults(defineProps<IconoProps>(), {
 })
 
 const attrs = useAttrs()
-const icono = computed(() => ICONOS[props.nombre])
+const icono = computed(() => ICONOS?.[props.nombre])
 </script>
 
 <template>
   <component
-    v-bind="attrs"
+    v-bind="{
+      'aria-hidden': true,
+      ...attrs,
+    }"
     :is="icono"
-    aria-hidden="true"
     :class="cn(iconoVariantes({ tamano: props.tamano }), attrs.class)"
-    :style="{ color: props.color }"
+    :style="[{ color: props.color }, attrs.style]"
   />
 </template>

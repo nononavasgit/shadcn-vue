@@ -1,30 +1,29 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { PrimitiveProps } from 'reka-ui'
 import type { SVGAttributes } from 'vue'
-import type { IconoNombre, IconProps } from '@/components/app/Icon'
+import type { IconoNombre, IconoProps } from '@/components/app/Icon'
 
 export { default as Badge } from './Badge.vue'
 
-export const badgeVariants = cva('', {
+export const etiquetaVariantes = cva('', {
   variants: {
-    size: {
-      sm: 'gap-0.5 px-0.5 text-sm [&>svg]:size-2.5',
-      md: 'gap-1 px-1 text-base [&>svg]:size-3',
-      lg: 'gap-1.5 px-2 text-lg [&>svg]:size-3.5',
+    tamano: {
+      sm: 'gap-0.5 px-0.5 text-sm [&>svg]:tamano-2.5',
+      md: 'gap-1 px-1 text-base [&>svg]:tamano-3',
+      lg: 'gap-1.5 px-2 text-lg [&>svg]:tamano-3.5',
     },
-    variant: {
-      solid: '',
-      outlined: 'border bg-transparent',
-      plain: 'bg-transparent',
-      subtle: 'border',
-      soft: '',
+    variante: {
+      solido: '',
+      delineado: 'border bg-transparent',
+      plano: 'bg-transparent',
+      sutil: 'border',
+      suave: '',
     },
-    severity: {
-      primary: 'focus-visible:border-primary focus-visible:ring-primary/30',
-      secondary:
+    gravedad: {
+      primario: 'focus-visible:border-primary focus-visible:ring-primary/30',
+      secundario:
         'focus-visible:border-secondary-foreground focus-visible:ring-secondary-foreground/20',
-      warning: 'focus-visible:border-warning focus-visible:ring-warning/30',
-      success: 'focus-visible:border-success focus-visible:ring-success/30',
+      alerta: 'focus-visible:border-warning focus-visible:ring-warning/30',
+      exito: 'focus-visible:border-success focus-visible:ring-success/30',
       error: 'focus-visible:border-error focus-visible:ring-error/30',
     },
     color: {
@@ -34,186 +33,186 @@ export const badgeVariants = cva('', {
   },
   compoundVariants: [
     {
-      variant: 'solid',
-      severity: 'primary',
+      variante: 'solido',
+      gravedad: 'primario',
       class: 'border-transparent bg-primary text-primary-foreground',
     },
     {
-      variant: 'outlined',
-      severity: 'primary',
+      variante: 'delineado',
+      gravedad: 'primario',
       class: 'border-primary/40 text-primary',
     },
     {
-      variant: 'plain',
-      severity: 'primary',
+      variante: 'plano',
+      gravedad: 'primario',
       class: 'border-transparent text-primary',
     },
     {
-      variant: 'subtle',
-      severity: 'primary',
+      variante: 'sutil',
+      gravedad: 'primario',
       class: 'border-primary/20 bg-primary/10 text-primary',
     },
     {
-      variant: 'soft',
-      severity: 'primary',
+      variante: 'suave',
+      gravedad: 'primario',
       class: 'border-transparent bg-primary/10 text-primary',
     },
     {
-      variant: 'solid',
-      severity: 'secondary',
+      variante: 'solido',
+      gravedad: 'secundario',
       class: 'border-transparent bg-secondary text-secondary-foreground',
     },
     {
-      variant: 'outlined',
-      severity: 'secondary',
+      variante: 'delineado',
+      gravedad: 'secundario',
       class: 'border-secondary-foreground/30 text-secondary-foreground',
     },
     {
-      variant: 'plain',
-      severity: 'secondary',
+      variante: 'plano',
+      gravedad: 'secundario',
       class: 'border-transparent text-secondary-foreground',
     },
     {
-      variant: 'subtle',
-      severity: 'secondary',
+      variante: 'sutil',
+      gravedad: 'secundario',
       class: 'border-secondary-foreground/15 bg-secondary/60 text-secondary-foreground',
     },
     {
-      variant: 'soft',
-      severity: 'secondary',
+      variante: 'suave',
+      gravedad: 'secundario',
       class: 'border-transparent bg-secondary/60 text-secondary-foreground',
     },
     {
-      variant: 'solid',
-      severity: 'warning',
+      variante: 'solido',
+      gravedad: 'alerta',
       class: 'border-transparent bg-warning text-warning-foreground',
     },
     {
-      variant: 'outlined',
-      severity: 'warning',
+      variante: 'delineado',
+      gravedad: 'alerta',
       class: 'border-warning/40 text-warning',
     },
     {
-      variant: 'plain',
-      severity: 'warning',
+      variante: 'plano',
+      gravedad: 'alerta',
       class: 'border-transparent text-warning',
     },
     {
-      variant: 'subtle',
-      severity: 'warning',
+      variante: 'sutil',
+      gravedad: 'alerta',
       class: 'border-warning/20 bg-warning/10 text-warning',
     },
     {
-      variant: 'soft',
-      severity: 'warning',
+      variante: 'suave',
+      gravedad: 'alerta',
       class: 'border-transparent bg-warning/10 text-warning',
     },
     {
-      variant: 'solid',
-      severity: 'success',
+      variante: 'solido',
+      gravedad: 'exito',
       class: 'border-transparent bg-success text-success-foreground',
     },
     {
-      variant: 'outlined',
-      severity: 'success',
+      variante: 'delineado',
+      gravedad: 'exito',
       class: 'border-success/40 text-success',
     },
     {
-      variant: 'plain',
-      severity: 'success',
+      variante: 'plano',
+      gravedad: 'exito',
       class: 'border-transparent text-success',
     },
     {
-      variant: 'subtle',
-      severity: 'success',
+      variante: 'sutil',
+      gravedad: 'exito',
       class: 'border-success/20 bg-success/10 text-success',
     },
     {
-      variant: 'soft',
-      severity: 'success',
+      variante: 'suave',
+      gravedad: 'exito',
       class: 'border-transparent bg-success/10 text-success',
     },
     {
-      variant: 'solid',
-      severity: 'error',
+      variante: 'solido',
+      gravedad: 'error',
       class: 'border-transparent bg-error text-error-foreground',
     },
     {
-      variant: 'outlined',
-      severity: 'error',
+      variante: 'delineado',
+      gravedad: 'error',
       class: 'border-error/40 text-error',
     },
     {
-      variant: 'plain',
-      severity: 'error',
+      variante: 'plano',
+      gravedad: 'error',
       class: 'border-transparent text-error',
     },
     {
-      variant: 'subtle',
-      severity: 'error',
+      variante: 'sutil',
+      gravedad: 'error',
       class: 'border-error/20 bg-error/10 text-error',
     },
     {
-      variant: 'soft',
-      severity: 'error',
+      variante: 'suave',
+      gravedad: 'error',
       class: 'border-transparent bg-error/10 text-error',
     },
     {
       color: true,
-      variant: 'solid',
+      variante: 'solido',
       class: 'border-transparent bg-(--badge-color) text-(--badge-color-foreground)',
     },
     {
       color: true,
-      variant: 'outlined',
+      variante: 'delineado',
       class: 'border-(--badge-color)/40 bg-transparent text-(--badge-color)',
     },
     {
       color: true,
-      variant: 'plain',
+      variante: 'plano',
       class: 'border-transparent bg-transparent text-(--badge-color)',
     },
     {
       color: true,
-      variant: 'subtle',
+      variante: 'sutil',
       class: 'border-(--badge-color)/20 bg-(--badge-color)/10 text-(--badge-color)',
     },
     {
       color: true,
-      variant: 'soft',
+      variante: 'suave',
       class: 'border-transparent bg-(--badge-color)/10 text-(--badge-color)',
     },
   ],
   defaultVariants: {
-    size: 'md',
-    variant: 'solid',
-    severity: 'primary',
+    tamano: 'md',
+    variante: 'solido',
+    gravedad: 'primario',
     color: false,
   },
 })
 
-export type BadgeVariants = VariantProps<typeof badgeVariants>
-export type BadgeIcon = IconoNombre | (IconProps & SVGAttributes)
-export type BadgeIconUI = IconProps & SVGAttributes
+export type EtiquetaVariantes = VariantProps<typeof etiquetaVariantes>
 
-export interface BadgeUI {
-  icon?: BadgeIconUI
-  trailingIcon?: BadgeIconUI
+export interface EtiquetaUI {
+  icono?: IconoProps & SVGAttributes
+  iconoFinal?: IconoProps & SVGAttributes
 }
 
-export interface BadgeProps extends PrimitiveProps {
-  label?: string
-  size?: BadgeVariants['size']
-  variant?: BadgeVariants['variant']
-  severity?: BadgeVariants['severity']
+export interface EtiquetaProps {
+  as?: string
+  asChild?: boolean
+  titulo?: string
+  tamano?: EtiquetaVariantes['tamano']
+  variante?: EtiquetaVariantes['variante']
+  gravedad?: EtiquetaVariantes['gravedad']
   color?: string
-  icon?: BadgeIcon
-  trailingIcon?: BadgeIcon
-  ui?: BadgeUI
+  icono?: IconoNombre | (IconoProps & SVGAttributes)
+  iconoFinal?: IconoNombre | (IconoProps & SVGAttributes)
+  ui?: EtiquetaUI
 }
 
-export interface BadgeSlots {
+export interface EtiquetaSlots {
   default?(): unknown
-  leading?(): unknown
-  trailing?(): unknown
+  inicio?(): unknown
+  final?(): unknown
 }

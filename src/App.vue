@@ -1,19 +1,19 @@
 <script setup>
 import { ref } from 'vue'
-import { Button } from '@/components/app/Button'
+import { Badge } from '@/components/app/Badge'
 </script>
 
 <template>
-  <Button
+  <Badge
     titulo="Hola"
     :ui="{
       icono: { nombre: 'alerta' },
       iconoFinal: { nombre: 'chevronLeft', 'aria-label': 'pepe' },
     }"
-  ></Button>
+  ></Badge>
 
-  <Button titulo="Adios" gravedad="exito" :cargando="false"></Button>
-  <Button titulo="Adios" gravedad="error" :cargando="false"></Button>
-  <Button titulo="Adios" gravedad="alerta" :cargando="false"></Button>
-  <Button titulo="Adios" color="#4aaddd" :cargando="true"></Button>
+  <Badge titulo="Adios" gravedad="exito"></Badge>
+  <Badge titulo="Adios" gravedad="error"></Badge>
+  <Badge titulo="Adios" gravedad="alerta"></Badge>
+  <Badge titulo="Adios" color="#4aaddd"></Badge>
 </template>

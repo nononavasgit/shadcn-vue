@@ -4,30 +4,29 @@ import { Badge as BadgeBase } from '@/components/ui/Badge'
 import { Icon } from '@/components/app/Icon'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
-import { badgeVariants, type BadgeProps, type BadgeSlots } from '.'
+import { etiquetaVariantes, type EtiquetaProps, type EtiquetaSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
-defineSlots<BadgeSlots>()
+defineSlots<EtiquetaSlots>()
+const attrs = useAttrs()
 
-const props = withDefaults(defineProps<BadgeProps>(), {
+const props = withDefaults(defineProps<EtiquetaProps>(), {
   as: 'span',
-  label: undefined,
-  size: 'md',
-  variant: 'solid',
-  severity: 'primary',
+  titulo: undefined,
+  tamano: 'md',
+  variante: 'solido',
+  gravedad: 'primario',
   color: undefined,
-  icon: undefined,
-  trailingIcon: undefined,
+  icono: undefined,
+  iconoFinal: undefined,
   ui: undefined,
 })
 
-const attrs = useAttrs()
-
-const iconLeading = computed(() =>
-  typeof props.icon === 'string' ? { name: props.icon } : props.icon,
+const iconoInicioCalculado = computed(() =>
+  typeof props.icono === 'string' ? { nombre: props.icono } : props.icono,
 )
-const iconTrailing = computed(() =>
-  typeof props.trailingIcon === 'string' ? { name: props.trailingIcon } : props.trailingIcon,
+const iconoFinalCalculado = computed(() =>
+  typeof props.iconoFinal === 'string' ? { nombre: props.iconoFinal } : props.iconoFinal,
 )
 
 const { colorStyle } = useColor(
@@ -36,44 +35,50 @@ const { colorStyle } = useColor(
 )
 
 const uiCalculado = computed(() => ({
-  root: {
+  raiz: {
     ...attrs,
     as: props.as,
     asChild: props.asChild,
     class: cn(
-      badgeVariants({
-        size: props.size,
-        variant: props.variant,
-        severity: props.severity,
+      etiquetaVariantes({
+        tamano: props.tamano,
+        variante: props.variante,
+        gravedad: props.gravedad,
         color: Boolean(props.color),
       }),
       attrs.class,
     ),
     style: [colorStyle.value, attrs.style],
   },
-  icon: {
-    ...props.ui?.icon,
-    ...iconLeading.value,
-    class: cn(props.ui?.icon?.class, iconLeading.value?.class),
+  icono: {
+    ...props.ui?.icono,
+    ...iconoInicioCalculado.value,
+    class: cn(props.ui?.icono?.class, iconoInicioCalculado.value?.class),
   },
-  trailingIcon: {
-    ...props.ui?.trailingIcon,
-    ...iconTrailing.value,
-    class: cn(props.ui?.trailingIcon?.class, iconTrailing.value?.class),
+  iconoFinal: {
+    ...props.ui?.iconoFinal,
+    ...iconoFinalCalculado.value,
+    class: cn(props.ui?.iconoFinal?.class, iconoFinalCalculado.value?.class),
   },
 }))
 </script>
 
 <template>
-  <BadgeBase v-bind="uiCalculado.root">
-    <slot name="leading">
-      <Icon v-if="iconLeading" v-bind="uiCalculado.icon" :name="iconLeading.name" />
+  <BadgeBase v-bind="uiCalculado.raiz">
+    <slot name="inicio">
+      <Icon
+        v-if="uiCalculado.icono?.nombre"
+        v-bind="{ ...uiCalculado?.icono, nombre: uiCalculado?.icono?.nombre }"
+      />
     </slot>
 
-    <slot>{{ props.label }}</slot>
+    <slot>{{ props.titulo }}</slot>
 
-    <slot name="trailing">
-      <Icon v-if="iconTrailing" v-bind="uiCalculado.trailingIcon" :name="iconTrailing.name" />
+    <slot name="final">
+      <Icon
+        v-if="uiCalculado.iconoFinal?.nombre"
+        v-bind="{ ...uiCalculado?.iconoFinal, nombre: uiCalculado?.iconoFinal?.nombre }"
+      />
     </slot>
   </BadgeBase>
 </template>

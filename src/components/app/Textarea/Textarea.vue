@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useAttrs } from 'vue'
+import { computed, useAttrs } from 'vue'
 import { Textarea as TextareaBase } from '@/components/ui/Textarea'
 import { cn } from '@/lib/utils'
 import type { TextareaEmits, TextareaProps } from '.'
@@ -10,14 +10,17 @@ const props = defineProps<TextareaProps>()
 defineEmits<TextareaEmits>()
 
 const attrs = useAttrs()
-const modelValue = defineModel<string | number>()
+const valorModelo = defineModel<string | number>()
+
+const uiCalculado = computed(() => ({
+  raiz: {
+    ...attrs,
+    defaultValue: props.valorPredeterminado,
+    class: cn('focus-visible:border-primary focus-visible:ring-primary/50', attrs.class),
+  },
+}))
 </script>
 
 <template>
-  <TextareaBase
-    v-bind="attrs"
-    v-model="modelValue"
-    :class="cn('focus-visible:border-primary focus-visible:ring-primary/50', attrs.class)"
-    :default-value="props.defaultValue"
-  />
+  <TextareaBase v-model="valorModelo" v-bind="uiCalculado.raiz" />
 </template>

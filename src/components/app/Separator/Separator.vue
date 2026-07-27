@@ -1,18 +1,28 @@
 <script setup lang="ts">
-import { useAttrs } from 'vue'
-import type { SeparatorProps } from './index'
+import { computed, useAttrs } from 'vue'
 import { Separator as SeparatorBase } from '@/components/ui/Separator'
+import type { SeparatorProps } from '.'
 
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<SeparatorProps>(), {
-  orientation: 'horizontal',
-  decorative: true,
+  orientacion: 'horizontal',
+  decorativo: true,
 })
 
 const attrs = useAttrs()
+
+const uiCalculado = computed(() => ({
+  raiz: {
+    ...attrs,
+    orientation: props.orientacion,
+    decorative: props.decorativo,
+    as: props.as,
+    asChild: props.asChild,
+  },
+}))
 </script>
 
 <template>
-  <SeparatorBase v-bind="attrs" :orientation="props.orientation" :decorative="props.decorative" />
+  <SeparatorBase v-bind="uiCalculado.raiz" />
 </template>

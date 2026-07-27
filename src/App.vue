@@ -3,9 +3,14 @@ import { ref } from 'vue'
 import { Badge } from '@/components/app/Badge'
 import { HoverCard } from '@/components/app/HoverCard'
 import { Tooltip } from '@/components/app/Tooltip'
+import { Textarea } from '@/components/app/Textarea'
+import { Switch } from '@/components/app/Switch'
+import { Separator } from '@/components/app/Separator'
 
 const hoverCardAbierto = ref(false)
 const tooltipAbierto = ref(false)
+const texto = ref('Texto inicial')
+const switchActivado = ref(false)
 </script>
 
 <template>
@@ -82,5 +87,44 @@ const tooltipAbierto = ref(false)
 
       <template #contenido> ee </template>
     </Tooltip>
+  </section>
+
+  <section class="m-6 max-w-xl space-y-6 rounded-lg border p-6">
+    <div class="space-y-2">
+      <label for="textarea-ejemplo" class="text-sm font-medium">Textarea controlado</label>
+      <Textarea
+        id="textarea-ejemplo"
+        v-model="texto"
+        valor-predeterminado="Texto predeterminado"
+        placeholder="Escribe aqui..."
+        rows="4"
+      />
+      <p class="text-sm text-muted-foreground">Valor: {{ texto }}</p>
+    </div>
+
+    <Separator orientacion="horizontal" :decorativo="true" />
+
+    <div class="flex items-center justify-between gap-4">
+      <label for="switch-ejemplo" class="text-sm font-medium">Activar notificaciones</label>
+      <Switch id="switch-ejemplo" v-model="switchActivado">
+        <template #indicador="{ activado }">
+          <span class="">{{ activado ? 'SI' : '' }}</span>
+        </template>
+      </Switch>
+    </div>
+
+    <p class="text-sm text-muted-foreground">
+      Switch: {{ switchActivado ? 'activado' : 'desactivado' }}
+    </p>
+
+    <Separator orientacion="horizontal" :decorativo="false" />
+
+    <div class="flex h-12 items-center gap-4 text-sm">
+      <span>Izquierda</span>
+      <Separator orientacion="vertical" :decorativo="true" />
+      <span>Centro</span>
+      <Separator orientacion="vertical" :decorativo="true" />
+      <span>Derecha</span>
+    </div>
   </section>
 </template>

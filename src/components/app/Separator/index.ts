@@ -1,5 +1,10 @@
-import type { SeparatorProps as RekaSeparatorProps } from 'reka-ui'
+import type { Component } from 'vue'
 
 export { default as Separator } from './Separator.vue'
 
-export type SeparatorProps = RekaSeparatorProps
+export interface SeparatorProps {
+  orientacion?: 'horizontal' | 'vertical'
+  decorativo?: boolean
+  as?: string | Component
+  asChild?: boolean
+}

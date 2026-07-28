@@ -4,23 +4,27 @@ import type { HTMLAttributes } from 'vue'
 export { default as Progress } from './Progress.vue'
 
 export interface ProgressUI {
-  indicator?: HTMLAttributes
-  label?: HTMLAttributes
+  indicador?: HTMLAttributes
+  titulo?: HTMLAttributes
 }
 
 export interface ProgressProps {
-  value?: number | null
-  max?: number
-  label?: string
+  valor?: number | null
+  maximo?: number
+  titulo?: string
   color?: string
-  trackColor?: string
-  getValueLabel?: ProgressRootProps['getValueLabel']
-  getValueText?: ProgressRootProps['getValueText']
+  colorPista?: string
+  getTituloValor?: ProgressRootProps['getValueLabel']
+  getTextoValor?: ProgressRootProps['getValueText']
   ui?: ProgressUI
 }
 
 export interface ProgressLabelSlotProps {
-  value: number | null
-  max: number
-  percentage: number
+  valor: number | null
+  maximo: number
+  porcentaje: number
+}
+
+export interface ProgressSlots {
+  titulo?(props: ProgressLabelSlotProps): unknown
 }

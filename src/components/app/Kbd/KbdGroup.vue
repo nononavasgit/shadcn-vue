@@ -8,16 +8,15 @@ defineOptions({ inheritAttrs: false })
 defineSlots<KbdGroupSlots>()
 
 const attrs = useAttrs()
-
-const uiCalculado = computed(() => ({
-  raiz: {
+const calculatedUI = computed(() => ({
+  root: {
     ...attrs,
   },
 }))
 </script>
 
 <template>
-  <KbdGroupBase v-bind="uiCalculado.raiz">
+  <KbdGroupBase v-bind="calculatedUI.root">
     <slot />
   </KbdGroupBase>
 </template>

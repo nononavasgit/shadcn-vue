@@ -1,220 +1,246 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Avatar } from '@/components/app/Avatar'
-import { Badge } from '@/components/app/Badge'
-import { Icon } from '@/components/app/Icon'
+import { onMounted, onUnmounted, ref } from 'vue'
+import { Kbd, KbdGroup } from '@/components/app/Kbd'
+import { Time } from '@/components/app/Time'
 
-const avatarLoading = ref(false)
-const avatarEvents = ref(0)
+const fixedDate = new Date('2026-07-28T18:30:00.000Z')
+const timestamp = Date.UTC(2026, 6, 28, 18, 30)
+const now = ref(new Date())
+let timer: ReturnType<typeof window.setInterval> | undefined
 
-function handleAvatarLoading(value: boolean) {
-  avatarLoading.value = value
-  avatarEvents.value++
-}
+onMounted(() => {
+  timer = window.setInterval(() => {
+    now.value = new Date()
+  }, 1000)
+})
+
+onUnmounted(() => {
+  if (timer !== undefined) window.clearInterval(timer)
+})
 </script>
 
 <template>
-  <main class="mx-auto max-w-5xl space-y-12 p-8">
+  <main class="mx-auto max-w-4xl space-y-12 p-8">
     <header class="space-y-2">
-      <h1 class="text-3xl font-bold">Avatar & Badge</h1>
+      <h1 class="text-3xl font-bold">Time & Kbd</h1>
       <p class="text-muted-foreground">Ejemplos de los componentes con su nueva API en inglés.</p>
     </header>
 
     <section class="space-y-4">
       <div>
-        <h2 class="text-xl font-semibold">Avatar básico</h2>
-        <p class="text-sm text-muted-foreground">Imagen, texto alternativo e icono.</p>
+        <h2 class="text-xl font-semibold">Time básico</h2>
+        <p class="text-sm text-muted-foreground">
+          Acepta cadenas, objetos Date y marcas de tiempo numéricas.
+        </p>
       </div>
 
-      <div class="flex flex-wrap items-center gap-4">
-        <Avatar src="https://github.com/shadcn.png" alt="Avatar de shadcn" title="SC" />
-        <Avatar title="NN" />
-        <Avatar icon="info" />
-        <Avatar icon="success" :ui="{ icon: { name: 'success', color: '#16a34a' } }" />
-        <Avatar src="/image-that-does-not-exist.png" alt="Imagen no disponible" title="ER" />
+      <div class="grid gap-3 rounded-lg border p-5 sm:grid-cols-3">
+        <div class="space-y-1">
+          <p class="text-xs font-medium text-muted-foreground">ISO string</p>
+          <Time datetime="2026-07-28T18:30:00.000Z" locale="es-ES" />
+        </div>
+
+        <div class="space-y-1">
+          <p class="text-xs font-medium text-muted-foreground">Date</p>
+          <Time :datetime="fixedDate" locale="es-ES" />
+        </div>
+
+        <div class="space-y-1">
+          <p class="text-xs font-medium text-muted-foreground">Timestamp</p>
+          <Time :datetime="timestamp" locale="es-ES" />
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold">Formatos de fecha</h2>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <article class="rounded-lg border p-4">
+          <p class="mb-2 text-sm text-muted-foreground">Fecha completa</p>
+          <Time
+            :datetime="fixedDate"
+            locale="es-ES"
+            :format="{
+              dateStyle: 'full',
+            }"
+            class="font-medium"
+          />
+        </article>
+
+        <article class="rounded-lg border p-4">
+          <p class="mb-2 text-sm text-muted-foreground">Fecha y hora</p>
+          <Time
+            :datetime="fixedDate"
+            locale="es-ES"
+            :format="{
+              dateStyle: 'medium',
+              timeStyle: 'short',
+            }"
+            class="font-medium"
+          />
+        </article>
+
+        <article class="rounded-lg border p-4">
+          <p class="mb-2 text-sm text-muted-foreground">Mes y año</p>
+          <Time
+            :datetime="fixedDate"
+            locale="es-ES"
+            :format="{
+              month: 'long',
+              year: 'numeric',
+            }"
+            class="font-medium capitalize"
+          />
+        </article>
+
+        <article class="rounded-lg border p-4">
+          <p class="mb-2 text-sm text-muted-foreground">Solo hora</p>
+          <Time
+            :datetime="fixedDate"
+            locale="es-ES"
+            :format="{
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+              hour12: false,
+            }"
+            class="font-mono font-medium"
+          />
+        </article>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold">Diferentes locales</h2>
+
+      <div class="overflow-hidden rounded-lg border">
+        <div class="grid grid-cols-[8rem_1fr] border-b p-3">
+          <span class="text-sm font-medium">Español</span>
+          <Time :datetime="fixedDate" locale="es-ES" :format="{ dateStyle: 'long' }" />
+        </div>
+        <div class="grid grid-cols-[8rem_1fr] border-b p-3">
+          <span class="text-sm font-medium">English</span>
+          <Time :datetime="fixedDate" locale="en-US" :format="{ dateStyle: 'long' }" />
+        </div>
+        <div class="grid grid-cols-[8rem_1fr] border-b p-3">
+          <span class="text-sm font-medium">Français</span>
+          <Time :datetime="fixedDate" locale="fr-FR" :format="{ dateStyle: 'long' }" />
+        </div>
+        <div class="grid grid-cols-[8rem_1fr] p-3">
+          <span class="text-sm font-medium">日本語</span>
+          <Time :datetime="fixedDate" locale="ja-JP" :format="{ dateStyle: 'long' }" />
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold">Fecha en vivo y slot personalizado</h2>
+
+      <div class="flex flex-wrap items-center gap-4 rounded-lg border p-5">
+        <div>
+          <p class="text-xs text-muted-foreground">Hora actual</p>
+          <Time
+            :datetime="now"
+            locale="es-ES"
+            :format="{
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+            }"
+            class="font-mono text-2xl font-semibold tabular-nums"
+          />
+        </div>
+
+        <Time :datetime="fixedDate" locale="es-ES" :format="{ dateStyle: 'medium' }">
+          <template #default="{ date }">
+            <span class="rounded-full bg-violet-100 px-3 py-1 text-sm text-violet-700">
+              📅 {{ date }}
+            </span>
+          </template>
+        </Time>
       </div>
     </section>
 
     <section class="space-y-4">
       <div>
-        <h2 class="text-xl font-semibold">Tamaños de Avatar</h2>
-        <p class="text-sm text-muted-foreground">El tamaño se personaliza desde ui.root.</p>
+        <h2 class="text-xl font-semibold">Kbd básico</h2>
+        <p class="text-sm text-muted-foreground">Contenido mediante title o mediante el slot.</p>
       </div>
-
-      <div class="flex flex-wrap items-end gap-4">
-        <Avatar
-          title="XS"
-          :ui="{
-            root: { class: 'size-7' },
-            fallback: { class: 'text-xs' },
-          }"
-        />
-        <Avatar
-          title="SM"
-          :ui="{
-            root: { class: 'size-9' },
-            fallback: { class: 'text-sm' },
-          }"
-        />
-        <Avatar
-          src="https://github.com/shadcn.png"
-          alt="Avatar mediano"
-          title="MD"
-          :ui="{ root: { class: 'size-12' } }"
-        />
-        <Avatar
-          icon="info"
-          :ui="{
-            root: { class: 'size-16' },
-            icon: { name: 'info', size: 'lg', color: '#7c3aed' },
-          }"
-        />
-      </div>
-    </section>
-
-    <section class="space-y-4">
-      <div class="flex items-center justify-between gap-4">
-        <div>
-          <h2 class="text-xl font-semibold">Carga y UI personalizada</h2>
-          <p class="text-sm text-muted-foreground">
-            Eventos recibidos: {{ avatarEvents }} · {{ avatarLoading ? 'Cargando' : 'En reposo' }}
-          </p>
-        </div>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-4">
-        <Avatar
-          src="https://github.com/vuejs.png"
-          alt="Avatar de Vue"
-          title="VU"
-          :ui="{
-            root: { class: 'size-14 ring-2 ring-emerald-500 ring-offset-2' },
-            image: { class: 'object-cover' },
-          }"
-          @loading-state-change="handleAvatarLoading"
-        />
-
-        <Avatar :ui="{ root: { class: 'size-14 bg-violet-100' } }">
-          <template #fallback>
-            <span class="font-bold text-violet-700">Slot</span>
-          </template>
-        </Avatar>
-      </div>
-    </section>
-
-    <section class="space-y-4">
-      <h2 class="text-xl font-semibold">Variantes de Badge</h2>
-
-      <div class="flex flex-wrap gap-3">
-        <Badge variant="solid">Solid</Badge>
-        <Badge variant="outline">Outline</Badge>
-        <Badge variant="plain">Plain</Badge>
-        <Badge variant="subtle">Subtle</Badge>
-        <Badge variant="soft">Soft</Badge>
-      </div>
-    </section>
-
-    <section class="space-y-4">
-      <h2 class="text-xl font-semibold">Severidades de Badge</h2>
-
-      <div class="grid gap-4">
-        <div class="flex flex-wrap gap-3">
-          <Badge severity="primary">Primary</Badge>
-          <Badge severity="secondary">Secondary</Badge>
-          <Badge severity="warning">Warning</Badge>
-          <Badge severity="success">Success</Badge>
-          <Badge severity="error">Error</Badge>
-        </div>
-
-        <div class="flex flex-wrap gap-3">
-          <Badge variant="outline" severity="primary">Primary</Badge>
-          <Badge variant="outline" severity="secondary">Secondary</Badge>
-          <Badge variant="outline" severity="warning">Warning</Badge>
-          <Badge variant="outline" severity="success">Success</Badge>
-          <Badge variant="outline" severity="error">Error</Badge>
-        </div>
-
-        <div class="flex flex-wrap gap-3">
-          <Badge variant="soft" severity="primary">Primary</Badge>
-          <Badge variant="soft" severity="secondary">Secondary</Badge>
-          <Badge variant="soft" severity="warning">Warning</Badge>
-          <Badge variant="soft" severity="success">Success</Badge>
-          <Badge variant="soft" severity="error">Error</Badge>
-        </div>
-      </div>
-    </section>
-
-    <section class="space-y-4">
-      <h2 class="text-xl font-semibold">Tamaños e iconos</h2>
 
       <div class="flex flex-wrap items-center gap-3">
-        <Badge size="sm" icon="info">Small</Badge>
-        <Badge size="md" icon="check">Medium</Badge>
-        <Badge size="lg" icon="success">Large</Badge>
-        <Badge severity="warning" icon="warning">Pendiente</Badge>
-        <Badge severity="success" icon="check">Completado</Badge>
-        <Badge variant="outline" trailing-icon="x">Descartable</Badge>
-        <Badge
-          variant="soft"
-          :icon="{ name: 'search', size: 'sm' }"
-          :trailing-icon="{ name: 'chevronRight', size: 'sm' }"
-        >
-          Resultado
-        </Badge>
+        <Kbd title="Esc" />
+        <Kbd title="Enter" />
+        <Kbd title="Tab" />
+        <Kbd title="⌘" />
+        <Kbd>Ctrl</Kbd>
+        <Kbd>Shift</Kbd>
+        <Kbd>Alt</Kbd>
+        <Kbd>Space</Kbd>
       </div>
     </section>
 
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">Color y slots personalizados</h2>
+      <h2 class="text-xl font-semibold">Combinaciones con KbdGroup</h2>
 
-      <div class="flex flex-wrap gap-3">
-        <Badge color="#7c3aed" icon="success">Violeta</Badge>
-        <Badge color="#0891b2" variant="outline">Cian</Badge>
-        <Badge color="#db2777" variant="soft">Rosa</Badge>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="flex items-center justify-between rounded-lg border p-4">
+          <span class="text-sm">Guardar</span>
+          <KbdGroup>
+            <Kbd>Ctrl</Kbd>
+            <span>+</span>
+            <Kbd>S</Kbd>
+          </KbdGroup>
+        </div>
 
-        <Badge variant="outline">
-          <template #leading>
-            <span class="size-2 rounded-full bg-emerald-500" />
-          </template>
-          En línea
-        </Badge>
+        <div class="flex items-center justify-between rounded-lg border p-4">
+          <span class="text-sm">Buscar</span>
+          <KbdGroup>
+            <Kbd>Ctrl</Kbd>
+            <span>+</span>
+            <Kbd>K</Kbd>
+          </KbdGroup>
+        </div>
 
-        <Badge severity="secondary">
-          <template #leading>
-            <Icon name="info" size="sm" />
-          </template>
-          Información
-          <template #trailing>
-            <Icon name="chevronRight" size="sm" />
-          </template>
-        </Badge>
+        <div class="flex items-center justify-between rounded-lg border p-4">
+          <span class="text-sm">Cerrar ventana</span>
+          <KbdGroup>
+            <Kbd>Alt</Kbd>
+            <span>+</span>
+            <Kbd>F4</Kbd>
+          </KbdGroup>
+        </div>
+
+        <div class="flex items-center justify-between rounded-lg border p-4">
+          <span class="text-sm">Paleta de comandos</span>
+          <KbdGroup>
+            <Kbd>⌘</Kbd>
+            <span>+</span>
+            <Kbd>Shift</Kbd>
+            <span>+</span>
+            <Kbd>P</Kbd>
+          </KbdGroup>
+        </div>
       </div>
     </section>
 
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">Avatar con Badge</h2>
+      <h2 class="text-xl font-semibold">Kbd dentro de texto</h2>
 
-      <div class="flex items-center gap-4 rounded-lg border p-4">
-        <div class="relative">
-          <Avatar
-            src="https://github.com/shadcn.png"
-            alt="Perfil de usuario"
-            title="SC"
-            :ui="{ root: { class: 'size-12' } }"
-          />
-          <span
-            class="absolute right-0 bottom-0 size-3 rounded-full border-2 border-background bg-emerald-500"
-            aria-label="En línea"
-          />
-        </div>
-
-        <div class="min-w-0">
-          <p class="font-medium">Usuario de ejemplo</p>
-          <div class="mt-1 flex gap-2">
-            <Badge size="sm" variant="soft" severity="success" icon="check"> Verificado </Badge>
-            <Badge size="sm" variant="outline">Administrador</Badge>
-          </div>
-        </div>
+      <div class="space-y-3 rounded-lg border p-5 text-sm leading-7">
+        <p>
+          Pulsa
+          <KbdGroup class="mx-1 inline-flex">
+            <Kbd>Ctrl</Kbd>
+            <span>+</span>
+            <Kbd>K</Kbd>
+          </KbdGroup>
+          para abrir el buscador.
+        </p>
+        <p>
+          Usa <Kbd class="mx-1">Esc</Kbd> para cerrar el diálogo o
+          <Kbd class="mx-1">Enter</Kbd> para confirmar.
+        </p>
       </div>
     </section>
   </main>

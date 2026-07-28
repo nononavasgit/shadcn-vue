@@ -1,3 +1,3 @@
 export { getContrastColor, useColor } from './useColor'
-export * from './useFechas'
+export * from './useDates'
 export * from './useAnunciador'

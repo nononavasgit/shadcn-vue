@@ -5,20 +5,19 @@ import type { KbdProps, KbdSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
+const props = defineProps<KbdProps>()
 defineSlots<KbdSlots>()
 
-const props = defineProps<KbdProps>()
 const attrs = useAttrs()
-
-const uiCalculado = computed(() => ({
-  raiz: {
+const calculatedUI = computed(() => ({
+  root: {
     ...attrs,
   },
 }))
 </script>
 
 <template>
-  <KbdBase v-bind="uiCalculado.raiz">
-    <slot>{{ props.titulo }}</slot>
+  <KbdBase v-bind="calculatedUI.root">
+    <slot>{{ props.title }}</slot>
   </KbdBase>
 </template>

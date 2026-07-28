@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
+import { HoverCard } from '@/components/app/HoverCard'
 import { Kbd, KbdGroup } from '@/components/app/Kbd'
 import { Popover } from '@/components/app/Popover'
+import { Separator } from '@/components/app/Separator'
 import { Time } from '@/components/app/Time'
 import { Tooltip } from '@/components/app/Tooltip'
 
@@ -10,6 +12,7 @@ const timestamp = Date.UTC(2026, 6, 28, 18, 30)
 const now = ref(new Date())
 const tooltipOpen = ref(false)
 const popoverOpen = ref(false)
+const hoverCardOpen = ref(false)
 let timer: ReturnType<typeof window.setInterval> | undefined
 
 onMounted(() => {
@@ -319,6 +322,72 @@ onUnmounted(() => {
             </div>
           </template>
         </Popover>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-xl font-semibold">Separator</h2>
+        <p class="text-sm text-muted-foreground">
+          Separadores horizontales y verticales con la API en inglés.
+        </p>
+      </div>
+
+      <div class="space-y-5 rounded-lg border p-5">
+        <div class="space-y-1">
+          <p class="font-medium">Cuenta</p>
+          <p class="text-sm text-muted-foreground">Gestiona los datos de tu perfil.</p>
+        </div>
+
+        <Separator />
+
+        <div class="flex h-5 items-center gap-4 text-sm">
+          <span>Perfil</span>
+          <Separator orientation="vertical" />
+          <span>Seguridad</span>
+          <Separator orientation="vertical" />
+          <span>Notificaciones</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-xl font-semibold">HoverCard</h2>
+        <p class="text-sm text-muted-foreground">
+          Contenido directo, slot personalizado y estado controlado.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-6 rounded-lg border p-5">
+        <HoverCard content="Documentación y ejemplos del componente." side="top">
+          <a href="#" class="font-medium underline underline-offset-4">@shadcn-vue</a>
+        </HoverCard>
+
+        <HoverCard :open-delay="200" :close-delay="150" side="right" align="start">
+          <button class="rounded-md border px-4 py-2 text-sm font-medium">Ver perfil</button>
+
+          <template #content="{ open }">
+            <div class="space-y-3">
+              <div class="flex items-center gap-3">
+                <div class="grid size-10 place-items-center rounded-full bg-zinc-900 text-white">
+                  NN
+                </div>
+                <div>
+                  <p class="font-semibold">Nono Navas</p>
+                  <p class="text-sm text-muted-foreground">@nononavas</p>
+                </div>
+              </div>
+              <p class="text-sm">Estado recibido por el slot: {{ open ? 'abierto' : 'cerrado' }}</p>
+            </div>
+          </template>
+        </HoverCard>
+
+        <HoverCard v-model:open="hoverCardOpen" content="HoverCard controlado">
+          <button class="rounded-md border px-4 py-2 text-sm font-medium">
+            {{ hoverCardOpen ? 'HoverCard abierto' : 'HoverCard cerrado' }}
+          </button>
+        </HoverCard>
       </div>
     </section>
   </main>

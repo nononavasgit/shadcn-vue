@@ -6,17 +6,17 @@ import type { SeparatorProps } from '.'
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<SeparatorProps>(), {
-  orientacion: 'horizontal',
-  decorativo: true,
+  orientation: 'horizontal',
+  decorative: true,
 })
 
 const attrs = useAttrs()
 
-const uiCalculado = computed(() => ({
-  raiz: {
+const calculatedUI = computed(() => ({
+  root: {
     ...attrs,
-    orientation: props.orientacion,
-    decorative: props.decorativo,
+    orientation: props.orientation,
+    decorative: props.decorative,
     as: props.as,
     asChild: props.asChild,
   },
@@ -24,5 +24,5 @@ const uiCalculado = computed(() => ({
 </script>
 
 <template>
-  <SeparatorBase v-bind="uiCalculado.raiz" />
+  <SeparatorBase v-bind="calculatedUI.root" />
 </template>

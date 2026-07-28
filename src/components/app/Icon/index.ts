@@ -1,26 +1,26 @@
-import type { IconoNombre } from './icons.ts'
+import type { IconName } from './icons.ts'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 export { default as Icon } from './Icon.vue'
-export type { IconoNombre } from './icons.ts'
+export type { IconName } from './icons.ts'
 
-export const iconoVariantes = cva('shrink-0', {
+export const iconVariants = cva('shrink-0', {
   variants: {
-    tamano: {
+    size: {
       sm: 'size-4',
       md: 'size-5',
       lg: 'size-6',
     },
   },
   defaultVariants: {
-    tamano: 'md',
+    size: 'md',
   },
 })
 
-export type IconoVariantes = VariantProps<typeof iconoVariantes>
+export type IconVariants = VariantProps<typeof iconVariants>
 
-export interface IconoProps {
-  nombre: IconoNombre
-  tamano?: IconoVariantes['tamano']
+export interface IconProps {
+  name: IconName
+  size?: IconVariants['size']
   color?: string
 }

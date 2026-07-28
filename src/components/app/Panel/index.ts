@@ -1,6 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes, SVGAttributes } from 'vue'
-import type { BotonProps } from '@/components/app/Button'
 import type { IconoNombre, IconoProps } from '@/components/app/Icon'
 
 export { default as Panel } from './Panel.vue'
@@ -48,8 +47,8 @@ export interface PanelUI {
 
 export interface PanelProps {
   abierto?: boolean
-  variante?: BotonProps['variante']
-  gravedad?: BotonProps['gravedad']
+  variante?: PanelVariantes['variante']
+  gravedad?: PanelVariantes['gravedad']
   color?: string
   titulo?: string
   icono?: IconoNombre | (IconoProps & SVGAttributes)

@@ -1,37 +1,37 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { Component, SVGAttributes } from 'vue'
-import type { IconoProps, IconoNombre } from '@/components/app/Icon'
+import type { IconName, IconProps } from '@/components/app/Icon'
 
 export { default as Button } from './Button.vue'
 
-export const botonVariantes = cva('', {
+export const buttonVariants = cva('', {
   variants: {
-    variante: {
-      solido: '',
-      delineado: 'border bg-transparent',
-      plano: 'bg-transparent',
-      sutil: 'border',
-      suave: '',
+    variant: {
+      solid: '',
+      outline: 'border bg-transparent',
+      plain: 'bg-transparent',
+      subtle: 'border',
+      soft: '',
     },
-    gravedad: {
-      primario: 'focus-visible:border-primary focus-visible:ring-primary/30',
-      secundario:
+    severity: {
+      primary: 'focus-visible:border-primary focus-visible:ring-primary/30',
+      secondary:
         'focus-visible:border-secondary-foreground focus-visible:ring-secondary-foreground/20',
-      alerta: 'focus-visible:border-warning focus-visible:ring-warning/30',
-      exito: 'focus-visible:border-success focus-visible:ring-success/30',
+      warning: 'focus-visible:border-warning focus-visible:ring-warning/30',
+      success: 'focus-visible:border-success focus-visible:ring-success/30',
       error: 'focus-visible:border-error focus-visible:ring-error/30',
     },
-    tamano: {
+    size: {
       xs: 'h-7 gap-1 px-2.5 text-xs has-[>svg]:px-2',
       sm: 'h-8 gap-1.5 px-3 text-sm has-[>svg]:px-2.5',
       md: 'h-9 px-4 py-2 text-base has-[>svg]:px-3',
       lg: 'h-10 px-6 text-lg has-[>svg]:px-4',
     },
-    redondeado: {
+    rounded: {
       true: 'rounded-full',
       false: '',
     },
-    cuadrado: {
+    square: {
       true: '',
       false: '',
     },
@@ -41,215 +41,221 @@ export const botonVariantes = cva('', {
     },
   },
   compoundVariants: [
-    { cuadrado: true, tamano: 'xs', class: 'tamano-7 p-0' },
-    { cuadrado: true, tamano: 'sm', class: 'tamano-8 p-0' },
-    { cuadrado: true, tamano: 'md', class: 'tamano-9 p-0' },
-    { cuadrado: true, tamano: 'lg', class: 'tamano-10 p-0' },
+    { square: true, size: 'xs', class: 'size-7 p-0' },
+    { square: true, size: 'sm', class: 'size-8 p-0' },
+    { square: true, size: 'md', class: 'size-9 p-0' },
+    { square: true, size: 'lg', class: 'size-10 p-0' },
     {
-      variante: 'solido',
-      gravedad: 'primario',
+      variant: 'solid',
+      severity: 'primary',
       class: 'bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80',
     },
     {
-      variante: 'delineado',
-      gravedad: 'primario',
+      variant: 'outline',
+      severity: 'primary',
       class:
         'border-primary/40 text-primary hover:bg-primary/10 active:border-primary/60 active:bg-primary/20',
     },
     {
-      variante: 'plano',
-      gravedad: 'primario',
+      variant: 'plain',
+      severity: 'primary',
       class: 'text-primary hover:bg-primary/10 active:bg-primary/20',
     },
     {
-      variante: 'sutil',
-      gravedad: 'primario',
+      variant: 'subtle',
+      severity: 'primary',
       class:
         'border-primary/20 bg-primary/10 text-primary hover:bg-primary/15 active:bg-primary/25',
     },
     {
-      variante: 'suave',
-      gravedad: 'primario',
+      variant: 'soft',
+      severity: 'primary',
       class: 'bg-primary/10 text-primary hover:bg-primary/20 active:bg-primary/30',
     },
     {
-      variante: 'solido',
-      gravedad: 'secundario',
+      variant: 'solid',
+      severity: 'secondary',
       class: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70',
     },
     {
-      variante: 'delineado',
-      gravedad: 'secundario',
+      variant: 'outline',
+      severity: 'secondary',
       class:
         'border-secondary-foreground/30 text-secondary-foreground hover:bg-secondary active:bg-secondary/70',
     },
     {
-      variante: 'plano',
-      gravedad: 'secundario',
+      variant: 'plain',
+      severity: 'secondary',
       class: 'text-secondary-foreground hover:bg-secondary active:bg-secondary/70',
     },
     {
-      variante: 'sutil',
-      gravedad: 'secundario',
+      variant: 'subtle',
+      severity: 'secondary',
       class:
         'border-secondary-foreground/15 bg-secondary/60 text-secondary-foreground hover:bg-secondary/80 active:bg-secondary',
     },
     {
-      variante: 'suave',
-      gravedad: 'secundario',
+      variant: 'soft',
+      severity: 'secondary',
       class: 'bg-secondary/60 text-secondary-foreground hover:bg-secondary/80 active:bg-secondary',
     },
     {
-      variante: 'solido',
-      gravedad: 'alerta',
+      variant: 'solid',
+      severity: 'warning',
       class: 'bg-warning text-warning-foreground hover:bg-warning/90 active:bg-warning/80',
     },
     {
-      variante: 'delineado',
-      gravedad: 'alerta',
+      variant: 'outline',
+      severity: 'warning',
       class:
         'border-warning/40 text-warning hover:bg-warning/10 active:border-warning/60 active:bg-warning/20',
     },
     {
-      variante: 'plano',
-      gravedad: 'alerta',
+      variant: 'plain',
+      severity: 'warning',
       class: 'text-warning hover:bg-warning/10 active:bg-warning/20',
     },
     {
-      variante: 'sutil',
-      gravedad: 'alerta',
+      variant: 'subtle',
+      severity: 'warning',
       class:
         'border-warning/20 bg-warning/10 text-warning hover:bg-warning/15 active:bg-warning/25',
     },
     {
-      variante: 'suave',
-      gravedad: 'alerta',
+      variant: 'soft',
+      severity: 'warning',
       class: 'bg-warning/10 text-warning hover:bg-warning/20 active:bg-warning/30',
     },
     {
-      variante: 'solido',
-      gravedad: 'exito',
+      variant: 'solid',
+      severity: 'success',
       class: 'bg-success text-success-foreground hover:bg-success/90 active:bg-success/80',
     },
     {
-      variante: 'delineado',
-      gravedad: 'exito',
+      variant: 'outline',
+      severity: 'success',
       class:
         'border-success/40 text-success hover:bg-success/10 active:border-success/60 active:bg-success/20',
     },
     {
-      variante: 'plano',
-      gravedad: 'exito',
+      variant: 'plain',
+      severity: 'success',
       class: 'text-success hover:bg-success/10 active:bg-success/20',
     },
     {
-      variante: 'sutil',
-      gravedad: 'exito',
+      variant: 'subtle',
+      severity: 'success',
       class:
         'border-success/20 bg-success/10 text-success hover:bg-success/15 active:bg-success/25',
     },
     {
-      variante: 'suave',
-      gravedad: 'exito',
+      variant: 'soft',
+      severity: 'success',
       class: 'bg-success/10 text-success hover:bg-success/20 active:bg-success/30',
     },
     {
-      variante: 'solido',
-      gravedad: 'error',
+      variant: 'solid',
+      severity: 'error',
       class: 'bg-error text-error-foreground hover:bg-error/90 active:bg-error/80',
     },
     {
-      variante: 'delineado',
-      gravedad: 'error',
+      variant: 'outline',
+      severity: 'error',
       class:
         'border-error/40 text-error hover:bg-error/10 active:border-error/60 active:bg-error/20',
     },
     {
-      variante: 'plano',
-      gravedad: 'error',
+      variant: 'plain',
+      severity: 'error',
       class: 'text-error hover:bg-error/10 active:bg-error/20',
     },
     {
-      variante: 'sutil',
-      gravedad: 'error',
+      variant: 'subtle',
+      severity: 'error',
       class: 'border-error/20 bg-error/10 text-error hover:bg-error/15 active:bg-error/25',
     },
     {
-      variante: 'suave',
-      gravedad: 'error',
+      variant: 'soft',
+      severity: 'error',
       class: 'bg-error/10 text-error hover:bg-error/20 active:bg-error/30',
     },
     {
       color: true,
-      variante: 'solido',
+      variant: 'solid',
       class:
         'bg-(--button-color) text-(--button-color-foreground) hover:bg-(--button-color)/90 active:bg-(--button-color)/80',
     },
     {
       color: true,
-      variante: 'delineado',
+      variant: 'outline',
       class:
         'border-(--button-color)/40 text-(--button-color) hover:bg-(--button-color)/10 active:border-(--button-color)/60 active:bg-(--button-color)/20',
     },
     {
       color: true,
-      variante: 'plano',
+      variant: 'plain',
       class: 'text-(--button-color) hover:bg-(--button-color)/10 active:bg-(--button-color)/20',
     },
     {
       color: true,
-      variante: 'sutil',
+      variant: 'subtle',
       class:
         'border-(--button-color)/20 bg-(--button-color)/10 text-(--button-color) hover:bg-(--button-color)/15 active:bg-(--button-color)/25',
     },
     {
       color: true,
-      variante: 'suave',
+      variant: 'soft',
       class:
         'bg-(--button-color)/10 text-(--button-color) hover:bg-(--button-color)/20 active:bg-(--button-color)/30',
     },
   ],
   defaultVariants: {
-    variante: 'solido',
-    gravedad: 'primario',
-    tamano: 'md',
-    redondeado: false,
-    cuadrado: false,
+    variant: 'solid',
+    severity: 'primary',
+    size: 'md',
+    rounded: false,
+    square: false,
     color: false,
   },
 })
 
-export type BotonVariantes = VariantProps<typeof botonVariantes>
+export type ButtonVariants = VariantProps<typeof buttonVariants>
 
-export interface BotonUI {
-  icono?: IconoProps & SVGAttributes
-  iconoFinal?: IconoProps & SVGAttributes
-  iconoCargando?: IconoProps & SVGAttributes
+export interface ButtonIconProps extends SVGAttributes {
+  name?: IconName
+  size?: IconProps['size']
+  color?: string
 }
 
-export interface BotonProps {
+export interface ButtonUI {
+  icon?: ButtonIconProps
+  trailingIcon?: ButtonIconProps
+  loadingIcon?: ButtonIconProps
+}
+
+export interface ButtonProps {
   as?: string | Component
   asChild?: boolean
-  titulo?: string
-  variante?: BotonVariantes['variante']
-  gravedad?: BotonVariantes['gravedad']
-  tamano?: BotonVariantes['tamano']
-  redondeado?: BotonVariantes['redondeado'] | boolean
-  cuadrado?: BotonVariantes['cuadrado'] | boolean
-  cargando?: boolean
+  title?: string
+  variant?: ButtonVariants['variant']
+  severity?: ButtonVariants['severity']
+  size?: ButtonVariants['size']
+  rounded?: ButtonVariants['rounded'] | boolean
+  square?: ButtonVariants['square'] | boolean
+  loading?: boolean
   color?: string
-  icono?: IconoNombre | (IconoProps & SVGAttributes)
-  iconoFinal?: IconoNombre | (IconoProps & SVGAttributes)
-  ui?: BotonUI
+  icon?: IconName | (ButtonIconProps & { name: IconName })
+  trailingIcon?: IconName | (ButtonIconProps & { name: IconName })
+  ui?: ButtonUI
 }
 
-export interface BotonEmits {
-  click: [evt: MouseEvent]
+export interface ButtonEmits {
+  click: [event: MouseEvent]
 }
 
-export interface BotonSlots {
+export interface ButtonSlots {
   default?(): unknown
-  inicio?(): unknown
-  cargando?(): unknown
-  final?(): unknown
+  leading?(): unknown
+  loading?(): unknown
+  trailing?(): unknown
 }

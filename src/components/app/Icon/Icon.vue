@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { ICONOS } from './icons.ts'
+import { ICONS } from './icons.ts'
 import { cn } from '@/lib/utils'
-import { iconoVariantes, type IconoProps } from '.'
+import { iconVariants, type IconProps } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<IconoProps>(), {
-  tamano: 'md',
+const props = withDefaults(defineProps<IconProps>(), {
+  size: 'md',
   color: 'currentColor',
 })
 
 const attrs = useAttrs()
-const icono = computed(() => ICONOS?.[props.nombre])
+const icon = computed(() => ICONS[props.name])
 </script>
 
 <template>
@@ -21,8 +21,8 @@ const icono = computed(() => ICONOS?.[props.nombre])
       'aria-hidden': true,
       ...attrs,
     }"
-    :is="icono"
-    :class="cn(iconoVariantes({ tamano: props.tamano }), attrs.class)"
+    :is="icon"
+    :class="cn(iconVariants({ size: props.size }), attrs.class)"
     :style="[{ color: props.color }, attrs.style]"
   />
 </template>

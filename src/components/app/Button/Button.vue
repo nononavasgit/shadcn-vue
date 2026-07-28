@@ -1,131 +1,134 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { button as Button } from '@/components/ui/Button'
+import { button as ButtonBase } from '@/components/ui/Button'
 import { Icon } from '@/components/app/Icon'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
-import { botonVariantes, type BotonEmits, type BotonProps, type BotonSlots } from '.'
+import {
+  buttonVariants,
+  type ButtonEmits,
+  type ButtonIconProps,
+  type ButtonProps,
+  type ButtonSlots,
+} from '.'
 
 defineOptions({ inheritAttrs: false })
 
-const attrs = useAttrs()
-
-const emit = defineEmits<BotonEmits>()
-
-defineSlots<BotonSlots>()
-
-const props = withDefaults(defineProps<BotonProps>(), {
+const props = withDefaults(defineProps<ButtonProps>(), {
   as: 'button',
   asChild: false,
-  titulo: undefined,
+  title: undefined,
   variant: 'solid',
   severity: 'primary',
-  tamano: 'md',
-  redondeado: false,
-  cuadrado: false,
-  cargando: false,
+  size: 'md',
+  rounded: false,
+  square: false,
+  loading: false,
   color: undefined,
-  icono: undefined,
-  iconoFinal: undefined,
+  icon: undefined,
+  trailingIcon: undefined,
   ui: undefined,
 })
+const emit = defineEmits<ButtonEmits>()
+defineSlots<ButtonSlots>()
 
-const iconoInicioCalculado = computed(() =>
-  typeof props.icono === 'string' ? { nombre: props.icono } : props.icono,
-)
-const iconoFinalCalculado = computed(() =>
-  typeof props.iconoFinal === 'string' ? { nombre: props.iconoFinal } : props.iconoFinal,
-)
+const attrs = useAttrs()
 
+function normalizeIcon(icon: ButtonIconProps | string | undefined) {
+  return typeof icon === 'string' ? { name: icon } : icon
+}
+const leadingIcon = computed(() => normalizeIcon(props.icon))
+const trailingIcon = computed(() => normalizeIcon(props.trailingIcon))
 const { colorStyle } = useColor(
   computed(() => props.color),
   'button',
 )
-
-const ariaDisabled = computed(() => {
-  return props.cargando || attrs['aria-disabled']
-})
-
-const ariaBusy = computed(() => {
-  return props.cargando || attrs['aria-busy']
-})
-const variantesCalculadas = computed(() => {
-  const clases = botonVariantes({
-    variante: props.variante,
-    gravedad: props.gravedad,
-    tamano: props.tamano,
-    redondeado: props.redondeado,
-    cuadrado: props.cuadrado,
+const ariaDisabled = computed(() => props.loading || attrs['aria-disabled'])
+const ariaBusy = computed(() => props.loading || attrs['aria-busy'])
+const calculatedVariants = computed(() => {
+  const classes = buttonVariants({
+    variant: props.variant,
+    severity: props.severity,
+    size: props.size,
+    rounded: props.rounded,
+    square: props.square,
     color: Boolean(props.color),
   })
 
-  if (props.as === 'button' || props.as === 'a') return clases
+  if (props.as === 'button' || props.as === 'a') return classes
 
-  return clases
+  return classes
     .split(/\s+/)
-    .filter((clase) => !clase.startsWith('hover:') && !clase.startsWith('active:'))
+    .filter((className) => !className.startsWith('hover:') && !className.startsWith('active:'))
     .join(' ')
 })
+const calculatedUI = computed(() => {
+  const iconUI = normalizeIcon(props.ui?.icon)
+  const trailingIconUI = normalizeIcon(props.ui?.trailingIcon)
+  const loadingIconUI = normalizeIcon(props.ui?.loadingIcon)
 
-const uiCalculado = computed(() => ({
-  raiz: {
-    ...attrs,
-    as: props.as,
-    asChild: props.asChild,
-    'aria-busy': ariaBusy.value,
-    'aria-disabled': ariaDisabled.value,
-    class: cn(variantesCalculadas.value, attrs.class),
-    style: [colorStyle.value, attrs.style],
-  },
-  icono: {
-    ...props.ui?.icono,
-    ...iconoInicioCalculado.value,
-    class: cn(props.ui?.icono?.class, iconoInicioCalculado.value?.class),
-  },
-  iconoFinal: {
-    ...props.ui?.iconoFinal,
-    ...iconoFinalCalculado.value,
-    class: cn(props.ui?.iconoFinal?.class, iconoFinalCalculado.value?.class),
-  },
-  iconoCargando: {
-    ...props.ui?.iconoCargando,
-    nombre: 'spinner' as const,
-    class: cn('animate-spin', props.ui?.iconoCargando?.class),
-  },
-}))
+  return {
+    root: {
+      ...attrs,
+      as: props.as,
+      asChild: props.asChild,
+      'aria-busy': ariaBusy.value,
+      'aria-disabled': ariaDisabled.value,
+      class: cn(calculatedVariants.value, attrs.class),
+      style: [colorStyle.value, attrs.style],
+    },
+    icon: {
+      ...iconUI,
+      ...leadingIcon.value,
+      class: cn(iconUI?.class, leadingIcon.value?.class),
+    },
+    trailingIcon: {
+      ...trailingIconUI,
+      ...trailingIcon.value,
+      class: cn(trailingIconUI?.class, trailingIcon.value?.class),
+    },
+    loadingIcon: {
+      ...loadingIconUI,
+      name: 'spinner' as const,
+      class: cn('animate-spin', loadingIconUI?.class),
+    },
+  }
+})
 
-function handleClick(evt: MouseEvent) {
+function handleClick(event: MouseEvent) {
   if (ariaDisabled.value === true || ariaDisabled.value === 'true') {
-    evt.preventDefault()
-    evt.stopPropagation()
+    event.preventDefault()
+    event.stopPropagation()
     return
   }
 
-  emit('click', evt)
+  emit('click', event)
 }
 </script>
 
 <template>
-  <Button v-bind="uiCalculado.raiz" @click="handleClick">
-    <template v-if="props.cargando">
-      <slot name="cargando">
-        <Icon v-bind="uiCalculado?.iconoCargando" />
+  <ButtonBase v-bind="calculatedUI.root" @click="handleClick">
+    <template v-if="props.loading">
+      <slot name="loading">
+        <Icon v-bind="calculatedUI.loadingIcon" />
       </slot>
     </template>
-    <slot v-else name="inicio">
+    <slot v-else name="leading">
       <Icon
-        v-if="uiCalculado.icono?.nombre"
-        v-bind="{ ...uiCalculado?.icono, nombre: uiCalculado?.icono?.nombre }"
+        v-if="calculatedUI.icon.name"
+        v-bind="calculatedUI.icon"
+        :name="calculatedUI.icon.name"
       />
     </slot>
 
-    <slot>{{ titulo }}</slot>
+    <slot>{{ props.title }}</slot>
 
-    <slot name="final">
+    <slot name="trailing">
       <Icon
-        v-if="uiCalculado.iconoFinal?.nombre"
-        v-bind="{ ...uiCalculado?.iconoFinal, nombre: uiCalculado?.iconoFinal?.nombre }"
+        v-if="calculatedUI.trailingIcon.name"
+        v-bind="calculatedUI.trailingIcon"
+        :name="calculatedUI.trailingIcon.name"
       />
     </slot>
-  </Button>
+  </ButtonBase>
 </template>

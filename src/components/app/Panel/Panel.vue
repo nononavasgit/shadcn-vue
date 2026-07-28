@@ -9,6 +9,21 @@ import { panelVariantes, type PanelEmits, type PanelProps, type PanelSlotProps }
 
 defineOptions({ inheritAttrs: false })
 
+const buttonVariants = {
+  solido: 'solid',
+  delineado: 'outline',
+  plano: 'plain',
+  sutil: 'subtle',
+  suave: 'soft',
+} as const
+const buttonSeverities = {
+  primario: 'primary',
+  secundario: 'secondary',
+  alerta: 'warning',
+  exito: 'success',
+  error: 'error',
+} as const
+
 defineSlots<{
   default?(): unknown
   titulo?(props: PanelSlotProps): unknown
@@ -51,8 +66,8 @@ const uiCalculado = computed(() => ({
     ...props.ui?.encabezado,
     as: props.expandible ? undefined : 'span',
     color: props.color,
-    gravedad: props.gravedad,
-    variante: props.variante,
+    severity: props.gravedad ? buttonSeverities[props.gravedad] : undefined,
+    variant: props.variante ? buttonVariants[props.variante] : undefined,
     class: cn(
       'w-full',
       abiertoCalculado.value && 'rounded-br-none rounded-bl-none',

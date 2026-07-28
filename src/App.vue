@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { Kbd, KbdGroup } from '@/components/app/Kbd'
+import { Popover } from '@/components/app/Popover'
 import { Time } from '@/components/app/Time'
+import { Tooltip } from '@/components/app/Tooltip'
 
 const fixedDate = new Date('2026-07-28T18:30:00.000Z')
 const timestamp = Date.UTC(2026, 6, 28, 18, 30)
 const now = ref(new Date())
+const tooltipOpen = ref(false)
+const popoverOpen = ref(false)
 let timer: ReturnType<typeof window.setInterval> | undefined
 
 onMounted(() => {
@@ -241,6 +245,80 @@ onUnmounted(() => {
           Usa <Kbd class="mx-1">Esc</Kbd> para cerrar el diálogo o
           <Kbd class="mx-1">Enter</Kbd> para confirmar.
         </p>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-xl font-semibold">Tooltip</h2>
+        <p class="text-sm text-muted-foreground">
+          Ejemplos con contenido directo, slot personalizado y estado controlado.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4 rounded-lg border p-5">
+        <Tooltip content="Guarda los cambios">
+          <button class="rounded-md border px-4 py-2 text-sm font-medium">Tooltip básico</button>
+        </Tooltip>
+
+        <Tooltip side="right" :side-offset="8">
+          <button class="rounded-md border px-4 py-2 text-sm font-medium">
+            Contenido con slot
+          </button>
+
+          <template #content>
+            <span class="font-medium">Tooltip personalizado</span>
+          </template>
+        </Tooltip>
+
+        <Tooltip v-model:open="tooltipOpen" content="Estado controlado" side="bottom">
+          <button class="rounded-md border px-4 py-2 text-sm font-medium">
+            {{ tooltipOpen ? 'Abierto' : 'Cerrado' }}
+          </button>
+        </Tooltip>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-xl font-semibold">Popover</h2>
+        <p class="text-sm text-muted-foreground">
+          Ejemplos con slot de contenido, cierre desde el slot y v-model.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4 rounded-lg border p-5">
+        <Popover>
+          <button class="rounded-md border px-4 py-2 text-sm font-medium">Abrir popover</button>
+
+          <template #content="{ close }">
+            <div class="w-64 space-y-3 p-1">
+              <div>
+                <p class="font-medium">Preferencias</p>
+                <p class="text-sm text-muted-foreground">Configura las opciones del elemento.</p>
+              </div>
+              <button
+                class="w-full rounded-md bg-zinc-900 px-3 py-2 text-sm text-white"
+                @click="close"
+              >
+                Guardar y cerrar
+              </button>
+            </div>
+          </template>
+        </Popover>
+
+        <Popover v-model:open="popoverOpen" side="right" align="start">
+          <button class="rounded-md border px-4 py-2 text-sm font-medium">
+            Popover {{ popoverOpen ? 'abierto' : 'cerrado' }}
+          </button>
+
+          <template #content="{ open, close }">
+            <div class="w-56 space-y-3 p-1">
+              <p class="text-sm">Estado del slot: {{ open ? 'abierto' : 'cerrado' }}</p>
+              <button class="rounded-md border px-3 py-1.5 text-sm" @click="close">Cerrar</button>
+            </div>
+          </template>
+        </Popover>
       </div>
     </section>
   </main>

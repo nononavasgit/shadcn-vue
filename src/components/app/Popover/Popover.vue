@@ -2,12 +2,12 @@
 import { computed, useAttrs } from 'vue'
 import { Popover as PopoverBase, PopoverContent, PopoverTrigger } from '@/components/ui/Popover'
 import {
-  ADHERENCIAS,
-  ALINEACIONES,
-  ESTRATEGIAS_ACTUALIZACION_POSICION,
-  ESTRATEGIAS_POSICION,
-  LADOS,
-  mapearRellenoColision,
+  ALIGNS,
+  mapCollisionPadding,
+  POSITION_STRATEGIES,
+  SIDES,
+  STICKY_VALUES,
+  UPDATE_POSITION_STRATEGIES,
 } from '.'
 import type { PopoverEmits, PopoverProps, PopoverSlots } from '.'
 
@@ -16,47 +16,48 @@ defineOptions({ inheritAttrs: false })
 defineSlots<PopoverSlots>()
 
 const props = withDefaults(defineProps<PopoverProps>(), {
-  lado: 'abajo',
-  desplazamientoLado: 4,
-  alineacion: 'centro',
-  evitarColisiones: true,
+  side: 'bottom',
+  sideOffset: 4,
+  sideFlip: true,
+  align: 'center',
+  avoidCollisions: true,
 })
 defineEmits<PopoverEmits>()
 
 const attrs = useAttrs()
-const abierto = defineModel<boolean>('abierto')
+const open = defineModel<boolean>('open')
 
-const uiCalculado = computed(() => {
-  const { montajeForzado: montajeForzadoContenido, ...contenidoUI } = props.ui?.contenido ?? {}
+const calculatedUI = computed(() => {
+  const { forceMount: contentForceMount, ...contentUI } = props.ui?.content ?? {}
 
   return {
-    raiz: {
+    root: {
       ...attrs,
-      defaultOpen: props.abiertoPredeterminado,
+      defaultOpen: props.defaultOpen,
       modal: props.modal,
     },
-    activador: {
-      ...props.ui?.activador,
-      asChild: props.ui?.activador?.asChild ?? true,
+    trigger: {
+      ...props.ui?.trigger,
+      asChild: props.ui?.trigger?.asChild ?? true,
     },
-    contenido: {
-      ...contenidoUI,
-      align: ALINEACIONES[props.alineacion],
-      alignOffset: props.desplazamientoAlineacion,
-      alignFlip: props.invertirAlineacion,
-      avoidCollisions: props.evitarColisiones,
-      collisionPadding: mapearRellenoColision(props.rellenoColision),
-      forceMount: props.montajeForzado ?? montajeForzadoContenido,
-      hideWhenDetached: props.ocultarAlSeparar,
-      positionStrategy: props.estrategiaPosicion
-        ? ESTRATEGIAS_POSICION[props.estrategiaPosicion]
+    content: {
+      ...contentUI,
+      align: ALIGNS[props.align],
+      alignOffset: props.alignOffset,
+      alignFlip: props.alignFlip,
+      avoidCollisions: props.avoidCollisions,
+      collisionPadding: mapCollisionPadding(props.collisionPadding),
+      forceMount: props.forceMount ?? contentForceMount,
+      hideWhenDetached: props.hideWhenDetached,
+      positionStrategy: props.positionStrategy
+        ? POSITION_STRATEGIES[props.positionStrategy]
         : undefined,
-      side: LADOS[props.lado],
-      sideFlip: props.invertirLado,
-      sideOffset: props.desplazamientoLado,
-      sticky: props.adherencia ? ADHERENCIAS[props.adherencia] : undefined,
-      updatePositionStrategy: props.estrategiaActualizacionPosicion
-        ? ESTRATEGIAS_ACTUALIZACION_POSICION[props.estrategiaActualizacionPosicion]
+      side: SIDES[props.side],
+      sideFlip: props.sideFlip,
+      sideOffset: props.sideOffset,
+      sticky: props.sticky ? STICKY_VALUES[props.sticky] : undefined,
+      updatePositionStrategy: props.updatePositionStrategy
+        ? UPDATE_POSITION_STRATEGIES[props.updatePositionStrategy]
         : undefined,
     },
   }
@@ -64,13 +65,13 @@ const uiCalculado = computed(() => {
 </script>
 
 <template>
-  <PopoverBase v-slot="slotProps" v-model:open="abierto" v-bind="uiCalculado.raiz">
-    <PopoverTrigger v-bind="uiCalculado.activador">
-      <slot :abierto="slotProps.open" :cerrar="slotProps.close" />
+  <PopoverBase v-slot="slotProps" v-model:open="open" v-bind="calculatedUI.root">
+    <PopoverTrigger v-bind="calculatedUI.trigger">
+      <slot :open="slotProps.open" :close="slotProps.close" />
     </PopoverTrigger>
 
-    <PopoverContent v-if="$slots.contenido" v-bind="uiCalculado.contenido">
-      <slot name="contenido" :abierto="slotProps.open" :cerrar="slotProps.close" />
+    <PopoverContent v-if="$slots.content" v-bind="calculatedUI.content">
+      <slot name="content" :open="slotProps.open" :close="slotProps.close" />
     </PopoverContent>
   </PopoverBase>
 </template>

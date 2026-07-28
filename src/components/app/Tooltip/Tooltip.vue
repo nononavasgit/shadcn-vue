@@ -9,12 +9,12 @@ import {
 } from '@/components/ui/Tooltip'
 import { cn } from '@/lib/utils'
 import {
-  mapearRellenoColision,
-  ADHERENCIAS,
-  ALINEACIONES,
-  ESTRATEGIAS_ACTUALIZACION_POSICION,
-  ESTRATEGIAS_POSICION,
-  LADOS,
+  ALIGNS,
+  mapCollisionPadding,
+  POSITION_STRATEGIES,
+  SIDES,
+  STICKY_VALUES,
+  UPDATE_POSITION_STRATEGIES,
 } from '.'
 import type { TooltipEmits, TooltipProps, TooltipSlots } from '.'
 
@@ -23,82 +23,83 @@ defineOptions({ inheritAttrs: false })
 defineSlots<TooltipSlots>()
 
 const props = withDefaults(defineProps<TooltipProps>(), {
-  retrasoApertura: 0,
-  lado: 'arriba',
-  desplazamientoLado: 2,
-  alineacion: 'centro',
+  delayDuration: 0,
+  side: 'top',
+  sideOffset: 2,
+  align: 'center',
+  avoidCollisions: true,
 })
 defineEmits<TooltipEmits>()
 
 const attrs = useAttrs()
-const abierto = defineModel<boolean>('abierto')
+const open = defineModel<boolean>('open')
 
-const uiCalculado = computed(() => {
-  const { montajeForzado: montajeForzadoContenido, ...contenidoUI } = props.ui?.contenido ?? {}
-  const flechaUI = props.ui?.flecha ?? {}
+const calculatedUI = computed(() => {
+  const { forceMount: contentForceMount, ...contentUI } = props.ui?.content ?? {}
+  const arrowUI = props.ui?.arrow ?? {}
 
   return {
-    proveedor: {
-      delayDuration: props.retrasoApertura,
-      disableClosingTrigger: props.deshabilitarCierreActivador,
-      disableHoverableContent: props.deshabilitarContenidoInteractivo,
-      disabled: props.deshabilitado,
-      ignoreNonKeyboardFocus: props.ignorarFocoNoTeclado,
-      skipDelayDuration: props.retrasoEntreTooltips,
+    provider: {
+      delayDuration: props.delayDuration,
+      disableClosingTrigger: props.disableClosingTrigger,
+      disableHoverableContent: props.disableHoverableContent,
+      disabled: props.disabled,
+      ignoreNonKeyboardFocus: props.ignoreNonKeyboardFocus,
+      skipDelayDuration: props.skipDelayDuration,
     },
-    raiz: {
+    root: {
       ...attrs,
-      defaultOpen: props.abiertoPredeterminado,
-      disableClosingTrigger: props.deshabilitarCierreActivador,
-      disableHoverableContent: props.deshabilitarContenidoInteractivo,
-      disabled: props.deshabilitado,
-      ignoreNonKeyboardFocus: props.ignorarFocoNoTeclado,
+      defaultOpen: props.defaultOpen,
+      disableClosingTrigger: props.disableClosingTrigger,
+      disableHoverableContent: props.disableHoverableContent,
+      disabled: props.disabled,
+      ignoreNonKeyboardFocus: props.ignoreNonKeyboardFocus,
     },
-    activador: {
-      ...props.ui?.activador,
-      asChild: props.ui?.activador?.asChild ?? true,
+    trigger: {
+      ...props.ui?.trigger,
+      asChild: props.ui?.trigger?.asChild ?? true,
     },
-    contenido: {
-      ...contenidoUI,
-      align: ALINEACIONES[props.alineacion],
-      alignOffset: props.desplazamientoAlineacion,
-      arrowPadding: props.rellenoFlecha,
-      avoidCollisions: props.evitarColisiones,
-      class: cn('border border-zinc-200 bg-white text-zinc-950 shadow-md', contenidoUI.class),
-      collisionPadding: mapearRellenoColision(props.rellenoColision),
-      forceMount: props.montajeForzado ?? montajeForzadoContenido,
-      hideWhenDetached: props.ocultarAlSeparar,
-      positionStrategy: props.estrategiaPosicion
-        ? ESTRATEGIAS_POSICION[props.estrategiaPosicion]
+    content: {
+      ...contentUI,
+      align: ALIGNS[props.align],
+      alignOffset: props.alignOffset,
+      arrowPadding: props.arrowPadding,
+      avoidCollisions: props.avoidCollisions,
+      class: cn('border border-zinc-200 bg-white text-zinc-950 shadow-md', contentUI.class),
+      collisionPadding: mapCollisionPadding(props.collisionPadding),
+      forceMount: props.forceMount ?? contentForceMount,
+      hideWhenDetached: props.hideWhenDetached,
+      positionStrategy: props.positionStrategy
+        ? POSITION_STRATEGIES[props.positionStrategy]
         : undefined,
-      side: LADOS[props.lado],
-      sideOffset: props.desplazamientoLado,
-      sticky: props.adherencia ? ADHERENCIAS[props.adherencia] : undefined,
-      updatePositionStrategy: props.estrategiaActualizacionPosicion
-        ? ESTRATEGIAS_ACTUALIZACION_POSICION[props.estrategiaActualizacionPosicion]
+      side: SIDES[props.side],
+      sideOffset: props.sideOffset,
+      sticky: props.sticky ? STICKY_VALUES[props.sticky] : undefined,
+      updatePositionStrategy: props.updatePositionStrategy
+        ? UPDATE_POSITION_STRATEGIES[props.updatePositionStrategy]
         : undefined,
     },
-    flecha: {
-      ...flechaUI,
-      width: props.anchoFlecha,
-      height: props.altoFlecha,
-      class: cn('', flechaUI.class),
+    arrow: {
+      ...arrowUI,
+      width: props.arrowWidth,
+      height: props.arrowHeight,
+      class: cn('', arrowUI.class),
     },
   }
 })
 </script>
 
 <template>
-  <TooltipProvider v-bind="uiCalculado.proveedor">
-    <TooltipBase v-slot="slotProps" v-model:open="abierto" v-bind="uiCalculado.raiz">
-      <TooltipTrigger v-bind="uiCalculado.activador">
-        <slot :abierto="slotProps.open" />
+  <TooltipProvider v-bind="calculatedUI.provider">
+    <TooltipBase v-slot="slotProps" v-model:open="open" v-bind="calculatedUI.root">
+      <TooltipTrigger v-bind="calculatedUI.trigger">
+        <slot :open="slotProps.open" />
       </TooltipTrigger>
 
-      <TooltipContent v-bind="uiCalculado.contenido">
-        <slot name="contenido" :abierto="slotProps.open">{{ props.contenido }}</slot>
+      <TooltipContent v-bind="calculatedUI.content">
+        <slot name="content" :open="slotProps.open">{{ props.content }}</slot>
 
-        <TooltipArrow v-bind="uiCalculado.flecha" />
+        <TooltipArrow v-bind="calculatedUI.arrow" />
       </TooltipContent>
     </TooltipBase>
   </TooltipProvider>

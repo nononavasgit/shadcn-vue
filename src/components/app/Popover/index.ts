@@ -2,39 +2,39 @@ import type { Component, HTMLAttributes } from 'vue'
 
 export { default as Popover } from './Popover.vue'
 
-export const LADOS = {
-  arriba: 'top',
-  derecha: 'right',
-  abajo: 'bottom',
-  izquierda: 'left',
+export const SIDES = {
+  top: 'top',
+  right: 'right',
+  bottom: 'bottom',
+  left: 'left',
 } as const
 
-export const ALINEACIONES = {
-  inicio: 'start',
-  centro: 'center',
-  final: 'end',
+export const ALIGNS = {
+  start: 'start',
+  center: 'center',
+  end: 'end',
 } as const
 
-export const ADHERENCIAS = {
-  parcial: 'partial',
-  siempre: 'always',
+export const STICKY_VALUES = {
+  partial: 'partial',
+  always: 'always',
 } as const
 
-export const ESTRATEGIAS_POSICION = {
-  absoluta: 'absolute',
-  fija: 'fixed',
+export const POSITION_STRATEGIES = {
+  absolute: 'absolute',
+  fixed: 'fixed',
 } as const
 
-export const ESTRATEGIAS_ACTUALIZACION_POSICION = {
-  optimizada: 'optimized',
-  siempre: 'always',
+export const UPDATE_POSITION_STRATEGIES = {
+  optimized: 'optimized',
+  always: 'always',
 } as const
 
-export type PopoverSide = keyof typeof LADOS
-export type PopoverAlign = keyof typeof ALINEACIONES
-export type PopoverSticky = keyof typeof ADHERENCIAS
-export type PopoverPositionStrategy = keyof typeof ESTRATEGIAS_POSICION
-export type PopoverUpdatePositionStrategy = keyof typeof ESTRATEGIAS_ACTUALIZACION_POSICION
+export type PopoverSide = keyof typeof SIDES
+export type PopoverAlign = keyof typeof ALIGNS
+export type PopoverSticky = keyof typeof STICKY_VALUES
+export type PopoverPositionStrategy = keyof typeof POSITION_STRATEGIES
+export type PopoverUpdatePositionStrategy = keyof typeof UPDATE_POSITION_STRATEGIES
 
 export type PopoverNodeUI = Omit<HTMLAttributes, 'dir'> & {
   as?: string | Component
@@ -43,54 +43,54 @@ export type PopoverNodeUI = Omit<HTMLAttributes, 'dir'> & {
 }
 
 export type PopoverContentUI = PopoverNodeUI & {
-  montajeForzado?: boolean
+  forceMount?: boolean
 }
 
 export interface PopoverUI {
-  activador?: PopoverNodeUI
-  contenido?: PopoverContentUI
+  trigger?: PopoverNodeUI
+  content?: PopoverContentUI
 }
 
 export interface PopoverProps {
-  abierto?: boolean
-  abiertoPredeterminado?: boolean
+  open?: boolean
+  defaultOpen?: boolean
   modal?: boolean
-  lado?: PopoverSide
-  desplazamientoLado?: number
-  invertirLado?: boolean
-  alineacion?: PopoverAlign
-  desplazamientoAlineacion?: number
-  invertirAlineacion?: boolean
-  evitarColisiones?: boolean
-  rellenoColision?: number | Partial<Record<PopoverSide, number>>
-  adherencia?: PopoverSticky
-  ocultarAlSeparar?: boolean
-  estrategiaPosicion?: PopoverPositionStrategy
-  estrategiaActualizacionPosicion?: PopoverUpdatePositionStrategy
-  montajeForzado?: boolean
+  side?: PopoverSide
+  sideOffset?: number
+  sideFlip?: boolean
+  align?: PopoverAlign
+  alignOffset?: number
+  alignFlip?: boolean
+  avoidCollisions?: boolean
+  collisionPadding?: number | Partial<Record<PopoverSide, number>>
+  sticky?: PopoverSticky
+  hideWhenDetached?: boolean
+  positionStrategy?: PopoverPositionStrategy
+  updatePositionStrategy?: PopoverUpdatePositionStrategy
+  forceMount?: boolean
   ui?: PopoverUI
 }
 
 export interface PopoverEmits {
-  'update:abierto': [valor: boolean]
+  'update:open': [value: boolean]
 }
 
 export interface PopoverSlotProps {
-  abierto: boolean
-  cerrar: () => void
+  open: boolean
+  close: () => void
 }
 
 export interface PopoverSlots {
   default?(props: PopoverSlotProps): unknown
-  contenido?(props: PopoverSlotProps): unknown
+  content?(props: PopoverSlotProps): unknown
 }
 
-export function mapearRellenoColision(
-  relleno: number | Partial<Record<PopoverSide, number>> | undefined,
+export function mapCollisionPadding(
+  padding: number | Partial<Record<PopoverSide, number>> | undefined,
 ) {
-  if (relleno === undefined || typeof relleno === 'number') return relleno
+  if (padding === undefined || typeof padding === 'number') return padding
 
   return Object.fromEntries(
-    Object.entries(relleno).map(([lado, valor]) => [LADOS[lado as PopoverSide], valor]),
-  ) as Partial<Record<(typeof LADOS)[PopoverSide], number>>
+    Object.entries(padding).map(([side, value]) => [SIDES[side as PopoverSide], value]),
+  ) as Partial<Record<(typeof SIDES)[PopoverSide], number>>
 }

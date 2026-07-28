@@ -2,39 +2,39 @@ import type { Component, HTMLAttributes } from 'vue'
 
 export { default as Tooltip } from './Tooltip.vue'
 
-export const LADOS = {
-  arriba: 'top',
-  derecha: 'right',
-  abajo: 'bottom',
-  izquierda: 'left',
+export const SIDES = {
+  top: 'top',
+  right: 'right',
+  bottom: 'bottom',
+  left: 'left',
 } as const
 
-export const ALINEACIONES = {
-  inicio: 'start',
-  centro: 'center',
-  final: 'end',
+export const ALIGNS = {
+  start: 'start',
+  center: 'center',
+  end: 'end',
 } as const
 
-export const ADHERENCIAS = {
-  parcial: 'partial',
-  siempre: 'always',
+export const STICKY_VALUES = {
+  partial: 'partial',
+  always: 'always',
 } as const
 
-export const ESTRATEGIAS_POSICION = {
-  absoluta: 'absolute',
-  fija: 'fixed',
+export const POSITION_STRATEGIES = {
+  absolute: 'absolute',
+  fixed: 'fixed',
 } as const
 
-export const ESTRATEGIAS_ACTUALIZACION_POSICION = {
-  optimizada: 'optimized',
-  siempre: 'always',
+export const UPDATE_POSITION_STRATEGIES = {
+  optimized: 'optimized',
+  always: 'always',
 } as const
 
-export type TooltipSide = keyof typeof LADOS
-export type TooltipAlign = keyof typeof ALINEACIONES
-export type TooltipSticky = keyof typeof ADHERENCIAS
-export type TooltipPositionStrategy = keyof typeof ESTRATEGIAS_POSICION
-export type TooltipUpdatePositionStrategy = keyof typeof ESTRATEGIAS_ACTUALIZACION_POSICION
+export type TooltipSide = keyof typeof SIDES
+export type TooltipAlign = keyof typeof ALIGNS
+export type TooltipSticky = keyof typeof STICKY_VALUES
+export type TooltipPositionStrategy = keyof typeof POSITION_STRATEGIES
+export type TooltipUpdatePositionStrategy = keyof typeof UPDATE_POSITION_STRATEGIES
 
 export type TooltipNodeUI = Omit<HTMLAttributes, 'dir'> & {
   as?: string | Component
@@ -43,63 +43,63 @@ export type TooltipNodeUI = Omit<HTMLAttributes, 'dir'> & {
 }
 
 export type TooltipContentUI = TooltipNodeUI & {
-  montajeForzado?: boolean
+  forceMount?: boolean
 }
 
 export type TooltipArrowUI = TooltipNodeUI
 
 export interface TooltipUI {
-  activador?: TooltipNodeUI
-  contenido?: TooltipContentUI
-  flecha?: TooltipArrowUI
+  trigger?: TooltipNodeUI
+  content?: TooltipContentUI
+  arrow?: TooltipArrowUI
 }
 
 export interface TooltipProps {
-  abierto?: boolean
-  abiertoPredeterminado?: boolean
-  contenido?: string
-  retrasoApertura?: number
-  retrasoEntreTooltips?: number
-  deshabilitarContenidoInteractivo?: boolean
-  deshabilitarCierreActivador?: boolean
-  deshabilitado?: boolean
-  ignorarFocoNoTeclado?: boolean
-  lado?: TooltipSide
-  desplazamientoLado?: number
-  alineacion?: TooltipAlign
-  desplazamientoAlineacion?: number
-  evitarColisiones?: boolean
-  rellenoColision?: number | Partial<Record<TooltipSide, number>>
-  rellenoFlecha?: number
-  anchoFlecha?: number
-  altoFlecha?: number
-  adherencia?: TooltipSticky
-  ocultarAlSeparar?: boolean
-  estrategiaPosicion?: TooltipPositionStrategy
-  estrategiaActualizacionPosicion?: TooltipUpdatePositionStrategy
-  montajeForzado?: boolean
+  open?: boolean
+  defaultOpen?: boolean
+  content?: string
+  delayDuration?: number
+  skipDelayDuration?: number
+  disableHoverableContent?: boolean
+  disableClosingTrigger?: boolean
+  disabled?: boolean
+  ignoreNonKeyboardFocus?: boolean
+  side?: TooltipSide
+  sideOffset?: number
+  align?: TooltipAlign
+  alignOffset?: number
+  avoidCollisions?: boolean
+  collisionPadding?: number | Partial<Record<TooltipSide, number>>
+  arrowPadding?: number
+  arrowWidth?: number
+  arrowHeight?: number
+  sticky?: TooltipSticky
+  hideWhenDetached?: boolean
+  positionStrategy?: TooltipPositionStrategy
+  updatePositionStrategy?: TooltipUpdatePositionStrategy
+  forceMount?: boolean
   ui?: TooltipUI
 }
 
 export interface TooltipEmits {
-  'update:abierto': [valor: boolean]
+  'update:open': [value: boolean]
 }
 
 export interface TooltipSlotProps {
-  abierto: boolean
+  open: boolean
 }
 
 export interface TooltipSlots {
   default?(props: TooltipSlotProps): unknown
-  contenido?(props: TooltipSlotProps): unknown
+  content?(props: TooltipSlotProps): unknown
 }
 
-export function mapearRellenoColision(
-  relleno: number | Partial<Record<TooltipSide, number>> | undefined,
+export function mapCollisionPadding(
+  padding: number | Partial<Record<TooltipSide, number>> | undefined,
 ) {
-  if (relleno === undefined || typeof relleno === 'number') return relleno
+  if (padding === undefined || typeof padding === 'number') return padding
 
   return Object.fromEntries(
-    Object.entries(relleno).map(([lado, valor]) => [LADOS[lado as TooltipSide], valor]),
-  ) as Partial<Record<(typeof LADOS)[TooltipSide], number>>
+    Object.entries(padding).map(([side, value]) => [SIDES[side as TooltipSide], value]),
+  ) as Partial<Record<(typeof SIDES)[TooltipSide], number>>
 }

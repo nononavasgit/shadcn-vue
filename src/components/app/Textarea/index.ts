@@ -1,10 +1,12 @@
 export { default as Textarea } from './Textarea.vue'
 
+export type TextareaValue = string | number
+
 export interface TextareaProps {
-  modelValue?: string | number
-  valorPredeterminado?: string | number
+  modelValue?: TextareaValue
+  defaultValue?: TextareaValue
 }
 
 export interface TextareaEmits {
-  'update:modelValue': [valor: string | number]
+  'update:modelValue': [value: TextareaValue]
 }

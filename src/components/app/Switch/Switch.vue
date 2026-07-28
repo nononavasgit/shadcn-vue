@@ -2,30 +2,26 @@
 import { computed, useAttrs } from 'vue'
 import { Switch as SwitchBase } from '@/components/ui/Switch'
 import { cn } from '@/lib/utils'
-import type { SwitchEmits, SwitchProps, SwitchSlots } from '.'
+import type { SwitchEmits, SwitchProps, SwitchSlots, SwitchValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
+const props = defineProps<SwitchProps>()
+defineEmits<SwitchEmits>()
 defineSlots<SwitchSlots>()
 
-const props = withDefaults(defineProps<SwitchProps>(), {
-  valorVerdadero: true,
-  valorFalso: false,
-})
-
-defineEmits<SwitchEmits>()
-
 const attrs = useAttrs()
-const valorModelo = defineModel<boolean | null>()
-
-const uiCalculado = computed(() => ({
-  raiz: {
+const modelValue = defineModel<SwitchValue>()
+const calculatedUI = computed(() => ({
+  root: {
     ...attrs,
     as: props.as,
     asChild: props.asChild,
-    defaultValue: props.valorPredeterminado,
-    trueValue: props.valorVerdadero,
-    falseValue: props.valorFalso,
+    defaultValue: props.defaultValue,
+    disabled: props.disabled,
+    id: props.id,
+    name: props.name,
+    value: props.value,
     required: props.required,
     class: cn('focus-visible:border-primary focus-visible:ring-primary/50', attrs.class),
   },
@@ -33,9 +29,9 @@ const uiCalculado = computed(() => ({
 </script>
 
 <template>
-  <SwitchBase v-model="valorModelo" v-bind="uiCalculado.raiz">
-    <template v-if="$slots.indicador" #thumb="slotProps">
-      <slot name="indicador" :activado="slotProps.checked" :valor="slotProps.modelValue" />
+  <SwitchBase v-model="modelValue" v-bind="calculatedUI.root">
+    <template v-if="$slots.thumb" #thumb="slotProps">
+      <slot name="thumb" :checked="slotProps.checked" :value="slotProps.modelValue" />
     </template>
   </SwitchBase>
 </template>

@@ -2,7 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { Textarea as TextareaBase } from '@/components/ui/Textarea'
 import { cn } from '@/lib/utils'
-import type { TextareaEmits, TextareaProps } from '.'
+import type { TextareaEmits, TextareaProps, TextareaValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -10,17 +10,16 @@ const props = defineProps<TextareaProps>()
 defineEmits<TextareaEmits>()
 
 const attrs = useAttrs()
-const valorModelo = defineModel<string | number>()
-
-const uiCalculado = computed(() => ({
-  raiz: {
+const modelValue = defineModel<TextareaValue>()
+const calculatedUI = computed(() => ({
+  root: {
     ...attrs,
-    defaultValue: props.valorPredeterminado,
+    defaultValue: props.defaultValue,
     class: cn('focus-visible:border-primary focus-visible:ring-primary/50', attrs.class),
   },
 }))
 </script>
 
 <template>
-  <TextareaBase v-model="valorModelo" v-bind="uiCalculado.raiz" />
+  <TextareaBase v-model="modelValue" v-bind="calculatedUI.root" />
 </template>

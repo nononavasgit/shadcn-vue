@@ -2,27 +2,29 @@ import type { Component } from 'vue'
 
 export { default as Switch } from './Switch.vue'
 
-type modelValueType = boolean | null | number | string
+export type SwitchValue = boolean | null
 
 export interface SwitchProps {
-  modelValue?: modelValueType
-  valorPredeterminado?: boolean
-  valorVerdadero?: modelValueType
-  valorFalso?: modelValueType
+  modelValue?: SwitchValue
+  defaultValue?: boolean
+  disabled?: boolean
+  id?: string
+  name?: string
+  value?: string
   as?: string | Component
   asChild?: boolean
   required?: boolean
 }
 
 export interface SwitchEmits {
-  'update:modelValue': [valor: boolean]
+  'update:modelValue': [value: boolean]
 }
 
 export interface SwitchSlotProps {
-  valor: modelValueType
-  activado: boolean
+  value: SwitchValue
+  checked: boolean
 }
 
 export interface SwitchSlots {
-  indicador?(props: SwitchSlotProps): unknown
+  thumb?(props: SwitchSlotProps): unknown
 }

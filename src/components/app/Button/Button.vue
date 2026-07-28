@@ -1,16 +1,10 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { button as ButtonBase } from '@/components/ui/Button'
-import { Icon } from '@/components/app/Icon'
+import { Icon, type IconProps } from '@/components/app/Icon'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
-import {
-  buttonVariants,
-  type ButtonEmits,
-  type ButtonIconProps,
-  type ButtonProps,
-  type ButtonSlots,
-} from '.'
+import { buttonVariants, type ButtonEmits, type ButtonProps, type ButtonSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -34,7 +28,7 @@ defineSlots<ButtonSlots>()
 
 const attrs = useAttrs()
 
-function normalizeIcon(icon: ButtonIconProps | string | undefined) {
+function normalizeIcon(icon: IconProps | string | undefined) {
   return typeof icon === 'string' ? { name: icon } : icon
 }
 const leadingIcon = computed(() => normalizeIcon(props.icon))

@@ -1,25 +1,29 @@
 import type { HTMLAttributes, ImgHTMLAttributes, SVGAttributes } from 'vue'
-import type { IconoNombre, IconoProps } from '@/components/app/Icon'
+import type { IconName, IconProps } from '@/components/app/Icon'
 
 export { default as Avatar } from './Avatar.vue'
 
-export type AvatarEstadoCarga = boolean
+export type AvatarLoadingState = boolean
 
 export interface AvatarUI {
-  raiz?: HTMLAttributes
-  imagen?: ImgHTMLAttributes
+  root?: HTMLAttributes
+  image?: ImgHTMLAttributes
   fallback?: HTMLAttributes
-  icono?: IconoProps & SVGAttributes
+  icon?: IconProps & SVGAttributes
 }
 
 export interface AvatarProps {
   src?: string
   alt?: string
-  icono?: IconoNombre | (IconoProps & SVGAttributes)
-  titulo?: string
+  icon?: IconName | (IconProps & SVGAttributes)
+  title?: string
   ui?: AvatarUI
 }
 
 export interface AvatarEmits {
-  cambioEstadoCarga: [valor: AvatarEstadoCarga]
+  loadingStateChange: [value: AvatarLoadingState]
+}
+
+export interface AvatarSlots {
+  fallback?(): unknown
 }

@@ -5,31 +5,25 @@ import type { AvatarImageEmits } from 'reka-ui'
 import { Avatar as AvatarBase, AvatarFallback, AvatarImage } from '@/components/ui/Avatar'
 import { Icon } from '@/components/app/Icon'
 import { cn } from '@/lib/utils'
-import type { AvatarEmits, AvatarEstadoCarga, AvatarProps } from '.'
+import type { AvatarEmits, AvatarLoadingState, AvatarProps, AvatarSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-defineSlots<{
-  alternativo?(): unknown
-}>()
-
 const props = defineProps<AvatarProps>()
-const emits = defineEmits<AvatarEmits>()
+const emit = defineEmits<AvatarEmits>()
+defineSlots<AvatarSlots>()
+
 const attrs = useAttrs() as ImgHTMLAttributes
-
-const icono = computed(() =>
-  typeof props.icono === 'string' ? { nombre: props.icono } : props.icono,
-)
-
-const uiCalculado = computed(() => ({
-  raiz: props.ui?.raiz,
-  imagen: props.src
+const icon = computed(() => (typeof props.icon === 'string' ? { name: props.icon } : props.icon))
+const calculatedUI = computed(() => ({
+  root: props.ui?.root,
+  image: props.src
     ? {
-        ...props.ui?.imagen,
+        ...props.ui?.image,
         ...attrs,
         src: props.src,
         alt: props.alt,
-        class: cn(props.ui?.imagen?.class, attrs.class),
+        class: cn(props.ui?.image?.class, attrs.class),
       }
     : undefined,
   fallback: {
@@ -37,42 +31,43 @@ const uiCalculado = computed(() => ({
     ...attrs,
     class: cn(props.ui?.fallback?.class, attrs.class),
   },
-  icono: {
-    ...props.ui?.icono,
-    ...icono.value,
-    class: cn(props.ui?.icono?.class, icono.value?.class),
+  icon: {
+    ...props.ui?.icon,
+    ...icon.value,
+    class: cn(props.ui?.icon?.class, icon.value?.class),
   },
 }))
 
-type EstadoCargaOriginal = AvatarImageEmits['loadingStatusChange'][0]
+type OriginalLoadingState = AvatarImageEmits['loadingStatusChange'][0]
 
-const mapaEstadoCarga: Record<EstadoCargaOriginal, AvatarEstadoCarga> = {
+const loadingStates: Record<OriginalLoadingState, AvatarLoadingState> = {
   idle: false,
   loading: true,
   loaded: false,
   error: false,
 }
 
-const handleCambioEstadoCarga = (estado: EstadoCargaOriginal) => {
-  emits('cambioEstadoCarga', mapaEstadoCarga[estado])
+function handleLoadingStateChange(state: OriginalLoadingState) {
+  emit('loadingStateChange', loadingStates[state])
 }
 </script>
 
 <template>
-  <AvatarBase v-bind="uiCalculado.raiz">
+  <AvatarBase v-bind="calculatedUI.root">
     <AvatarImage
-      v-if="uiCalculado.imagen"
-      v-bind="uiCalculado.imagen"
-      @loading-status-change="handleCambioEstadoCarga"
+      v-if="calculatedUI.image"
+      v-bind="calculatedUI.image"
+      @loading-status-change="handleLoadingStateChange"
     />
 
-    <AvatarFallback v-bind="uiCalculado.fallback">
-      <slot name="alternativo">
+    <AvatarFallback v-bind="calculatedUI.fallback">
+      <slot name="fallback">
         <Icon
-          v-if="uiCalculado.icono?.nombre"
-          v-bind="{ ...uiCalculado.icono, nombre: uiCalculado.icono.nombre }"
+          v-if="calculatedUI.icon.name"
+          v-bind="calculatedUI.icon"
+          :name="calculatedUI.icon.name"
         />
-        <template v-else>{{ props.titulo }}</template>
+        <template v-else>{{ props.title }}</template>
       </slot>
     </AvatarFallback>
   </AvatarBase>

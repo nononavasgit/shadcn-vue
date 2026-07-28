@@ -221,16 +221,10 @@ export const buttonVariants = cva('', {
 
 export type ButtonVariants = VariantProps<typeof buttonVariants>
 
-export interface ButtonIconProps extends SVGAttributes {
-  name?: IconName
-  size?: IconProps['size']
-  color?: string
-}
-
 export interface ButtonUI {
-  icon?: ButtonIconProps
-  trailingIcon?: ButtonIconProps
-  loadingIcon?: ButtonIconProps
+  icon?: IconProps & SVGAttributes
+  trailingIcon?: IconProps & SVGAttributes
+  loadingIcon?: IconProps & SVGAttributes
 }
 
 export interface ButtonProps {
@@ -244,8 +238,8 @@ export interface ButtonProps {
   square?: ButtonVariants['square'] | boolean
   loading?: boolean
   color?: string
-  icon?: IconName | (ButtonIconProps & { name: IconName })
-  trailingIcon?: IconName | (ButtonIconProps & { name: IconName })
+  icon?: IconName | (IconProps & SVGAttributes)
+  trailingIcon?: IconName | (IconProps & SVGAttributes)
   ui?: ButtonUI
 }
 

@@ -1,160 +1,166 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Button } from '@/components/app/Button'
-import { Icon, type IconName } from '@/components/app/Icon'
+import { Avatar } from '@/components/app/Avatar'
+import { Badge } from '@/components/app/Badge'
+import { Icon } from '@/components/app/Icon'
 
-const iconNames: IconName[] = [
-  'warning',
-  'check',
-  'chevronDown',
-  'chevronUp',
-  'chevronRight',
-  'chevronLeft',
-  'error',
-  'success',
-  'info',
-  'spinner',
-  'save',
-  'search',
-  'trash2',
-  'x',
-]
+const avatarLoading = ref(false)
+const avatarEvents = ref(0)
 
-const loading = ref(false)
-const clicks = ref(0)
-
-function simulateLoading() {
-  loading.value = true
-  window.setTimeout(() => {
-    loading.value = false
-  }, 1500)
+function handleAvatarLoading(value: boolean) {
+  avatarLoading.value = value
+  avatarEvents.value++
 }
 </script>
 
 <template>
   <main class="mx-auto max-w-5xl space-y-12 p-8">
     <header class="space-y-2">
-      <h1 class="text-3xl font-bold">Icon & Button</h1>
+      <h1 class="text-3xl font-bold">Avatar & Badge</h1>
       <p class="text-muted-foreground">Ejemplos de los componentes con su nueva API en inglés.</p>
     </header>
 
     <section class="space-y-4">
       <div>
-        <h2 class="text-xl font-semibold">Iconos disponibles</h2>
-        <p class="text-sm text-muted-foreground">Todos los valores aceptados por IconName.</p>
+        <h2 class="text-xl font-semibold">Avatar básico</h2>
+        <p class="text-sm text-muted-foreground">Imagen, texto alternativo e icono.</p>
       </div>
 
-      <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-7">
-        <div
-          v-for="name in iconNames"
-          :key="name"
-          class="flex flex-col items-center gap-2 rounded-lg border p-4"
-        >
-          <Icon :name="name" />
-          <code class="text-xs text-muted-foreground">{{ name }}</code>
-        </div>
+      <div class="flex flex-wrap items-center gap-4">
+        <Avatar src="https://github.com/shadcn.png" alt="Avatar de shadcn" title="SC" />
+        <Avatar title="NN" />
+        <Avatar icon="info" />
+        <Avatar icon="success" :ui="{ icon: { name: 'success', color: '#16a34a' } }" />
+        <Avatar src="/image-that-does-not-exist.png" alt="Imagen no disponible" title="ER" />
       </div>
     </section>
 
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">Tamaños y colores de Icon</h2>
+      <div>
+        <h2 class="text-xl font-semibold">Tamaños de Avatar</h2>
+        <p class="text-sm text-muted-foreground">El tamaño se personaliza desde ui.root.</p>
+      </div>
 
-      <div class="flex flex-wrap items-center gap-6 rounded-lg border p-5">
-        <div class="flex items-center gap-2">
-          <Icon name="info" size="sm" />
-          <span class="text-sm">Small</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <Icon name="info" size="md" />
-          <span class="text-sm">Medium</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <Icon name="info" size="lg" />
-          <span class="text-sm">Large</span>
-        </div>
-        <Icon name="success" size="lg" color="#16a34a" />
-        <Icon name="warning" size="lg" color="#f59e0b" />
-        <Icon name="error" size="lg" color="#dc2626" />
+      <div class="flex flex-wrap items-end gap-4">
+        <Avatar
+          title="XS"
+          :ui="{
+            root: { class: 'size-7' },
+            fallback: { class: 'text-xs' },
+          }"
+        />
+        <Avatar
+          title="SM"
+          :ui="{
+            root: { class: 'size-9' },
+            fallback: { class: 'text-sm' },
+          }"
+        />
+        <Avatar
+          src="https://github.com/shadcn.png"
+          alt="Avatar mediano"
+          title="MD"
+          :ui="{ root: { class: 'size-12' } }"
+        />
+        <Avatar
+          icon="info"
+          :ui="{
+            root: { class: 'size-16' },
+            icon: { name: 'info', size: 'lg', color: '#7c3aed' },
+          }"
+        />
       </div>
     </section>
 
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">Variantes de Button</h2>
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <h2 class="text-xl font-semibold">Carga y UI personalizada</h2>
+          <p class="text-sm text-muted-foreground">
+            Eventos recibidos: {{ avatarEvents }} · {{ avatarLoading ? 'Cargando' : 'En reposo' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4">
+        <Avatar
+          src="https://github.com/vuejs.png"
+          alt="Avatar de Vue"
+          title="VU"
+          :ui="{
+            root: { class: 'size-14 ring-2 ring-emerald-500 ring-offset-2' },
+            image: { class: 'object-cover' },
+          }"
+          @loading-state-change="handleAvatarLoading"
+        />
+
+        <Avatar :ui="{ root: { class: 'size-14 bg-violet-100' } }">
+          <template #fallback>
+            <span class="font-bold text-violet-700">Slot</span>
+          </template>
+        </Avatar>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold">Variantes de Badge</h2>
 
       <div class="flex flex-wrap gap-3">
-        <Button variant="solid">Solid</Button>
-        <Button variant="outline">Outline</Button>
-        <Button variant="plain">Plain</Button>
-        <Button variant="subtle">Subtle</Button>
-        <Button variant="soft">Soft</Button>
+        <Badge variant="solid">Solid</Badge>
+        <Badge variant="outline">Outline</Badge>
+        <Badge variant="plain">Plain</Badge>
+        <Badge variant="subtle">Subtle</Badge>
+        <Badge variant="soft">Soft</Badge>
       </div>
     </section>
 
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">Severidades</h2>
+      <h2 class="text-xl font-semibold">Severidades de Badge</h2>
 
-      <div class="grid gap-5">
+      <div class="grid gap-4">
         <div class="flex flex-wrap gap-3">
-          <Button severity="primary">Primary</Button>
-          <Button severity="secondary">Secondary</Button>
-          <Button severity="warning">Warning</Button>
-          <Button severity="success">Success</Button>
-          <Button severity="error">Error</Button>
+          <Badge severity="primary">Primary</Badge>
+          <Badge severity="secondary">Secondary</Badge>
+          <Badge severity="warning">Warning</Badge>
+          <Badge severity="success">Success</Badge>
+          <Badge severity="error">Error</Badge>
         </div>
 
         <div class="flex flex-wrap gap-3">
-          <Button variant="outline" severity="primary">Primary</Button>
-          <Button variant="outline" severity="secondary">Secondary</Button>
-          <Button variant="outline" severity="warning">Warning</Button>
-          <Button variant="outline" severity="success">Success</Button>
-          <Button variant="outline" severity="error">Error</Button>
+          <Badge variant="outline" severity="primary">Primary</Badge>
+          <Badge variant="outline" severity="secondary">Secondary</Badge>
+          <Badge variant="outline" severity="warning">Warning</Badge>
+          <Badge variant="outline" severity="success">Success</Badge>
+          <Badge variant="outline" severity="error">Error</Badge>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <Badge variant="soft" severity="primary">Primary</Badge>
+          <Badge variant="soft" severity="secondary">Secondary</Badge>
+          <Badge variant="soft" severity="warning">Warning</Badge>
+          <Badge variant="soft" severity="success">Success</Badge>
+          <Badge variant="soft" severity="error">Error</Badge>
         </div>
       </div>
     </section>
 
     <section class="space-y-4">
-      <h2 class="text-xl font-semibold">Tamaños y formas</h2>
+      <h2 class="text-xl font-semibold">Tamaños e iconos</h2>
 
       <div class="flex flex-wrap items-center gap-3">
-        <Button size="xs">Extra small</Button>
-        <Button size="sm">Small</Button>
-        <Button size="md">Medium</Button>
-        <Button size="lg">Large</Button>
-        <Button rounded icon="check">Rounded</Button>
-        <Button square size="sm" icon="search" aria-label="Buscar" />
-        <Button square size="md" icon="save" aria-label="Guardar" />
-        <Button square size="lg" severity="error" icon="trash2" aria-label="Eliminar" />
-      </div>
-    </section>
-
-    <section class="space-y-4">
-      <h2 class="text-xl font-semibold">Botones con iconos</h2>
-
-      <div class="flex flex-wrap gap-3">
-        <Button icon="save">Guardar</Button>
-        <Button trailing-icon="chevronRight">Continuar</Button>
-        <Button
-          variant="outline"
+        <Badge size="sm" icon="info">Small</Badge>
+        <Badge size="md" icon="check">Medium</Badge>
+        <Badge size="lg" icon="success">Large</Badge>
+        <Badge severity="warning" icon="warning">Pendiente</Badge>
+        <Badge severity="success" icon="check">Completado</Badge>
+        <Badge variant="outline" trailing-icon="x">Descartable</Badge>
+        <Badge
+          variant="soft"
           :icon="{ name: 'search', size: 'sm' }"
           :trailing-icon="{ name: 'chevronRight', size: 'sm' }"
         >
-          Buscar
-        </Button>
-        <Button severity="error" icon="trash2">Eliminar</Button>
-      </div>
-    </section>
-
-    <section class="space-y-4">
-      <h2 class="text-xl font-semibold">Carga e interacción</h2>
-
-      <div class="flex flex-wrap items-center gap-3">
-        <Button :loading="loading" icon="save" @click="simulateLoading">
-          {{ loading ? 'Guardando…' : 'Guardar cambios' }}
-        </Button>
-
-        <Button variant="outline" @click="clicks++"> Pulsaciones: {{ clicks }} </Button>
-
-        <Button loading variant="soft">Procesando</Button>
+          Resultado
+        </Badge>
       </div>
     </section>
 
@@ -162,29 +168,53 @@ function simulateLoading() {
       <h2 class="text-xl font-semibold">Color y slots personalizados</h2>
 
       <div class="flex flex-wrap gap-3">
-        <Button color="#7c3aed" icon="success">Color personalizado</Button>
-        <Button color="#0891b2" variant="outline">Outline personalizado</Button>
+        <Badge color="#7c3aed" icon="success">Violeta</Badge>
+        <Badge color="#0891b2" variant="outline">Cian</Badge>
+        <Badge color="#db2777" variant="soft">Rosa</Badge>
 
-        <Button variant="soft">
+        <Badge variant="outline">
           <template #leading>
-            <span
-              class="flex size-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground"
-            >
-              N
-            </span>
+            <span class="size-2 rounded-full bg-emerald-500" />
           </template>
-          Slot leading
+          En línea
+        </Badge>
+
+        <Badge severity="secondary">
+          <template #leading>
+            <Icon name="info" size="sm" />
+          </template>
+          Información
           <template #trailing>
             <Icon name="chevronRight" size="sm" />
           </template>
-        </Button>
+        </Badge>
+      </div>
+    </section>
 
-        <Button loading severity="warning">
-          <template #loading>
-            <Icon name="spinner" size="sm" class="animate-spin" />
-          </template>
-          Carga personalizada
-        </Button>
+    <section class="space-y-4">
+      <h2 class="text-xl font-semibold">Avatar con Badge</h2>
+
+      <div class="flex items-center gap-4 rounded-lg border p-4">
+        <div class="relative">
+          <Avatar
+            src="https://github.com/shadcn.png"
+            alt="Perfil de usuario"
+            title="SC"
+            :ui="{ root: { class: 'size-12' } }"
+          />
+          <span
+            class="absolute right-0 bottom-0 size-3 rounded-full border-2 border-background bg-emerald-500"
+            aria-label="En línea"
+          />
+        </div>
+
+        <div class="min-w-0">
+          <p class="font-medium">Usuario de ejemplo</p>
+          <div class="mt-1 flex gap-2">
+            <Badge size="sm" variant="soft" severity="success" icon="check"> Verificado </Badge>
+            <Badge size="sm" variant="outline">Administrador</Badge>
+          </div>
+        </div>
       </div>
     </section>
   </main>

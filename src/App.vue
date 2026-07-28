@@ -1,125 +1,118 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Button } from '@/components/app/Button'
-import { Dialog } from '@/components/app/Dialog'
+import { Accordeon, type AccordeonElemento } from '@/components/app/Accordion'
 
-const dialogoAbierto = ref(false)
-const personalizadoAbierto = ref(false)
+const elementos: AccordeonElemento[] = [
+  {
+    valor: 'cuenta',
+    titulo: '¿Cómo creo una cuenta?',
+    contenido: 'Pulsa en Registrarse y completa los datos solicitados.',
+  },
+  {
+    valor: 'contrasena',
+    titulo: '¿Cómo cambio mi contraseña?',
+    contenido: 'Puedes cambiarla desde la sección de seguridad de tu perfil.',
+  },
+  {
+    valor: 'soporte',
+    titulo: '¿Cómo contacto con soporte?',
+    contenido: 'Envía tu consulta desde el formulario de ayuda.',
+  },
+]
+
+const elementosConDeshabilitado: AccordeonElemento[] = [
+  ...elementos,
+  {
+    valor: 'proximamente',
+    titulo: 'Función disponible próximamente',
+    contenido: 'Este contenido todavía no está disponible.',
+    deshabilitado: true,
+  },
+]
+
+const valorUnico = ref<string>()
+const valoresMultiples = ref<string[]>(['cuenta'])
 </script>
 
 <template>
   <main class="mx-auto max-w-3xl space-y-10 p-8">
     <header class="space-y-2">
-      <h1 class="text-2xl font-bold">Ejemplos de Dialog</h1>
+      <h1 class="text-2xl font-bold">Ejemplos de Accordeon</h1>
       <p class="text-muted-foreground">Variantes de uso de la API en español.</p>
     </header>
 
     <section class="space-y-3">
       <h2 class="font-semibold">Básico</h2>
-
-      <Dialog
-        titulo="Información"
-        descripcion="Un diálogo sencillo con título, descripción y contenido."
-      >
-        <Button>Abrir diálogo</Button>
-
-        <template #contenido>
-          <p class="text-sm">Este es el contenido principal del diálogo.</p>
-        </template>
-      </Dialog>
+      <Accordeon :elementos="elementos" colapsable />
     </section>
 
     <section class="space-y-3">
       <div class="flex items-center justify-between">
         <h2 class="font-semibold">Estado controlado</h2>
         <span class="text-sm text-muted-foreground">
-          {{ dialogoAbierto ? 'Abierto' : 'Cerrado' }}
+          {{ valorUnico ?? 'Ninguno' }}
         </span>
       </div>
 
-      <Dialog
-        v-model:abierto="dialogoAbierto"
-        titulo="Diálogo controlado"
-        descripcion="Su estado se sincroniza mediante v-model:abierto."
+      <Accordeon v-model="valorUnico" :elementos="elementos" colapsable />
+
+      <button
+        class="rounded-md border px-3 py-2 text-sm"
+        type="button"
+        @click="valorUnico = 'soporte'"
       >
-        <Button>Abrir diálogo controlado</Button>
-
-        <template #contenido>
-          <p class="text-sm">También puedes cambiar su estado desde fuera.</p>
-        </template>
-      </Dialog>
-
-      <Button variante="delineado" @click="dialogoAbierto = !dialogoAbierto">
-        Cambiar desde fuera
-      </Button>
+        Abrir soporte
+      </button>
     </section>
 
     <section class="space-y-3">
-      <h2 class="font-semibold">Con icono y pie</h2>
+      <div class="flex items-center justify-between">
+        <h2 class="font-semibold">Selección múltiple</h2>
+        <span class="text-sm text-muted-foreground"> {{ valoresMultiples.length }} abiertos </span>
+      </div>
 
-      <Dialog
-        titulo="Confirmar operación"
-        descripcion="Comprueba los datos antes de continuar."
-        icono="alerta"
-      >
-        <Button gravedad="alerta">Mostrar confirmación</Button>
-
-        <template #contenido>
-          <p class="text-sm">Esta acción realizará cambios sobre los datos seleccionados.</p>
-        </template>
-
-        <template #pie="{ cerrar }">
-          <Button variante="delineado" @click="cerrar">Cancelar</Button>
-          <Button gravedad="alerta" @click="cerrar">Confirmar</Button>
-        </template>
-      </Dialog>
+      <Accordeon v-model="valoresMultiples" tipo="multiple" :elementos="elementos" />
     </section>
 
     <section class="space-y-3">
-      <h2 class="font-semibold">Cierre personalizado</h2>
-
-      <Dialog titulo="Botón de cierre personalizado" titulo-cerrar="Cerrar ventana">
-        <Button variante="sutil">Abrir ejemplo</Button>
-
-        <template #iconoCerrar>
-          <span class="text-xs font-bold">Cerrar</span>
-        </template>
-
-        <template #contenido>
-          <p class="text-sm">El icono de cierre se ha sustituido mediante un slot.</p>
-        </template>
-      </Dialog>
+      <h2 class="font-semibold">Elemento deshabilitado</h2>
+      <Accordeon :elementos="elementosConDeshabilitado" colapsable />
     </section>
 
     <section class="space-y-3">
-      <h2 class="font-semibold">Slots y UI personalizada</h2>
+      <h2 class="font-semibold">Slots personalizados</h2>
 
-      <Dialog
-        v-model:abierto="personalizadoAbierto"
+      <Accordeon :elementos="elementos" colapsable>
+        <template #activador="{ elemento, abierto, indice }">
+          <span class="flex w-full items-center gap-2">
+            <span class="text-xs text-muted-foreground">0{{ indice + 1 }}</span>
+            <span>{{ elemento.titulo }}</span>
+            <span class="ml-auto text-xs">{{ abierto ? 'Abierto' : 'Cerrado' }}</span>
+          </span>
+        </template>
+
+        <template #default="{ elemento }">
+          <p class="text-sm text-muted-foreground">{{ elemento.contenido }}</p>
+        </template>
+      </Accordeon>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="font-semibold">UI dinámica</h2>
+
+      <Accordeon
+        :elementos="elementos"
+        colapsable
         :ui="{
-          contenedor: { class: 'border-violet-300 sm:max-w-xl' },
-          encabezado: { class: 'border-b border-violet-100 pb-4' },
-          titulo: { class: 'text-violet-700' },
-          contenido: { class: 'py-4' },
-          pie: { class: 'border-t border-violet-100 pt-4' },
+          elemento: ({ ultimo }) => ({
+            class: ultimo ? 'border-b-0' : 'border-b border-violet-100',
+          }),
+          activador: ({ abierto }) => ({
+            class: abierto ? 'text-violet-700' : 'text-foreground',
+          }),
+          contenido: { class: 'pb-4 text-violet-950' },
         }"
-      >
-        <Button color="#7c3aed">Abrir personalizado</Button>
-
-        <template #titulo>Diálogo personalizado</template>
-
-        <template #descripcion>
-          El aspecto se configura con las claves visuales de <code>ui</code>.
-        </template>
-
-        <template #contenido>
-          <p class="text-sm">Las opciones funcionales del contenedor ahora son props de Dialog.</p>
-        </template>
-
-        <template #pie="{ cerrar }">
-          <Button color="#7c3aed" @click="cerrar">Aceptar</Button>
-        </template>
-      </Dialog>
+      />
     </section>
   </main>
 </template>

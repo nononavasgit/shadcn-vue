@@ -1,31 +1,27 @@
-import type { ProgressRootProps } from 'reka-ui'
 import type { HTMLAttributes, SVGAttributes } from 'vue'
 
 export { default as ProgressCircular } from './ProgressCircular.vue'
 
 export interface ProgressCircularUI {
-  root?: HTMLAttributes
   svg?: SVGAttributes
-  track?: SVGAttributes
-  indicator?: SVGAttributes
-  label?: HTMLAttributes
+  pista?: SVGAttributes
+  indicador?: SVGAttributes
+  titulo?: HTMLAttributes
 }
 
 export interface ProgressCircularProps {
-  value?: number | null
-  max?: number
-  label?: string
+  valor?: number | null
+  maximo?: number
+  titulo?: string
   color?: string
-  trackColor?: string
-  size?: number | string
-  strokeWidth?: number
-  getValueLabel?: ProgressRootProps['getValueLabel']
-  getValueText?: ProgressRootProps['getValueText']
+  colorPista?: string
+  tamano?: number | string
+  grosor?: number
   ui?: ProgressCircularUI
 }
 
-export interface ProgressCircularLabelSlotProps {
-  value: number | null
-  max: number
-  percentage: number
+export interface ProgressCircularTituloSlotProps {
+  valor: number | null
+  maximo: number
+  porcentaje: number
 }

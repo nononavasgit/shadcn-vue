@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Progress } from '@/components/app/Progress'
+import { ProgressCircular } from '@/components/app/ProgressCircular'
 
 const progreso = ref(42)
 </script>
@@ -69,6 +70,66 @@ const progreso = ref(42)
         :ui="{
           indicador: { class: 'bg-violet-500' },
           titulo: { class: 'font-bold tracking-wide' },
+        }"
+      />
+    </section>
+    <header class="space-y-2 border-t pt-10">
+      <h1 class="text-2xl font-bold">Ejemplos de ProgressCircular</h1>
+      <p class="text-muted-foreground">Variantes de uso de la API en español.</p>
+    </header>
+
+    <section class="flex flex-wrap items-center gap-8">
+      <div class="space-y-3 text-center">
+        <h2 class="font-semibold">Básico</h2>
+        <ProgressCircular :valor="35" />
+      </div>
+
+      <div class="space-y-3 text-center">
+        <h2 class="font-semibold">Con título</h2>
+        <ProgressCircular :valor="65" titulo="65 %" />
+      </div>
+
+      <div class="space-y-3 text-center">
+        <h2 class="font-semibold">Título mediante slot</h2>
+        <ProgressCircular :valor="72" :maximo="100">
+          <template #titulo="{ valor, maximo, porcentaje }">
+            <span class="text-xs">
+              {{ valor }}/{{ maximo }}<br />
+              {{ Math.round(porcentaje) }} %
+            </span>
+          </template>
+        </ProgressCircular>
+      </div>
+    </section>
+
+    <section class="flex flex-wrap items-end gap-8">
+      <div class="space-y-3 text-center">
+        <h2 class="font-semibold">Colores</h2>
+        <ProgressCircular :valor="80" titulo="80 %" color="#16a34a" color-pista="#dcfce7" />
+      </div>
+
+      <div class="space-y-3 text-center">
+        <h2 class="font-semibold">Tamaño y grosor</h2>
+        <ProgressCircular :valor="60" titulo="60 %" :tamano="120" :grosor="12" />
+      </div>
+
+      <div class="space-y-3 text-center">
+        <h2 class="font-semibold">Valor reactivo</h2>
+        <ProgressCircular :valor="progreso" :tamano="100">
+          <template #titulo="{ porcentaje }">{{ Math.round(porcentaje) }} %</template>
+        </ProgressCircular>
+      </div>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="font-semibold">UI personalizada</h2>
+      <ProgressCircular
+        :valor="55"
+        titulo="55 %"
+        :ui="{
+          indicador: { class: 'stroke-violet-500' },
+          pista: { class: 'stroke-violet-100' },
+          titulo: { class: 'font-bold text-violet-700' },
         }"
       />
     </section>

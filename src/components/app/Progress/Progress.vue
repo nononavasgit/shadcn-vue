@@ -42,8 +42,6 @@ const uiCalculado = computed(() => ({
     ...attrs,
     modelValue: props.valor,
     max: props.maximo,
-    getValueLabel: props.getTituloValor,
-    getValueText: props.getTextoValor,
     'aria-label': attrs['aria-label'],
     'aria-valuetext': attrs['aria-valuetext'] || props.titulo,
     class: cn(
@@ -58,6 +56,7 @@ const uiCalculado = computed(() => ({
     class: cn(props.color && 'bg-(--progress-color)', props.ui?.indicador?.class),
   },
   titulo: {
+    'aria-hidden': true,
     ...props.ui?.titulo,
     class: cn(
       'pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-2 text-center text-xs font-medium text-white [text-shadow:0_1px_3px_rgb(0_0_0),0_0_7px_rgb(0_0_0/0.9),0_0_12px_rgb(0_0_0/0.7)]',

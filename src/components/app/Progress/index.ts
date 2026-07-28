@@ -1,4 +1,3 @@
-import type { ProgressRootProps } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 
 export { default as Progress } from './Progress.vue'
@@ -14,8 +13,6 @@ export interface ProgressProps {
   titulo?: string
   color?: string
   colorPista?: string
-  getTituloValor?: ProgressRootProps['getValueLabel']
-  getTextoValor?: ProgressRootProps['getValueText']
   ui?: ProgressUI
 }
 

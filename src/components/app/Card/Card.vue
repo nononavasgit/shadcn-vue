@@ -10,67 +10,66 @@ import {
   CardTitle,
 } from '@/components/ui/Card'
 import { cn } from '@/lib/utils'
-import type { TarjetaProps, TarjetaSlots } from '.'
+import type { CardProps, CardSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-defineSlots<TarjetaSlots>()
+const props = defineProps<CardProps>()
+defineSlots<CardSlots>()
 
-const props = defineProps<TarjetaProps>()
 const attrs = useAttrs()
-
-const uiCalculado = computed(() => ({
-  raiz: {
-    ...props.ui?.raiz,
+const calculatedUI = computed(() => ({
+  root: {
+    ...props.ui?.root,
     ...attrs,
-    class: cn(props.ui?.raiz?.class, attrs.class),
+    class: cn(props.ui?.root?.class, attrs.class),
   },
-  cabecera: props.ui?.cabecera,
-  titulo: props.ui?.titulo,
-  descripcion: props.ui?.descripcion,
-  accion: props.ui?.accion,
-  contenido: props.ui?.contenido,
-  pie: props.ui?.pie,
+  header: props.ui?.header,
+  label: props.ui?.label,
+  description: props.ui?.description,
+  action: props.ui?.action,
+  content: props.ui?.content,
+  footer: props.ui?.footer,
 }))
 </script>
 
 <template>
-  <CardBase v-bind="uiCalculado.raiz">
+  <CardBase v-bind="calculatedUI.root">
     <CardHeader
       v-if="
-        props.titulo ||
-        props.descripcion ||
-        $slots.cabecera ||
-        $slots.titulo ||
-        $slots.descripcion ||
-        $slots.accion
+        props.label ||
+        props.description ||
+        $slots.header ||
+        $slots.label ||
+        $slots.description ||
+        $slots.action
       "
-      v-bind="uiCalculado.cabecera"
+      v-bind="calculatedUI.header"
     >
-      <slot name="cabecera">
-        <CardTitle v-if="props.titulo || $slots.titulo" v-bind="uiCalculado.titulo">
-          <slot name="titulo">{{ props.titulo }}</slot>
+      <slot name="header">
+        <CardTitle v-if="props.label || $slots.label" v-bind="calculatedUI.label">
+          <slot name="label">{{ props.label }}</slot>
         </CardTitle>
 
         <CardDescription
-          v-if="props.descripcion || $slots.descripcion"
-          v-bind="uiCalculado.descripcion"
+          v-if="props.description || $slots.description"
+          v-bind="calculatedUI.description"
         >
-          <slot name="descripcion">{{ props.descripcion }}</slot>
+          <slot name="description">{{ props.description }}</slot>
         </CardDescription>
       </slot>
 
-      <CardAction v-if="$slots.accion" v-bind="uiCalculado.accion">
-        <slot name="accion" />
+      <CardAction v-if="$slots.action" v-bind="calculatedUI.action">
+        <slot name="action" />
       </CardAction>
     </CardHeader>
 
-    <CardContent v-if="$slots.default" v-bind="uiCalculado.contenido">
+    <CardContent v-if="$slots.default" v-bind="calculatedUI.content">
       <slot />
     </CardContent>
 
-    <CardFooter v-if="$slots.pie" v-bind="uiCalculado.pie">
-      <slot name="pie" />
+    <CardFooter v-if="$slots.footer" v-bind="calculatedUI.footer">
+      <slot name="footer" />
     </CardFooter>
   </CardBase>
 </template>

@@ -230,7 +230,7 @@ export interface ButtonUI {
 export interface ButtonProps {
   as?: string | Component
   asChild?: boolean
-  title?: string
+  label?: string
   variant?: ButtonVariants['variant']
   severity?: ButtonVariants['severity']
   size?: ButtonVariants['size']

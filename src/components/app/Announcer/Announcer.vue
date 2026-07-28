@@ -1,43 +1,38 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
 import { Announcer as AnnouncerBase } from '@/components/ui/Announcer'
-import { useAnunciador } from '@/composables/useAnunciador'
-import type { AnunciadorProps, AnunciadorSlotProps } from '.'
+import { useAnnouncer } from '@/composables/useAnnouncer'
+import type { AnnouncerProps, AnnouncerSlots } from '.'
 
-defineSlots<{
-  default?(props: AnunciadorSlotProps): unknown
-}>()
-
-const props = withDefaults(defineProps<AnunciadorProps>(), {
-  atomico: true,
-  cortesia: 'polite',
+const props = withDefaults(defineProps<AnnouncerProps>(), {
+  atomic: true,
+  politeness: 'polite',
 })
-const { mensaje, cortesia, establecer, polite, assertive } = useAnunciador({
-  cortesia: props.cortesia,
+defineSlots<AnnouncerSlots>()
+
+const { message, politeness, set, polite, assertive } = useAnnouncer({
+  politeness: props.politeness,
 })
 
 watch(
-  () => props.cortesia,
-  (valor) => {
-    cortesia.value = valor
+  () => props.politeness,
+  (value) => {
+    politeness.value = value
   },
 )
 
-const ariaLive = computed(() => {
-  return cortesia.value
-})
-
-const rol = computed(() => {
-  if (cortesia.value === 'assertive') return 'alert'
-  if (cortesia.value === 'polite') return 'status'
+const ariaLive = computed(() => politeness.value)
+const role = computed(() => {
+  if (politeness.value === 'assertive') return 'alert'
+  if (politeness.value === 'polite') return 'status'
   return undefined
 })
 
-defineExpose({ mensaje, cortesia, establecer, polite, assertive })
+defineExpose({ message, politeness, set, polite, assertive })
 </script>
 
 <template>
-  <AnnouncerBase :aria-atomic="props.atomico" :aria-live="ariaLive" :role="rol">
-    <slot :mensaje="mensaje">{{ mensaje }}</slot>
+  <AnnouncerBase :aria-atomic="props.atomic" :aria-live="ariaLive" :role="role">
+    <slot :message="message">{{ message }}</slot>
   </AnnouncerBase>
 </template>

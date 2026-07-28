@@ -1,12 +1,16 @@
-import type { CortesiaAnunciador } from '@/composables/useAnunciador'
+import type { AnnouncerPoliteness } from '@/composables/useAnnouncer'
 
 export { default as Announcer } from './Announcer.vue'
 
-export interface AnunciadorProps {
-  atomico?: boolean
-  cortesia?: CortesiaAnunciador
+export interface AnnouncerProps {
+  atomic?: boolean
+  politeness?: AnnouncerPoliteness
 }
 
-export interface AnunciadorSlotProps {
-  mensaje: string
+export interface AnnouncerSlotProps {
+  message: string
+}
+
+export interface AnnouncerSlots {
+  default?(props: AnnouncerSlotProps): unknown
 }

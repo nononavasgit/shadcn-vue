@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { button as ButtonBase } from '@/components/ui/Button'
-import { Icon, type IconProps } from '@/components/app/Icon'
+import { Icon, useNormalizeIconProps } from '@/components/app/Icon'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import { buttonVariants, type ButtonEmits, type ButtonProps, type ButtonSlots } from '.'
@@ -11,7 +11,7 @@ defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<ButtonProps>(), {
   as: 'button',
   asChild: false,
-  title: undefined,
+  label: undefined,
   variant: 'solid',
   severity: 'primary',
   size: 'md',
@@ -28,11 +28,8 @@ defineSlots<ButtonSlots>()
 
 const attrs = useAttrs()
 
-function normalizeIcon(icon: IconProps | string | undefined) {
-  return typeof icon === 'string' ? { name: icon } : icon
-}
-const leadingIcon = computed(() => normalizeIcon(props.icon))
-const trailingIcon = computed(() => normalizeIcon(props.trailingIcon))
+const leadingIcon = useNormalizeIconProps(() => props.icon)
+const trailingIcon = useNormalizeIconProps(() => props.trailingIcon)
 const { colorStyle } = useColor(
   computed(() => props.color),
   'button',
@@ -57,10 +54,6 @@ const calculatedVariants = computed(() => {
     .join(' ')
 })
 const calculatedUI = computed(() => {
-  const iconUI = normalizeIcon(props.ui?.icon)
-  const trailingIconUI = normalizeIcon(props.ui?.trailingIcon)
-  const loadingIconUI = normalizeIcon(props.ui?.loadingIcon)
-
   return {
     root: {
       ...attrs,
@@ -72,19 +65,17 @@ const calculatedUI = computed(() => {
       style: [colorStyle.value, attrs.style],
     },
     icon: {
-      ...iconUI,
       ...leadingIcon.value,
-      class: cn(iconUI?.class, leadingIcon.value?.class),
+      class: cn(props.ui?.icon?.class, leadingIcon.value?.class),
     },
     trailingIcon: {
-      ...trailingIconUI,
       ...trailingIcon.value,
-      class: cn(trailingIconUI?.class, trailingIcon.value?.class),
+      class: cn(props.ui?.trailingIcon?.class, trailingIcon.value?.class),
     },
     loadingIcon: {
-      ...loadingIconUI,
       name: 'spinner' as const,
-      class: cn('animate-spin', loadingIconUI?.class),
+      ...props.ui?.loadingIcon,
+      class: cn('animate-spin', props.ui?.loadingIcon?.class),
     },
   }
 })
@@ -115,7 +106,7 @@ function handleClick(event: MouseEvent) {
       />
     </slot>
 
-    <slot>{{ props.title }}</slot>
+    <slot>{{ props.label }}</slot>
 
     <slot name="trailing">
       <Icon

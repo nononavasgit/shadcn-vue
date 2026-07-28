@@ -1,5 +1,7 @@
 import type { IconName } from './icons.ts'
 import { cva, type VariantProps } from 'class-variance-authority'
+import type { MaybeRefOrGetter, SVGAttributes } from 'vue'
+import { useNormalize } from '@/composables'
 
 export { default as Icon } from './Icon.vue'
 export type { IconName } from './icons.ts'
@@ -23,4 +25,12 @@ export interface IconProps {
   name: IconName
   size?: IconVariants['size']
   color?: string
+}
+
+export type NormalizedIconProps = IconProps & SVGAttributes
+
+export function useNormalizeIconProps(
+  source: MaybeRefOrGetter<IconName | NormalizedIconProps | null | undefined>,
+) {
+  return useNormalize<NormalizedIconProps, 'name'>(source, 'name')
 }

@@ -3,7 +3,7 @@ import { computed, useAttrs } from 'vue'
 import type { ImgHTMLAttributes } from 'vue'
 import type { AvatarImageEmits } from 'reka-ui'
 import { Avatar as AvatarBase, AvatarFallback, AvatarImage } from '@/components/ui/Avatar'
-import { Icon } from '@/components/app/Icon'
+import { Icon, useNormalizeIconProps } from '@/components/app/Icon'
 import { cn } from '@/lib/utils'
 import type { AvatarEmits, AvatarLoadingState, AvatarProps, AvatarSlots } from '.'
 
@@ -14,7 +14,7 @@ const emit = defineEmits<AvatarEmits>()
 defineSlots<AvatarSlots>()
 
 const attrs = useAttrs() as ImgHTMLAttributes
-const icon = computed(() => (typeof props.icon === 'string' ? { name: props.icon } : props.icon))
+const icon = useNormalizeIconProps(() => props.icon)
 const calculatedUI = computed(() => ({
   root: props.ui?.root,
   image: props.src

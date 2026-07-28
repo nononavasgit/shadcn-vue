@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { Badge as BadgeBase } from '@/components/ui/Badge'
-import { Icon } from '@/components/app/Icon'
+import { Icon, useNormalizeIconProps } from '@/components/app/Icon'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import { badgeVariants, type BadgeProps, type BadgeSlots } from '.'
@@ -10,7 +10,7 @@ defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<BadgeProps>(), {
   as: 'span',
-  title: undefined,
+  label: undefined,
   size: 'md',
   variant: 'solid',
   severity: 'primary',
@@ -22,12 +22,8 @@ const props = withDefaults(defineProps<BadgeProps>(), {
 defineSlots<BadgeSlots>()
 
 const attrs = useAttrs()
-const leadingIcon = computed(() =>
-  typeof props.icon === 'string' ? { name: props.icon } : props.icon,
-)
-const trailingIcon = computed(() =>
-  typeof props.trailingIcon === 'string' ? { name: props.trailingIcon } : props.trailingIcon,
-)
+const leadingIcon = useNormalizeIconProps(() => props.icon)
+const trailingIcon = useNormalizeIconProps(() => props.trailingIcon)
 const { colorStyle } = useColor(
   computed(() => props.color),
   'badge',
@@ -71,7 +67,7 @@ const calculatedUI = computed(() => ({
       />
     </slot>
 
-    <slot>{{ props.title }}</slot>
+    <slot>{{ props.label }}</slot>
 
     <slot name="trailing">
       <Icon

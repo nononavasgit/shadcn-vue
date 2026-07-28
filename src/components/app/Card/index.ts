@@ -2,27 +2,27 @@ import type { HTMLAttributes } from 'vue'
 
 export { default as Card } from './Card.vue'
 
-export interface TarjetaUI {
-  raiz?: HTMLAttributes
-  cabecera?: HTMLAttributes
-  titulo?: HTMLAttributes
-  descripcion?: HTMLAttributes
-  accion?: HTMLAttributes
-  contenido?: HTMLAttributes
-  pie?: HTMLAttributes
+export interface CardUI {
+  root?: HTMLAttributes
+  header?: HTMLAttributes
+  label?: HTMLAttributes
+  description?: HTMLAttributes
+  action?: HTMLAttributes
+  content?: HTMLAttributes
+  footer?: HTMLAttributes
 }
 
-export interface TarjetaProps {
-  titulo?: string
-  descripcion?: string
-  ui?: TarjetaUI
+export interface CardProps {
+  label?: string
+  description?: string
+  ui?: CardUI
 }
 
-export interface TarjetaSlots {
+export interface CardSlots {
   default?(): unknown
-  cabecera?(): unknown
-  titulo?(): unknown
-  descripcion?(): unknown
-  accion?(): unknown
-  pie?(): unknown
+  header?(): unknown
+  label?(): unknown
+  description?(): unknown
+  action?(): unknown
+  footer?(): unknown
 }

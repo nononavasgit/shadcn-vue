@@ -18,6 +18,6 @@ const calculatedUI = computed(() => ({
 
 <template>
   <KbdBase v-bind="calculatedUI.root">
-    <slot>{{ props.title }}</slot>
+    <slot>{{ props.label }}</slot>
   </KbdBase>
 </template>

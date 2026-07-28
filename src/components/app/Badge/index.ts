@@ -201,7 +201,7 @@ export interface BadgeUI {
 export interface BadgeProps {
   as?: string | Component
   asChild?: boolean
-  title?: string
+  label?: string
   size?: BadgeVariants['size']
   variant?: BadgeVariants['variant']
   severity?: BadgeVariants['severity']

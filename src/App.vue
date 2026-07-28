@@ -169,10 +169,10 @@ onUnmounted(() => {
       </div>
 
       <div class="flex flex-wrap items-center gap-3">
-        <Kbd title="Esc" />
-        <Kbd title="Enter" />
-        <Kbd title="Tab" />
-        <Kbd title="⌘" />
+        <Kbd label="Esc" />
+        <Kbd label="Enter" />
+        <Kbd label="Tab" />
+        <Kbd label="⌘" />
         <Kbd>Ctrl</Kbd>
         <Kbd>Shift</Kbd>
         <Kbd>Alt</Kbd>

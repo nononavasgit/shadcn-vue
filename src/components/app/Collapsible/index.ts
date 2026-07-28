@@ -2,36 +2,31 @@ import type { Component, HTMLAttributes } from 'vue'
 
 export { default as Collapsible } from './Collapsible.vue'
 
-export type CollapsibleNodeUI = Omit<HTMLAttributes, 'dir'> & {
+export type CollapsibleNodoUI = Omit<HTMLAttributes, 'dir'> & {
   as?: string | Component
   asChild?: boolean
   dir?: 'ltr' | 'rtl'
 }
 
-export type CollapsibleContentUI = CollapsibleNodeUI & {
-  forceMount?: boolean
-}
-
 export interface CollapsibleUI {
-  trigger?: CollapsibleNodeUI
-  content?: CollapsibleContentUI
+  activador?: CollapsibleNodoUI
+  contenido?: CollapsibleNodoUI
 }
 
 export interface CollapsibleProps {
-  open?: boolean
-  defaultOpen?: boolean
-  disabled?: boolean
-  unmountOnHide?: boolean
-  forceMount?: boolean
+  abierto?: boolean
+  deshabilitado?: boolean
+  desmontarAlOcultar?: boolean
+  forzarMontaje?: boolean
   as?: string | Component
   asChild?: boolean
   ui?: CollapsibleUI
 }
 
 export interface CollapsibleEmits {
-  'update:open': [value: boolean]
+  'update:abierto': [valor: boolean]
 }
 
 export interface CollapsibleSlotProps {
-  open: boolean
+  abierto: boolean
 }

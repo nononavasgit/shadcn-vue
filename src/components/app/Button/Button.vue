@@ -15,6 +15,8 @@ const emit = defineEmits<BotonEmits>()
 defineSlots<BotonSlots>()
 
 const props = withDefaults(defineProps<BotonProps>(), {
+  as: 'button',
+  asChild: false,
   titulo: undefined,
   variant: 'solid',
   severity: 'primary',
@@ -47,23 +49,32 @@ const ariaDisabled = computed(() => {
 const ariaBusy = computed(() => {
   return props.cargando || attrs['aria-busy']
 })
+const variantesCalculadas = computed(() => {
+  const clases = botonVariantes({
+    variante: props.variante,
+    gravedad: props.gravedad,
+    tamano: props.tamano,
+    redondeado: props.redondeado,
+    cuadrado: props.cuadrado,
+    color: Boolean(props.color),
+  })
+
+  if (props.as === 'button' || props.as === 'a') return clases
+
+  return clases
+    .split(/\s+/)
+    .filter((clase) => !clase.startsWith('hover:') && !clase.startsWith('active:'))
+    .join(' ')
+})
 
 const uiCalculado = computed(() => ({
   raiz: {
     ...attrs,
+    as: props.as,
+    asChild: props.asChild,
     'aria-busy': ariaBusy.value,
     'aria-disabled': ariaDisabled.value,
-    class: cn(
-      botonVariantes({
-        variante: props.variante,
-        gravedad: props.gravedad,
-        tamano: props.tamano,
-        redondeado: props.redondeado,
-        cuadrado: props.cuadrado,
-        color: Boolean(props.color),
-      }),
-      attrs.class,
-    ),
+    class: cn(variantesCalculadas.value, attrs.class),
     style: [colorStyle.value, attrs.style],
   },
   icono: {

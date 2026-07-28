@@ -1,113 +1,118 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { Boton } from '@/components/app/Button'
+import { Button } from '@/components/app/Button'
 import { Collapsible } from '@/components/app/Collapsible'
 import { Icon } from '@/components/app/Icon'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
-import { panelVariants, type PanelEmits, type PanelProps, type PanelSlotProps } from '.'
+import { panelVariantes, type PanelEmits, type PanelProps, type PanelSlotProps } from '.'
 
 defineOptions({ inheritAttrs: false })
 
 defineSlots<{
   default?(): unknown
-  label?(props: PanelSlotProps): unknown
-  icon?(props: PanelSlotProps): unknown
-  arrows?(props: PanelSlotProps): unknown
+  titulo?(props: PanelSlotProps): unknown
+  icono?(props: PanelSlotProps): unknown
+  flechas?(props: PanelSlotProps): unknown
 }>()
 
 const props = withDefaults(defineProps<PanelProps>(), {
-  variant: 'solid',
-  severity: 'primary',
-  expandable: true,
+  variante: 'solido',
+  gravedad: 'primario',
+  expandible: true,
 })
 defineEmits<PanelEmits>()
 
 const attrs = useAttrs()
-const open = defineModel<boolean>('open')
+const abierto = defineModel<boolean>('abierto')
 const { colorStyle } = useColor(
   computed(() => props.color),
   'panel',
 )
 
-const openCalculado = computed({
-  get: () => (props.expandable ? open.value : true),
+const iconoCalculado = computed(() =>
+  typeof props.icono === 'string' ? { nombre: props.icono } : props.icono,
+)
+
+const abiertoCalculado = computed({
+  get: () => (props.expandible ? abierto.value : true),
   set: (value: boolean) => {
-    if (props.expandable) open.value = value
+    if (props.expandible) abierto.value = value
   },
 })
 
 const uiCalculado = computed(() => ({
-  root: {
-    ...props.ui?.root,
+  raiz: {
     ...attrs,
+    class: cn('', attrs.class),
+    style: [colorStyle.value, attrs.style],
+  },
+  encabezado: {
+    ...props.ui?.encabezado,
+    as: props.expandible ? undefined : 'span',
+    color: props.color,
+    gravedad: props.gravedad,
+    variante: props.variante,
     class: cn(
-      panelVariants({
-        severity: props.severity,
-        variant: props.variant,
+      'w-full',
+      abiertoCalculado.value && 'rounded-br-none rounded-bl-none',
+      !props.expandible ? 'justify-start' : '',
+      props.ui?.encabezado?.class,
+    ),
+  },
+  icono: {
+    ...props.ui?.icono,
+    ...iconoCalculado.value,
+    class: cn(props.ui?.icono?.class, iconoCalculado.value?.class),
+  },
+  titulo: props.ui?.titulo,
+  flechas: {
+    ...props.ui?.flechas,
+    class: cn('ml-auto shrink-0', props.ui?.flechas?.class),
+  },
+  contenido: {
+    ...props.ui?.contenido,
+    class: cn(
+      panelVariantes({
+        gravedad: props.gravedad,
+        variante: props.variante,
         color: Boolean(props.color),
       }),
-      props.ui?.root?.class,
-      attrs.class,
+      'rounded-t-none border-t-0 p-[15px] text-card-foreground shadow-none',
+      props.ui?.contenido?.class,
     ),
-    style: [colorStyle.value, props.ui?.root?.style, attrs.style],
-  },
-  header: {
-    ...props.ui?.header,
-    class: cn(
-      'h-auto min-h-0 w-full justify-start rounded-none border-x-0 border-t-0 px-[15px] py-[10px] text-left text-base leading-[1.1] font-medium shadow-none',
-      !props.expandable && 'disabled:cursor-default disabled:opacity-100',
-      props.ui?.header?.class,
-    ),
-  },
-  icon: {
-    ...props.ui?.icon,
-    ...props.iconProps,
-    class: cn(props.ui?.icon?.class, props.iconProps?.class),
-  },
-  label: props.ui?.label,
-  arrows: props.ui?.arrows,
-  content: {
-    ...props.ui?.content,
-    class: cn('bg-card p-[15px] text-card-foreground', props.ui?.content?.class),
   },
 }))
 </script>
 
 <template>
-  <Collapsible
-    v-bind="uiCalculado.root"
-    v-model:open="openCalculado"
-    :default-open="props.expandable ? props.defaultOpen : true"
-    :disabled="!props.expandable"
-  >
-    <template #default="collapsibleState">
-      <Boton
-        v-bind="uiCalculado.header"
-        :color="props.color"
-        :severity="props.severity"
-        :variant="props.variant"
-      >
+  <Collapsible v-bind="uiCalculado.raiz" v-model:abierto="abiertoCalculado">
+    <template #default="estadoColapsable">
+      <Button v-bind="uiCalculado.encabezado">
         <span class="flex min-w-0 items-center gap-2">
-          <slot name="icon" :open="collapsibleState.open">
-            <Icon v-if="props.nameIcon" v-bind="uiCalculado.icon" :name="props.nameIcon" />
+          <slot name="icono" :abierto="estadoColapsable.abierto">
+            <Icon
+              v-if="uiCalculado.icono?.nombre"
+              v-bind="uiCalculado.icono"
+              :nombre="uiCalculado.icono?.nombre"
+            />
           </slot>
 
-          <span v-if="props.label || $slots.label" v-bind="uiCalculado.label">
-            <slot name="label" :open="collapsibleState.open">{{ props.label }}</slot>
+          <span v-if="props.titulo || $slots.titulo" v-bind="uiCalculado.titulo">
+            <slot name="titulo" :abierto="estadoColapsable.abierto">{{ props.titulo }}</slot>
           </span>
         </span>
 
-        <span v-if="props.expandable" v-bind="uiCalculado.arrows" class="ml-auto shrink-0">
-          <slot name="arrows" :open="collapsibleState.open">
-            <Icon :name="collapsibleState.open ? 'chevronUp' : 'chevronDown'" size="sm" />
+        <span v-if="props.expandible" v-bind="uiCalculado.flechas">
+          <slot name="flechas" :abierto="estadoColapsable.abierto">
+            <Icon :nombre="estadoColapsable.abierto ? 'chevronUp' : 'chevronDown'" tamano="sm" />
           </slot>
         </span>
-      </Boton>
+      </Button>
     </template>
 
-    <template v-if="$slots.default" #content>
-      <div v-bind="uiCalculado.content">
+    <template v-if="$slots.default" #contenido>
+      <div v-bind="uiCalculado.contenido">
         <slot />
       </div>
     </template>

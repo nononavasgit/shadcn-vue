@@ -1,137 +1,102 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Progress } from '@/components/app/Progress'
-import { ProgressCircular } from '@/components/app/ProgressCircular'
+import { Panel } from '@/components/app/Panel'
 
-const progreso = ref(42)
+const panelAbierto = ref(true)
+const personalizadoAbierto = ref(true)
 </script>
 
 <template>
   <main class="mx-auto max-w-3xl space-y-10 p-8">
     <header class="space-y-2">
-      <h1 class="text-2xl font-bold">Ejemplos de Progress</h1>
+      <h1 class="text-2xl font-bold">Ejemplos de Panel</h1>
       <p class="text-muted-foreground">Variantes de uso de la API en español.</p>
     </header>
 
     <section class="space-y-3">
-      <h2 class="font-semibold">Basico</h2>
-      <Progress :valor="35" />
+      <h2 class="font-semibold">Básico</h2>
+      <Panel titulo="Información"> Este es el contenido de un panel expandible. </Panel>
     </section>
 
     <section class="space-y-3">
-      <h2 class="font-semibold">Con etiqueta</h2>
-      <Progress :valor="65" titulo="65 % completado" />
-    </section>
-
-    <section class="space-y-3">
-      <h2 class="font-semibold">Etiqueta mediante slot</h2>
-      <Progress :valor="72" :maximo="100">
-        <template #titulo="{ valor, maximo, porcentaje }">
-          {{ valor }} de {{ maximo }} ({{ Math.round(porcentaje) }} %)
-        </template>
-      </Progress>
-    </section>
-
-    <section class="space-y-3">
-      <h2 class="font-semibold">Colores personalizados</h2>
-      <Progress :valor="80" titulo="Procesando" color="#16a34a" color-pista="#dcfce7" />
-    </section>
-
-    <section class="space-y-4">
       <div class="flex items-center justify-between">
-        <h2 class="font-semibold">Valor reactivo</h2>
-        <span class="text-sm text-muted-foreground">{{ progreso }} %</span>
+        <h2 class="font-semibold">Estado controlado</h2>
+        <span class="text-sm text-muted-foreground">
+          {{ panelAbierto ? 'Abierto' : 'Cerrado' }}
+        </span>
       </div>
 
-      <Progress :valor="progreso">
-        <template #titulo="{ porcentaje }">{{ Math.round(porcentaje) }} %</template>
-      </Progress>
+      <Panel v-model:abierto="panelAbierto" titulo="Panel controlado">
+        Su estado se controla mediante <code>v-model:abierto</code>.
+      </Panel>
 
-      <input
-        v-model.number="progreso"
-        class="w-full"
-        type="range"
-        min="0"
-        max="100"
-        aria-label="Cambiar progreso"
-      />
+      <button
+        class="rounded-md border px-3 py-2 text-sm"
+        type="button"
+        @click="panelAbierto = !panelAbierto"
+      >
+        Cambiar desde fuera
+      </button>
     </section>
 
     <section class="space-y-3">
-      <h2 class="font-semibold">Estado indeterminado</h2>
-      <Progress :valor="null" titulo="Esperando..." />
+      <h2 class="font-semibold">Gravedades y variantes</h2>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <Panel titulo="Éxito" gravedad="exito" variante="sutil">
+          La operación se completó correctamente.
+        </Panel>
+
+        <Panel titulo="Alerta" gravedad="alerta" variante="delineado">
+          Revisa la información antes de continuar.
+        </Panel>
+
+        <Panel titulo="Error" gravedad="error" variante="suave">
+          No se pudo completar la operación.
+        </Panel>
+
+        <Panel titulo="Secundario" gravedad="secundario" variante="plano">
+          Contenido con una apariencia secundaria.
+        </Panel>
+      </div>
     </section>
 
     <section class="space-y-3">
-      <h2 class="font-semibold">UI personalizada</h2>
-      <Progress
-        :valor="55"
-        titulo="Personalizado"
+      <h2 class="font-semibold">Color e icono</h2>
+
+      <Panel titulo="Configuración" icono="info" color="#7c3aed">
+        Panel con un color y un icono personalizados.
+      </Panel>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="font-semibold">No expandible</h2>
+
+      <Panel titulo="Contenido permanente" :expandible="false">
+        Este contenido permanece siempre visible.
+      </Panel>
+    </section>
+
+    <section class="space-y-3">
+      <h2 class="font-semibold">Slots y UI personalizada</h2>
+
+      <Panel
+        v-model:abierto="personalizadoAbierto"
         :ui="{
-          indicador: { class: 'bg-violet-500' },
-          titulo: { class: 'font-bold tracking-wide' },
+          encabezado: { class: 'bg-violet-50 text-violet-700' },
+          contenido: { class: 'bg-violet-50/40 p-5' },
         }"
-      />
-    </section>
-    <header class="space-y-2 border-t pt-10">
-      <h1 class="text-2xl font-bold">Ejemplos de ProgressCircular</h1>
-      <p class="text-muted-foreground">Variantes de uso de la API en español.</p>
-    </header>
+      >
+        <template #titulo="{ abierto }">
+          Panel personalizado · {{ abierto ? 'abierto' : 'cerrado' }}
+        </template>
 
-    <section class="flex flex-wrap items-center gap-8">
-      <div class="space-y-3 text-center">
-        <h2 class="font-semibold">Básico</h2>
-        <ProgressCircular :valor="35" />
-      </div>
+        <template #flechas="{ abierto }">
+          <span class="text-xs">{{ abierto ? 'Ocultar' : 'Mostrar' }}</span>
+        </template>
 
-      <div class="space-y-3 text-center">
-        <h2 class="font-semibold">Con título</h2>
-        <ProgressCircular :valor="65" titulo="65 %" />
-      </div>
-
-      <div class="space-y-3 text-center">
-        <h2 class="font-semibold">Título mediante slot</h2>
-        <ProgressCircular :valor="72" :maximo="100">
-          <template #titulo="{ valor, maximo, porcentaje }">
-            <span class="text-xs">
-              {{ valor }}/{{ maximo }}<br />
-              {{ Math.round(porcentaje) }} %
-            </span>
-          </template>
-        </ProgressCircular>
-      </div>
-    </section>
-
-    <section class="flex flex-wrap items-end gap-8">
-      <div class="space-y-3 text-center">
-        <h2 class="font-semibold">Colores</h2>
-        <ProgressCircular :valor="80" titulo="80 %" color="#16a34a" color-pista="#dcfce7" />
-      </div>
-
-      <div class="space-y-3 text-center">
-        <h2 class="font-semibold">Tamaño y grosor</h2>
-        <ProgressCircular :valor="60" titulo="60 %" :tamano="120" :grosor="12" />
-      </div>
-
-      <div class="space-y-3 text-center">
-        <h2 class="font-semibold">Valor reactivo</h2>
-        <ProgressCircular :valor="progreso" :tamano="100">
-          <template #titulo="{ porcentaje }">{{ Math.round(porcentaje) }} %</template>
-        </ProgressCircular>
-      </div>
-    </section>
-
-    <section class="space-y-3">
-      <h2 class="font-semibold">UI personalizada</h2>
-      <ProgressCircular
-        :valor="55"
-        titulo="55 %"
-        :ui="{
-          indicador: { class: 'stroke-violet-500' },
-          pista: { class: 'stroke-violet-100' },
-          titulo: { class: 'font-bold text-violet-700' },
-        }"
-      />
+        Contenido personalizado mediante slots y la prop <code>ui</code>.
+      </Panel>
     </section>
   </main>
 </template>

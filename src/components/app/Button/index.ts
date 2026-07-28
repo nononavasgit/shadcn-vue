@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { SVGAttributes } from 'vue'
+import type { Component, SVGAttributes } from 'vue'
 import type { IconoProps, IconoNombre } from '@/components/app/Icon'
 
 export { default as Button } from './Button.vue'
@@ -228,6 +228,8 @@ export interface BotonUI {
 }
 
 export interface BotonProps {
+  as?: string | Component
+  asChild?: boolean
   titulo?: string
   variante?: BotonVariantes['variante']
   gravedad?: BotonVariantes['gravedad']

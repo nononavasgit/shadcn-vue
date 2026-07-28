@@ -1,116 +1,156 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Accordeon, type AccordeonElemento } from '@/components/app/Accordion'
+import { Stepper, type StepperPaso } from '@/components/app/Stepper'
 
-const elementos: AccordeonElemento[] = [
+const pasos: StepperPaso[] = [
   {
-    valor: 'cuenta',
-    titulo: '¿Cómo creo una cuenta?',
-    contenido: 'Pulsa en Registrarse y completa los datos solicitados.',
+    clave: 'cuenta',
+    paso: 1,
+    titulo: 'Cuenta',
+    descripcion: 'Introduce tus datos personales',
+    contenido: 'Completa el nombre y el correo electrónico de tu cuenta.',
   },
   {
-    valor: 'contrasena',
-    titulo: '¿Cómo cambio mi contraseña?',
-    contenido: 'Puedes cambiarla desde la sección de seguridad de tu perfil.',
+    clave: 'direccion',
+    paso: 2,
+    titulo: 'Dirección',
+    descripcion: 'Indica dónde recibirás el pedido',
+    contenido: 'Añade la dirección y las instrucciones de entrega.',
   },
   {
-    valor: 'soporte',
-    titulo: '¿Cómo contacto con soporte?',
-    contenido: 'Envía tu consulta desde el formulario de ayuda.',
+    clave: 'confirmacion',
+    paso: 3,
+    titulo: 'Confirmación',
+    descripcion: 'Revisa y confirma la información',
+    contenido: 'Comprueba todos los datos antes de finalizar.',
   },
 ]
 
-const elementosConDeshabilitado: AccordeonElemento[] = [
-  ...elementos,
-  {
-    valor: 'proximamente',
-    titulo: 'Función disponible próximamente',
-    contenido: 'Este contenido todavía no está disponible.',
-    deshabilitado: true,
-  },
+const pasosConIconos: StepperPaso[] = [
+  { ...pasos[0], icono: 'info' },
+  { ...pasos[1], icono: 'guardar' },
+  { ...pasos[2], icono: 'exito' },
 ]
 
-const valorUnico = ref<string>()
-const valoresMultiples = ref<string[]>(['cuenta'])
+const pasosConDeshabilitado: StepperPaso[] = [
+  pasos[0],
+  { ...pasos[1], deshabilitado: true },
+  pasos[2],
+]
+
+const pasoActual = ref(1)
+const pasoVertical = ref(1)
 </script>
 
 <template>
-  <main class="mx-auto max-w-3xl space-y-10 p-8">
+  <main class="mx-auto max-w-4xl space-y-12 p-8">
     <header class="space-y-2">
-      <h1 class="text-2xl font-bold">Ejemplos de Accordeon</h1>
+      <h1 class="text-2xl font-bold">Ejemplos de Stepper</h1>
       <p class="text-muted-foreground">Variantes de uso de la API en español.</p>
     </header>
 
-    <section class="space-y-3">
+    <section class="space-y-4">
       <h2 class="font-semibold">Básico</h2>
-      <Accordeon :elementos="elementos" colapsable />
+      <Stepper :pasos="pasos" />
     </section>
 
-    <section class="space-y-3">
+    <section class="space-y-4">
       <div class="flex items-center justify-between">
-        <h2 class="font-semibold">Estado controlado</h2>
-        <span class="text-sm text-muted-foreground">
-          {{ valorUnico ?? 'Ninguno' }}
-        </span>
+        <h2 class="font-semibold">Estado controlado y navegación</h2>
+        <span class="text-sm text-muted-foreground">Paso actual: {{ pasoActual }}</span>
       </div>
 
-      <Accordeon v-model="valorUnico" :elementos="elementos" colapsable />
+      <Stepper v-model="pasoActual" :pasos="pasos" lineal>
+        <template
+          #contenido="{
+            paso,
+            anteriorDeshabilitado,
+            siguienteDeshabilitado,
+            pasoAnterior,
+            siguientePaso,
+          }"
+        >
+          <div class="rounded-lg border p-4">
+            <p class="text-sm text-muted-foreground">{{ paso.contenido }}</p>
 
-      <button
-        class="rounded-md border px-3 py-2 text-sm"
-        type="button"
-        @click="valorUnico = 'soporte'"
-      >
-        Abrir soporte
-      </button>
+            <div class="mt-4 flex justify-between">
+              <button
+                type="button"
+                class="rounded-md border px-3 py-2 text-sm disabled:opacity-50"
+                :disabled="anteriorDeshabilitado"
+                @click="pasoAnterior"
+              >
+                Anterior
+              </button>
+              <button
+                type="button"
+                class="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground disabled:opacity-50"
+                :disabled="siguienteDeshabilitado"
+                @click="siguientePaso"
+              >
+                Siguiente
+              </button>
+            </div>
+          </div>
+        </template>
+      </Stepper>
     </section>
 
-    <section class="space-y-3">
-      <div class="flex items-center justify-between">
-        <h2 class="font-semibold">Selección múltiple</h2>
-        <span class="text-sm text-muted-foreground"> {{ valoresMultiples.length }} abiertos </span>
-      </div>
-
-      <Accordeon v-model="valoresMultiples" tipo="multiple" :elementos="elementos" />
+    <section class="space-y-4">
+      <h2 class="font-semibold">Orientación vertical</h2>
+      <Stepper
+        v-model="pasoVertical"
+        :pasos="pasosConIconos"
+        orientacion="vertical"
+        class="max-w-lg"
+      />
     </section>
 
-    <section class="space-y-3">
-      <h2 class="font-semibold">Elemento deshabilitado</h2>
-      <Accordeon :elementos="elementosConDeshabilitado" colapsable />
+    <section class="space-y-4">
+      <h2 class="font-semibold">Paso deshabilitado</h2>
+      <Stepper :pasos="pasosConDeshabilitado" />
     </section>
 
-    <section class="space-y-3">
-      <h2 class="font-semibold">Slots personalizados</h2>
+    <section class="space-y-4">
+      <h2 class="font-semibold">Slots por paso</h2>
 
-      <Accordeon :elementos="elementos" colapsable>
-        <template #activador="{ elemento, abierto, indice }">
-          <span class="flex w-full items-center gap-2">
-            <span class="text-xs text-muted-foreground">0{{ indice + 1 }}</span>
-            <span>{{ elemento.titulo }}</span>
-            <span class="ml-auto text-xs">{{ abierto ? 'Abierto' : 'Cerrado' }}</span>
-          </span>
+      <Stepper :pasos="pasos">
+        <template #icono-cuenta>
+          <span class="text-xs font-bold">A</span>
         </template>
 
-        <template #default="{ elemento }">
-          <p class="text-sm text-muted-foreground">{{ elemento.contenido }}</p>
+        <template #titulo-confirmacion="{ paso, activo }">
+          <span :class="activo && 'text-violet-700'">{{ paso.titulo }} personalizada</span>
         </template>
-      </Accordeon>
+
+        <template #contenido-direccion="{ paso }">
+          <div class="rounded-lg bg-violet-50 p-4 text-sm text-violet-950">
+            Contenido exclusivo para {{ paso.titulo.toLowerCase() }}.
+          </div>
+        </template>
+      </Stepper>
     </section>
 
-    <section class="space-y-3">
-      <h2 class="font-semibold">UI dinámica</h2>
+    <section class="space-y-4">
+      <h2 class="font-semibold">Color y UI dinámica</h2>
 
-      <Accordeon
-        :elementos="elementos"
-        colapsable
+      <Stepper
+        :pasos="pasos"
+        color="#7c3aed"
         :ui="{
           elemento: ({ ultimo }) => ({
-            class: ultimo ? 'border-b-0' : 'border-b border-violet-100',
+            class: ultimo ? 'opacity-100' : undefined,
           }),
-          activador: ({ abierto }) => ({
-            class: abierto ? 'text-violet-700' : 'text-foreground',
+          activador: ({ activo }) => ({
+            class: activo ? 'scale-105' : 'opacity-80',
           }),
-          contenido: { class: 'pb-4 text-violet-950' },
+          indicador: ({ estado }) => ({
+            class: estado === 'inactivo' ? 'border-violet-200' : undefined,
+          }),
+          titulo: ({ activo }) => ({
+            class: activo ? 'text-violet-700' : undefined,
+          }),
+          contenido: { class: 'rounded-lg border border-violet-200 p-4' },
         }"
       />
     </section>

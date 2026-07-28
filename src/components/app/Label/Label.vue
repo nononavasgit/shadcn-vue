@@ -10,8 +10,8 @@ defineSlots<LabelSlots>()
 const props = defineProps<LabelProps>()
 const attrs = useAttrs()
 
-const uiCalculado = computed(() => ({
-  raiz: {
+const calculatedUI = computed(() => ({
+  root: {
     ...attrs,
     as: props.as,
     asChild: props.asChild,
@@ -21,7 +21,7 @@ const uiCalculado = computed(() => ({
 </script>
 
 <template>
-  <LabelBase v-bind="uiCalculado.raiz">
+  <LabelBase v-bind="calculatedUI.root">
     <slot />
   </LabelBase>
 </template>

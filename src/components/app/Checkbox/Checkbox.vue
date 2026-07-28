@@ -1,35 +1,37 @@
 <script setup lang="ts">
-import { useAttrs } from 'vue'
+import { computed, useAttrs } from 'vue'
 import { Checkbox as CheckboxBase } from '@/components/ui/Checkbox'
 import { cn } from '@/lib/utils'
-import type { CheckboxEmits, CheckboxProps, CheckboxSlots, ValorCheckbox } from '.'
+import type { CheckboxEmits, CheckboxProps, CheckboxSlots, CheckboxValue } from '.'
 
 defineOptions({ inheritAttrs: false })
-defineSlots<CheckboxSlots>()
-defineEmits<CheckboxEmits>()
 
 const props = withDefaults(defineProps<CheckboxProps>(), {
-  valorVerdadero: true,
-  valorFalso: false,
+  trueValue: true,
+  falseValue: false,
 })
+defineEmits<CheckboxEmits>()
+defineSlots<CheckboxSlots>()
 
 const attrs = useAttrs()
-const valorModelo = defineModel<ValorCheckbox | 'indeterminate' | null>()
+const modelValue = defineModel<CheckboxValue | 'indeterminate' | null>()
+const calculatedUI = computed(() => ({
+  root: {
+    ...attrs,
+    as: props.as,
+    asChild: props.asChild,
+    defaultValue: props.defaultValue,
+    falseValue: props.falseValue,
+    trueValue: props.trueValue,
+    class: cn('focus-visible:border-primary focus-visible:ring-primary/50', attrs.class),
+  },
+}))
 </script>
 
 <template>
-  <CheckboxBase
-    v-model="valorModelo"
-    v-bind="attrs"
-    :as="props.as"
-    :as-child="props.asChild"
-    :class="cn('focus-visible:border-primary focus-visible:ring-primary/50', attrs.class)"
-    :default-value="props.valorPredeterminado"
-    :false-value="props.valorFalso"
-    :true-value="props.valorVerdadero"
-  >
-    <template v-if="$slots.indicador" #default="slotProps">
-      <slot name="indicador" :estado="slotProps.state" :valor="slotProps.modelValue" />
+  <CheckboxBase v-model="modelValue" v-bind="calculatedUI.root">
+    <template v-if="$slots.indicator" #default="slotProps">
+      <slot name="indicator" :state="slotProps.state" :value="slotProps.modelValue" />
     </template>
   </CheckboxBase>
 </template>

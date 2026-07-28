@@ -1,60 +1,63 @@
 import type { ButtonHTMLAttributes, Component, HTMLAttributes, SVGAttributes } from 'vue'
-import type { IconoNombre, IconProps } from '@/components/app/Icon'
+import type { IconoNombre, IconoProps } from '@/components/app/Icon'
 
 export { default as Dialog } from './Dialog.vue'
 
-export type DialogNodeUI = Omit<HTMLAttributes, 'dir'> & {
+export type DialogNodoUI = Omit<HTMLAttributes, 'dir'> & {
   as?: string | Component
   asChild?: boolean
   dir?: 'ltr' | 'rtl'
 }
 
-export type DialogIcon = IconoNombre | (IconProps & SVGAttributes)
-export type DialogContentEvent = Event
-
-export type DialogContentUI = DialogNodeUI & {
-  forceMount?: boolean
-  disableOutsidePointerEvents?: boolean
-  onOpenAutoFocus?: (event: DialogContentEvent) => void
-  onCloseAutoFocus?: (event: DialogContentEvent) => void
-  onEscapeKeyDown?: (event: KeyboardEvent) => void
-  onPointerDownOutside?: (event: DialogContentEvent) => void
-  onFocusOutside?: (event: DialogContentEvent) => void
-  onInteractOutside?: (event: DialogContentEvent) => void
-}
-
 export interface DialogUI {
-  trigger?: DialogNodeUI
-  container?: DialogContentUI
-  header?: HTMLAttributes
-  title?: DialogNodeUI
-  icon?: SVGAttributes
-  description?: DialogNodeUI
-  content?: HTMLAttributes
-  footer?: HTMLAttributes
-  close?: HTMLAttributes & ButtonHTMLAttributes
+  activador?: DialogNodoUI
+  contenedor?: DialogNodoUI
+  encabezado?: HTMLAttributes
+  titulo?: DialogNodoUI
+  icono?: SVGAttributes
+  descripcion?: DialogNodoUI
+  contenido?: HTMLAttributes
+  pie?: HTMLAttributes
+  cerrar?: HTMLAttributes & ButtonHTMLAttributes
 }
 
 export interface DialogProps {
-  open?: boolean
-  defaultOpen?: boolean
+  abierto?: boolean
+  abiertoPredeterminado?: boolean
   modal?: boolean
-  unmountOnHide?: boolean
-  label?: string
-  description?: string
-  icon?: DialogIcon
-  showCloseButton?: boolean
-  closeLabel?: string
-  forceMount?: boolean
+  desmontarAlOcultar?: boolean
+  titulo?: string
+  descripcion?: string
+  icono?: IconoNombre | (IconoProps & SVGAttributes)
+  mostrarBotonCerrar?: boolean
+  forzarMontaje?: boolean
+  deshabilitarPunteroExterior?: boolean
+
   ui?: DialogUI
 }
 
 export interface DialogEmits {
-  'update:open': [value: boolean]
+  'update:abierto': [valor: boolean]
+  enfocarAbrir: [evento: Event]
+  enfocarCerrar: [evento: Event]
+  pulsarEscape: [evento: Event]
+  pulsarFuera: [evento: Event]
+  enfocarFuera: [evento: Event]
+  interactuarFuera: [evento: Event]
 }
 
 export interface DialogSlotProps {
-  open: boolean
-  close: () => void
-  icon?: DialogIcon
+  abierto: boolean
+  cerrar: () => void
+}
+
+export interface DialogSlots {
+  default?(props: DialogSlotProps): unknown
+  contenido?(props: DialogSlotProps): unknown
+  encabezado?(props: DialogSlotProps): unknown
+  titulo?(props: DialogSlotProps): unknown
+  descripcion?(props: DialogSlotProps): unknown
+  pie?(props: DialogSlotProps): unknown
+  cerrar?(props: DialogSlotProps): unknown
+  iconoCerrar?(props: DialogSlotProps): unknown
 }

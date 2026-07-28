@@ -1,102 +1,125 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Panel } from '@/components/app/Panel'
+import { Button } from '@/components/app/Button'
+import { Dialog } from '@/components/app/Dialog'
 
-const panelAbierto = ref(true)
-const personalizadoAbierto = ref(true)
+const dialogoAbierto = ref(false)
+const personalizadoAbierto = ref(false)
 </script>
 
 <template>
   <main class="mx-auto max-w-3xl space-y-10 p-8">
     <header class="space-y-2">
-      <h1 class="text-2xl font-bold">Ejemplos de Panel</h1>
+      <h1 class="text-2xl font-bold">Ejemplos de Dialog</h1>
       <p class="text-muted-foreground">Variantes de uso de la API en español.</p>
     </header>
 
     <section class="space-y-3">
       <h2 class="font-semibold">Básico</h2>
-      <Panel titulo="Información"> Este es el contenido de un panel expandible. </Panel>
+
+      <Dialog
+        titulo="Información"
+        descripcion="Un diálogo sencillo con título, descripción y contenido."
+      >
+        <Button>Abrir diálogo</Button>
+
+        <template #contenido>
+          <p class="text-sm">Este es el contenido principal del diálogo.</p>
+        </template>
+      </Dialog>
     </section>
 
     <section class="space-y-3">
       <div class="flex items-center justify-between">
         <h2 class="font-semibold">Estado controlado</h2>
         <span class="text-sm text-muted-foreground">
-          {{ panelAbierto ? 'Abierto' : 'Cerrado' }}
+          {{ dialogoAbierto ? 'Abierto' : 'Cerrado' }}
         </span>
       </div>
 
-      <Panel v-model:abierto="panelAbierto" titulo="Panel controlado">
-        Su estado se controla mediante <code>v-model:abierto</code>.
-      </Panel>
-
-      <button
-        class="rounded-md border px-3 py-2 text-sm"
-        type="button"
-        @click="panelAbierto = !panelAbierto"
+      <Dialog
+        v-model:abierto="dialogoAbierto"
+        titulo="Diálogo controlado"
+        descripcion="Su estado se sincroniza mediante v-model:abierto."
       >
+        <Button>Abrir diálogo controlado</Button>
+
+        <template #contenido>
+          <p class="text-sm">También puedes cambiar su estado desde fuera.</p>
+        </template>
+      </Dialog>
+
+      <Button variante="delineado" @click="dialogoAbierto = !dialogoAbierto">
         Cambiar desde fuera
-      </button>
+      </Button>
     </section>
 
     <section class="space-y-3">
-      <h2 class="font-semibold">Gravedades y variantes</h2>
+      <h2 class="font-semibold">Con icono y pie</h2>
 
-      <div class="grid gap-4 sm:grid-cols-2">
-        <Panel titulo="Éxito" gravedad="exito" variante="sutil">
-          La operación se completó correctamente.
-        </Panel>
+      <Dialog
+        titulo="Confirmar operación"
+        descripcion="Comprueba los datos antes de continuar."
+        icono="alerta"
+      >
+        <Button gravedad="alerta">Mostrar confirmación</Button>
 
-        <Panel titulo="Alerta" gravedad="alerta" variante="delineado">
-          Revisa la información antes de continuar.
-        </Panel>
+        <template #contenido>
+          <p class="text-sm">Esta acción realizará cambios sobre los datos seleccionados.</p>
+        </template>
 
-        <Panel titulo="Error" gravedad="error" variante="suave">
-          No se pudo completar la operación.
-        </Panel>
-
-        <Panel titulo="Secundario" gravedad="secundario" variante="plano">
-          Contenido con una apariencia secundaria.
-        </Panel>
-      </div>
+        <template #pie="{ cerrar }">
+          <Button variante="delineado" @click="cerrar">Cancelar</Button>
+          <Button gravedad="alerta" @click="cerrar">Confirmar</Button>
+        </template>
+      </Dialog>
     </section>
 
     <section class="space-y-3">
-      <h2 class="font-semibold">Color e icono</h2>
+      <h2 class="font-semibold">Cierre personalizado</h2>
 
-      <Panel titulo="Configuración" icono="info" color="#7c3aed">
-        Panel con un color y un icono personalizados.
-      </Panel>
-    </section>
+      <Dialog titulo="Botón de cierre personalizado" titulo-cerrar="Cerrar ventana">
+        <Button variante="sutil">Abrir ejemplo</Button>
 
-    <section class="space-y-3">
-      <h2 class="font-semibold">No expandible</h2>
+        <template #iconoCerrar>
+          <span class="text-xs font-bold">Cerrar</span>
+        </template>
 
-      <Panel titulo="Contenido permanente" :expandible="false">
-        Este contenido permanece siempre visible.
-      </Panel>
+        <template #contenido>
+          <p class="text-sm">El icono de cierre se ha sustituido mediante un slot.</p>
+        </template>
+      </Dialog>
     </section>
 
     <section class="space-y-3">
       <h2 class="font-semibold">Slots y UI personalizada</h2>
 
-      <Panel
+      <Dialog
         v-model:abierto="personalizadoAbierto"
         :ui="{
-          encabezado: { class: 'bg-violet-50 text-violet-700' },
-          contenido: { class: 'bg-violet-50/40 p-5' },
+          contenedor: { class: 'border-violet-300 sm:max-w-xl' },
+          encabezado: { class: 'border-b border-violet-100 pb-4' },
+          titulo: { class: 'text-violet-700' },
+          contenido: { class: 'py-4' },
+          pie: { class: 'border-t border-violet-100 pt-4' },
         }"
       >
-        <template #titulo="{ abierto }">
-          Panel personalizado · {{ abierto ? 'abierto' : 'cerrado' }}
+        <Button color="#7c3aed">Abrir personalizado</Button>
+
+        <template #titulo>Diálogo personalizado</template>
+
+        <template #descripcion>
+          El aspecto se configura con las claves visuales de <code>ui</code>.
         </template>
 
-        <template #flechas="{ abierto }">
-          <span class="text-xs">{{ abierto ? 'Ocultar' : 'Mostrar' }}</span>
+        <template #contenido>
+          <p class="text-sm">Las opciones funcionales del contenedor ahora son props de Dialog.</p>
         </template>
 
-        Contenido personalizado mediante slots y la prop <code>ui</code>.
-      </Panel>
+        <template #pie="{ cerrar }">
+          <Button color="#7c3aed" @click="cerrar">Aceptar</Button>
+        </template>
+      </Dialog>
     </section>
   </main>
 </template>

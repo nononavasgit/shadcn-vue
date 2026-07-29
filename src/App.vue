@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { Accordion } from '@/components/app/Accordion'
 import { Alert } from '@/components/app/Alert'
 import { AlertDialog } from '@/components/app/AlertDialog'
+import { AspectRatio } from '@/components/app/AspectRatio'
 import { Breadcrumb, type BreadcrumbItem } from '@/components/app/Breadcrumb'
 import { Collapsible } from '@/components/app/Collapsible'
 import { Dialog } from '@/components/app/Dialog'
@@ -1186,6 +1187,80 @@ const breadcrumbUI: BreadcrumbUI = {
       <div class="rounded-md bg-muted p-3 text-sm text-muted-foreground">
         Estado controlado: {{ alertDialogOpen ? 'abierto' : 'cerrado' }} · Resultado:
         {{ alertDialogResult }}
+      </div>
+    </section>
+    <section class="space-y-4" aria-labelledby="aspect-ratio-examples-title">
+      <div>
+        <h2 id="aspect-ratio-examples-title" class="text-xl font-semibold">AspectRatio</h2>
+        <p class="text-sm text-muted-foreground">
+          Proporciones estables para imágenes, vídeo, tarjetas y cualquier otro contenido.
+        </p>
+      </div>
+
+      <div class="grid gap-5 rounded-lg border p-5 sm:grid-cols-2">
+        <div class="space-y-2">
+          <h3 class="font-medium">Panorámico · 16:9</h3>
+          <AspectRatio :ratio="16 / 9" class="overflow-hidden rounded-lg bg-muted">
+            <div
+              class="flex size-full flex-col justify-end bg-linear-to-br from-sky-500 via-indigo-500 to-violet-700 p-5 text-white"
+            >
+              <p class="text-xs font-medium tracking-widest uppercase opacity-80">Banner</p>
+              <p class="text-xl font-semibold">Contenido panorámico adaptable</p>
+            </div>
+          </AspectRatio>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="font-medium">Cuadrado · 1:1</h3>
+          <AspectRatio :ratio="1" class="max-w-64 overflow-hidden rounded-lg border bg-muted">
+            <div class="flex size-full flex-col items-center justify-center gap-3 p-6 text-center">
+              <span
+                class="flex size-16 items-center justify-center rounded-full bg-primary text-xl font-bold text-primary-foreground"
+              >
+                AR
+              </span>
+              <div>
+                <p class="font-semibold">Tarjeta de perfil</p>
+                <p class="text-sm text-muted-foreground">Siempre conserva su forma cuadrada.</p>
+              </div>
+            </div>
+          </AspectRatio>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="font-medium">Reproductor · 4:3</h3>
+          <AspectRatio :ratio="4 / 3" class="overflow-hidden rounded-lg bg-zinc-950 text-white">
+            <div class="relative flex size-full items-center justify-center">
+              <button
+                type="button"
+                aria-label="Reproducir vídeo de demostración"
+                class="flex size-14 items-center justify-center rounded-full bg-white/15 text-xl backdrop-blur hover:bg-white/25"
+              >
+                ▶
+              </button>
+              <div class="absolute right-4 bottom-3 left-4 h-1 rounded-full bg-white/20">
+                <div class="h-full w-1/3 rounded-full bg-white" />
+              </div>
+            </div>
+          </AspectRatio>
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="font-medium">Slot y asChild · 21:9</h3>
+          <AspectRatio v-slot="{ aspect }" :ratio="21 / 9" as-child>
+            <article
+              class="flex w-full items-center justify-between gap-4 overflow-hidden rounded-lg border bg-primary/5 p-5"
+            >
+              <div>
+                <p class="font-semibold">Artículo como elemento raíz</p>
+                <p class="text-sm text-muted-foreground">
+                  Porcentaje interno calculado: {{ aspect.toFixed(2) }}%
+                </p>
+              </div>
+              <Icon name="info" class="size-8 shrink-0 text-primary" aria-hidden="true" />
+            </article>
+          </AspectRatio>
+        </div>
       </div>
     </section>
     <section class="space-y-4">

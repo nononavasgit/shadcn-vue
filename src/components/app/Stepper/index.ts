@@ -1,59 +1,59 @@
 import type { StepperSeparatorProps } from 'reka-ui'
-import type { Component, HTMLAttributes, SVGAttributes } from 'vue'
-import type { IconoNombre, IconoProps } from '@/components/app/Icon'
+import type { Component, HTMLAttributes } from 'vue'
+import type { NormalizeIconProps, NormalizedIconProps } from '@/components/app/Icon'
 
 export { default as Stepper } from './Stepper.vue'
 
-export type StepperEstado = 'completado' | 'activo' | 'inactivo'
-export type StepperNodoUI = Omit<HTMLAttributes, 'dir'> & {
+export type StepperState = 'completed' | 'active' | 'inactive'
+export type StepperNodeUI = Omit<HTMLAttributes, 'dir'> & {
   as?: string | Component
   asChild?: boolean
   dir?: 'ltr' | 'rtl'
 }
-export type StepperSeparadorUI = Omit<HTMLAttributes, 'orientation'> & StepperSeparatorProps
+export type StepperSeparatorUI = Omit<HTMLAttributes, 'orientation'> & StepperSeparatorProps
 
-export interface StepperPaso {
-  clave?: string | number
-  paso: number
-  titulo?: string
-  descripcion?: string
-  icono?: IconoNombre | (IconoProps & SVGAttributes)
-  contenido?: string
-  deshabilitado?: boolean
-  completado?: boolean
+export interface StepperStep {
+  key?: string | number
+  step: number
+  label?: string
+  description?: string
+  icon?: NormalizeIconProps
+  content?: string
+  disabled?: boolean
+  completed?: boolean
 }
 
 // Context UI
-export interface StepperContextoUI {
-  paso: StepperPaso
-  indice: number
-  estado: StepperEstado
-  activo: boolean
-  primero: boolean
-  ultimo: boolean
+export interface StepperUIContext {
+  step: StepperStep
+  index: number
+  state: StepperState
+  active: boolean
+  first: boolean
+  last: boolean
 }
 
 // UI
-export type StepperValorUI<T> = T | ((contexto: StepperContextoUI) => T)
+export type StepperUIValue<T> = T | ((context: StepperUIContext) => T)
 export interface StepperUI {
-  lista?: HTMLAttributes
-  elemento?: StepperValorUI<HTMLAttributes>
-  activador?: StepperValorUI<HTMLAttributes>
-  indicador?: StepperValorUI<HTMLAttributes>
-  encabezado?: StepperValorUI<HTMLAttributes>
-  icono?: StepperValorUI<SVGAttributes>
-  titulo?: StepperValorUI<HTMLAttributes>
-  descripcion?: StepperValorUI<HTMLAttributes>
-  separador?: StepperValorUI<StepperSeparadorUI>
-  contenido?: StepperValorUI<HTMLAttributes>
+  list?: HTMLAttributes
+  item?: StepperUIValue<HTMLAttributes>
+  trigger?: StepperUIValue<HTMLAttributes>
+  indicator?: StepperUIValue<HTMLAttributes>
+  header?: StepperUIValue<HTMLAttributes>
+  icon?: StepperUIValue<NormalizedIconProps>
+  title?: StepperUIValue<HTMLAttributes>
+  description?: StepperUIValue<HTMLAttributes>
+  separator?: StepperUIValue<StepperSeparatorUI>
+  content?: StepperUIValue<HTMLAttributes>
 }
 
 // Props
 export interface StepperProps {
-  pasos?: StepperPaso[]
-  orientacion?: 'vertical' | 'horizontal'
+  steps?: StepperStep[]
+  orientation?: 'vertical' | 'horizontal'
   dir?: 'ltr' | 'rtl'
-  lineal?: boolean
+  linear?: boolean
   color?: string
   as?: string | Component
   asChild?: boolean
@@ -61,48 +61,48 @@ export interface StepperProps {
 }
 
 export interface StepperEmits {
-  'update:modelValue': [valor: number | undefined]
+  'update:modelValue': [value: number | undefined]
 }
 
 // SlotProps
 export interface StepperSlotProps {
-  valor: number | undefined
-  totalPasos: number
-  siguienteDeshabilitado: boolean
-  anteriorDeshabilitado: boolean
-  primerPaso: boolean
-  ultimoPaso: boolean
-  irAlPaso: (paso: number) => void
-  siguientePaso: () => void
-  pasoAnterior: () => void
-  tieneSiguiente: () => boolean
-  tieneAnterior: () => boolean
-  paso: StepperPaso
-  indice: number
-  estado: StepperEstado
-  activo: boolean
-  primero: boolean
-  ultimo: boolean
+  value: number | undefined
+  totalSteps: number
+  isNextDisabled: boolean
+  isPrevDisabled: boolean
+  isFirstStep: boolean
+  isLastStep: boolean
+  goToStep: (step: number) => void
+  nextStep: () => void
+  prevStep: () => void
+  hasNext: () => boolean
+  hasPrev: () => boolean
+  step: StepperStep
+  index: number
+  state: StepperState
+  active: boolean
+  first: boolean
+  last: boolean
 }
 
 // Slots
 export type StepperSlots = {
   default?(props: StepperSlotProps): unknown
-  elemento?(props: StepperSlotProps): unknown
-  encabezado?(props: StepperSlotProps): unknown
-  indicador?(props: StepperSlotProps): unknown
-  icono?(props: StepperSlotProps): unknown
-  titulo?(props: StepperSlotProps): unknown
-  descripcion?(props: StepperSlotProps): unknown
-  separador?(props: StepperSlotProps): unknown
-  contenido?(props: StepperSlotProps): unknown
+  item?(props: StepperSlotProps): unknown
+  header?(props: StepperSlotProps): unknown
+  indicator?(props: StepperSlotProps): unknown
+  icon?(props: StepperSlotProps): unknown
+  title?(props: StepperSlotProps): unknown
+  description?(props: StepperSlotProps): unknown
+  separator?(props: StepperSlotProps): unknown
+  content?(props: StepperSlotProps): unknown
 } & {
-  [nombre: `elemento-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
-  [nombre: `encabezado-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
-  [nombre: `indicador-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
-  [nombre: `icono-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
-  [nombre: `titulo-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
-  [nombre: `descripcion-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
-  [nombre: `separador-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
-  [nombre: `contenido-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
+  [name: `item-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
+  [name: `header-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
+  [name: `indicator-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
+  [name: `icon-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
+  [name: `title-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
+  [name: `description-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
+  [name: `separator-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
+  [name: `content-${string}`]: ((props: StepperSlotProps) => unknown) | undefined
 }

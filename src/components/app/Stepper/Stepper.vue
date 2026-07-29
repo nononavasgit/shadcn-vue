@@ -13,215 +13,213 @@ import { Icon } from '@/components/app/Icon'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import type {
-  StepperContextoUI,
-  StepperEstado,
+  StepperUIContext,
+  StepperState,
   StepperProps,
   StepperSlotProps,
   StepperSlots,
-  StepperValorUI,
+  StepperUIValue,
 } from '.'
 
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<StepperProps>(), {
-  orientacion: 'horizontal',
-  pasos: () => [],
+  orientation: 'horizontal',
+  steps: () => [],
 })
 defineSlots<StepperSlots>()
 
 const attrs = useAttrs()
 const slots = useSlots()
-const modelo = defineModel<number>()
+const model = defineModel<number>()
 const { colorStyle } = useColor(
   computed(() => props.color),
   'stepper',
 )
 
-interface EstadoRaizOriginal {
+interface StepperRootState {
   modelValue: number | undefined
   totalSteps: number
   isNextDisabled: boolean
   isPrevDisabled: boolean
   isFirstStep: boolean
   isLastStep: boolean
-  goToStep: (paso: number) => void
+  goToStep: (step: number) => void
   nextStep: () => void
   prevStep: () => void
   hasNext: () => boolean
   hasPrev: () => boolean
 }
 
-const uiCalculado = computed(() => {
-  const pasoActual = modelo.value
-  const vertical = props.orientacion === 'vertical'
-  const claseActivador = cn(
+const calculatedUI = computed(() => {
+  const currentStep = model.value
+  const isVertical = props.orientation === 'vertical'
+  const triggerClass = cn(
     'z-10 border border-transparent outline-none focus-visible:ring-3',
     props.color
       ? 'focus-visible:border-(--stepper-color) focus-visible:ring-(--stepper-color)/50'
       : 'focus-visible:border-primary focus-visible:ring-primary/50',
-    vertical && 'flex-row items-start gap-3 p-0 text-left',
+    isVertical && 'flex-row items-start gap-3 p-0 text-left',
   )
-  const claseIndicador =
+  const indicatorClass =
     props.color &&
     'group-data-[state=active]:bg-(--stepper-color) group-data-[state=active]:text-(--stepper-color-foreground) group-data-[state=completed]:bg-(--stepper-color) group-data-[state=completed]:text-(--stepper-color-foreground)'
-  const claseSeparador = cn(
-    vertical
+  const separatorClass = cn(
+    isVertical
       ? 'absolute top-10 left-5 h-[calc(100%+1.5rem)] w-0.5 -translate-x-1/2 rounded-full'
       : 'absolute top-5 right-[calc(-50%+10px)] left-[calc(50%+20px)] h-0.5 shrink-0 rounded-full',
     props.color && 'group-data-[state=completed]:bg-(--stepper-color)',
   )
 
   return {
-    raiz: {
+    root: {
       ...attrs,
       as: props.as,
       asChild: props.asChild,
-      orientation: props.orientacion,
+      orientation: props.orientation,
       dir: props.dir,
-      linear: props.lineal,
+      linear: props.linear,
       class: cn('block w-full', attrs.class),
       style: [colorStyle.value, attrs.style],
     },
-    lista: {
-      ...props.ui?.lista,
+    list: {
+      ...props.ui?.list,
       class: cn(
         'flex w-full',
-        vertical ? 'flex-col gap-6' : 'items-start gap-2',
-        props.ui?.lista?.class,
+        isVertical ? 'flex-col gap-6' : 'items-start gap-2',
+        props.ui?.list?.class,
       ),
     },
-    pasos: props.pasos.map((paso, indice) => {
-      const estado: StepperEstado = paso.completado
-        ? 'completado'
-        : paso.paso === pasoActual
-          ? 'activo'
-          : pasoActual !== undefined && paso.paso < pasoActual
-            ? 'completado'
-            : 'inactivo'
-      const contexto: StepperContextoUI = {
-        paso,
-        indice,
-        estado,
-        activo: estado === 'activo',
-        primero: indice === 0,
-        ultimo: indice === props.pasos.length - 1,
+    steps: props.steps.map((step, index) => {
+      const state: StepperState = step.completed
+        ? 'completed'
+        : step.step === currentStep
+          ? 'active'
+          : currentStep !== undefined && step.step < currentStep
+            ? 'completed'
+            : 'inactive'
+      const context: StepperUIContext = {
+        step,
+        index,
+        state,
+        active: state === 'active',
+        first: index === 0,
+        last: index === props.steps.length - 1,
       }
-      const resolverUI = <T,>(valor: StepperValorUI<T> | undefined): T | undefined =>
-        typeof valor === 'function'
-          ? (valor as (contexto: StepperContextoUI) => T)(contexto)
-          : valor
-      const uiElemento = resolverUI(props.ui?.elemento)
-      const uiActivador = resolverUI(props.ui?.activador)
-      const uiIndicador = resolverUI(props.ui?.indicador)
-      const uiEncabezado = resolverUI(props.ui?.encabezado)
-      const uiIcono = resolverUI(props.ui?.icono)
-      const uiTitulo = resolverUI(props.ui?.titulo)
-      const uiDescripcion = resolverUI(props.ui?.descripcion)
-      const uiSeparador = resolverUI(props.ui?.separador)
-      const uiContenido = resolverUI(props.ui?.contenido)
-      const clave = String(paso.clave ?? paso.paso)
-      const nombres = {
-        elemento: `elemento-${clave}`,
-        encabezado: `encabezado-${clave}`,
-        indicador: `indicador-${clave}`,
-        icono: `icono-${clave}`,
-        titulo: `titulo-${clave}`,
-        descripcion: `descripcion-${clave}`,
-        separador: `separador-${clave}`,
-        contenido: `contenido-${clave}`,
+      const resolveUI = <T,>(value: StepperUIValue<T> | undefined): T | undefined =>
+        typeof value === 'function' ? (value as (context: StepperUIContext) => T)(context) : value
+      const itemUI = resolveUI(props.ui?.item)
+      const triggerUI = resolveUI(props.ui?.trigger)
+      const indicatorUI = resolveUI(props.ui?.indicator)
+      const headerUI = resolveUI(props.ui?.header)
+      const iconUI = resolveUI(props.ui?.icon)
+      const titleUI = resolveUI(props.ui?.title)
+      const descriptionUI = resolveUI(props.ui?.description)
+      const separatorUI = resolveUI(props.ui?.separator)
+      const contentUI = resolveUI(props.ui?.content)
+      const key = String(step.key ?? step.step)
+      const slotNames = {
+        item: `item-${key}`,
+        header: `header-${key}`,
+        indicator: `indicator-${key}`,
+        icon: `icon-${key}`,
+        title: `title-${key}`,
+        description: `description-${key}`,
+        separator: `separator-${key}`,
+        content: `content-${key}`,
       } as const
-      const icono = typeof paso.icono === 'string' ? { nombre: paso.icono } : paso.icono
+      const icon = typeof step.icon === 'string' ? { name: step.icon } : step.icon
 
       return {
-        clave,
-        datos: paso,
-        contexto,
-        nombres,
-        elemento: {
-          ...uiElemento,
-          step: paso.paso,
-          disabled: paso.deshabilitado,
-          completed: paso.completado,
+        key,
+        data: step,
+        context,
+        slotNames,
+        item: {
+          ...itemUI,
+          step: step.step,
+          disabled: step.disabled,
+          completed: step.completed,
           class: cn(
-            vertical
+            isVertical
               ? 'relative flex w-full items-start gap-4'
               : 'relative flex w-full flex-col items-center justify-center',
-            uiElemento?.class,
+            itemUI?.class,
           ),
-          style: uiElemento?.style,
+          style: itemUI?.style,
         },
-        activador: {
-          ...uiActivador,
-          class: cn(claseActivador, uiActivador?.class),
-          style: uiActivador?.style,
+        trigger: {
+          ...triggerUI,
+          class: cn(triggerClass, triggerUI?.class),
+          style: triggerUI?.style,
         },
-        indicador: {
-          ...uiIndicador,
-          class: cn(claseIndicador, uiIndicador?.class),
-          style: uiIndicador?.style,
+        indicator: {
+          ...indicatorUI,
+          class: cn(indicatorClass, indicatorUI?.class),
+          style: indicatorUI?.style,
         },
-        encabezado: {
-          ...uiEncabezado,
-          class: cn('flex min-w-0 flex-col', uiEncabezado?.class),
-          style: uiEncabezado?.style,
+        header: {
+          ...headerUI,
+          class: cn('flex min-w-0 flex-col', headerUI?.class),
+          style: headerUI?.style,
         },
-        icono: {
-          ...uiIcono,
-          ...icono,
-          nombre: icono?.nombre ?? 'check',
-          class: cn(uiIcono?.class, icono?.class),
-          style: [uiIcono?.style, icono?.style],
+        icon: {
+          ...iconUI,
+          ...icon,
+          name: icon?.name ?? 'check',
+          class: cn(iconUI?.class, icon?.class),
+          style: [iconUI?.style, icon?.style],
         },
-        titulo: {
-          ...uiTitulo,
-          class: cn(uiTitulo?.class),
-          style: uiTitulo?.style,
+        title: {
+          ...titleUI,
+          class: cn(titleUI?.class),
+          style: titleUI?.style,
         },
-        descripcion: {
-          ...uiDescripcion,
-          class: cn(uiDescripcion?.class),
-          style: uiDescripcion?.style,
+        description: {
+          ...descriptionUI,
+          class: cn(descriptionUI?.class),
+          style: descriptionUI?.style,
         },
-        separador: {
-          ...uiSeparador,
-          class: cn(claseSeparador, uiSeparador?.class),
-          style: uiSeparador?.style,
+        separator: {
+          ...separatorUI,
+          class: cn(separatorClass, separatorUI?.class),
+          style: separatorUI?.style,
         },
-        contenido: {
-          ...uiContenido,
-          class: cn('mt-6', uiContenido?.class),
-          style: uiContenido?.style,
+        content: {
+          ...contentUI,
+          class: cn('mt-6', contentUI?.class),
+          style: contentUI?.style,
         },
-        mostrarEncabezado: Boolean(
-          paso.titulo ||
-          paso.descripcion ||
-          slots.encabezado ||
-          slots.titulo ||
-          slots.descripcion ||
-          slots[nombres.encabezado] ||
-          slots[nombres.titulo] ||
-          slots[nombres.descripcion],
+        showHeader: Boolean(
+          step.label ||
+          step.description ||
+          slots.header ||
+          slots.title ||
+          slots.description ||
+          slots[slotNames.header] ||
+          slots[slotNames.title] ||
+          slots[slotNames.description],
         ),
-        mostrarTitulo: Boolean(paso.titulo || slots.titulo || slots[nombres.titulo]),
-        mostrarDescripcion: Boolean(
-          paso.descripcion || slots.descripcion || slots[nombres.descripcion],
+        showTitle: Boolean(step.label || slots.title || slots[slotNames.title]),
+        showDescription: Boolean(
+          step.description || slots.description || slots[slotNames.description],
         ),
-        mostrarContenido: Boolean(
-          paso.contenido || slots.default || slots.contenido || slots[nombres.contenido],
+        showContent: Boolean(
+          step.content || slots.default || slots.content || slots[slotNames.content],
         ),
-        propiedadesSlot: (raiz: EstadoRaizOriginal): StepperSlotProps => ({
-          valor: raiz.modelValue,
-          totalPasos: raiz.totalSteps,
-          siguienteDeshabilitado: raiz.isNextDisabled,
-          anteriorDeshabilitado: raiz.isPrevDisabled,
-          primerPaso: raiz.isFirstStep,
-          ultimoPaso: raiz.isLastStep,
-          irAlPaso: raiz.goToStep,
-          siguientePaso: raiz.nextStep,
-          pasoAnterior: raiz.prevStep,
-          tieneSiguiente: raiz.hasNext,
-          tieneAnterior: raiz.hasPrev,
-          ...contexto,
+        getSlotProps: (root: StepperRootState): StepperSlotProps => ({
+          value: root.modelValue,
+          totalSteps: root.totalSteps,
+          isNextDisabled: root.isNextDisabled,
+          isPrevDisabled: root.isPrevDisabled,
+          isFirstStep: root.isFirstStep,
+          isLastStep: root.isLastStep,
+          goToStep: root.goToStep,
+          nextStep: root.nextStep,
+          prevStep: root.prevStep,
+          hasNext: root.hasNext,
+          hasPrev: root.hasPrev,
+          ...context,
         }),
       }
     }),
@@ -230,46 +228,46 @@ const uiCalculado = computed(() => {
 </script>
 
 <template>
-  <StepperBase v-slot="estadoRaiz" v-bind="uiCalculado.raiz" v-model="modelo">
-    <div v-bind="uiCalculado.lista" data-slot="stepper-list">
-      <StepperItem v-for="item in uiCalculado.pasos" :key="item.clave" v-bind="item.elemento">
-        <slot :name="item.nombres.elemento" v-bind="item.propiedadesSlot(estadoRaiz)">
-          <slot name="elemento" v-bind="item.propiedadesSlot(estadoRaiz)">
-            <StepperTrigger v-bind="item.activador">
-              <slot :name="item.nombres.encabezado" v-bind="item.propiedadesSlot(estadoRaiz)">
-                <slot name="encabezado" v-bind="item.propiedadesSlot(estadoRaiz)">
-                  <StepperIndicator v-bind="item.indicador">
-                    <slot :name="item.nombres.indicador" v-bind="item.propiedadesSlot(estadoRaiz)">
-                      <slot name="indicador" v-bind="item.propiedadesSlot(estadoRaiz)">
-                        <slot :name="item.nombres.icono" v-bind="item.propiedadesSlot(estadoRaiz)">
-                          <slot name="icono" v-bind="item.propiedadesSlot(estadoRaiz)">
+  <StepperBase v-slot="rootState" v-bind="calculatedUI.root" v-model="model">
+    <div v-bind="calculatedUI.list" data-slot="stepper-list">
+      <StepperItem v-for="item in calculatedUI.steps" :key="item.key" v-bind="item.item">
+        <slot :name="item.slotNames.item" v-bind="item.getSlotProps(rootState)">
+          <slot name="item" v-bind="item.getSlotProps(rootState)">
+            <StepperTrigger v-bind="item.trigger">
+              <slot :name="item.slotNames.header" v-bind="item.getSlotProps(rootState)">
+                <slot name="header" v-bind="item.getSlotProps(rootState)">
+                  <StepperIndicator v-bind="item.indicator">
+                    <slot :name="item.slotNames.indicator" v-bind="item.getSlotProps(rootState)">
+                      <slot name="indicator" v-bind="item.getSlotProps(rootState)">
+                        <slot :name="item.slotNames.icon" v-bind="item.getSlotProps(rootState)">
+                          <slot name="icon" v-bind="item.getSlotProps(rootState)">
                             <Icon
-                              v-if="item.datos.icono || item.contexto.estado === 'completado'"
-                              v-bind="item.icono"
+                              v-if="item.data.icon || item.context.state === 'completed'"
+                              v-bind="item.icon"
                             />
-                            <span v-else>{{ item.datos.paso }}</span>
+                            <span v-else>{{ item.data.step }}</span>
                           </slot>
                         </slot>
                       </slot>
                     </slot>
                   </StepperIndicator>
 
-                  <div v-if="item.mostrarEncabezado" v-bind="item.encabezado">
-                    <StepperTitle v-if="item.mostrarTitulo" v-bind="item.titulo">
-                      <slot :name="item.nombres.titulo" v-bind="item.propiedadesSlot(estadoRaiz)">
-                        <slot name="titulo" v-bind="item.propiedadesSlot(estadoRaiz)">
-                          {{ item.datos.titulo }}
+                  <div v-if="item.showHeader" v-bind="item.header">
+                    <StepperTitle v-if="item.showTitle" v-bind="item.title">
+                      <slot :name="item.slotNames.title" v-bind="item.getSlotProps(rootState)">
+                        <slot name="title" v-bind="item.getSlotProps(rootState)">
+                          {{ item.data.label }}
                         </slot>
                       </slot>
                     </StepperTitle>
 
-                    <StepperDescription v-if="item.mostrarDescripcion" v-bind="item.descripcion">
+                    <StepperDescription v-if="item.showDescription" v-bind="item.description">
                       <slot
-                        :name="item.nombres.descripcion"
-                        v-bind="item.propiedadesSlot(estadoRaiz)"
+                        :name="item.slotNames.description"
+                        v-bind="item.getSlotProps(rootState)"
                       >
-                        <slot name="descripcion" v-bind="item.propiedadesSlot(estadoRaiz)">
-                          {{ item.datos.descripcion }}
+                        <slot name="description" v-bind="item.getSlotProps(rootState)">
+                          {{ item.data.description }}
                         </slot>
                       </slot>
                     </StepperDescription>
@@ -278,10 +276,10 @@ const uiCalculado = computed(() => {
               </slot>
             </StepperTrigger>
 
-            <template v-if="!item.contexto.ultimo">
-              <slot :name="item.nombres.separador" v-bind="item.propiedadesSlot(estadoRaiz)">
-                <slot name="separador" v-bind="item.propiedadesSlot(estadoRaiz)">
-                  <StepperSeparator v-bind="item.separador" />
+            <template v-if="!item.context.last">
+              <slot :name="item.slotNames.separator" v-bind="item.getSlotProps(rootState)">
+                <slot name="separator" v-bind="item.getSlotProps(rootState)">
+                  <StepperSeparator v-bind="item.separator" />
                 </slot>
               </slot>
             </template>
@@ -290,16 +288,16 @@ const uiCalculado = computed(() => {
       </StepperItem>
     </div>
 
-    <template v-for="item in uiCalculado.pasos" :key="`contenido-${item.clave}`">
+    <template v-for="item in calculatedUI.steps" :key="`content-${item.key}`">
       <div
-        v-if="item.datos.paso === estadoRaiz.modelValue && item.mostrarContenido"
-        v-bind="item.contenido"
+        v-if="item.data.step === rootState.modelValue && item.showContent"
+        v-bind="item.content"
         data-slot="stepper-content"
       >
-        <slot :name="item.nombres.contenido" v-bind="item.propiedadesSlot(estadoRaiz)">
-          <slot name="contenido" v-bind="item.propiedadesSlot(estadoRaiz)">
-            <slot v-bind="item.propiedadesSlot(estadoRaiz)">
-              {{ item.datos.contenido }}
+        <slot :name="item.slotNames.content" v-bind="item.getSlotProps(rootState)">
+          <slot name="content" v-bind="item.getSlotProps(rootState)">
+            <slot v-bind="item.getSlotProps(rootState)">
+              {{ item.data.content }}
             </slot>
           </slot>
         </slot>

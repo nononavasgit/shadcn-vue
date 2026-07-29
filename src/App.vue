@@ -10,6 +10,7 @@ import { Popover } from '@/components/app/Popover'
 import { Progress } from '@/components/app/Progress'
 import { ProgressCircular } from '@/components/app/ProgressCircular'
 import { Separator } from '@/components/app/Separator'
+import { Stepper } from '@/components/app/Stepper'
 import { Time } from '@/components/app/Time'
 import { Tooltip } from '@/components/app/Tooltip'
 
@@ -37,6 +38,30 @@ const accordionItems = [
   },
 ]
 
+const stepperSteps = [
+  {
+    key: 'account',
+    step: 1,
+    label: 'Cuenta',
+    description: 'Introduce tus datos',
+    content: 'Configura el nombre y el correo electrónico asociados a tu nueva cuenta.',
+  },
+  {
+    key: 'preferences',
+    step: 2,
+    label: 'Preferencias',
+    description: 'Personaliza la experiencia',
+    content: 'Selecciona las opciones de privacidad, idioma y notificaciones que prefieras.',
+  },
+  {
+    key: 'confirmation',
+    step: 3,
+    label: 'Confirmación',
+    description: 'Revisa la información',
+    content: 'Comprueba que toda la información sea correcta antes de finalizar el proceso.',
+  },
+]
+
 const fixedDate = new Date('2026-07-28T18:30:00.000Z')
 const timestamp = Date.UTC(2026, 6, 28, 18, 30)
 const now = ref(new Date())
@@ -49,6 +74,8 @@ const collapsibleOpen = ref(false)
 const dialogOpen = ref(false)
 const panelOpen = ref(true)
 const progressValue = ref(68)
+const stepperValue = ref(1)
+const verticalStepperValue = ref(2)
 let timer
 
 onMounted(() => {
@@ -904,6 +931,142 @@ onUnmounted(() => {
             </div>
           </template>
         </Accordion>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-xl font-semibold">Stepper</h2>
+        <p class="text-sm text-muted-foreground">
+          Ejemplos horizontal, lineal y vertical con navegación y personalización mediante slots.
+        </p>
+      </div>
+
+      <div class="space-y-5 rounded-lg border p-5">
+        <div>
+          <h3 class="font-medium">Horizontal y lineal</h3>
+          <p class="text-sm text-muted-foreground">
+            Los botones del contenido utilizan las funciones recibidas por el slot.
+          </p>
+        </div>
+
+        <Stepper
+          v-model="stepperValue"
+          :steps="stepperSteps"
+          linear
+          color="#7c3aed"
+          :ui="{
+            content: { class: 'rounded-lg border bg-zinc-50 p-4' },
+          }"
+        >
+          <template
+            #default="{
+              step,
+              value,
+              isFirstStep,
+              isLastStep,
+              isNextDisabled,
+              isPrevDisabled,
+              nextStep,
+              prevStep,
+            }"
+          >
+            <div class="space-y-4">
+              <div>
+                <p class="font-medium">Paso activo: {{ value }} · {{ step.label }}</p>
+                <p class="mt-1 text-sm text-muted-foreground">{{ step.content }}</p>
+              </div>
+
+              <div class="flex items-center justify-between gap-3">
+                <button
+                  class="rounded-md border px-3 py-2 text-sm disabled:opacity-40"
+                  :disabled="isFirstStep || isPrevDisabled"
+                  @click="prevStep"
+                >
+                  Anterior
+                </button>
+                <button
+                  class="rounded-md bg-violet-700 px-3 py-2 text-sm text-white disabled:opacity-40"
+                  :disabled="isLastStep || isNextDisabled"
+                  @click="nextStep"
+                >
+                  Siguiente
+                </button>
+              </div>
+            </div>
+          </template>
+
+          <template #icon-confirmation="{ state }">
+            <span>{{ state === 'completed' ? '✓' : '★' }}</span>
+          </template>
+        </Stepper>
+
+        <p class="text-xs text-muted-foreground">Valor actual: {{ stepperValue }}</p>
+      </div>
+
+      <div class="grid gap-6 rounded-lg border p-5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div>
+          <h3 class="font-medium">Vertical y personalizable</h3>
+          <p class="mt-1 text-sm text-muted-foreground">
+            Las clases de cada elemento se calculan según su estado actual.
+          </p>
+
+          <Stepper
+            v-model="verticalStepperValue"
+            :steps="stepperSteps"
+            orientation="vertical"
+            color="#0284c7"
+            class="mt-5"
+            :ui="{
+              item: ({ active }) => ({ class: active ? 'rounded-md bg-sky-50 p-2' : 'p-2' }),
+              title: ({ active }) => ({ class: active ? 'text-sky-700' : undefined }),
+              content: { class: 'rounded-md border border-sky-200 bg-sky-50 p-4' },
+            }"
+          >
+            <template #title="{ step, state }">
+              {{ step.label }}
+              <span class="text-xs font-normal text-muted-foreground">({{ state }})</span>
+            </template>
+
+            <template #description-preferences="{ step }">
+              <span class="font-medium text-sky-700">{{ step.description }}</span>
+            </template>
+
+            <template #content="{ step, goToStep, hasNext, hasPrev }">
+              <div class="space-y-3">
+                <p class="text-sm">{{ step.content }}</p>
+                <div class="flex gap-2">
+                  <button
+                    v-if="hasPrev()"
+                    class="rounded-md border px-3 py-1.5 text-sm"
+                    @click="goToStep(step.step - 1)"
+                  >
+                    Volver
+                  </button>
+                  <button
+                    v-if="hasNext()"
+                    class="rounded-md bg-sky-700 px-3 py-1.5 text-sm text-white"
+                    @click="goToStep(step.step + 1)"
+                  >
+                    Continuar
+                  </button>
+                </div>
+              </div>
+            </template>
+          </Stepper>
+        </div>
+
+        <div class="rounded-lg bg-zinc-950 p-4 text-sm text-zinc-100">
+          <p class="font-medium">Estado externo</p>
+          <dl class="mt-3 grid grid-cols-[auto_1fr] gap-x-3 gap-y-2">
+            <dt class="text-zinc-400">Valor</dt>
+            <dd>{{ verticalStepperValue }}</dd>
+            <dt class="text-zinc-400">Paso</dt>
+            <dd>{{ stepperSteps.find((step) => step.step === verticalStepperValue)?.label }}</dd>
+            <dt class="text-zinc-400">Orientación</dt>
+            <dd>vertical</dd>
+          </dl>
+        </div>
       </div>
     </section>
   </main>

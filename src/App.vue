@@ -11,6 +11,7 @@ import { HoverCard } from '@/components/app/HoverCard'
 import { Icon } from '@/components/app/Icon'
 import { Kbd, KbdGroup } from '@/components/app/Kbd'
 import { Link } from '@/components/app/Link'
+import { Pagination, type PaginationUI } from '@/components/app/Pagination'
 import { Panel } from '@/components/app/Panel'
 import { Popover } from '@/components/app/Popover'
 import { Progress } from '@/components/app/Progress'
@@ -114,6 +115,10 @@ const alertDialogOpen = ref(false)
 const alertDialogResult = ref('Sin respuesta')
 const panelOpen = ref(true)
 const progressValue = ref(68)
+const paginationBasicPage = ref(1)
+const paginationBasicItemsPerPage = ref(10)
+const paginationEdgesPage = ref(8)
+const paginationCustomPage = ref(3)
 const stepperValue = ref(1)
 const verticalStepperValue = ref(2)
 let timer
@@ -135,6 +140,23 @@ const breadcrumbUI: BreadcrumbUI = {
     return {
       'aria-label': 'ee',
     }
+  },
+}
+
+const paginationUI: PaginationUI = {
+  content: {
+    class: 'rounded-xl bg-violet-50 p-2 dark:bg-violet-950/30',
+  },
+  previous: {
+    'aria-label': 'Primero',
+  },
+  item: ({ active }) => ({
+    class: active
+      ? 'border-violet-500 bg-violet-600 text-white hover:bg-violet-700 hover:text-white'
+      : 'hover:bg-violet-100 dark:hover:bg-violet-900/40',
+  }),
+  ellipsis: {
+    class: 'text-violet-600',
   },
 }
 </script>
@@ -357,6 +379,142 @@ const breadcrumbUI: BreadcrumbUI = {
         </div>
       </div>
     </section>
+
+    <section class="space-y-4" aria-labelledby="pagination-examples-title">
+      <div>
+        <h2 id="pagination-examples-title" class="text-xl font-semibold">Pagination</h2>
+        <p class="text-sm text-muted-foreground">
+          Páginas calculadas automáticamente, controles de extremos y personalización mediante
+          <code>ui</code> y slots.
+        </p>
+      </div>
+
+      <div class="space-y-6 rounded-lg border p-5">
+        <div class="space-y-3">
+          <div>
+            <h3 class="font-medium">Uso básico</h3>
+            <p class="text-sm text-muted-foreground">
+              95 resultados, diez elementos por página. Página actual:
+              {{ paginationBasicPage }}.
+            </p>
+          </div>
+
+          <Pagination
+            v-model:page="paginationBasicPage"
+            :total="95"
+            :items-per-page="paginationBasicItemsPerPage"
+          >
+            <template #preContent>
+              <label class="flex items-center gap-2 text-sm">
+                <select
+                  v-model.number="paginationBasicItemsPerPage"
+                  class="h-9 rounded-md border bg-background px-2"
+                  @change="paginationBasicPage = 1"
+                >
+                  <option :value="5">5</option>
+                  <option :value="10">10</option>
+                  <option :value="25">25</option>
+                </select>
+              </label>
+            </template>
+
+            <template #postContent="{ from, to, total }">
+              <span class="text-sm text-muted-foreground">
+                Mostrando {{ from }}–{{ to }} de {{ total }}
+              </span>
+            </template>
+          </Pagination>
+        </div>
+
+        <Separator />
+
+        <div class="space-y-3">
+          <div>
+            <h3 class="font-medium">Extremos y puntos suspensivos</h3>
+            <p class="text-sm text-muted-foreground">
+              Incluye los controles de primera y última página y mantiene visibles los extremos.
+            </p>
+          </div>
+
+          <Pagination
+            v-model:page="paginationEdgesPage"
+            :total="240"
+            :items-per-page="10"
+            :sibling-count="1"
+            show-first
+            show-last
+          />
+        </div>
+
+        <Separator />
+
+        <div class="space-y-3">
+          <div>
+            <h3 class="font-medium">UI y slots globales e individuales</h3>
+            <p class="text-sm text-muted-foreground">
+              El slot <code>item-3</code> sustituye únicamente la tercera página.
+            </p>
+          </div>
+
+          <Pagination
+            v-model:page="paginationCustomPage"
+            :total="120"
+            :items-per-page="10"
+            :sibling-count="3"
+            :ui="paginationUI"
+            :show-first="true"
+            :show-last="true"
+            :show-next="true"
+            :show-previous="true"
+            :show-edges="false"
+          >
+            <template #first>
+              <Icon name="chevronLeft" aria-hidden="true" />
+              <span class="sr-only">Primera página</span>
+            </template>
+
+            <template #previous>
+              <Icon name="chevronLeft" aria-hidden="true" />
+              <span class="hidden sm:inline">Anterior</span>
+            </template>
+
+            <template #item="{ item, active }">
+              <span :class="active ? 'font-bold' : undefined">
+                {{ item.type === 'page' ? item.value : '' }}
+              </span>
+            </template>
+
+            <template #item-3="{ active }">
+              <span aria-hidden="true">{{ active ? '★' : '☆' }}</span>
+              <span class="sr-only">Página 3</span>
+            </template>
+
+            <template #ellipsis>
+              <span class="font-bold tracking-widest" aria-hidden="true">···</span>
+              <span class="sr-only">Más páginas</span>
+            </template>
+
+            <template #next>
+              <span class="hidden sm:inline">Siguiente</span>
+              <Icon name="chevronRight" aria-hidden="true" />
+            </template>
+
+            <template #last>
+              <span class="sr-only">Última página</span>
+              <Icon name="chevronRight" aria-hidden="true" />
+            </template>
+          </Pagination>
+        </div>
+
+        <Separator />
+
+        <div class="space-y-3">
+          <h3 class="font-medium">Estado deshabilitado</h3>
+          <Pagination :page="4" :total="100" :items-per-page="10" disabled />
+        </div>
+      </div>
+    </section>
+
     <section class="space-y-4">
       <div>
         <h2 class="text-xl font-semibold">Time básico</h2>

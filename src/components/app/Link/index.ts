@@ -1,11 +1,10 @@
 import type { ButtonEmits, ButtonProps, ButtonSlots } from '@/components/app/Button'
+import type { RouterLinkProps } from 'vue-router'
 
 export { default as Link } from './Link.vue'
 
-export interface LinkProps extends ButtonProps {
-  to?: string | object
-}
+export type LinkProps = Omit<ButtonProps, 'as' | 'asChild'> &
+  Pick<RouterLinkProps, 'to' | 'replace'>
 
 export type LinkEmits = ButtonEmits
-
 export type LinkSlots = ButtonSlots

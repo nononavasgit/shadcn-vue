@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { Accordion } from '@/components/app/Accordion'
 import { Alert } from '@/components/app/Alert'
+import { Breadcrumb, type BreadcrumbItem } from '@/components/app/Breadcrumb'
 import { Collapsible } from '@/components/app/Collapsible'
 import { Dialog } from '@/components/app/Dialog'
 import { HoverCard } from '@/components/app/HoverCard'
@@ -16,6 +17,7 @@ import { Separator } from '@/components/app/Separator'
 import { Stepper } from '@/components/app/Stepper'
 import { Time } from '@/components/app/Time'
 import { Tooltip } from '@/components/app/Tooltip'
+import type { BreadcrumbUI } from '@/components/app/Breadcrumb'
 
 const accordionItems = [
   {
@@ -74,6 +76,28 @@ const alertSeverityExamples = [
   { value: 'error', label: 'Error', icon: 'error' },
 ] as const
 
+const breadcrumbBasicItems: BreadcrumbItem[] = [
+  { id: 'home', label: 'Inicio', to: '/' },
+  { id: 'components', label: 'Componentes', to: '/components' },
+  { id: 'breadcrumb', label: 'Breadcrumb' },
+]
+
+const breadcrumbIconItems: BreadcrumbItem[] = [
+  { id: 'home', label: 'Inicio', to: '/', icon: 'chevronLeft' },
+  {
+    id: 'router',
+    to: 'https://router.vuejs.org',
+    icon: 'info',
+  },
+  { id: 'links', label: 'Enlaces', icon: 'chevronRight' },
+]
+
+const breadcrumbSlotItems: BreadcrumbItem[] = [
+  { id: 'store', label: 'Tienda', to: '/store' },
+  { id: 'hidden', ellipsis: true },
+  { id: 'catalog', label: 'Catálogo', to: '/store/catalog' },
+  { id: 'confirmation', label: 'Confirmación' },
+]
 const fixedDate = new Date('2026-07-28T18:30:00.000Z')
 const timestamp = Date.UTC(2026, 6, 28, 18, 30)
 const now = ref(new Date())
@@ -99,6 +123,16 @@ onMounted(() => {
 onUnmounted(() => {
   if (timer !== undefined) window.clearInterval(timer)
 })
+
+const breadcrumbUI: BreadcrumbUI = {
+  item: (context) => {
+    console.log(context)
+
+    return {
+      'aria-label': 'ee',
+    }
+  },
+}
 </script>
 
 <template>
@@ -221,7 +255,12 @@ onUnmounted(() => {
           <div class="flex flex-wrap items-center gap-2">
             <Link to="#link-destination">Enlace predeterminado</Link>
             <Link to="#link-destination" label="Texto mediante label" />
-            <Link to="#link-destination" target="_self" aria-label="Abrir el destino interno">
+            <Link
+              to="https://google.com"
+              variant="solid"
+              target="_blank"
+              aria-label="Abrir el destino interno"
+            >
               Con atributos HTML
             </Link>
           </div>
@@ -260,6 +299,60 @@ onUnmounted(() => {
       </div>
     </section>
 
+    <section class="space-y-4" aria-labelledby="breadcrumb-examples-title">
+      <div>
+        <h2 id="breadcrumb-examples-title" class="text-xl font-semibold">Breadcrumb</h2>
+        <p class="text-sm text-muted-foreground">
+          Rutas internas y externas, iconos y personalización mediante slots.
+        </p>
+      </div>
+
+      <div class="space-y-5 rounded-lg border p-5">
+        <div class="space-y-2">
+          <h3 class="font-medium">Uso básico</h3>
+          <Breadcrumb :items="breadcrumbBasicItems" />
+        </div>
+
+        <Separator />
+
+        <div class="space-y-2">
+          <h3 class="font-medium">Iconos y enlace externo</h3>
+          <Breadcrumb :items="breadcrumbIconItems" :ui="breadcrumbUI" />
+        </div>
+
+        <Separator />
+
+        <div class="space-y-2">
+          <h3 class="font-medium">Slots globales e individuales</h3>
+          <Breadcrumb :items="breadcrumbSlotItems">
+            <template #icon="{ first }">
+              <Icon :name="first ? 'info' : 'chevronRight'" aria-hidden="true" />
+            </template>
+
+            <template #separator>
+              <span class="text-muted-foreground" aria-hidden="true">→</span>
+            </template>
+
+            <template #ellipsis-hidden>
+              <span class="px-1 font-bold tracking-widest text-muted-foreground" aria-hidden="true">
+                ···
+              </span>
+              <span class="sr-only">Rutas intermedias ocultas</span>
+            </template>
+
+            <template #separator-catalog>
+              <span class="font-semibold text-primary" aria-hidden="true">/</span>
+            </template>
+
+            <template #item-confirmation="{ item }">
+              <span class="rounded-md bg-primary/10 px-2 py-1 font-semibold text-primary">
+                {{ item.label }}
+              </span>
+            </template>
+          </Breadcrumb>
+        </div>
+      </div>
+    </section>
     <section class="space-y-4">
       <div>
         <h2 class="text-xl font-semibold">Time básico</h2>

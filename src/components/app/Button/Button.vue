@@ -93,27 +93,30 @@ function handleClick(event: MouseEvent) {
 
 <template>
   <ButtonBase v-bind="calculatedUI.root" @click="handleClick">
-    <template v-if="props.loading">
-      <slot name="loading">
-        <Icon v-bind="calculatedUI.loadingIcon" />
+    <slot v-if="props.asChild" />
+    <template v-else>
+      <template v-if="props.loading">
+        <slot name="loading">
+          <Icon v-bind="calculatedUI.loadingIcon" />
+        </slot>
+      </template>
+      <slot v-else name="leading">
+        <Icon
+          v-if="calculatedUI.icon.name"
+          v-bind="calculatedUI.icon"
+          :name="calculatedUI.icon.name"
+        />
+      </slot>
+
+      <slot>{{ props.label }}</slot>
+
+      <slot name="trailing">
+        <Icon
+          v-if="calculatedUI.trailingIcon.name"
+          v-bind="calculatedUI.trailingIcon"
+          :name="calculatedUI.trailingIcon.name"
+        />
       </slot>
     </template>
-    <slot v-else name="leading">
-      <Icon
-        v-if="calculatedUI.icon.name"
-        v-bind="calculatedUI.icon"
-        :name="calculatedUI.icon.name"
-      />
-    </slot>
-
-    <slot>{{ props.label }}</slot>
-
-    <slot name="trailing">
-      <Icon
-        v-if="calculatedUI.trailingIcon.name"
-        v-bind="calculatedUI.trailingIcon"
-        :name="calculatedUI.trailingIcon.name"
-      />
-    </slot>
   </ButtonBase>
 </template>

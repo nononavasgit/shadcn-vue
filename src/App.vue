@@ -18,6 +18,7 @@ import { Progress } from '@/components/app/Progress'
 import { ProgressCircular } from '@/components/app/ProgressCircular'
 import { ScrollArea } from '@/components/app/ScrollArea'
 import { Separator } from '@/components/app/Separator'
+import { Spinner } from '@/components/app/Spinner'
 import { Stepper } from '@/components/app/Stepper'
 import { Time } from '@/components/app/Time'
 import { Tooltip } from '@/components/app/Tooltip'
@@ -120,6 +121,8 @@ const paginationBasicPage = ref(1)
 const paginationBasicItemsPerPage = ref(10)
 const paginationEdgesPage = ref(8)
 const paginationCustomPage = ref(3)
+const spinnerLoading = ref(false)
+const customSpinnerLoading = ref(true)
 const stepperValue = ref(1)
 const verticalStepperValue = ref(2)
 let timer
@@ -613,6 +616,94 @@ const paginationUI: PaginationUI = {
               </div>
             </div>
           </ScrollArea>
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-4" aria-labelledby="spinner-examples-title">
+      <div>
+        <h2 id="spinner-examples-title" class="text-xl font-semibold">Spinner</h2>
+        <p class="text-sm text-muted-foreground">
+          Estados de carga con contenido persistente y un indicador personalizable.
+        </p>
+      </div>
+
+      <div class="grid gap-6 rounded-lg border p-5 lg:grid-cols-2">
+        <div class="space-y-3">
+          <div>
+            <h3 class="font-medium">Indicador predeterminado</h3>
+            <p class="text-sm text-muted-foreground">
+              Sin indicar <code>loading</code>, muestra el icono spinner traducido y accesible.
+            </p>
+          </div>
+
+          <Spinner class="rounded-md border p-8" />
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <h3 class="font-medium">Slot de carga personalizado</h3>
+            <p class="text-sm text-muted-foreground">
+              El indicador puede sustituirse sin modificar el contenido.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted"
+            @click="customSpinnerLoading = !customSpinnerLoading"
+          >
+            {{ customSpinnerLoading ? 'Mostrar contenido' : 'Volver a cargar' }}
+          </button>
+
+          <Spinner :loading="customSpinnerLoading" class="rounded-md border p-8">
+            <template #loading>
+              <div class="flex items-center gap-3 text-violet-600">
+                <Icon name="spinner" class="size-7 animate-spin" />
+                <span class="font-medium">Preparando información…</span>
+              </div>
+            </template>
+
+            <div
+              class="rounded-md bg-violet-50 p-4 text-violet-950 dark:bg-violet-950/30 dark:text-violet-100"
+            >
+              El contenido personalizado ya está disponible.
+            </div>
+          </Spinner>
+        </div>
+
+        <div class="space-y-3 lg:col-span-2">
+          <div>
+            <h3 class="font-medium">El contenido no se desmonta</h3>
+            <p class="text-sm text-muted-foreground">
+              Escribe en el campo, activa la carga y vuelve a mostrarlo. El texto introducido se
+              conserva porque ambos bloques utilizan <code>v-show</code>.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted"
+            @click="spinnerLoading = !spinnerLoading"
+          >
+            {{ spinnerLoading ? 'Finalizar carga' : 'Simular nueva carga' }}
+          </button>
+
+          <Spinner :loading="spinnerLoading" class="rounded-md border p-5">
+            <div class="space-y-3">
+              <label for="spinner-persistent-input" class="block text-sm font-medium">
+                Texto persistente
+              </label>
+              <input
+                id="spinner-persistent-input"
+                value="Edita este texto antes de cargar"
+                class="h-10 w-full rounded-md border bg-background px-3 text-sm"
+              />
+              <p class="text-sm text-muted-foreground">
+                Este campo es un estado interno del DOM y no utiliza <code>v-model</code>.
+              </p>
+            </div>
+          </Spinner>
         </div>
       </div>
     </section>

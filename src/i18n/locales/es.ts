@@ -4,4 +4,5 @@ export default {
   close: 'Cerrar',
   cancel: 'Cancelar',
   continue: 'Continuar',
+  loading: 'Cargando',
 } satisfies Messages

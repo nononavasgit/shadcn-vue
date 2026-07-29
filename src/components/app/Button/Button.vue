@@ -80,7 +80,7 @@ const calculatedUI = computed(() => {
   }
 })
 
-function handleClick(event: MouseEvent) {
+function handleClick(event: PointerEvent) {
   if (ariaDisabled.value === true || ariaDisabled.value === 'true') {
     event.preventDefault()
     event.stopPropagation()

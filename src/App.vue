@@ -5,6 +5,7 @@ import { Collapsible } from '@/components/app/Collapsible'
 import { Dialog } from '@/components/app/Dialog'
 import { HoverCard } from '@/components/app/HoverCard'
 import { Kbd, KbdGroup } from '@/components/app/Kbd'
+import { Link } from '@/components/app/Link'
 import { Panel } from '@/components/app/Panel'
 import { Popover } from '@/components/app/Popover'
 import { Progress } from '@/components/app/Progress'
@@ -95,6 +96,59 @@ onUnmounted(() => {
       <h1 class="text-3xl font-bold">Time & Kbd</h1>
       <p class="text-muted-foreground">Ejemplos de los componentes con su nueva API en inglés.</p>
     </header>
+
+    <section class="space-y-4" aria-labelledby="link-examples-title">
+      <div>
+        <h2 id="link-examples-title" class="text-xl font-semibold">Link</h2>
+        <p class="text-sm text-muted-foreground">
+          Enlaces basados en Button, con elemento anchor y variante link por defecto.
+        </p>
+      </div>
+
+      <div class="space-y-5 rounded-lg border p-5">
+        <div class="space-y-2">
+          <h3 class="font-medium">Uso básico</h3>
+          <div class="flex flex-wrap items-center gap-2">
+            <Link to="#link-destination">Enlace predeterminado</Link>
+            <Link to="#link-destination" label="Texto mediante label" />
+            <Link to="#link-destination" target="_self" aria-label="Abrir el destino interno">
+              Con atributos HTML
+            </Link>
+          </div>
+        </div>
+
+        <Separator />
+
+        <div class="space-y-2">
+          <h3 class="font-medium">Tamaños y colores</h3>
+          <div class="flex flex-wrap items-center gap-2">
+            <Link to="#link-destination" size="xs">Extra pequeño</Link>
+            <Link to="#link-destination" size="sm">Pequeño</Link>
+            <Link to="#link-destination" size="md">Mediano</Link>
+            <Link to="#link-destination" size="lg">Grande</Link>
+            <Link to="#link-destination" severity="success">Correcto</Link>
+            <Link to="#link-destination" severity="warning">Advertencia</Link>
+            <Link to="#link-destination" severity="error">Error</Link>
+            <Link to="#link-destination" color="#7c3aed">Color personalizado</Link>
+          </div>
+        </div>
+
+        <Separator />
+
+        <div class="space-y-2">
+          <h3 class="font-medium">Iconos y estados</h3>
+          <div class="flex flex-wrap items-center gap-2">
+            <Link to="#link-destination" icon="search">Buscar documentación</Link>
+            <Link to="#link-destination" trailing-icon="chevronRight">Continuar leyendo</Link>
+            <Link to="#link-destination" loading>Cargando destino</Link>
+          </div>
+        </div>
+
+        <p id="link-destination" class="rounded-md bg-muted p-3 text-sm text-muted-foreground">
+          Destino interno utilizado por los enlaces de estos ejemplos.
+        </p>
+      </div>
+    </section>
 
     <section class="space-y-4">
       <div>

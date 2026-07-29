@@ -25,6 +25,7 @@ export interface DialogProps {
   open?: boolean
   defaultOpen?: boolean
   modal?: boolean
+  block?: boolean
   unmountOnHide?: boolean
   label?: string
   description?: string

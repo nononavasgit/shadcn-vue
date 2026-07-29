@@ -1,90 +1,88 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import {
-  Accordion,
+  Accordion as AccordionBase,
   AccordionContent,
-  AccordionItem,
+  AccordionItem as AccordionItemBase,
   AccordionTrigger,
 } from '@/components/ui/Accordion'
 import { cn } from '@/lib/utils'
 import type {
-  AccordeonProps,
-  AccordeonSlotProps,
-  AccordeonSlots,
-  AccordeonContextoUI,
-  AccordeonValorUI,
+  AccordionProps,
+  AccordionSlotProps,
+  AccordionSlots,
+  AccordionUIContext,
+  AccordionUIValue,
 } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<AccordeonProps>(), {
-  tipo: 'unico',
-  colapsable: false,
-  deshabilitado: false,
-  orientacion: 'vertical',
-  desmontarAlOcultar: true,
-  elementos: () => [],
+const props = withDefaults(defineProps<AccordionProps>(), {
+  type: 'single',
+  collapsible: false,
+  disabled: false,
+  orientation: 'vertical',
+  unmountOnHide: true,
+  items: () => [],
   ui: undefined,
 })
-defineSlots<AccordeonSlots>()
+defineSlots<AccordionSlots>()
 
-const modelo = defineModel<string | string[]>()
+const model = defineModel<string | string[]>()
 const attrs = useAttrs()
 
-const uiCalculado = computed(() => ({
-  raiz: {
+const calculatedUI = computed(() => ({
+  root: {
     ...attrs,
-    type: props.tipo === 'unico' ? ('single' as const) : ('multiple' as const),
-    collapsible: props.colapsable,
-    defaultValue: props.valorPredeterminado,
-    disabled: props.deshabilitado,
+    type: props.type,
+    collapsible: props.collapsible,
+    defaultValue: props.defaultValue,
+    disabled: props.disabled,
     dir: props.dir,
-    orientation: props.orientacion,
-    unmountOnHide: props.desmontarAlOcultar,
+    orientation: props.orientation,
+    unmountOnHide: props.unmountOnHide,
     class: cn(attrs.class),
   },
-  elementos: props.elementos.map((elemento, indice) => {
-    const abierto = Array.isArray(modelo.value)
-      ? modelo.value.includes(elemento.valor)
-      : modelo.value === elemento.valor
-    const contexto: AccordeonContextoUI = {
-      elemento,
-      indice,
-      abierto,
-      primero: indice === 0,
-      ultimo: indice === props.elementos.length - 1,
+  items: props.items.map((item, index) => {
+    const open = Array.isArray(model.value)
+      ? model.value.includes(item.value)
+      : model.value === item.value
+    const context: AccordionUIContext = {
+      item,
+      index,
+      open,
+      first: index === 0,
+      last: index === props.items.length - 1,
     }
-    const resolverUI = <T,>(valor: AccordeonValorUI<T> | undefined): T | undefined =>
-      typeof valor === 'function'
-        ? (valor as (contexto: AccordeonContextoUI) => T)(contexto)
-        : valor
-    const uiElemento = resolverUI(props.ui?.elemento)
-    const uiActivador = resolverUI(props.ui?.activador)
-    const uiContenido = resolverUI(props.ui?.contenido)
-    const { forzarMontaje, ...atributosContenido } = uiContenido ?? {}
-    const propiedadesSlot: AccordeonSlotProps = { elemento, indice, abierto }
+    const resolveUI = <T,>(value: AccordionUIValue<T> | undefined): T | undefined =>
+      typeof value === 'function' ? (value as (context: AccordionUIContext) => T)(context) : value
+    const itemUI = resolveUI(props.ui?.item)
+    const triggerUI = resolveUI(props.ui?.trigger)
+    const contentUI = resolveUI(props.ui?.content)
+    const { forceMount, ...contentAttrs } = contentUI ?? {}
+    const slotProps: AccordionSlotProps = { item, index, open }
 
     return {
-      valor: elemento.valor,
-      datos: elemento,
-      propiedadesSlot,
-      elemento: {
-        ...uiElemento,
-        value: elemento.valor,
-        disabled: elemento.deshabilitado,
-        class: cn(uiElemento?.class),
-        style: uiElemento?.style,
+      value: item.value,
+      data: item,
+      slotProps,
+      item: {
+        ...itemUI,
+        value: item.value,
+        disabled: item.disabled,
+        class: cn(itemUI?.class),
+        style: itemUI?.style,
       },
-      activador: {
-        ...uiActivador,
-        class: cn(uiActivador?.class),
-        style: uiActivador?.style,
+      trigger: {
+        ...triggerUI,
+        class: cn(triggerUI?.class),
+        style: triggerUI?.style,
       },
-      contenido: {
-        ...atributosContenido,
-        forceMount: elemento.forzarMontaje ?? forzarMontaje,
-        class: cn(atributosContenido.class),
-        style: atributosContenido.style,
+      content: {
+        ...contentAttrs,
+        forceMount: item.forceMount ?? forceMount,
+        class: cn(contentAttrs.class),
+        style: contentAttrs.style,
       },
     }
   }),
@@ -92,23 +90,23 @@ const uiCalculado = computed(() => ({
 </script>
 
 <template>
-  <Accordion v-bind="uiCalculado.raiz" v-model="modelo">
-    <AccordionItem v-for="item in uiCalculado.elementos" :key="item.valor" v-bind="item.elemento">
-      <AccordionTrigger v-bind="item.activador">
-        <slot :name="`activador-${item.valor}`" v-bind="item.propiedadesSlot">
-          <slot name="activador" v-bind="item.propiedadesSlot">
-            {{ item.datos?.titulo }}
+  <AccordionBase v-bind="calculatedUI.root" v-model="model">
+    <AccordionItemBase v-for="item in calculatedUI.items" :key="item.value" v-bind="item.item">
+      <AccordionTrigger v-bind="item.trigger">
+        <slot :name="`trigger-${item.value}`" v-bind="item.slotProps">
+          <slot name="trigger" v-bind="item.slotProps">
+            {{ item.data?.title }}
           </slot>
         </slot>
       </AccordionTrigger>
 
-      <AccordionContent v-bind="item.contenido">
-        <slot :name="`contenido-${item.valor}`" v-bind="item.propiedadesSlot">
-          <slot v-bind="item.propiedadesSlot">
-            {{ item.datos?.contenido }}
+      <AccordionContent v-bind="item.content">
+        <slot :name="`content-${item.value}`" v-bind="item.slotProps">
+          <slot v-bind="item.slotProps">
+            {{ item.data?.content }}
           </slot>
         </slot>
       </AccordionContent>
-    </AccordionItem>
-  </Accordion>
+    </AccordionItemBase>
+  </AccordionBase>
 </template>

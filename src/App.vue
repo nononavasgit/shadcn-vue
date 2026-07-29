@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
+import { Accordion } from '@/components/app/Accordion'
 import { Collapsible } from '@/components/app/Collapsible'
 import { Dialog } from '@/components/app/Dialog'
 import { HoverCard } from '@/components/app/HoverCard'
@@ -12,9 +13,35 @@ import { Separator } from '@/components/app/Separator'
 import { Time } from '@/components/app/Time'
 import { Tooltip } from '@/components/app/Tooltip'
 
+const accordionItems = [
+  {
+    value: 'installation',
+    title: 'Instalación',
+    content: 'Instala el paquete y configura el plugin de Tailwind en tu proyecto Vue.',
+  },
+  {
+    value: 'usage',
+    title: 'Uso básico',
+    content: 'Importa los componentes que necesites y utilízalos directamente en tus templates.',
+  },
+  {
+    value: 'accessibility',
+    title: 'Accesibilidad',
+    content: 'Los componentes se apoyan en Reka UI para ofrecer navegación mediante teclado.',
+  },
+  {
+    value: 'disabled',
+    title: 'Elemento deshabilitado',
+    content: 'Este contenido no puede abrirse.',
+    disabled: true,
+  },
+]
+
 const fixedDate = new Date('2026-07-28T18:30:00.000Z')
 const timestamp = Date.UTC(2026, 6, 28, 18, 30)
 const now = ref(new Date())
+const accordionValue = ref('installation')
+const multipleAccordionValue = ref<string[]>(['usage', 'accessibility'])
 const tooltipOpen = ref(false)
 const popoverOpen = ref(false)
 const hoverCardOpen = ref(false)
@@ -782,6 +809,102 @@ onUnmounted(() => {
       <p class="text-sm text-muted-foreground">
         Estado del diálogo controlado: {{ dialogOpen ? 'abierto' : 'cerrado' }}
       </p>
+    </section>
+
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-xl font-semibold">Accordion</h2>
+        <p class="text-sm text-muted-foreground">
+          Ejemplos de selección única, múltiple y contenido personalizado mediante slots.
+        </p>
+      </div>
+
+      <div class="grid gap-6 sm:grid-cols-2">
+        <div class="space-y-3">
+          <div>
+            <h3 class="font-medium">Selección única</h3>
+            <p class="text-sm text-muted-foreground">
+              Solo puede permanecer abierto un elemento y todos se pueden cerrar.
+            </p>
+          </div>
+
+          <Accordion
+            v-model="accordionValue"
+            :items="accordionItems"
+            collapsible
+            class="rounded-lg border px-4"
+          />
+
+          <p class="text-xs text-muted-foreground">
+            Valor seleccionado: {{ accordionValue || 'ninguno' }}
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <h3 class="font-medium">Selección múltiple</h3>
+            <p class="text-sm text-muted-foreground">
+              Permite mantener varios elementos abiertos simultáneamente.
+            </p>
+          </div>
+
+          <Accordion
+            v-model="multipleAccordionValue"
+            type="multiple"
+            :items="accordionItems.slice(0, 3)"
+            class="rounded-lg border px-4"
+          />
+
+          <p class="text-xs text-muted-foreground">
+            Valores: {{ multipleAccordionValue.join(', ') || 'ninguno' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <h3 class="font-medium">Slots y UI dinámica</h3>
+          <p class="text-sm text-muted-foreground">
+            Personaliza un elemento concreto y calcula las clases según su estado.
+          </p>
+        </div>
+
+        <Accordion
+          :items="accordionItems.slice(0, 3)"
+          collapsible
+          class="rounded-lg border px-4"
+          :ui="{
+            item: ({ open }) => ({ class: open ? 'bg-violet-50' : undefined }),
+            trigger: ({ open }) => ({ class: open ? 'text-violet-700' : undefined }),
+            content: { class: 'text-muted-foreground' },
+          }"
+        >
+          <template #trigger="{ item, index, open }">
+            <span class="flex items-center gap-2">
+              <span class="grid size-6 place-items-center rounded-full bg-zinc-100 text-xs">
+                {{ index + 1 }}
+              </span>
+              {{ item.title }}
+              <span class="text-xs text-muted-foreground">
+                {{ open ? 'abierto' : 'cerrado' }}
+              </span>
+            </span>
+          </template>
+
+          <template #trigger-installation="{ item }">
+            <span class="font-semibold text-violet-700">★ {{ item.title }}</span>
+          </template>
+
+          <template #content-installation="{ item }">
+            <div class="space-y-2">
+              <p>{{ item.content }}</p>
+              <code class="block rounded-md bg-zinc-950 p-3 text-xs text-zinc-50">
+                npm install @nononavas/shadcn-vue
+              </code>
+            </div>
+          </template>
+        </Accordion>
+      </div>
     </section>
   </main>
 </template>

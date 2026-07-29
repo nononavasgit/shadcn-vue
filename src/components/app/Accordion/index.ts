@@ -1,71 +1,66 @@
 import type { Component, HTMLAttributes } from 'vue'
 
-export { default as Accordeon } from './Accordion.vue'
+export { default as Accordion } from './Accordion.vue'
 
-export type AccordeonValor = string | string[] | undefined
+export type AccordionValue = string | string[] | undefined
 
-export type AccordeonNodoUI = Omit<HTMLAttributes, 'dir'> & {
+export type AccordionNodeUI = Omit<HTMLAttributes, 'dir'> & {
   as?: string | Component
   asChild?: boolean
   dir?: 'ltr' | 'rtl'
 }
 
-export type AccordeonContenidoUI = AccordeonNodoUI & { forzarMontaje?: boolean }
-export type AccordeonValorUI<T> = T | ((contexto: AccordeonContextoUI) => T)
+export type AccordionContentUI = AccordionNodeUI & { forceMount?: boolean }
+export type AccordionUIValue<T> = T | ((context: AccordionUIContext) => T)
 
-export interface AccordeonUI {
-  elemento?: AccordeonValorUI<AccordeonNodoUI>
-  activador?: AccordeonValorUI<AccordeonNodoUI>
-  contenido?: AccordeonValorUI<AccordeonContenidoUI>
+export interface AccordionUI {
+  item?: AccordionUIValue<AccordionNodeUI>
+  trigger?: AccordionUIValue<AccordionNodeUI>
+  content?: AccordionUIValue<AccordionContentUI>
 }
 
-export interface AccordeonElemento {
-  valor: string
-  titulo?: string
-  contenido?: string
-  deshabilitado?: boolean
-  forzarMontaje?: boolean
+export interface AccordionItem {
+  value: string
+  title?: string
+  content?: string
+  disabled?: boolean
+  forceMount?: boolean
 }
 
-// Contexto UI
-export interface AccordeonContextoUI {
-  elemento: AccordeonElemento
-  indice: number
-  abierto: boolean
-  primero: boolean
-  ultimo: boolean
+export interface AccordionUIContext {
+  item: AccordionItem
+  index: number
+  open: boolean
+  first: boolean
+  last: boolean
 }
 
-// Props
-export interface AccordeonProps {
-  tipo?: 'unico' | 'multiple'
-  colapsable?: boolean
-  valorPredeterminado?: string | string[]
-  deshabilitado?: boolean
+export interface AccordionProps {
+  type?: 'single' | 'multiple'
+  collapsible?: boolean
+  defaultValue?: string | string[]
+  disabled?: boolean
   dir?: 'ltr' | 'rtl'
-  orientacion?: 'horizontal' | 'vertical'
-  desmontarAlOcultar?: boolean
-  elementos?: AccordeonElemento[]
-  ui?: AccordeonUI
+  orientation?: 'horizontal' | 'vertical'
+  unmountOnHide?: boolean
+  items?: AccordionItem[]
+  ui?: AccordionUI
 }
 
-// Emits
-export interface AccordeonEmits {
-  'update:modelValue': [valor: AccordeonValor]
+export interface AccordionEmits {
+  'update:modelValue': [value: AccordionValue]
 }
 
-// SlotProps
-export interface AccordeonSlotProps {
-  elemento: AccordeonElemento
-  indice: number
-  abierto: boolean
+export interface AccordionSlotProps {
+  item: AccordionItem
+  index: number
+  open: boolean
 }
 
-// Slots
-export type AccordeonSlots = {
-  activador?(props: AccordeonSlotProps): unknown
-  default?(props: AccordeonSlotProps): unknown
+export type AccordionSlots = {
+  trigger?(props: AccordionSlotProps): unknown
+  default?(props: AccordionSlotProps): unknown
 } & {
-  [nombre: `activador-${string}`]: ((props: AccordeonSlotProps) => unknown) | undefined
-  [nombre: `contenido-${string}`]: ((props: AccordeonSlotProps) => unknown) | undefined
+  [name: `trigger-${string}`]: ((props: AccordionSlotProps) => unknown) | undefined
+  [name: `content-${string}`]: ((props: AccordionSlotProps) => unknown) | undefined
 }

@@ -1,50 +1,51 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/Collapsible'
-import type { CollapsibleEmits, CollapsibleProps, CollapsibleSlotProps } from '.'
+import {
+  Collapsible as CollapsibleBase,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/Collapsible'
+import type { CollapsibleEmits, CollapsibleProps, CollapsibleSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-defineSlots<{
-  default?(props: CollapsibleSlotProps): unknown
-  contenido?(props: CollapsibleSlotProps): unknown
-}>()
+defineSlots<CollapsibleSlots>()
 
 const props = withDefaults(defineProps<CollapsibleProps>(), {
-  desmontarAlOcultar: false,
+  unmountOnHide: false,
 })
 defineEmits<CollapsibleEmits>()
 
 const attrs = useAttrs()
-const abierto = defineModel<boolean>('abierto')
+const open = defineModel<boolean>('open')
 
-const uiCalculado = computed(() => ({
-  raiz: {
+const calculatedUI = computed(() => ({
+  root: {
     ...attrs,
     as: props.as,
     asChild: props.asChild,
-    disabled: props.deshabilitado,
-    unmountOnHide: props.desmontarAlOcultar,
+    disabled: props.disabled,
+    unmountOnHide: props.unmountOnHide,
   },
-  activador: {
-    ...props.ui?.activador,
-    asChild: props.ui?.activador?.asChild ?? true,
+  trigger: {
+    ...props.ui?.trigger,
+    asChild: props.ui?.trigger?.asChild ?? true,
   },
-  contenido: {
-    ...props.ui?.contenido,
-    forceMount: props.forzarMontaje,
+  content: {
+    ...props.ui?.content,
+    forceMount: props.forceMount,
   },
 }))
 </script>
 
 <template>
-  <Collapsible v-slot="slotProps" v-bind="uiCalculado.raiz" v-model:open="abierto">
-    <CollapsibleTrigger v-bind="uiCalculado.activador">
-      <slot :abierto="slotProps.open" />
+  <CollapsibleBase v-slot="slotProps" v-model:open="open" v-bind="calculatedUI.root">
+    <CollapsibleTrigger v-bind="calculatedUI.trigger">
+      <slot :open="slotProps.open" />
     </CollapsibleTrigger>
 
-    <CollapsibleContent v-if="$slots.contenido" v-bind="uiCalculado.contenido">
-      <slot name="contenido" :abierto="slotProps.open" />
+    <CollapsibleContent v-if="$slots.content" v-bind="calculatedUI.content">
+      <slot name="content" :open="slotProps.open" />
     </CollapsibleContent>
-  </Collapsible>
+  </CollapsibleBase>
 </template>

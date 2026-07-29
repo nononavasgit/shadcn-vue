@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
+import { Collapsible } from '@/components/app/Collapsible'
 import { HoverCard } from '@/components/app/HoverCard'
 import { Kbd, KbdGroup } from '@/components/app/Kbd'
+import { Panel } from '@/components/app/Panel'
 import { Popover } from '@/components/app/Popover'
 import { Separator } from '@/components/app/Separator'
 import { Time } from '@/components/app/Time'
@@ -13,7 +15,9 @@ const now = ref(new Date())
 const tooltipOpen = ref(false)
 const popoverOpen = ref(false)
 const hoverCardOpen = ref(false)
-let timer: ReturnType<typeof window.setInterval> | undefined
+const collapsibleOpen = ref(false)
+const panelOpen = ref(true)
+let timer
 
 onMounted(() => {
   timer = window.setInterval(() => {
@@ -388,6 +392,107 @@ onUnmounted(() => {
             {{ hoverCardOpen ? 'HoverCard abierto' : 'HoverCard cerrado' }}
           </button>
         </HoverCard>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-xl font-semibold">Collapsible</h2>
+        <p class="text-sm text-muted-foreground">Ejemplos básico, controlado y deshabilitado.</p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <Collapsible class="rounded-lg border">
+          <template #default="{ open }">
+            <button class="flex w-full items-center justify-between p-4 text-left font-medium">
+              Detalles del proyecto
+              <span class="text-sm text-muted-foreground">{{ open ? '−' : '+' }}</span>
+            </button>
+          </template>
+          <template #content>
+            <div class="border-t p-4 text-sm text-muted-foreground">
+              Este contenido se muestra y oculta al pulsar el encabezado.
+            </div>
+          </template>
+        </Collapsible>
+
+        <div class="space-y-3">
+          <Collapsible v-model:open="collapsibleOpen" class="rounded-lg border">
+            <template #default="{ open }">
+              <button class="flex w-full items-center justify-between p-4 text-left font-medium">
+                Estado controlado
+                <span class="text-sm text-muted-foreground">{{
+                  open ? 'Abierto' : 'Cerrado'
+                }}</span>
+              </button>
+            </template>
+            <template #content="{ open }">
+              <div class="border-t p-4 text-sm text-muted-foreground">
+                El valor de <code>open</code> es {{ open }}.
+              </div>
+            </template>
+          </Collapsible>
+          <button
+            class="rounded-md border px-3 py-2 text-sm font-medium"
+            @click="collapsibleOpen = !collapsibleOpen"
+          >
+            Cambiar desde fuera
+          </button>
+        </div>
+
+        <Collapsible disabled class="rounded-lg border opacity-60">
+          <template #default>
+            <button class="w-full p-4 text-left font-medium">Collapsible deshabilitado</button>
+          </template>
+          <template #content>
+            <div class="border-t p-4 text-sm">Este contenido no se puede abrir.</div>
+          </template>
+        </Collapsible>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-xl font-semibold">Panel</h2>
+        <p class="text-sm text-muted-foreground">
+          Paneles plegables, personalizados y con encabezado fijo.
+        </p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <Panel label="Panel básico" :ui="{ arrows: { style: { color: 'red' } } }">
+          <p class="text-sm">Un panel plegable con los valores predeterminados del componente.</p>
+        </Panel>
+
+        <Panel v-model:open="panelOpen" label="Panel controlado" severity="success" variant="soft">
+          <div class="space-y-3">
+            <p class="text-sm">Su estado también se puede cambiar desde un control externo.</p>
+            <button
+              class="rounded-md border px-3 py-1.5 text-sm font-medium"
+              @click="panelOpen = false"
+            >
+              Cerrar panel
+            </button>
+          </div>
+        </Panel>
+
+        <Panel label="Información permanente" severity="secondary" :collapsible="false">
+          <p class="text-sm">
+            Con <code>collapsible="false"</code>, el contenido permanece siempre visible.
+          </p>
+        </Panel>
+
+        <Panel color="#7c3aed" variant="outline">
+          <template #label="{ open }">
+            Panel personalizado · {{ open ? 'abierto' : 'cerrado' }}
+          </template>
+          <template #arrows="{ open }">
+            <span class="text-xs font-semibold">{{ open ? 'Ocultar' : 'Mostrar' }}</span>
+          </template>
+          <p class="text-sm">
+            Los slots permiten personalizar la etiqueta y el indicador del encabezado.
+          </p>
+        </Panel>
       </div>
     </section>
   </main>

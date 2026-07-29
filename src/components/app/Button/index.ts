@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { Component, SVGAttributes } from 'vue'
-import type { IconName, IconProps } from '@/components/app/Icon'
+import type { Component, HTMLAttributes } from 'vue'
+import type { NormalizedIconProps, NormalizeIconProps } from '@/components/app/Icon'
 
 export { default as Button } from './Button.vue'
 
@@ -222,9 +222,9 @@ export const buttonVariants = cva('', {
 export type ButtonVariants = VariantProps<typeof buttonVariants>
 
 export interface ButtonUI {
-  icon?: IconProps & SVGAttributes
-  trailingIcon?: IconProps & SVGAttributes
-  loadingIcon?: IconProps & SVGAttributes
+  icon?: NormalizedIconProps
+  trailingIcon?: NormalizedIconProps
+  loadingIcon?: NormalizedIconProps
 }
 
 export interface ButtonProps {
@@ -238,8 +238,8 @@ export interface ButtonProps {
   square?: ButtonVariants['square'] | boolean
   loading?: boolean
   color?: string
-  icon?: IconName | (IconProps & SVGAttributes)
-  trailingIcon?: IconName | (IconProps & SVGAttributes)
+  icon?: NormalizeIconProps
+  trailingIcon?: NormalizeIconProps
   ui?: ButtonUI
 }
 

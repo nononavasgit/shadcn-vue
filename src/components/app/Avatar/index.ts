@@ -1,5 +1,5 @@
-import type { HTMLAttributes, ImgHTMLAttributes, SVGAttributes } from 'vue'
-import type { IconName, IconProps } from '@/components/app/Icon'
+import type { HTMLAttributes, ImgHTMLAttributes } from 'vue'
+import type { NormalizeIconProps, NormalizedIconProps } from '@/components/app/Icon'
 
 export { default as Avatar } from './Avatar.vue'
 
@@ -9,13 +9,13 @@ export interface AvatarUI {
   root?: HTMLAttributes
   image?: ImgHTMLAttributes
   fallback?: HTMLAttributes
-  icon?: IconProps & SVGAttributes
+  icon?: NormalizedIconProps
 }
 
 export interface AvatarProps {
   src?: string
   alt?: string
-  icon?: IconName | (IconProps & SVGAttributes)
+  icon?: NormalizeIconProps
   title?: string
   ui?: AvatarUI
 }

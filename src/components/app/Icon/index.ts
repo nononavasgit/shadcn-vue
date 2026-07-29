@@ -28,9 +28,10 @@ export interface IconProps {
 }
 
 export type NormalizedIconProps = IconProps & SVGAttributes
+export type NormalizeIconProps = IconName | NormalizedIconProps
 
 export function useNormalizeIconProps(
-  source: MaybeRefOrGetter<IconName | NormalizedIconProps | null | undefined>,
+  source: MaybeRefOrGetter<NormalizeIconProps | null | undefined>,
 ) {
   return useNormalize<NormalizedIconProps, 'name'>(source, 'name')
 }

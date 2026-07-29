@@ -2,6 +2,7 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { Accordion } from '@/components/app/Accordion'
 import { Alert } from '@/components/app/Alert'
+import { AlertDialog } from '@/components/app/AlertDialog'
 import { Breadcrumb, type BreadcrumbItem } from '@/components/app/Breadcrumb'
 import { Collapsible } from '@/components/app/Collapsible'
 import { Dialog } from '@/components/app/Dialog'
@@ -108,6 +109,8 @@ const popoverOpen = ref(false)
 const hoverCardOpen = ref(false)
 const collapsibleOpen = ref(false)
 const dialogOpen = ref(false)
+const alertDialogOpen = ref(false)
+const alertDialogResult = ref('Sin respuesta')
 const panelOpen = ref(true)
 const progressValue = ref(68)
 const stepperValue = ref(1)
@@ -1096,6 +1099,95 @@ const breadcrumbUI: BreadcrumbUI = {
       </p>
     </section>
 
+    <section class="space-y-4" aria-labelledby="alert-dialog-examples-title">
+      <div>
+        <h2 id="alert-dialog-examples-title" class="text-xl font-semibold">AlertDialog</h2>
+        <p class="text-sm text-muted-foreground">
+          Confirmaciones importantes con botones normalizados, estado controlado y slots.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4 rounded-lg border p-5">
+        <AlertDialog
+          label="¿Quieres eliminar definitivamente esta cuenta?"
+          description="Esta acción no se puede deshacer. Se eliminarán permanentemente la cuenta, las preferencias guardadas y todos los datos relacionados almacenados en nuestros servidores."
+          icon="warning"
+          :action-button="{ label: 'Eliminar cuenta', severity: 'error', icon: 'trash2' }"
+          cancel-button="Conservar cuenta"
+        >
+          <button
+            class="rounded-md border border-error/40 px-4 py-2 text-sm font-medium text-error"
+          >
+            Eliminar cuenta
+          </button>
+        </AlertDialog>
+
+        <AlertDialog
+          v-model:open="alertDialogOpen"
+          label="¿Quieres continuar con la publicación?"
+          description="Antes de continuar, confirma que has revisado el contenido, los permisos de acceso y la fecha prevista de publicación."
+          icon="info"
+          :action-button="{
+            icon: 'warning',
+            label: 'continuar',
+          }"
+          cancel-button="Volver"
+          @action="alertDialogResult = 'Publicación confirmada'"
+          @cancel="alertDialogResult = 'Publicación cancelada'"
+        >
+          <template #default="{ open }">
+            <button class="rounded-md border px-4 py-2 text-sm font-medium">
+              {{ open ? 'Confirmación abierta' : 'Abrir confirmación controlada' }}
+            </button>
+          </template>
+
+          <template #content>
+            <div class="rounded-md bg-muted p-3 text-sm text-muted-foreground">
+              La publicación quedará visible para todas las personas con acceso al proyecto y
+              comenzará a generar notificaciones inmediatamente.
+            </div>
+          </template>
+        </AlertDialog>
+
+        <AlertDialog icon="warning">
+          <button
+            class="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+          >
+            Abrir ejemplo con slots
+          </button>
+
+          <template #label>Confirmación personalizada mediante slots</template>
+
+          <template #description>
+            Decide si quieres aplicar ahora los cambios pendientes a todos los elementos
+            seleccionados.
+          </template>
+
+          <template #content>
+            <ul class="list-inside list-disc space-y-1 rounded-md border p-3 text-sm">
+              <li>Se actualizarán los permisos compartidos.</li>
+              <li>Las personas afectadas recibirán una notificación.</li>
+              <li>La operación quedará registrada en el historial.</li>
+            </ul>
+          </template>
+
+          <template #cancel>
+            <button class="rounded-md border px-4 py-2 text-sm font-medium">Ahora no</button>
+          </template>
+
+          <template #action>
+            <button class="rounded-md bg-success px-4 py-2 text-sm font-medium text-white">
+              Sí, aplicar cambios
+            </button>
+          </template>
+        </AlertDialog>
+      </div>
+
+      <div class="rounded-md bg-muted p-3 text-sm text-muted-foreground">
+        Estado controlado: {{ alertDialogOpen ? 'abierto' : 'cerrado' }} · Resultado:
+        {{ alertDialogResult }}
+      </div>
+    </section>
     <section class="space-y-4">
       <div>
         <h2 class="text-xl font-semibold">Accordion</h2>

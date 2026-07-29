@@ -285,7 +285,7 @@ export function useNormalizeButtonProps(
 }
 
 export interface ButtonEmits {
-  click: [event: MouseEvent]
+  click: [event: PointerEvent]
 }
 
 export interface ButtonSlots {

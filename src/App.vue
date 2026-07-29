@@ -5,6 +5,8 @@ import { HoverCard } from '@/components/app/HoverCard'
 import { Kbd, KbdGroup } from '@/components/app/Kbd'
 import { Panel } from '@/components/app/Panel'
 import { Popover } from '@/components/app/Popover'
+import { Progress } from '@/components/app/Progress'
+import { ProgressCircular } from '@/components/app/ProgressCircular'
 import { Separator } from '@/components/app/Separator'
 import { Time } from '@/components/app/Time'
 import { Tooltip } from '@/components/app/Tooltip'
@@ -17,6 +19,7 @@ const popoverOpen = ref(false)
 const hoverCardOpen = ref(false)
 const collapsibleOpen = ref(false)
 const panelOpen = ref(true)
+const progressValue = ref(68)
 let timer
 
 onMounted(() => {
@@ -493,6 +496,115 @@ onUnmounted(() => {
             Los slots permiten personalizar la etiqueta y el indicador del encabezado.
           </p>
         </Panel>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-xl font-semibold">Progress</h2>
+        <p class="text-sm text-muted-foreground">
+          Valores básicos, colores personalizados, límites y etiquetas mediante slots.
+        </p>
+      </div>
+
+      <div class="grid gap-5 rounded-lg border p-5 sm:grid-cols-2">
+        <div class="space-y-2">
+          <div class="flex justify-between text-sm">
+            <span>Progreso básico</span>
+            <span>{{ progressValue }}%</span>
+          </div>
+          <Progress :value="progressValue" aria-label="Progreso básico" />
+        </div>
+
+        <div class="space-y-2">
+          <p class="text-sm">Valor máximo personalizado</p>
+          <Progress :value="7" :max="10" label="7 de 10" color="#16a34a" />
+        </div>
+
+        <div class="space-y-2">
+          <p class="text-sm">Colores personalizados</p>
+          <Progress
+            :value="45"
+            color="#7c3aed"
+            track-color="#ede9fe"
+            aria-label="Progreso personalizado"
+          />
+        </div>
+
+        <div class="space-y-2">
+          <p class="text-sm">Etiqueta con slot</p>
+          <Progress :value="progressValue" color="#ea580c">
+            <template #label="{ percentage }">{{ Math.round(percentage) }}% completado</template>
+          </Progress>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <button
+          class="rounded-md border px-3 py-2 text-sm font-medium"
+          @click="progressValue = Math.max(0, progressValue - 10)"
+        >
+          Reducir
+        </button>
+        <button
+          class="rounded-md border px-3 py-2 text-sm font-medium"
+          @click="progressValue = Math.min(100, progressValue + 10)"
+        >
+          Aumentar
+        </button>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-xl font-semibold">ProgressCircular</h2>
+        <p class="text-sm text-muted-foreground">
+          Diferentes tamaños, grosores, colores y contenido central personalizado.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-8 rounded-lg border p-5">
+        <div class="space-y-2 text-center">
+          <ProgressCircular
+            :value="progressValue"
+            :label="`${progressValue}%`"
+            aria-label="Progreso circular"
+          />
+          <p class="text-xs text-muted-foreground">Básico</p>
+        </div>
+
+        <div class="space-y-2 text-center">
+          <ProgressCircular
+            :value="3"
+            :max="5"
+            :size="104"
+            :thickness="12"
+            color="#16a34a"
+            track-color="#dcfce7"
+            label="3/5"
+          />
+          <p class="text-xs text-muted-foreground">Tamaño y grosor</p>
+        </div>
+
+        <div class="space-y-2 text-center">
+          <ProgressCircular :value="progressValue" size="7rem" color="#7c3aed">
+            <template #label="{ percentage }">
+              <span class="text-lg font-bold">{{ Math.round(percentage) }}%</span>
+            </template>
+          </ProgressCircular>
+          <p class="text-xs text-muted-foreground">Slot personalizado</p>
+        </div>
+
+        <div class="space-y-2 text-center">
+          <ProgressCircular
+            :value="82"
+            :size="64"
+            :thickness="5"
+            color="#0284c7"
+            aria-label="Progreso fino"
+          />
+          <p class="text-xs text-muted-foreground">Fino</p>
+        </div>
       </div>
     </section>
   </main>

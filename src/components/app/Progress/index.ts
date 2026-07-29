@@ -1,27 +1,30 @@
+import type { ProgressRootProps } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 
 export { default as Progress } from './Progress.vue'
 
 export interface ProgressUI {
-  indicador?: HTMLAttributes
-  titulo?: HTMLAttributes
+  indicator?: HTMLAttributes
+  label?: HTMLAttributes
 }
 
 export interface ProgressProps {
-  valor?: number | null
-  maximo?: number
-  titulo?: string
+  value?: number | null
+  max?: number
+  getValueLabel?: ProgressRootProps['getValueLabel']
+  getValueText?: ProgressRootProps['getValueText']
+  label?: string
   color?: string
-  colorPista?: string
+  trackColor?: string
   ui?: ProgressUI
 }
 
 export interface ProgressLabelSlotProps {
-  valor: number | null
-  maximo: number
-  porcentaje: number
+  value: number | null
+  max: number
+  percentage: number
 }
 
 export interface ProgressSlots {
-  titulo?(props: ProgressLabelSlotProps): unknown
+  label?(props: ProgressLabelSlotProps): unknown
 }

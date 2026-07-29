@@ -12,74 +12,76 @@ defineSlots<ProgressSlots>()
 const attrs = useAttrs()
 const slots = useSlots()
 const props = withDefaults(defineProps<ProgressProps>(), {
-  valor: 0,
-  maximo: 100,
+  value: 0,
+  max: 100,
 })
 
 const { colorStyle } = useColor(
   computed(() => props.color),
   'progress',
 )
-const { colorStyle: estiloColorPista } = useColor(
-  computed(() => props.colorPista),
+const { colorStyle: trackColorStyle } = useColor(
+  computed(() => props.trackColor),
   'progress-track',
 )
 
-const porcentaje = computed(() => {
-  if (props.valor === null) return 0
+const percentage = computed(() => {
+  if (props.value === null) return 0
 
-  return Math.min(100, Math.max(0, (props.valor / props.maximo) * 100))
+  return Math.min(100, Math.max(0, (props.value / props.max) * 100))
 })
 
 const slotProps = computed<ProgressLabelSlotProps>(() => ({
-  valor: props.valor,
-  maximo: props.maximo,
-  porcentaje: porcentaje.value,
+  value: props.value,
+  max: props.max,
+  percentage: percentage.value,
 }))
 
-const uiCalculado = computed(() => ({
-  raiz: {
+const calculatedUI = computed(() => ({
+  root: {
     ...attrs,
-    modelValue: props.valor,
-    max: props.maximo,
+    modelValue: props.value,
+    max: props.max,
+    getValueLabel: props.getValueLabel,
+    getValueText: props.getValueText,
     'aria-label': attrs['aria-label'],
-    'aria-valuetext': attrs['aria-valuetext'] || props.titulo,
+    'aria-valuetext': attrs['aria-valuetext'] || props.label,
     class: cn(
-      (props.titulo || slots.titulo) && 'h-4',
-      props.colorPista ? 'bg-(--progress-track-color)' : props.color && 'bg-(--progress-color)/20',
+      (props.label || slots.label) && 'h-4',
+      props.trackColor ? 'bg-(--progress-track-color)' : props.color && 'bg-(--progress-color)/20',
       attrs.class,
     ),
-    style: [colorStyle.value, estiloColorPista.value, attrs.style],
+    style: [colorStyle.value, trackColorStyle.value, attrs.style],
   },
-  indicador: {
-    ...props.ui?.indicador,
-    class: cn(props.color && 'bg-(--progress-color)', props.ui?.indicador?.class),
+  indicator: {
+    ...props.ui?.indicator,
+    class: cn(props.color && 'bg-(--progress-color)', props.ui?.indicator?.class),
   },
-  titulo: {
+  label: {
     'aria-hidden': true,
-    ...props.ui?.titulo,
+    ...props.ui?.label,
     class: cn(
       'pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-2 text-center text-xs font-medium text-white [text-shadow:0_1px_3px_rgb(0_0_0),0_0_7px_rgb(0_0_0/0.9),0_0_12px_rgb(0_0_0/0.7)]',
-      props.ui?.titulo?.class,
+      props.ui?.label?.class,
     ),
   },
 }))
 </script>
 
 <template>
-  <ProgressBase v-bind="uiCalculado.raiz">
-    <template #indicator="{ percentage: porcentajeIndicador }">
+  <ProgressBase v-bind="calculatedUI.root">
+    <template #indicator="{ percentage: indicatorPercentage }">
       <ProgressIndicator
-        v-bind="uiCalculado.indicador"
+        v-bind="calculatedUI.indicator"
         :style="[
-          { transform: `translateX(-${100 - porcentajeIndicador}%)` },
-          uiCalculado.indicador.style,
+          { transform: `translateX(-${100 - indicatorPercentage}%)` },
+          calculatedUI.indicator.style,
         ]"
       />
     </template>
 
-    <span v-if="props.titulo || $slots.titulo" v-bind="uiCalculado.titulo">
-      <slot name="titulo" v-bind="slotProps">{{ props.titulo }}</slot>
+    <span v-if="props.label || $slots.label" v-bind="calculatedUI.label">
+      <slot name="label" v-bind="slotProps">{{ props.label }}</slot>
     </span>
   </ProgressBase>
 </template>

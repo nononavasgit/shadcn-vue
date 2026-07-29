@@ -3,4 +3,6 @@ export interface Messages {
   cancel: string
   continue: string
   loading: string
+  commandPlaceholder: string
+  noResults: string
 }

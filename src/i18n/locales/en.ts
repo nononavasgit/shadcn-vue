@@ -5,4 +5,6 @@ export default {
   cancel: 'Cancel',
   continue: 'Continue',
   loading: 'Loading',
+  commandPlaceholder: 'Search for a command...',
+  noResults: 'No results found.',
 } satisfies Messages

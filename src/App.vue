@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { Accordion } from '@/components/app/Accordion'
+import { Alert } from '@/components/app/Alert'
 import { Collapsible } from '@/components/app/Collapsible'
 import { Dialog } from '@/components/app/Dialog'
 import { HoverCard } from '@/components/app/HoverCard'
+import { Icon } from '@/components/app/Icon'
 import { Kbd, KbdGroup } from '@/components/app/Kbd'
 import { Link } from '@/components/app/Link'
 import { Panel } from '@/components/app/Panel'
@@ -63,6 +65,15 @@ const stepperSteps = [
   },
 ]
 
+const alertVariantExamples = ['solid', 'outline', 'plain', 'subtle', 'soft'] as const
+const alertSeverityExamples = [
+  { value: 'primary', label: 'Primary', icon: 'info' },
+  { value: 'secondary', label: 'Secondary', icon: 'info' },
+  { value: 'warning', label: 'Warning', icon: 'warning' },
+  { value: 'success', label: 'Success', icon: 'success' },
+  { value: 'error', label: 'Error', icon: 'error' },
+] as const
+
 const fixedDate = new Date('2026-07-28T18:30:00.000Z')
 const timestamp = Date.UTC(2026, 6, 28, 18, 30)
 const now = ref(new Date())
@@ -97,6 +108,105 @@ onUnmounted(() => {
       <p class="text-muted-foreground">Ejemplos de los componentes con su nueva API en inglés.</p>
     </header>
 
+    <section class="space-y-5" aria-labelledby="alert-examples-title">
+      <div>
+        <h2 id="alert-examples-title" class="text-xl font-semibold">Alert</h2>
+        <p class="text-sm text-muted-foreground">
+          Las cinco severidades en todas sus variantes. Todas las alertas son cerrables.
+        </p>
+      </div>
+
+      <div
+        v-for="severity in alertSeverityExamples"
+        :key="severity.value"
+        class="space-y-3 rounded-lg border p-5"
+      >
+        <div>
+          <h3 class="font-medium">Severity: {{ severity.label }}</h3>
+          <p class="text-sm text-muted-foreground">
+            Solid, outline, plain, subtle y soft con severidad {{ severity.value }}.
+          </p>
+        </div>
+
+        <Alert
+          v-for="variant in alertVariantExamples"
+          :key="variant"
+          closable
+          :label="severity.label + ' · ' + variant"
+          :description="'Variante ' + variant + ' con severidad ' + severity.value + '.'"
+          :icon="severity.icon"
+          :severity="severity.value"
+          :variant="variant"
+        />
+      </div>
+
+      <div class="space-y-4 rounded-lg border p-5">
+        <div>
+          <h3 class="font-medium">Color y botón normalizado</h3>
+          <p class="text-sm text-muted-foreground">
+            Color personalizado y closeButton abreviado mediante un texto.
+          </p>
+        </div>
+
+        <Alert
+          closable
+          close-button="Cerrar"
+          color="#7c3aed"
+          variant="solid"
+          label="Color personalizado"
+          description="El contraste se calcula igual que en Button y el texto se normaliza como label del botón de cierre."
+          icon="info"
+        />
+
+        <Alert
+          closable
+          color="#db2777"
+          variant="subtle"
+          label="CloseButton con objeto"
+          description="También admite todas las props y atributos HTML de Button."
+          icon="info"
+          :close-button="{
+            icon: 'x',
+            rounded: true,
+            size: 'sm',
+            'aria-label': 'Descartar alerta personalizada',
+          }"
+        />
+      </div>
+
+      <div class="space-y-4 rounded-lg border p-5">
+        <h3 class="font-medium">Slots personalizados</h3>
+
+        <Alert closable severity="warning" variant="outline" class="pr-24">
+          <template #icon>
+            <Icon name="warning" aria-hidden="true" />
+          </template>
+
+          <template #label>Contenido personalizado mediante slots</template>
+
+          <template #description>
+            <p>
+              Los slots permiten sustituir el icono, el título, la descripción y el control de
+              cierre.
+            </p>
+            <ul class="mt-2 list-inside list-disc">
+              <li>El contenido puede incluir cualquier estructura HTML.</li>
+              <li>El slot close recibe la función que descarta la alerta.</li>
+            </ul>
+          </template>
+
+          <template #close="{ close }">
+            <button
+              type="button"
+              class="absolute top-3 right-3 text-xs font-medium underline hover:no-underline"
+              @click="close"
+            >
+              Descartar
+            </button>
+          </template>
+        </Alert>
+      </div>
+    </section>
     <section class="space-y-4" aria-labelledby="link-examples-title">
       <div>
         <h2 id="link-examples-title" class="text-xl font-semibold">Link</h2>

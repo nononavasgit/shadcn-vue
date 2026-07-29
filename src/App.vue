@@ -16,6 +16,7 @@ import { Panel } from '@/components/app/Panel'
 import { Popover } from '@/components/app/Popover'
 import { Progress } from '@/components/app/Progress'
 import { ProgressCircular } from '@/components/app/ProgressCircular'
+import { ScrollArea } from '@/components/app/ScrollArea'
 import { Separator } from '@/components/app/Separator'
 import { Stepper } from '@/components/app/Stepper'
 import { Time } from '@/components/app/Time'
@@ -511,6 +512,107 @@ const paginationUI: PaginationUI = {
         <div class="space-y-3">
           <h3 class="font-medium">Estado deshabilitado</h3>
           <Pagination :page="4" :total="100" :items-per-page="10" disabled />
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-4" aria-labelledby="scroll-area-examples-title">
+      <div>
+        <h2 id="scroll-area-examples-title" class="text-xl font-semibold">ScrollArea</h2>
+        <p class="text-sm text-muted-foreground">
+          Áreas de desplazamiento verticales, horizontales y en ambas direcciones.
+        </p>
+      </div>
+
+      <div class="grid gap-6 rounded-lg border p-5 lg:grid-cols-2">
+        <div class="space-y-3">
+          <div>
+            <h3 class="font-medium">Vertical</h3>
+            <p class="text-sm text-muted-foreground">
+              La barra aparece al interactuar con una lista extensa.
+            </p>
+          </div>
+
+          <ScrollArea class="h-72 rounded-md border">
+            <div class="p-4">
+              <h4 class="mb-4 text-sm leading-none font-medium">Versiones publicadas</h4>
+              <div
+                v-for="version in 30"
+                :key="version"
+                class="border-t py-3 text-sm first:border-t-0 first:pt-0"
+              >
+                shadcn-vue v0.{{ 31 - version }}.0
+              </div>
+            </div>
+          </ScrollArea>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <h3 class="font-medium">Horizontal</h3>
+            <p class="text-sm text-muted-foreground">
+              El contenido conserva su anchura y se recorre lateralmente.
+            </p>
+          </div>
+
+          <ScrollArea orientation="horizontal" type="always" class="w-full rounded-md border">
+            <div class="flex w-max gap-4 p-4">
+              <article
+                v-for="card in 8"
+                :key="card"
+                class="w-48 shrink-0 overflow-hidden rounded-md border bg-muted/30"
+              >
+                <div
+                  class="flex h-28 items-end bg-linear-to-br from-sky-400 via-indigo-500 to-violet-600 p-3 text-white"
+                >
+                  <span class="text-lg font-semibold">Colección {{ card }}</span>
+                </div>
+                <div class="p-3">
+                  <p class="text-sm font-medium">Elemento desplazable</p>
+                  <p class="mt-1 text-xs text-muted-foreground">Desliza para ver el siguiente.</p>
+                </div>
+              </article>
+            </div>
+          </ScrollArea>
+        </div>
+
+        <div class="space-y-3 lg:col-span-2">
+          <div>
+            <h3 class="font-medium">Vertical y horizontal</h3>
+            <p class="text-sm text-muted-foreground">
+              Las dos barras permanecen montadas y sus <code>thumbs</code> se personalizan de forma
+              independiente mediante <code>ui</code>.
+            </p>
+          </div>
+
+          <ScrollArea
+            orientation="both"
+            type="always"
+            force-mount
+            class="h-64 rounded-md border"
+            :ui="{
+              thumbVertical: { class: 'bg-violet-500' },
+              thumbHorizontal: { class: 'bg-sky-500' },
+              corner: { class: 'bg-violet-100 dark:bg-violet-950' },
+            }"
+          >
+            <div class="w-[900px] space-y-3 p-4">
+              <div
+                v-for="row in 12"
+                :key="row"
+                class="grid grid-cols-[120px_220px_220px_220px] gap-3"
+              >
+                <div class="rounded-md bg-muted p-3 text-sm font-medium">Fila {{ row }}</div>
+                <div
+                  v-for="column in 3"
+                  :key="column"
+                  class="rounded-md border p-3 text-sm text-muted-foreground"
+                >
+                  Contenido de la columna {{ column }}
+                </div>
+              </div>
+            </div>
+          </ScrollArea>
         </div>
       </div>
     </section>

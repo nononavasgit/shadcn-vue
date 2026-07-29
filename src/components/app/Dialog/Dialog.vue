@@ -22,6 +22,7 @@ const emit = defineEmits<DialogEmits>()
 
 const props = withDefaults(defineProps<DialogProps>(), {
   modal: true,
+  block: false,
   unmountOnHide: true,
   showCloseButton: true,
 })
@@ -29,13 +30,20 @@ const props = withDefaults(defineProps<DialogProps>(), {
 const slots = useSlots()
 const attrs = useAttrs()
 const open = defineModel<boolean>('open')
+const calculatedOpen = computed({
+  get: () => open.value,
+  set: (value: boolean | undefined) => {
+    if (props.block && value === false) return
+    open.value = value
+  },
+})
 
 const calculatedIcon = useNormalizeIconProps(() => props.icon)
 
 function getSlotProps(slotProps: { open: boolean; close: () => void }): DialogSlotProps {
   return {
     open: slotProps.open,
-    close: slotProps.close,
+    close: props.block ? () => {} : slotProps.close,
   }
 }
 
@@ -56,10 +64,22 @@ const calculatedUI = computed(() => ({
     disableOutsidePointerEvents: props.disableOutsidePointerEvents ?? props.modal,
     onOpenAutoFocus: (event: Event) => emit('openAutoFocus', event),
     onCloseAutoFocus: (event: Event) => emit('closeAutoFocus', event),
-    onEscapeKeyDown: (event: Event) => emit('escapeKeyDown', event),
-    onPointerDownOutside: (event: Event) => emit('pointerDownOutside', event),
-    onFocusOutside: (event: Event) => emit('focusOutside', event),
-    onInteractOutside: (event: Event) => emit('interactOutside', event),
+    onEscapeKeyDown: (event: Event) => {
+      if (props.block) event.preventDefault()
+      emit('escapeKeyDown', event)
+    },
+    onPointerDownOutside: (event: Event) => {
+      if (props.block) event.preventDefault()
+      emit('pointerDownOutside', event)
+    },
+    onFocusOutside: (event: Event) => {
+      if (props.block) event.preventDefault()
+      emit('focusOutside', event)
+    },
+    onInteractOutside: (event: Event) => {
+      if (props.block) event.preventDefault()
+      emit('interactOutside', event)
+    },
   },
   header: {
     ...props.ui?.header,
@@ -96,13 +116,13 @@ const calculatedUI = computed(() => ({
 </script>
 
 <template>
-  <DialogBase v-slot="rootSlotProps" v-bind="calculatedUI.root" v-model:open="open">
+  <DialogBase v-slot="rootSlotProps" v-bind="calculatedUI.root" v-model:open="calculatedOpen">
     <DialogTrigger v-bind="calculatedUI.trigger">
       <slot v-bind="getSlotProps(rootSlotProps)" />
     </DialogTrigger>
 
     <DialogContent v-bind="calculatedUI.content">
-      <template v-if="props.showCloseButton" #close>
+      <template v-if="props.showCloseButton && !props.block" #close>
         <slot name="close" v-bind="getSlotProps(rootSlotProps)">
           <DialogClose v-bind="calculatedUI.close">
             <slot name="closeIcon" v-bind="getSlotProps(rootSlotProps)">

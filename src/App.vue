@@ -777,6 +777,7 @@ onUnmounted(() => {
           label="Editar todas las preferencias de comunicación, privacidad y notificaciones asociadas a la cuenta"
           description="Configura con precisión cómo, cuándo y mediante qué canales quieres recibir las notificaciones relacionadas con actividad importante, novedades del producto y cambios de seguridad."
           :ui="{ body: { class: 'py-2' } }"
+          block
         >
           <template #default="{ open }">
             <button class="rounded-md border px-4 py-2 text-sm font-medium">

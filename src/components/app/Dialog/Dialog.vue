@@ -13,6 +13,7 @@ import {
 import { Icon, useNormalizeIconProps } from '@/components/app/Icon'
 import { Separator } from '@/components/app/Separator'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/i18n'
 import type { DialogEmits, DialogProps, DialogSlotProps, DialogSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
@@ -39,6 +40,7 @@ const calculatedOpen = computed({
 })
 
 const calculatedIcon = useNormalizeIconProps(() => props.icon)
+const { t } = useI18n()
 
 function getSlotProps(slotProps: { open: boolean; close: () => void }): DialogSlotProps {
   return {
@@ -106,7 +108,7 @@ const calculatedUI = computed(() => ({
   },
   close: {
     ...props.ui?.close,
-    'aria-label': props.ui?.close?.['aria-label'],
+    'aria-label': props.ui?.close?.['aria-label'] ?? t('close'),
     class: cn(
       'absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
       props.ui?.close?.class,

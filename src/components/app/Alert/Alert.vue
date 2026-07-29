@@ -5,6 +5,7 @@ import { Button, useNormalizeButtonProps } from '@/components/app/Button'
 import { Icon, useNormalizeIconProps } from '@/components/app/Icon'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
+import { useI18n } from '@/i18n'
 import { alertVariants, type AlertEmits, type AlertProps, type AlertSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
@@ -23,6 +24,7 @@ const slots = useSlots()
 const visible = ref(true)
 const calculatedIcon = useNormalizeIconProps(() => props.icon)
 const calculatedCloseButton = useNormalizeButtonProps(() => props.closeButton)
+const { t } = useI18n()
 const { colorStyle } = useColor(
   computed(() => props.color),
   'alert',
@@ -68,7 +70,7 @@ const calculatedUI = computed(() => ({
       ? calculatedCloseButton.value.icon
       : (calculatedCloseButton.value?.icon ?? 'x'),
     ...calculatedCloseButton.value,
-    'aria-label': calculatedCloseButton.value?.['aria-label'] ?? 'Close',
+    'aria-label': calculatedCloseButton.value?.['aria-label'] ?? t('close'),
     class: cn(
       'absolute top-2 right-2 shrink-0 text-current hover:bg-current/10',
       calculatedCloseButton.value?.class,

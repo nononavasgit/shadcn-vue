@@ -10,7 +10,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/Dialog'
-import { Icon } from '@/components/app/Icon'
+import { Icon, useNormalizeIconProps } from '@/components/app/Icon'
+import { Separator } from '@/components/app/Separator'
 import { cn } from '@/lib/utils'
 import type { DialogEmits, DialogProps, DialogSlotProps, DialogSlots } from '.'
 
@@ -21,128 +22,130 @@ const emit = defineEmits<DialogEmits>()
 
 const props = withDefaults(defineProps<DialogProps>(), {
   modal: true,
-  desmontarAlOcultar: true,
-  mostrarBotonCerrar: true,
+  unmountOnHide: true,
+  showCloseButton: true,
 })
 
 const slots = useSlots()
 const attrs = useAttrs()
-const abierto = defineModel<boolean>('abierto')
+const open = defineModel<boolean>('open')
 
-const iconoCalculado = computed(() =>
-  typeof props.icono === 'string' ? { nombre: props.icono } : props.icono,
-)
+const calculatedIcon = useNormalizeIconProps(() => props.icon)
 
-function propiedadesSlot(propiedades: { open: boolean; close: () => void }): DialogSlotProps {
+function getSlotProps(slotProps: { open: boolean; close: () => void }): DialogSlotProps {
   return {
-    abierto: propiedades.open,
-    cerrar: propiedades.close,
+    open: slotProps.open,
+    close: slotProps.close,
   }
 }
 
-const uiCalculado = computed(() => ({
-  raiz: {
+const calculatedUI = computed(() => ({
+  root: {
     ...attrs,
-    defaultOpen: props.abiertoPredeterminado,
+    defaultOpen: props.defaultOpen,
     modal: props.modal,
-    unmountOnHide: props.desmontarAlOcultar,
+    unmountOnHide: props.unmountOnHide,
   },
-  activador: {
-    ...props.ui?.activador,
-    asChild: props.ui?.activador?.asChild ?? true,
+  trigger: {
+    ...props.ui?.trigger,
+    asChild: props.ui?.trigger?.asChild ?? true,
   },
-  contenedor: {
-    ...props.ui?.contenedor,
-    forceMount: props.forzarMontaje,
-    disableOutsidePointerEvents: props.deshabilitarPunteroExterior,
-    onOpenAutoFocus: (evento: Event) => emit('enfocarAbrir', evento),
-    onCloseAutoFocus: (evento: Event) => emit('enfocarCerrar', evento),
-    onEscapeKeyDown: (evento: Event) => emit('pulsarEscape', evento),
-    onPointerDownOutside: (evento: Event) => emit('pulsarFuera', evento),
-    onFocusOutside: (evento: Event) => emit('enfocarFuera', evento),
-    onInteractOutside: (evento: Event) => emit('interactuarFuera', evento),
+  content: {
+    ...props.ui?.content,
+    forceMount: props.forceMount,
+    disableOutsidePointerEvents: props.disableOutsidePointerEvents ?? props.modal,
+    onOpenAutoFocus: (event: Event) => emit('openAutoFocus', event),
+    onCloseAutoFocus: (event: Event) => emit('closeAutoFocus', event),
+    onEscapeKeyDown: (event: Event) => emit('escapeKeyDown', event),
+    onPointerDownOutside: (event: Event) => emit('pointerDownOutside', event),
+    onFocusOutside: (event: Event) => emit('focusOutside', event),
+    onInteractOutside: (event: Event) => emit('interactOutside', event),
   },
-  encabezado: {
-    ...props.ui?.encabezado,
+  header: {
+    ...props.ui?.header,
   },
-  titulo: {
-    ...props.ui?.titulo,
-    class: cn('flex items-center gap-2', props.ui?.titulo?.class),
+  title: {
+    ...props.ui?.title,
+    class: cn('flex items-center gap-2', props.ui?.title?.class),
   },
-  icono: {
+  icon: {
     'aria-hidden': true,
-    ...props.ui?.icono,
-    ...iconoCalculado.value,
-    class: cn(props.ui?.icono?.class, iconoCalculado.value?.class),
+    ...props.ui?.icon,
+    ...calculatedIcon.value,
+    class: cn(props.ui?.icon?.class, calculatedIcon.value?.class),
   },
-  descripcion: {
-    ...props.ui?.descripcion,
+  description: {
+    ...props.ui?.description,
   },
-  contenido: {
-    ...props.ui?.contenido,
-    class: cn('min-h-0 overflow-y-auto', props.ui?.contenido?.class),
+  body: {
+    ...props.ui?.body,
+    class: cn('min-h-0 overflow-y-auto', props.ui?.body?.class),
   },
-  pie: {
-    ...props.ui?.pie,
+  footer: {
+    ...props.ui?.footer,
   },
-  cerrar: {
-    ...props.ui?.cerrar,
-    'aria-label': props.ui?.cerrar?.['aria-label'],
+  close: {
+    ...props.ui?.close,
+    'aria-label': props.ui?.close?.['aria-label'],
     class: cn(
       'absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
-      props.ui?.cerrar?.class,
+      props.ui?.close?.class,
     ),
   },
 }))
 </script>
 
 <template>
-  <DialogBase v-slot="propiedadesRaiz" v-bind="uiCalculado.raiz" v-model:open="abierto">
-    <DialogTrigger v-bind="uiCalculado.activador">
-      <slot v-bind="propiedadesSlot(propiedadesRaiz)" />
+  <DialogBase v-slot="rootSlotProps" v-bind="calculatedUI.root" v-model:open="open">
+    <DialogTrigger v-bind="calculatedUI.trigger">
+      <slot v-bind="getSlotProps(rootSlotProps)" />
     </DialogTrigger>
 
-    <DialogContent v-bind="uiCalculado.contenedor">
-      <template v-if="props.mostrarBotonCerrar" #close>
-        <slot name="cerrar" v-bind="propiedadesSlot(propiedadesRaiz)">
-          <DialogClose v-bind="uiCalculado.cerrar">
-            <slot name="iconoCerrar" v-bind="propiedadesSlot(propiedadesRaiz)">
-              <Icon nombre="x" />
+    <DialogContent v-bind="calculatedUI.content">
+      <template v-if="props.showCloseButton" #close>
+        <slot name="close" v-bind="getSlotProps(rootSlotProps)">
+          <DialogClose v-bind="calculatedUI.close">
+            <slot name="closeIcon" v-bind="getSlotProps(rootSlotProps)">
+              <Icon name="x" />
             </slot>
           </DialogClose>
         </slot>
       </template>
 
-      <DialogHeader v-bind="uiCalculado.encabezado">
-        <slot name="encabezado" v-bind="propiedadesSlot(propiedadesRaiz)">
-          <DialogTitle v-if="props.titulo || slots.titulo" v-bind="uiCalculado.titulo">
+      <DialogHeader v-bind="calculatedUI.header">
+        <slot name="header" v-bind="getSlotProps(rootSlotProps)">
+          <DialogTitle v-if="props.label || slots.title" v-bind="calculatedUI.title">
             <Icon
-              v-if="iconoCalculado?.nombre"
-              v-bind="uiCalculado.icono"
-              :nombre="iconoCalculado.nombre"
+              v-if="calculatedUI.icon.name"
+              v-bind="calculatedUI.icon"
+              :name="calculatedUI.icon.name"
             />
-            <slot name="titulo" v-bind="propiedadesSlot(propiedadesRaiz)">
-              {{ props.titulo }}
+            <slot name="title" v-bind="getSlotProps(rootSlotProps)">
+              {{ props.label }}
             </slot>
           </DialogTitle>
 
           <DialogDescription
-            v-if="props.descripcion || slots.descripcion"
-            v-bind="uiCalculado.descripcion"
+            v-if="props.description || slots.description"
+            v-bind="calculatedUI.description"
           >
-            <slot name="descripcion" v-bind="propiedadesSlot(propiedadesRaiz)">
-              {{ props.descripcion }}
+            <slot name="description" v-bind="getSlotProps(rootSlotProps)">
+              {{ props.description }}
             </slot>
           </DialogDescription>
         </slot>
       </DialogHeader>
 
-      <div v-if="slots.contenido" v-bind="uiCalculado.contenido">
-        <slot name="contenido" v-bind="propiedadesSlot(propiedadesRaiz)" />
+      <Separator />
+
+      <div v-if="slots.content" v-bind="calculatedUI.body">
+        <slot name="content" v-bind="getSlotProps(rootSlotProps)" />
       </div>
 
-      <DialogFooter v-if="slots.pie" v-bind="uiCalculado.pie">
-        <slot name="pie" v-bind="propiedadesSlot(propiedadesRaiz)" />
+      <Separator v-if="slots.footer" />
+
+      <DialogFooter v-if="slots.footer" v-bind="calculatedUI.footer">
+        <slot name="footer" v-bind="getSlotProps(rootSlotProps)" />
       </DialogFooter>
     </DialogContent>
   </DialogBase>

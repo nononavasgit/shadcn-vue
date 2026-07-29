@@ -1,63 +1,62 @@
-import type { ButtonHTMLAttributes, Component, HTMLAttributes, SVGAttributes } from 'vue'
-import type { IconoNombre, IconoProps } from '@/components/app/Icon'
+import type { ButtonHTMLAttributes, Component, HTMLAttributes } from 'vue'
+import type { NormalizeIconProps, NormalizedIconProps } from '@/components/app/Icon'
 
 export { default as Dialog } from './Dialog.vue'
 
-export type DialogNodoUI = Omit<HTMLAttributes, 'dir'> & {
+export type DialogNodeUI = Omit<HTMLAttributes, 'dir'> & {
   as?: string | Component
   asChild?: boolean
   dir?: 'ltr' | 'rtl'
 }
 
 export interface DialogUI {
-  activador?: DialogNodoUI
-  contenedor?: DialogNodoUI
-  encabezado?: HTMLAttributes
-  titulo?: DialogNodoUI
-  icono?: SVGAttributes
-  descripcion?: DialogNodoUI
-  contenido?: HTMLAttributes
-  pie?: HTMLAttributes
-  cerrar?: HTMLAttributes & ButtonHTMLAttributes
+  trigger?: DialogNodeUI
+  content?: DialogNodeUI
+  header?: HTMLAttributes
+  title?: DialogNodeUI
+  icon?: NormalizedIconProps
+  description?: DialogNodeUI
+  body?: HTMLAttributes
+  footer?: HTMLAttributes
+  close?: HTMLAttributes & ButtonHTMLAttributes
 }
 
 export interface DialogProps {
-  abierto?: boolean
-  abiertoPredeterminado?: boolean
+  open?: boolean
+  defaultOpen?: boolean
   modal?: boolean
-  desmontarAlOcultar?: boolean
-  titulo?: string
-  descripcion?: string
-  icono?: IconoNombre | (IconoProps & SVGAttributes)
-  mostrarBotonCerrar?: boolean
-  forzarMontaje?: boolean
-  deshabilitarPunteroExterior?: boolean
-
+  unmountOnHide?: boolean
+  label?: string
+  description?: string
+  icon?: NormalizeIconProps
+  showCloseButton?: boolean
+  forceMount?: boolean
+  disableOutsidePointerEvents?: boolean
   ui?: DialogUI
 }
 
 export interface DialogEmits {
-  'update:abierto': [valor: boolean]
-  enfocarAbrir: [evento: Event]
-  enfocarCerrar: [evento: Event]
-  pulsarEscape: [evento: Event]
-  pulsarFuera: [evento: Event]
-  enfocarFuera: [evento: Event]
-  interactuarFuera: [evento: Event]
+  'update:open': [value: boolean]
+  openAutoFocus: [event: Event]
+  closeAutoFocus: [event: Event]
+  escapeKeyDown: [event: Event]
+  pointerDownOutside: [event: Event]
+  focusOutside: [event: Event]
+  interactOutside: [event: Event]
 }
 
 export interface DialogSlotProps {
-  abierto: boolean
-  cerrar: () => void
+  open: boolean
+  close: () => void
 }
 
 export interface DialogSlots {
   default?(props: DialogSlotProps): unknown
-  contenido?(props: DialogSlotProps): unknown
-  encabezado?(props: DialogSlotProps): unknown
-  titulo?(props: DialogSlotProps): unknown
-  descripcion?(props: DialogSlotProps): unknown
-  pie?(props: DialogSlotProps): unknown
-  cerrar?(props: DialogSlotProps): unknown
-  iconoCerrar?(props: DialogSlotProps): unknown
+  content?(props: DialogSlotProps): unknown
+  header?(props: DialogSlotProps): unknown
+  title?(props: DialogSlotProps): unknown
+  description?(props: DialogSlotProps): unknown
+  footer?(props: DialogSlotProps): unknown
+  close?(props: DialogSlotProps): unknown
+  closeIcon?(props: DialogSlotProps): unknown
 }

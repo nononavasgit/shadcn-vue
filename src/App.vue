@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { Collapsible } from '@/components/app/Collapsible'
+import { Dialog } from '@/components/app/Dialog'
 import { HoverCard } from '@/components/app/HoverCard'
 import { Kbd, KbdGroup } from '@/components/app/Kbd'
 import { Panel } from '@/components/app/Panel'
@@ -18,6 +19,7 @@ const tooltipOpen = ref(false)
 const popoverOpen = ref(false)
 const hoverCardOpen = ref(false)
 const collapsibleOpen = ref(false)
+const dialogOpen = ref(false)
 const panelOpen = ref(true)
 const progressValue = ref(68)
 let timer
@@ -606,6 +608,180 @@ onUnmounted(() => {
           <p class="text-xs text-muted-foreground">Fino</p>
         </div>
       </div>
+    </section>
+
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-xl font-semibold">Dialog</h2>
+        <p class="text-sm text-muted-foreground">
+          Ejemplos básico, controlado y personalizado con la API en inglés.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4 rounded-lg border p-5">
+        <Dialog
+          label="Información detallada y extraordinariamente extensa sobre la planificación, ejecución, seguimiento y mantenimiento futuro del proyecto"
+          description="Consulta detenidamente todos los datos principales, las condiciones aplicables, las dependencias técnicas, los posibles riesgos y las decisiones pendientes antes de continuar con la siguiente fase del proceso."
+          icon="info"
+        >
+          <button class="rounded-md border px-4 py-2 text-sm font-medium">
+            Abrir diálogo básico
+          </button>
+
+          <template #content>
+            <div class="space-y-4 py-2 text-sm leading-6">
+              <p>
+                Este contenido se proporciona mediante el slot <code>content</code> y contiene
+                varios párrafos deliberadamente largos para comprobar que el diálogo distribuye
+                correctamente el espacio disponible sin desplazar fuera de la pantalla el encabezado
+                ni las acciones situadas en el pie.
+              </p>
+              <p class="text-muted-foreground">
+                El proyecto reúne diferentes módulos que deben coordinarse durante varias fases.
+                Cada módulo tiene responsables, dependencias, fechas objetivo y criterios de
+                aceptación propios, por lo que cualquier cambio debe documentarse y comunicarse a
+                todas las personas implicadas antes de incorporarse a la planificación definitiva.
+              </p>
+              <p class="text-muted-foreground">
+                Durante la fase de implementación se revisarán periódicamente el rendimiento, la
+                accesibilidad, la compatibilidad entre navegadores y la experiencia de uso. Los
+                resultados de esas revisiones se conservarán junto con las decisiones técnicas para
+                facilitar el mantenimiento y evitar que se repitan problemas ya resueltos.
+              </p>
+              <p class="text-muted-foreground">
+                También se preparará una estrategia de publicación gradual que permita detectar
+                incidencias con rapidez, limitar su impacto y recuperar una versión estable si fuera
+                necesario. La estrategia incluirá métricas, alertas, responsables de guardia y un
+                procedimiento claro para comunicar cualquier interrupción relevante del servicio.
+              </p>
+              <p class="text-muted-foreground">
+                Finalmente, toda la documentación se actualizará para reflejar el comportamiento
+                real del producto, incluyendo ejemplos completos, casos límite y recomendaciones
+                para futuras ampliaciones. Este último párrafo añade altura suficiente para probar
+                el desplazamiento vertical del cuerpo manteniendo visibles las demás secciones.
+              </p>
+              <p class="text-muted-foreground">
+                Durante la fase de implementación se revisarán periódicamente el rendimiento, la
+                accesibilidad, la compatibilidad entre navegadores y la experiencia de uso. Los
+                resultados de esas revisiones se conservarán junto con las decisiones técnicas para
+                facilitar el mantenimiento y evitar que se repitan problemas ya resueltos.
+              </p>
+              <p class="text-muted-foreground">
+                También se preparará una estrategia de publicación gradual que permita detectar
+                incidencias con rapidez, limitar su impacto y recuperar una versión estable si fuera
+                necesario. La estrategia incluirá métricas, alertas, responsables de guardia y un
+                procedimiento claro para comunicar cualquier interrupción relevante del servicio.
+              </p>
+              <p class="text-muted-foreground">
+                Finalmente, toda la documentación se actualizará para reflejar el comportamiento
+                real del producto, incluyendo ejemplos completos, casos límite y recomendaciones
+                para futuras ampliaciones. Este último párrafo añade altura suficiente para probar
+                el desplazamiento vertical del cuerpo manteniendo visibles las demás secciones.
+              </p>
+              <p class="text-muted-foreground">
+                Durante la fase de implementación se revisarán periódicamente el rendimiento, la
+                accesibilidad, la compatibilidad entre navegadores y la experiencia de uso. Los
+                resultados de esas revisiones se conservarán junto con las decisiones técnicas para
+                facilitar el mantenimiento y evitar que se repitan problemas ya resueltos.
+              </p>
+              <p class="text-muted-foreground">
+                También se preparará una estrategia de publicación gradual que permita detectar
+                incidencias con rapidez, limitar su impacto y recuperar una versión estable si fuera
+                necesario. La estrategia incluirá métricas, alertas, responsables de guardia y un
+                procedimiento claro para comunicar cualquier interrupción relevante del servicio.
+              </p>
+              <p class="text-muted-foreground">
+                Finalmente, toda la documentación se actualizará para reflejar el comportamiento
+                real del producto, incluyendo ejemplos completos, casos límite y recomendaciones
+                para futuras ampliaciones. Este último párrafo añade altura suficiente para probar
+                el desplazamiento vertical del cuerpo manteniendo visibles las demás secciones.
+              </p>
+              <p class="text-muted-foreground">
+                Durante la fase de implementación se revisarán periódicamente el rendimiento, la
+                accesibilidad, la compatibilidad entre navegadores y la experiencia de uso. Los
+                resultados de esas revisiones se conservarán junto con las decisiones técnicas para
+                facilitar el mantenimiento y evitar que se repitan problemas ya resueltos.
+              </p>
+              <p class="text-muted-foreground">
+                También se preparará una estrategia de publicación gradual que permita detectar
+                incidencias con rapidez, limitar su impacto y recuperar una versión estable si fuera
+                necesario. La estrategia incluirá métricas, alertas, responsables de guardia y un
+                procedimiento claro para comunicar cualquier interrupción relevante del servicio.
+              </p>
+              <p class="text-muted-foreground">
+                Finalmente, toda la documentación se actualizará para reflejar el comportamiento
+                real del producto, incluyendo ejemplos completos, casos límite y recomendaciones
+                para futuras ampliaciones. Este último párrafo añade altura suficiente para probar
+                el desplazamiento vertical del cuerpo manteniendo visibles las demás secciones.
+              </p>
+            </div>
+          </template>
+        </Dialog>
+
+        <Dialog
+          v-model:open="dialogOpen"
+          label="Editar todas las preferencias de comunicación, privacidad y notificaciones asociadas a la cuenta"
+          description="Configura con precisión cómo, cuándo y mediante qué canales quieres recibir las notificaciones relacionadas con actividad importante, novedades del producto y cambios de seguridad."
+          :ui="{ body: { class: 'py-2' } }"
+        >
+          <template #default="{ open }">
+            <button class="rounded-md border px-4 py-2 text-sm font-medium">
+              Dialog {{ open ? 'abierto' : 'controlado' }}
+            </button>
+          </template>
+
+          <template #content>
+            <div class="grid gap-3">
+              <label class="grid gap-1 text-sm">
+                <span class="font-medium">Correo electrónico</span>
+                <input class="rounded-md border px-3 py-2" value="usuario@ejemplo.com" />
+              </label>
+              <label class="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked />
+                Recibir novedades del producto, resúmenes semanales de actividad y avisos
+                importantes relacionados con la seguridad de la cuenta
+              </label>
+            </div>
+          </template>
+
+          <template #footer="{ close }">
+            <button class="rounded-md border px-3 py-2 text-sm" @click="close">Cancelar</button>
+            <button class="rounded-md bg-zinc-900 px-3 py-2 text-sm text-white" @click="close">
+              Guardar cambios
+            </button>
+          </template>
+        </Dialog>
+
+        <Dialog
+          label="Eliminar definitivamente este elemento y todos los datos relacionados que dependen de él"
+          description="Esta acción es solo una demostración, pero el texto extenso permite comprobar cómo se comportan el encabezado, la descripción, el icono y el botón de cierre cuando el espacio disponible es reducido."
+          icon="warning"
+          :show-close-button="false"
+        >
+          <button class="rounded-md border border-red-300 px-4 py-2 text-sm text-red-700">
+            Sin botón de cierre
+          </button>
+
+          <template #content>
+            <p class="py-2 text-sm text-muted-foreground">
+              El botón superior se oculta mediante <code>showCloseButton</code>. Este texto es
+              intencionadamente largo para verificar que el contenido conserva una lectura cómoda,
+              que los separadores ocupan todo el ancho disponible y que la acción del pie permanece
+              accesible incluso cuando la explicación necesita varias líneas.
+            </p>
+          </template>
+
+          <template #footer="{ close }">
+            <button class="rounded-md border px-3 py-2 text-sm" @click="close">
+              Cerrar desde el slot
+            </button>
+          </template>
+        </Dialog>
+      </div>
+
+      <p class="text-sm text-muted-foreground">
+        Estado del diálogo controlado: {{ dialogOpen ? 'abierto' : 'cerrado' }}
+      </p>
     </section>
   </main>
 </template>

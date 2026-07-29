@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { Component, HTMLAttributes } from 'vue'
+import type { Component } from 'vue'
 import type { NormalizedIconProps, NormalizeIconProps } from '@/components/app/Icon'
 
 export { default as Button } from './Button.vue'
@@ -12,6 +12,7 @@ export const buttonVariants = cva('', {
       plain: 'bg-transparent',
       subtle: 'border',
       soft: '',
+      link: 'bg-transparent underline underline-offset-4 hover:no-underline',
     },
     severity: {
       primary: 'focus-visible:border-primary focus-visible:ring-primary/30',
@@ -73,6 +74,11 @@ export const buttonVariants = cva('', {
       class: 'bg-primary/10 text-primary hover:bg-primary/20 active:bg-primary/30',
     },
     {
+      variant: 'link',
+      severity: 'primary',
+      class: 'text-primary',
+    },
+    {
       variant: 'solid',
       severity: 'secondary',
       class: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70',
@@ -98,6 +104,11 @@ export const buttonVariants = cva('', {
       variant: 'soft',
       severity: 'secondary',
       class: 'bg-secondary/60 text-secondary-foreground hover:bg-secondary/80 active:bg-secondary',
+    },
+    {
+      variant: 'link',
+      severity: 'secondary',
+      class: 'text-secondary-foreground',
     },
     {
       variant: 'solid',
@@ -127,6 +138,11 @@ export const buttonVariants = cva('', {
       class: 'bg-warning/10 text-warning hover:bg-warning/20 active:bg-warning/30',
     },
     {
+      variant: 'link',
+      severity: 'warning',
+      class: 'text-warning',
+    },
+    {
       variant: 'solid',
       severity: 'success',
       class: 'bg-success text-success-foreground hover:bg-success/90 active:bg-success/80',
@@ -154,6 +170,11 @@ export const buttonVariants = cva('', {
       class: 'bg-success/10 text-success hover:bg-success/20 active:bg-success/30',
     },
     {
+      variant: 'link',
+      severity: 'success',
+      class: 'text-success',
+    },
+    {
       variant: 'solid',
       severity: 'error',
       class: 'bg-error text-error-foreground hover:bg-error/90 active:bg-error/80',
@@ -178,6 +199,11 @@ export const buttonVariants = cva('', {
       variant: 'soft',
       severity: 'error',
       class: 'bg-error/10 text-error hover:bg-error/20 active:bg-error/30',
+    },
+    {
+      variant: 'link',
+      severity: 'error',
+      class: 'text-error',
     },
     {
       color: true,
@@ -207,6 +233,11 @@ export const buttonVariants = cva('', {
       variant: 'soft',
       class:
         'bg-(--button-color)/10 text-(--button-color) hover:bg-(--button-color)/20 active:bg-(--button-color)/30',
+    },
+    {
+      color: true,
+      variant: 'link',
+      class: 'text-(--button-color)',
     },
   ],
   defaultVariants: {

@@ -13,6 +13,7 @@ import {
   Search,
   Trash2,
   X,
+  Minus,
 } from '@lucide/vue'
 
 export const ICONS = {
@@ -30,6 +31,7 @@ export const ICONS = {
   search: Search,
   trash2: Trash2,
   x: X,
+  minus: Minus,
 } as const
 
 export type IconName = keyof typeof ICONS

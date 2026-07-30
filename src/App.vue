@@ -5,7 +5,17 @@ import { Command } from '@/components/app/Command'
 import { Icon } from '@/components/app/Icon'
 import { Popover } from '@/components/app/Popover'
 import { Input } from '@/components/app/Input'
+import { InputOTP } from '@/components/app/InputOTP'
 import { Sheet } from '@/components/app/Sheet'
+
+const otpValue = ref('')
+const alphanumericOtp = ref('A7B9C2')
+const completedOtp = ref('')
+const otpLargeUI = {
+  slot: {
+    class: 'size-11 text-base',
+  },
+}
 
 const sheetSides = ['top', 'right', 'bottom', 'left']
 const sheetParagraphs = Array.from({ length: 10 }, (_, index) => ({
@@ -442,6 +452,99 @@ function handleSelect(item, group) {
           <Button label="Aceptar" @click="close" />
         </template>
       </Sheet>
+    </section>
+
+    <section class="space-y-6 border-t pt-10" aria-labelledby="input-otp-title">
+      <div class="space-y-2">
+        <h2 id="input-otp-title" class="text-2xl font-semibold">Input OTP</h2>
+        <p class="text-sm text-muted-foreground">
+          Entrada accesible de códigos de un solo uso con navegación por teclado y pegado completo.
+        </p>
+      </div>
+
+      <div class="grid gap-8 lg:grid-cols-2">
+        <article class="space-y-4 rounded-lg border p-5">
+          <div class="space-y-1">
+            <h3 id="otp-controlled-label" class="font-medium">Controlado y agrupado</h3>
+            <p class="text-sm text-muted-foreground">
+              Seis dígitos distribuidos en dos grupos. También puedes pegar el código completo.
+            </p>
+          </div>
+
+          <InputOTP
+            v-model="otpValue"
+            :groups="[3, 3]"
+            pattern="digits"
+            aria-labelledby="otp-controlled-label"
+            @complete="completedOtp = $event"
+          />
+
+          <div class="space-y-1 text-sm">
+            <p>
+              Valor actual: <code>{{ otpValue || 'vacío' }}</code>
+            </p>
+            <p v-if="completedOtp" class="text-success">Código completado: {{ completedOtp }}</p>
+          </div>
+        </article>
+
+        <article class="space-y-4 rounded-lg border p-5">
+          <div class="space-y-1">
+            <h3 id="otp-alphanumeric-label" class="font-medium">Alfanumérico</h3>
+            <p class="text-sm text-muted-foreground">
+              Admite letras y números, usa tres grupos y personaliza el separador.
+            </p>
+          </div>
+
+          <InputOTP
+            v-model="alphanumericOtp"
+            :groups="[2, 2, 2]"
+            pattern="alphanumeric"
+            inputmode="text"
+            aria-labelledby="otp-alphanumeric-label"
+          >
+            <template #separator>
+              <span class="px-1 text-muted-foreground" aria-hidden="true">/</span>
+            </template>
+          </InputOTP>
+
+          <p class="text-sm">
+            Valor actual: <code>{{ alphanumericOtp }}</code>
+          </p>
+        </article>
+
+        <article class="space-y-4 rounded-lg border p-5">
+          <div class="space-y-1">
+            <h3 id="otp-custom-label" class="font-medium">Tamaño personalizado</h3>
+            <p class="text-sm text-muted-foreground">
+              La configuración <code>ui.slot</code> modifica todos los slots generados.
+            </p>
+          </div>
+
+          <InputOTP
+            :maxlength="4"
+            :groups="[2, 2]"
+            pattern="digits"
+            :ui="otpLargeUI"
+            aria-labelledby="otp-custom-label"
+          />
+        </article>
+
+        <article class="space-y-4 rounded-lg border p-5">
+          <div class="space-y-1">
+            <h3 id="otp-disabled-label" class="font-medium">Deshabilitado</h3>
+            <p class="text-sm text-muted-foreground">
+              Conserva el valor mostrado y comunica correctamente el estado deshabilitado.
+            </p>
+          </div>
+
+          <InputOTP
+            default-value="123456"
+            :groups="[3, 3]"
+            disabled
+            aria-labelledby="otp-disabled-label"
+          />
+        </article>
+      </div>
     </section>
   </main>
 </template>

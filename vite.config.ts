@@ -64,6 +64,7 @@ export default defineConfig({
         'class-variance-authority',
         'clsx',
         'tailwind-merge',
+        'vue-input-otp',
       ],
       output: {
         preserveModules: true,

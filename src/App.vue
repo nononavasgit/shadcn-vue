@@ -1,8 +1,18 @@
 <script setup>
 import { ref } from 'vue'
+import { Button } from '@/components/app/Button'
 import { Command } from '@/components/app/Command'
 import { Icon } from '@/components/app/Icon'
 import { Popover } from '@/components/app/Popover'
+import { Input } from '@/components/app/Input'
+import { Sheet } from '@/components/app/Sheet'
+
+const sheetSides = ['top', 'right', 'bottom', 'left']
+const sheetParagraphs = Array.from({ length: 10 }, (_, index) => ({
+  id: index + 1,
+  label: `Sección ${index + 1}`,
+  text: 'Este contenido largo demuestra que el cuerpo del Sheet puede desplazarse de forma independiente sin mover la página principal.',
+}))
 
 const commandItems = [
   {
@@ -332,6 +342,106 @@ function handleSelect(item, group) {
           </div>
         </template>
       </Command>
+    </section>
+
+    <section class="space-y-4 border-t pt-10" aria-labelledby="sheet-title">
+      <div class="space-y-2">
+        <h2 id="sheet-title" class="text-2xl font-semibold">Sheet</h2>
+        <p class="text-sm text-muted-foreground">
+          Paneles modales que entran desde un borde y mantienen el contexto de la página.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <Sheet
+          label="Editar perfil"
+          description="Actualiza la información pública de tu cuenta."
+          :ui="{ content: { class: 'w-full sm:max-w-md' }, body: { class: 'space-y-5' } }"
+        >
+          <Button label="Editar perfil" variant="outline" />
+
+          <template #content>
+            <div class="space-y-2">
+              <label for="sheet-name" class="text-sm font-medium">Nombre</label>
+              <Input id="sheet-name" default-value="Pedro Duarte" />
+            </div>
+            <div class="space-y-2">
+              <label for="sheet-username" class="text-sm font-medium">Usuario</label>
+              <Input id="sheet-username" default-value="@peduarte" />
+            </div>
+          </template>
+
+          <template #footer="{ close }">
+            <Button label="Guardar cambios" @click="close" />
+            <Button label="Cancelar" variant="outline" severity="secondary" @click="close" />
+          </template>
+        </Sheet>
+      </div>
+    </section>
+
+    <section class="space-y-4" aria-labelledby="sheet-sides-title">
+      <div>
+        <h2 id="sheet-sides-title" class="text-xl font-semibold">Todos los lados</h2>
+        <p class="text-sm text-muted-foreground">
+          La prop <code>side</code> acepta top, right, bottom y left.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <Sheet
+          v-for="side in sheetSides"
+          :key="side"
+          :side="side"
+          :label="`Sheet ${side}`"
+          description="El mismo componente puede entrar desde cualquier borde de la pantalla."
+          :ui="{
+            content: {
+              class: side === 'top' || side === 'bottom' ? 'h-[45dvh]' : 'w-full sm:max-w-md',
+            },
+          }"
+        >
+          <Button :label="`Abrir ${side}`" variant="outline" />
+
+          <template #content="{ close }">
+            <div class="space-y-4">
+              <p class="text-sm text-muted-foreground">
+                Este panel se ha abierto desde <strong>{{ side }}</strong
+                >.
+              </p>
+              <Button label="Cerrar panel" variant="outline" @click="close" />
+            </div>
+          </template>
+        </Sheet>
+      </div>
+    </section>
+
+    <section class="space-y-4" aria-labelledby="sheet-scroll-title">
+      <div>
+        <h2 id="sheet-scroll-title" class="text-xl font-semibold">Contenido desplazable</h2>
+        <p class="text-sm text-muted-foreground">
+          El encabezado y el footer permanecen visibles mientras se desplaza el cuerpo.
+        </p>
+      </div>
+
+      <Sheet
+        side="right"
+        label="Detalles del proyecto"
+        description="Consulta toda la información sin abandonar la pantalla actual."
+        :ui="{ content: { class: 'w-full sm:max-w-xl' }, body: { class: 'space-y-6' } }"
+      >
+        <Button label="Ver detalles" variant="outline" />
+
+        <template #content>
+          <article v-for="paragraph in sheetParagraphs" :key="paragraph.id" class="space-y-2">
+            <h3 class="font-medium">{{ paragraph.label }}</h3>
+            <p class="text-sm leading-6 text-muted-foreground">{{ paragraph.text }}</p>
+          </article>
+        </template>
+
+        <template #footer="{ close }">
+          <Button label="Aceptar" @click="close" />
+        </template>
+      </Sheet>
     </section>
   </main>
 </template>

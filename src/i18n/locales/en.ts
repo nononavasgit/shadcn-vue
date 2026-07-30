@@ -7,4 +7,6 @@ export default {
   loading: 'Loading',
   commandPlaceholder: 'Search for a command...',
   noResults: 'No results found.',
+  decrement: 'Decrease',
+  increment: 'Increase',
 } satisfies Messages

@@ -6,7 +6,25 @@ import { Icon } from '@/components/app/Icon'
 import { Popover } from '@/components/app/Popover'
 import { Input } from '@/components/app/Input'
 import { InputOTP } from '@/components/app/InputOTP'
+import { Label } from '@/components/app/Label'
+import { NumberField } from '@/components/app/NumberField'
 import { Sheet } from '@/components/app/Sheet'
+
+const age = ref(18)
+const percentage = ref(0.25)
+const balance = ref(1500)
+const decimalFormatOptions = {
+  signDisplay: 'exceptZero',
+  minimumFractionDigits: 1,
+}
+const percentageFormatOptions = {
+  style: 'percent',
+}
+const currencyFormatOptions = {
+  style: 'currency',
+  currency: 'EUR',
+  currencyDisplay: 'symbol',
+}
 
 const otpValue = ref('')
 const alphanumericOtp = ref('A7B9C2')
@@ -543,6 +561,133 @@ function handleSelect(item, group) {
             disabled
             aria-labelledby="otp-disabled-label"
           />
+        </article>
+      </div>
+    </section>
+    <section class="space-y-6 border-t pt-10" aria-labelledby="number-field-title">
+      <div class="space-y-2">
+        <h2 id="number-field-title" class="text-2xl font-semibold">Number Field</h2>
+        <p class="text-sm text-muted-foreground">
+          Campos numericos controlados, localizados y formateados con Intl.NumberFormat.
+        </p>
+      </div>
+
+      <div class="grid gap-8 lg:grid-cols-2">
+        <article class="space-y-4 rounded-lg border p-5">
+          <div class="space-y-1">
+            <h3 class="font-medium">Valor controlado</h3>
+            <p class="text-sm text-muted-foreground">
+              Limita la edad entre 0 y 120 y mantiene el valor sincronizado con v-model.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <Label for="number-field-age">Edad</Label>
+            <NumberField
+              id="number-field-age"
+              v-model="age"
+              :min="0"
+              :max="120"
+              name="age"
+              required
+            />
+          </div>
+          <p class="text-sm">Valor actual: {{ age }}</p>
+        </article>
+
+        <article class="space-y-4 rounded-lg border p-5">
+          <div class="space-y-1">
+            <h3 class="font-medium">Numeros decimales</h3>
+            <p class="text-sm text-muted-foreground">
+              Usa pasos de una decima y muestra siempre al menos un decimal.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <Label for="number-field-decimal">Variacion</Label>
+            <NumberField
+              id="number-field-decimal"
+              :default-value="5"
+              :step="0.1"
+              :format-options="decimalFormatOptions"
+            />
+          </div>
+        </article>
+
+        <article class="space-y-4 rounded-lg border p-5">
+          <div class="space-y-1">
+            <h3 class="font-medium">Porcentaje</h3>
+            <p class="text-sm text-muted-foreground">
+              El valor interno es decimal, mientras el campo se presenta como porcentaje.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <Label for="number-field-percentage">Progreso</Label>
+            <NumberField
+              id="number-field-percentage"
+              v-model="percentage"
+              :min="0"
+              :max="1"
+              :step="0.01"
+              :format-options="percentageFormatOptions"
+            />
+          </div>
+          <p class="text-sm">Valor interno: {{ percentage }}</p>
+        </article>
+
+        <article class="space-y-4 rounded-lg border p-5">
+          <div class="space-y-1">
+            <h3 class="font-medium">Moneda localizada</h3>
+            <p class="text-sm text-muted-foreground">
+              Formatea euros con la configuracion regional espanola.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <Label for="number-field-currency">Saldo</Label>
+            <NumberField
+              id="number-field-currency"
+              v-model="balance"
+              locale="es-ES"
+              :step="50"
+              :format-options="currencyFormatOptions"
+            />
+          </div>
+          <p class="text-sm">Valor numerico: {{ balance }}</p>
+        </article>
+
+        <article class="space-y-4 rounded-lg border p-5">
+          <div class="space-y-1">
+            <h3 class="font-medium">Sin controles</h3>
+            <p class="text-sm text-muted-foreground">
+              Oculta ambos botones y conserva la entrada directa mediante teclado.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <Label for="number-field-without-controls">Cantidad</Label>
+            <NumberField
+              id="number-field-without-controls"
+              placeholder="Escribe una cantidad"
+              :show-decrement="false"
+              :show-increment="false"
+            />
+          </div>
+        </article>
+
+        <article class="space-y-4 rounded-lg border p-5">
+          <div class="space-y-1">
+            <h3 class="font-medium">Deshabilitado</h3>
+            <p class="text-sm text-muted-foreground">
+              Los atributos nativos y de Reka se reenvian al componente raiz mediante attrs.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <Label for="number-field-disabled">Unidades disponibles</Label>
+            <NumberField id="number-field-disabled" :default-value="24" disabled />
+          </div>
         </article>
       </div>
     </section>

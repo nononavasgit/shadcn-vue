@@ -6,6 +6,8 @@ import {
   type ToggleGroupValue,
 } from '@/components/ui/ToggleGroup'
 import { Tabs, type TabItem, type TabsValue } from '@/components/ui/Tabs'
+import { Button } from '@/components/ui/Button'
+import { Empty } from '@/components/ui/Empty'
 
 const alignmentItems: ToggleGroupItemData[] = [
   { id: 'left', value: 'left', label: 'Izquierda', icon: 'chevronLeft' },
@@ -354,6 +356,62 @@ const activeIconTab = ref<TabsValue>('search')
           </div>
         </template>
       </Tabs>
+    </section>
+
+    <header class="space-y-2 border-t pt-10">
+      <h1 class="text-3xl font-bold">Empty</h1>
+      <p class="max-w-3xl text-muted-foreground">
+        Estados vacíos con props, media, acciones, slots y personalización mediante ui.
+      </p>
+    </header>
+
+    <section class="grid gap-6 md:grid-cols-2">
+      <Empty
+        class="min-h-72 border"
+        label="No hay elementos"
+        description="Todavía no has creado ningún elemento. Empieza creando el primero."
+      >
+        <Button label="Crear elemento" />
+      </Empty>
+
+      <Empty
+        class="min-h-72 border border-dashed"
+        label="No hay proyectos"
+        description="Crea un proyecto para organizar y compartir tu trabajo."
+        media-variant="icon"
+      >
+        <template #media>
+          <span aria-hidden="true" class="text-xl">+</span>
+        </template>
+
+        <div class="flex flex-wrap justify-center gap-2">
+          <Button label="Nuevo proyecto" />
+          <Button label="Importar" variant="outline" />
+        </div>
+      </Empty>
+
+      <Empty
+        class="min-h-72 border bg-gradient-to-b from-muted/50 to-background md:col-span-2"
+        media-variant="icon"
+        :ui="{
+          header: { class: 'max-w-md' },
+          media: { class: 'size-14 rounded-full text-primary' },
+          label: { class: 'text-primary' },
+          content: { class: 'max-w-md' },
+        }"
+      >
+        <template #media>
+          <span aria-hidden="true" class="text-xl">✓</span>
+        </template>
+
+        <template #label>Estás al día</template>
+
+        <template #description>
+          No tienes notificaciones pendientes. Vuelve más tarde para comprobar las novedades.
+        </template>
+
+        <Button label="Actualizar" variant="soft" />
+      </Empty>
     </section>
   </main>
 </template>

@@ -1,6 +1,6 @@
 {
   "name": "@nononavas/shadcn-vue",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Librería personal de componentes Vue con Reka UI y Tailwind CSS",
   "keywords": [
     "shadcn-vue",

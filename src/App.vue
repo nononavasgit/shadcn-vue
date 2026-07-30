@@ -5,6 +5,7 @@ import {
   type ToggleGroupItem as ToggleGroupItemData,
   type ToggleGroupValue,
 } from '@/components/app/ToggleGroup'
+import { Tabs, type TabItem, type TabsValue } from '@/components/app/Tabs'
 
 const alignmentItems: ToggleGroupItemData[] = [
   { id: 'left', value: 'left', label: 'Izquierda', icon: 'chevronLeft' },
@@ -32,6 +33,40 @@ const alignment = ref<ToggleGroupValue>('center')
 const formats = ref<ToggleGroupValue[]>(['bold', 'underline'])
 const verticalValue = ref<ToggleGroupValue>('list')
 const customValue = ref<ToggleGroupValue[]>(['list'])
+
+const accountTabs: TabItem[] = [
+  {
+    id: 'account',
+    value: 'account',
+    label: 'Cuenta',
+    content:
+      'Gestiona la información pública de tu cuenta, el nombre visible y las preferencias principales del perfil.',
+  },
+  {
+    id: 'security',
+    value: 'security',
+    label: 'Seguridad',
+    content:
+      'Configura la contraseña, la autenticación en dos pasos y revisa las sesiones que permanecen activas.',
+  },
+  {
+    id: 'billing',
+    value: 'billing',
+    label: 'Facturación',
+    content:
+      'Consulta el plan actual, descarga facturas anteriores y actualiza el método de pago predeterminado.',
+  },
+]
+
+const iconTabs: TabItem[] = [
+  { id: 'search', value: 'search', label: 'Buscar', icon: 'search', forceMount: true },
+  { id: 'saved', value: 'saved', label: 'Guardado', icon: 'save' },
+  { id: 'alerts', value: 'alerts', label: 'Alertas', icon: 'warning' },
+  { id: 'disabled', value: 'disabled', label: 'Bloqueado', icon: 'x', disabled: true },
+]
+
+const activeAccountTab = ref<TabsValue>('account')
+const activeIconTab = ref<TabsValue>('search')
 </script>
 
 <template>
@@ -167,6 +202,158 @@ const customValue = ref<ToggleGroupValue[]>(['list'])
           </template>
         </ToggleGroup>
       </div>
+    </section>
+
+    <header class="space-y-2 border-t pt-10">
+      <h1 class="text-3xl font-bold">Tabs</h1>
+      <p class="max-w-3xl text-muted-foreground">
+        Variantes default y line, orientación vertical, iconos, slots y activación manual.
+      </p>
+    </header>
+
+    <section class="grid gap-6 rounded-xl border p-5 lg:grid-cols-2">
+      <div class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Pestañas clásicas</h2>
+          <p class="text-sm text-muted-foreground">
+            Tab activa: {{ activeAccountTab }}. Personalizadas únicamente mediante ui.
+          </p>
+        </div>
+
+        <Tabs
+          v-model="activeAccountTab"
+          :tabs="accountTabs"
+          :ui="{
+            list: {
+              class: 'h-auto justify-start gap-0 rounded-none bg-transparent p-0 gap-[1px]',
+            },
+            trigger: {
+              class:
+                'rounded-b-none border border-border bg-muted px-4 py-2 data-[state=active]:border-b-background data-[state=active]:bg-background data-[state=active]:shadow-none',
+            },
+            contentWrapper: {
+              class: 'border',
+            },
+            content: {
+              class: 'bg-background p-4 text-sm',
+            },
+          }"
+        />
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <h2 class="text-lg font-semibold">Variante line</h2>
+          <p class="text-sm text-muted-foreground">
+            La selección se representa mediante una línea inferior.
+          </p>
+        </div>
+
+        <Tabs
+          default-value="security"
+          variant="line"
+          :tabs="accountTabs"
+          :ui="{
+            content: {
+              class: 'border-t p-4 text-sm',
+            },
+          }"
+        />
+      </div>
+    </section>
+
+    <section class="space-y-5 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Orientación vertical</h2>
+        <p class="text-sm text-muted-foreground">
+          Las dos variantes adaptan su distribución y la posición del indicador.
+        </p>
+      </div>
+
+      <div class="grid gap-8 lg:grid-cols-2">
+        <Tabs
+          default-value="account"
+          orientation="vertical"
+          :tabs="accountTabs"
+          :ui="{
+            list: {
+              class: 'min-w-32',
+            },
+            content: {
+              class: 'min-h-40 rounded-lg border p-4 text-sm',
+            },
+          }"
+        />
+
+        <Tabs
+          default-value="billing"
+          orientation="vertical"
+          variant="line"
+          :tabs="accountTabs"
+          :ui="{
+            list: {
+              class: 'min-w-32',
+            },
+            content: {
+              class: 'min-h-40 border-l p-4 text-sm',
+            },
+          }"
+        />
+      </div>
+    </section>
+
+    <section class="space-y-5 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Iconos, estado y slots</h2>
+        <p class="text-sm text-muted-foreground">
+          Activación manual, contenido persistente, un tab deshabilitado y slots personalizados.
+        </p>
+      </div>
+
+      <Tabs
+        v-model="activeIconTab"
+        activation-mode="manual"
+        :unmount-on-hide="false"
+        variant="line"
+        :tabs="iconTabs"
+        :ui="{
+          list: {
+            class: 'w-full justify-start',
+            'aria-label': 'Herramientas',
+          },
+          trigger: ({ tab, active }) => ({
+            'aria-label': `Abrir ${tab.label}`,
+            class: active ? 'font-semibold' : '',
+          }),
+          content: {
+            class: 'min-h-28 rounded-lg border p-4',
+          },
+        }"
+      >
+        <template #trailing="{ active }">
+          <span v-if="active" aria-hidden="true" class="size-1.5 rounded-full bg-current" />
+        </template>
+
+        <template #content-search="{ tab }">
+          <div class="space-y-2">
+            <h3 class="font-semibold">{{ tab.label }}</h3>
+            <p class="text-sm text-muted-foreground">
+              Este panel usa el slot individual content-search y permanece montado al cambiar de
+              tab.
+            </p>
+          </div>
+        </template>
+
+        <template #content="{ tab, active }">
+          <div class="space-y-2">
+            <h3 class="font-semibold">{{ tab.label }}</h3>
+            <p class="text-sm text-muted-foreground">
+              Panel generado con el slot global. Estado actual:
+              {{ active ? 'activo' : 'inactivo' }}.
+            </p>
+          </div>
+        </template>
+      </Tabs>
     </section>
   </main>
 </template>

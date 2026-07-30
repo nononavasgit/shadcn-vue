@@ -1,29 +1,24 @@
 <script setup lang="ts">
-import { useAttrs } from 'vue'
-import { cn } from '@/lib/utils'
-import { buttonGroupVariants, type ButtonGroupVariants } from '.'
+import { computed, useAttrs } from 'vue'
+import { ButtonGroup as ButtonGroupBase } from '@/components/primitives/ButtonGroup'
+import type { ButtonGroupProps, ButtonGroupSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(
-  defineProps<{
-    orientation?: ButtonGroupVariants['orientation']
-  }>(),
-  {
-    orientation: 'horizontal',
-  },
-)
+defineSlots<ButtonGroupSlots>()
+
+const props = withDefaults(defineProps<ButtonGroupProps>(), {
+  orientation: 'horizontal',
+})
 const attrs = useAttrs()
+const calculatedProps = computed(() => ({
+  ...attrs,
+  orientation: props.orientation,
+}))
 </script>
 
 <template>
-  <div
-    v-bind="attrs"
-    role="group"
-    data-slot="button-group"
-    :data-orientation="props.orientation"
-    :class="cn(buttonGroupVariants({ orientation: props.orientation }), attrs.class)"
-  >
+  <ButtonGroupBase v-bind="calculatedProps">
     <slot />
-  </div>
+  </ButtonGroupBase>
 </template>

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { useAttrs } from 'vue'
-import type { SeparatorProps } from 'reka-ui'
-import { Separator as RekaSeparator } from 'reka-ui'
-import { cn } from '@/lib/utils'
+import { computed, useAttrs } from 'vue'
+import { Separator as SeparatorBase } from '@/components/primitives/Separator'
+import type { SeparatorProps } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -12,19 +11,18 @@ const props = withDefaults(defineProps<SeparatorProps>(), {
 })
 
 const attrs = useAttrs()
+
+const calculatedUI = computed(() => ({
+  root: {
+    ...attrs,
+    orientation: props.orientation,
+    decorative: props.decorative,
+    as: props.as,
+    asChild: props.asChild,
+  },
+}))
 </script>
 
 <template>
-  <RekaSeparator
-    v-bind="attrs"
-    data-slot="separator"
-    :orientation="props.orientation"
-    :decorative="props.decorative"
-    :class="
-      cn(
-        'shrink-0 bg-border data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px',
-        attrs.class,
-      )
-    "
-  />
+  <SeparatorBase v-bind="calculatedUI.root" />
 </template>

@@ -1,31 +1,80 @@
 <script setup lang="ts">
-import { useAttrs } from 'vue'
-import type { PrimitiveProps } from 'reka-ui'
-import { Primitive } from 'reka-ui'
+import { computed, useAttrs } from 'vue'
+import { Badge as BadgeBase } from '@/components/primitives/Badge'
+import { Icon, useNormalizeIconProps } from '@/components/ui/Icon'
 import { cn } from '@/lib/utils'
+import { useColor } from '@/composables'
+import { badgeVariants, type BadgeProps, type BadgeSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<PrimitiveProps>(), {
+const props = withDefaults(defineProps<BadgeProps>(), {
   as: 'span',
+  label: undefined,
+  size: 'md',
+  variant: 'solid',
+  severity: 'primary',
+  color: undefined,
+  icon: undefined,
+  trailingIcon: undefined,
+  ui: undefined,
 })
+defineSlots<BadgeSlots>()
 
 const attrs = useAttrs()
+const leadingIcon = useNormalizeIconProps(() => props.icon)
+const trailingIcon = useNormalizeIconProps(() => props.trailingIcon)
+const { colorStyle } = useColor(
+  computed(() => props.color),
+  'badge',
+)
+const calculatedUI = computed(() => ({
+  root: {
+    ...attrs,
+    as: props.as,
+    asChild: props.asChild,
+    class: cn(
+      badgeVariants({
+        size: props.size,
+        variant: props.variant,
+        severity: props.severity,
+        color: Boolean(props.color),
+      }),
+      attrs.class,
+    ),
+    style: [colorStyle.value, attrs.style],
+  },
+  icon: {
+    ...props.ui?.icon,
+    ...leadingIcon.value,
+    class: cn(props.ui?.icon?.class, leadingIcon.value?.class),
+  },
+  trailingIcon: {
+    ...props.ui?.trailingIcon,
+    ...trailingIcon.value,
+    class: cn(props.ui?.trailingIcon?.class, trailingIcon.value?.class),
+  },
+}))
 </script>
 
 <template>
-  <Primitive
-    v-bind="attrs"
-    data-slot="badge"
-    :as="props.as"
-    :as-child="props.asChild"
-    :class="
-      cn(
-        'inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-md border font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none',
-        attrs.class,
-      )
-    "
-  >
-    <slot />
-  </Primitive>
+  <BadgeBase v-bind="calculatedUI.root">
+    <slot name="leading">
+      <Icon
+        v-if="calculatedUI.icon.name"
+        v-bind="calculatedUI.icon"
+        :name="calculatedUI.icon.name"
+      />
+    </slot>
+
+    <slot>{{ props.label }}</slot>
+
+    <slot name="trailing">
+      <Icon
+        v-if="calculatedUI.trailingIcon.name"
+        v-bind="calculatedUI.trailingIcon"
+        :name="calculatedUI.trailingIcon.name"
+      />
+    </slot>
+  </BadgeBase>
 </template>

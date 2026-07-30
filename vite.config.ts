@@ -11,6 +11,14 @@ const sourceRoot = path.resolve(__dirname, 'src')
 const entries = {
   index: path.join(sourceRoot, 'index.js'),
   ...Object.fromEntries(
+    readdirSync(path.join(sourceRoot, 'components/primitives'), { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => [
+        `components/primitives/${entry.name}/index`,
+        path.join(sourceRoot, 'components/primitives', entry.name, 'index.ts'),
+      ]),
+  ),
+  ...Object.fromEntries(
     readdirSync(path.join(sourceRoot, 'components/ui'), { withFileTypes: true })
       .filter((entry) => entry.isDirectory())
       .map((entry) => [
@@ -37,13 +45,14 @@ export default defineConfig({
     dts({
       tsconfigPath: './tsconfig.app.json',
       include: [
+        'src/components/primitives/**/*',
         'src/components/ui/**/*',
         'src/composables/**/*.ts',
         'src/lib/**/*.ts',
         'src/assets/icons/**/*.ts',
         'src/index.js',
       ],
-      exclude: ['src/components/app/**', 'src/App.vue', 'src/main.ts'],
+      exclude: ['src/App.vue', 'src/main.ts'],
       rollupTypes: false,
       entryRoot: 'src',
     }),
@@ -65,6 +74,7 @@ export default defineConfig({
         'clsx',
         'tailwind-merge',
         'vue-input-otp',
+        'vue-router',
       ],
       output: {
         preserveModules: true,

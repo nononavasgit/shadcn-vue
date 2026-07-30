@@ -1,26 +1,22 @@
 <script setup lang="ts">
-import { useAttrs } from 'vue'
-import type { SeparatorProps } from 'reka-ui'
-import { Separator } from '@/components/ui/Separator'
-import { cn } from '@/lib/utils'
+import { computed, useAttrs } from 'vue'
+import { ButtonGroupSeparator as ButtonGroupSeparatorBase } from '@/components/primitives/ButtonGroup'
+import type { ButtonGroupSeparatorProps } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<SeparatorProps>(), {
+const props = withDefaults(defineProps<ButtonGroupSeparatorProps>(), {
   orientation: 'vertical',
   decorative: true,
 })
 const attrs = useAttrs()
+const calculatedProps = computed(() => ({
+  ...attrs,
+  orientation: props.orientation,
+  decorative: props.decorative,
+}))
 </script>
 
 <template>
-  <Separator
-    v-bind="attrs"
-    data-slot="button-group-separator"
-    :orientation="props.orientation"
-    :decorative="props.decorative"
-    :class="
-      cn('relative m-0! self-stretch bg-input data-[orientation=vertical]:h-auto', attrs.class)
-    "
-  />
+  <ButtonGroupSeparatorBase v-bind="calculatedProps" />
 </template>

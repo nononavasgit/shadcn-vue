@@ -1,26 +1,74 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import type { AvatarRootProps } from 'reka-ui'
-import { AvatarRoot } from 'reka-ui'
+import type { ImgHTMLAttributes } from 'vue'
+import type { AvatarImageEmits } from 'reka-ui'
+import { Avatar as AvatarBase, AvatarFallback, AvatarImage } from '@/components/primitives/Avatar'
+import { Icon, useNormalizeIconProps } from '@/components/ui/Icon'
 import { cn } from '@/lib/utils'
+import type { AvatarEmits, AvatarLoadingState, AvatarProps, AvatarSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<AvatarRootProps>()
-const attrs = useAttrs()
-const rootProps = computed(() => {
-  const restAttrs = { ...attrs }
-  delete restAttrs.class
-  return { ...restAttrs, ...props }
-})
+const props = defineProps<AvatarProps>()
+const emit = defineEmits<AvatarEmits>()
+defineSlots<AvatarSlots>()
+
+const attrs = useAttrs() as ImgHTMLAttributes
+const icon = useNormalizeIconProps(() => props.icon)
+const calculatedUI = computed(() => ({
+  root: props.ui?.root,
+  image: props.src
+    ? {
+        ...props.ui?.image,
+        ...attrs,
+        src: props.src,
+        alt: props.alt,
+        class: cn(props.ui?.image?.class, attrs.class),
+      }
+    : undefined,
+  fallback: {
+    ...props.ui?.fallback,
+    ...attrs,
+    class: cn(props.ui?.fallback?.class, attrs.class),
+  },
+  icon: {
+    ...props.ui?.icon,
+    ...icon.value,
+    class: cn(props.ui?.icon?.class, icon.value?.class),
+  },
+}))
+
+type OriginalLoadingState = AvatarImageEmits['loadingStatusChange'][0]
+
+const loadingStates: Record<OriginalLoadingState, AvatarLoadingState> = {
+  idle: false,
+  loading: true,
+  loaded: false,
+  error: false,
+}
+
+function handleLoadingStateChange(state: OriginalLoadingState) {
+  emit('loadingStateChange', loadingStates[state])
+}
 </script>
 
 <template>
-  <AvatarRoot
-    v-bind="rootProps"
-    data-slot="avatar"
-    :class="cn('relative flex size-8 shrink-0 overflow-hidden rounded-full', attrs.class)"
-  >
-    <slot />
-  </AvatarRoot>
+  <AvatarBase v-bind="calculatedUI.root">
+    <AvatarImage
+      v-if="calculatedUI.image"
+      v-bind="calculatedUI.image"
+      @loading-status-change="handleLoadingStateChange"
+    />
+
+    <AvatarFallback v-bind="calculatedUI.fallback">
+      <slot name="fallback">
+        <Icon
+          v-if="calculatedUI.icon.name"
+          v-bind="calculatedUI.icon"
+          :name="calculatedUI.icon.name"
+        />
+        <template v-else>{{ props.title }}</template>
+      </slot>
+    </AvatarFallback>
+  </AvatarBase>
 </template>

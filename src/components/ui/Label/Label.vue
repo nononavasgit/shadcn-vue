@@ -1,32 +1,27 @@
-﻿<script setup lang="ts">
-import { computed, mergeProps, useAttrs } from 'vue'
-import type { LabelProps } from 'reka-ui'
-import { Label as RekaLabel } from 'reka-ui'
-import { cn } from '@/lib/utils'
+<script setup lang="ts">
+import { computed, useAttrs } from 'vue'
+import { Label as LabelBase } from '@/components/primitives/Label'
+import type { LabelProps, LabelSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
+
+defineSlots<LabelSlots>()
 
 const props = defineProps<LabelProps>()
 const attrs = useAttrs()
 
-const rootProps = computed(() => {
-  const restAttrs = { ...attrs }
-  delete restAttrs.class
-  return mergeProps(restAttrs, props)
-})
+const calculatedUI = computed(() => ({
+  root: {
+    ...attrs,
+    as: props.as,
+    asChild: props.asChild,
+    for: props.for,
+  },
+}))
 </script>
 
 <template>
-  <RekaLabel
-    v-bind="rootProps"
-    data-slot="label"
-    :class="
-      cn(
-        'flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50',
-        attrs.class,
-      )
-    "
-  >
+  <LabelBase v-bind="calculatedUI.root">
     <slot />
-  </RekaLabel>
+  </LabelBase>
 </template>

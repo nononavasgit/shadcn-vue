@@ -1,7 +1,6 @@
 import type { IconName } from './icons.ts'
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { MaybeRefOrGetter, SVGAttributes } from 'vue'
-import { useNormalize } from '@/composables/useNormalize'
+import { computed, toValue, type MaybeRefOrGetter, type SVGAttributes } from 'vue'
 
 export { default as Icon } from './Icon.vue'
 export type { IconName } from './icons.ts'
@@ -30,8 +29,15 @@ export interface IconProps {
 export type NormalizedIconProps = IconProps & SVGAttributes
 export type NormalizeIconProps = IconName | NormalizedIconProps
 
+export function normalizeIconProps(
+  value: NormalizeIconProps | null | undefined,
+): NormalizedIconProps | undefined {
+  if (value == null) return undefined
+  return typeof value === 'object' ? value : { name: value }
+}
+
 export function useNormalizeIconProps(
   source: MaybeRefOrGetter<NormalizeIconProps | null | undefined>,
 ) {
-  return useNormalize<NormalizedIconProps, 'name'>(source, 'name')
+  return computed(() => normalizeIconProps(toValue(source)))
 }

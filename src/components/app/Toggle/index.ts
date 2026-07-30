@@ -7,11 +7,8 @@ export { default as Toggle } from './Toggle.vue'
 export const toggleVariants = cva('', {
   variants: {
     variant: {
-      solid: '',
       outline: 'border bg-transparent',
       plain: 'bg-transparent',
-      subtle: 'border',
-      soft: '',
     },
     severity: {
       default: 'focus-visible:border-ring focus-visible:ring-ring/50',
@@ -35,11 +32,6 @@ export const toggleVariants = cva('', {
   },
   compoundVariants: [
     {
-      variant: 'solid',
-      severity: 'default',
-      class: 'bg-accent text-accent-foreground hover:bg-accent/80 data-[state=on]:bg-accent/70',
-    },
-    {
       variant: 'outline',
       severity: 'default',
       class:
@@ -50,23 +42,6 @@ export const toggleVariants = cva('', {
       severity: 'default',
       class:
         'bg-transparent hover:bg-muted hover:text-muted-foreground data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
-    },
-    {
-      variant: 'subtle',
-      severity: 'default',
-      class:
-        'border-input bg-muted/50 text-foreground hover:bg-muted data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
-    },
-    {
-      variant: 'soft',
-      severity: 'default',
-      class:
-        'bg-muted text-muted-foreground hover:bg-muted/80 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground',
-    },
-    {
-      variant: 'solid',
-      severity: 'primary',
-      class: 'bg-primary text-primary-foreground hover:bg-primary/90 data-[state=on]:bg-primary/75',
     },
     {
       variant: 'outline',
@@ -80,23 +55,6 @@ export const toggleVariants = cva('', {
       class: 'text-primary hover:bg-primary/10 data-[state=on]:bg-primary/20',
     },
     {
-      variant: 'subtle',
-      severity: 'primary',
-      class:
-        'border-primary/20 bg-primary/10 text-primary hover:bg-primary/15 data-[state=on]:bg-primary/25',
-    },
-    {
-      variant: 'soft',
-      severity: 'primary',
-      class: 'bg-primary/10 text-primary hover:bg-primary/20 data-[state=on]:bg-primary/30',
-    },
-    {
-      variant: 'solid',
-      severity: 'secondary',
-      class:
-        'bg-secondary text-secondary-foreground hover:bg-secondary/80 data-[state=on]:bg-secondary/70',
-    },
-    {
       variant: 'outline',
       severity: 'secondary',
       class:
@@ -106,23 +64,6 @@ export const toggleVariants = cva('', {
       variant: 'plain',
       severity: 'secondary',
       class: 'text-secondary-foreground hover:bg-secondary data-[state=on]:bg-secondary/70',
-    },
-    {
-      variant: 'subtle',
-      severity: 'secondary',
-      class:
-        'border-secondary-foreground/15 bg-secondary/60 text-secondary-foreground hover:bg-secondary/80 data-[state=on]:bg-secondary',
-    },
-    {
-      variant: 'soft',
-      severity: 'secondary',
-      class:
-        'bg-secondary/60 text-secondary-foreground hover:bg-secondary/80 data-[state=on]:bg-secondary',
-    },
-    {
-      variant: 'solid',
-      severity: 'warning',
-      class: 'bg-warning text-warning-foreground hover:bg-warning/90 data-[state=on]:bg-warning/75',
     },
     {
       variant: 'outline',
@@ -136,22 +77,6 @@ export const toggleVariants = cva('', {
       class: 'text-warning hover:bg-warning/10 data-[state=on]:bg-warning/20',
     },
     {
-      variant: 'subtle',
-      severity: 'warning',
-      class:
-        'border-warning/20 bg-warning/10 text-warning hover:bg-warning/15 data-[state=on]:bg-warning/25',
-    },
-    {
-      variant: 'soft',
-      severity: 'warning',
-      class: 'bg-warning/10 text-warning hover:bg-warning/20 data-[state=on]:bg-warning/30',
-    },
-    {
-      variant: 'solid',
-      severity: 'success',
-      class: 'bg-success text-success-foreground hover:bg-success/90 data-[state=on]:bg-success/75',
-    },
-    {
       variant: 'outline',
       severity: 'success',
       class:
@@ -161,22 +86,6 @@ export const toggleVariants = cva('', {
       variant: 'plain',
       severity: 'success',
       class: 'text-success hover:bg-success/10 data-[state=on]:bg-success/20',
-    },
-    {
-      variant: 'subtle',
-      severity: 'success',
-      class:
-        'border-success/20 bg-success/10 text-success hover:bg-success/15 data-[state=on]:bg-success/25',
-    },
-    {
-      variant: 'soft',
-      severity: 'success',
-      class: 'bg-success/10 text-success hover:bg-success/20 data-[state=on]:bg-success/30',
-    },
-    {
-      variant: 'solid',
-      severity: 'error',
-      class: 'bg-error text-error-foreground hover:bg-error/90 data-[state=on]:bg-error/75',
     },
     {
       variant: 'outline',
@@ -190,22 +99,6 @@ export const toggleVariants = cva('', {
       class: 'text-error hover:bg-error/10 data-[state=on]:bg-error/20',
     },
     {
-      variant: 'subtle',
-      severity: 'error',
-      class: 'border-error/20 bg-error/10 text-error hover:bg-error/15 data-[state=on]:bg-error/25',
-    },
-    {
-      variant: 'soft',
-      severity: 'error',
-      class: 'bg-error/10 text-error hover:bg-error/20 data-[state=on]:bg-error/30',
-    },
-    {
-      color: true,
-      variant: 'solid',
-      class:
-        'bg-(--toggle-color) text-(--toggle-color-foreground) hover:bg-(--toggle-color)/90 data-[state=on]:bg-(--toggle-color)/75',
-    },
-    {
       color: true,
       variant: 'outline',
       class:
@@ -216,18 +109,6 @@ export const toggleVariants = cva('', {
       variant: 'plain',
       class:
         'text-(--toggle-color) hover:bg-(--toggle-color)/10 data-[state=on]:bg-(--toggle-color)/20',
-    },
-    {
-      color: true,
-      variant: 'subtle',
-      class:
-        'border-(--toggle-color)/20 bg-(--toggle-color)/10 text-(--toggle-color) hover:bg-(--toggle-color)/15 data-[state=on]:bg-(--toggle-color)/25',
-    },
-    {
-      color: true,
-      variant: 'soft',
-      class:
-        'bg-(--toggle-color)/10 text-(--toggle-color) hover:bg-(--toggle-color)/20 data-[state=on]:bg-(--toggle-color)/30',
     },
   ],
   defaultVariants: {

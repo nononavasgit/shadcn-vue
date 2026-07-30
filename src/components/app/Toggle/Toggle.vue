@@ -11,7 +11,7 @@ defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<ToggleProps>(), {
   as: 'button',
   asChild: false,
-  variant: 'subtle',
+  variant: 'plain',
   severity: 'default',
   size: 'md',
   color: undefined,

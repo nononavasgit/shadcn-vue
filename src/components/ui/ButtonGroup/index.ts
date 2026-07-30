@@ -1,24 +1,30 @@
-import { cva, type VariantProps } from 'class-variance-authority'
+import type { Component } from 'vue'
 
 export { default as ButtonGroup } from './ButtonGroup.vue'
 export { default as ButtonGroupSeparator } from './ButtonGroupSeparator.vue'
 export { default as ButtonGroupText } from './ButtonGroupText.vue'
 
-export const buttonGroupVariants = cva(
-  'flex w-fit items-stretch has-[>[data-slot=button-group]]:gap-2 [&>*]:focus-visible:relative [&>*]:focus-visible:z-10 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-md [&>[data-slot=select-trigger]:not([class*=w-])]:w-fit [&>input]:flex-1',
-  {
-    variants: {
-      orientation: {
-        horizontal:
-          '[&>*:not(:first-child)]:rounded-l-none [&>*:not(:first-child)]:border-l-0 [&>*:not(:last-child)]:rounded-r-none',
-        vertical:
-          'flex-col [&>*:not(:first-child)]:rounded-t-none [&>*:not(:first-child)]:border-t-0 [&>*:not(:last-child)]:rounded-b-none',
-      },
-    },
-    defaultVariants: {
-      orientation: 'horizontal',
-    },
-  },
-)
+export type ButtonGroupOrientation = 'horizontal' | 'vertical'
 
-export type ButtonGroupVariants = VariantProps<typeof buttonGroupVariants>
+export interface ButtonGroupProps {
+  orientation?: ButtonGroupOrientation
+}
+
+export interface ButtonGroupSeparatorProps {
+  orientation?: ButtonGroupOrientation
+  decorative?: boolean
+}
+
+export interface ButtonGroupTextProps {
+  label?: string
+  as?: string | Component
+  asChild?: boolean
+}
+
+export interface ButtonGroupSlots {
+  default?(): unknown
+}
+
+export interface ButtonGroupTextSlots {
+  default?(): unknown
+}

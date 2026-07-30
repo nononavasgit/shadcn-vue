@@ -1,35 +1,81 @@
 <script setup lang="ts">
-import { computed, mergeProps, useAttrs } from 'vue'
-import type { ToggleEmits, ToggleProps } from 'reka-ui'
-import { Toggle as RekaToggle, useForwardPropsEmits } from 'reka-ui'
+import { computed, useAttrs } from 'vue'
+import { Toggle as ToggleBase } from '@/components/primitives/Toggle'
+import { Icon, useNormalizeIconProps } from '@/components/ui/Icon'
 import { cn } from '@/lib/utils'
+import { useColor } from '@/composables'
+import { toggleVariants, type ToggleEmits, type ToggleProps, type ToggleSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<ToggleProps>()
-const emits = defineEmits<ToggleEmits>()
-const attrs = useAttrs()
-
-const forwarded = useForwardPropsEmits(props, emits)
-const rootProps = computed(() => {
-  const restAttrs = { ...attrs }
-  delete restAttrs.class
-  return mergeProps(restAttrs, forwarded.value)
+const props = withDefaults(defineProps<ToggleProps>(), {
+  as: 'button',
+  asChild: false,
+  variant: 'plain',
+  severity: 'default',
+  size: 'md',
+  color: undefined,
 })
+defineEmits<ToggleEmits>()
+defineSlots<ToggleSlots>()
+
+const attrs = useAttrs()
+const model = defineModel<boolean | null>()
+const leadingIcon = useNormalizeIconProps(() => props.icon)
+const trailingIcon = useNormalizeIconProps(() => props.trailingIcon)
+const { colorStyle } = useColor(
+  computed(() => props.color),
+  'toggle',
+)
+
+const calculatedUI = computed(() => ({
+  root: {
+    ...attrs,
+    as: props.as,
+    asChild: props.asChild,
+    defaultValue: props.defaultValue,
+    class: cn(
+      toggleVariants({
+        variant: props.variant,
+        severity: props.severity,
+        size: props.size,
+        color: Boolean(props.color),
+      }),
+      attrs.class,
+    ),
+    style: [colorStyle.value, attrs.style],
+  },
+  icon: {
+    ...props.ui?.icon,
+    ...leadingIcon.value,
+    class: cn(props.ui?.icon?.class, leadingIcon.value?.class),
+  },
+  trailingIcon: {
+    ...props.ui?.trailingIcon,
+    ...trailingIcon.value,
+    class: cn(props.ui?.trailingIcon?.class, trailingIcon.value?.class),
+  },
+}))
 </script>
 
 <template>
-  <RekaToggle
-    v-slot="slotProps"
-    v-bind="rootProps"
-    data-slot="toggle"
-    :class="
-      cn(
-        'inline-flex shrink-0 items-center justify-center gap-2 rounded-md border border-transparent text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
-        attrs.class,
-      )
-    "
-  >
-    <slot v-bind="slotProps" />
-  </RekaToggle>
+  <ToggleBase v-slot="slotProps" v-model="model" v-bind="calculatedUI.root">
+    <slot name="leading" v-bind="slotProps">
+      <Icon
+        v-if="calculatedUI.icon.name"
+        v-bind="calculatedUI.icon"
+        :name="calculatedUI.icon.name"
+      />
+    </slot>
+
+    <slot v-bind="slotProps">{{ props.label }}</slot>
+
+    <slot name="trailing" v-bind="slotProps">
+      <Icon
+        v-if="calculatedUI.trailingIcon.name"
+        v-bind="calculatedUI.trailingIcon"
+        :name="calculatedUI.trailingIcon.name"
+      />
+    </slot>
+  </ToggleBase>
 </template>

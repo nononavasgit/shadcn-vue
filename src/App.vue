@@ -4,8 +4,8 @@ import {
   ToggleGroup,
   type ToggleGroupItem as ToggleGroupItemData,
   type ToggleGroupValue,
-} from '@/components/app/ToggleGroup'
-import { Tabs, type TabItem, type TabsValue } from '@/components/app/Tabs'
+} from '@/components/ui/ToggleGroup'
+import { Tabs, type TabItem, type TabsValue } from '@/components/ui/Tabs'
 
 const alignmentItems: ToggleGroupItemData[] = [
   { id: 'left', value: 'left', label: 'Izquierda', icon: 'chevronLeft' },

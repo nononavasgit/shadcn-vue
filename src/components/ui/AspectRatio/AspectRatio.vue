@@ -1,38 +1,26 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import type { AspectRatioProps } from 'reka-ui'
-import { AspectRatio as RekaAspectRatio } from 'reka-ui'
-import { cn } from '@/lib/utils'
+import { AspectRatio as AspectRatioBase } from '@/components/primitives/AspectRatio'
+import type { AspectRatioProps, AspectRatioSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-defineSlots<{
-  default?(props: { aspect: number }): unknown
-}>()
+defineSlots<AspectRatioSlots>()
 
 const props = withDefaults(defineProps<AspectRatioProps>(), {
   ratio: 1,
   as: 'div',
+  asChild: false,
 })
 const attrs = useAttrs()
-const calculatedProps = computed(() => {
-  const restAttrs = { ...attrs }
-  delete restAttrs.class
-
-  return {
-    ...restAttrs,
-    ...props,
-  }
-})
+const calculatedProps = computed(() => ({
+  ...attrs,
+  ...props,
+}))
 </script>
 
 <template>
-  <RekaAspectRatio
-    v-slot="slotProps"
-    v-bind="calculatedProps"
-    data-slot="aspect-ratio"
-    :class="cn('relative w-full', attrs.class)"
-  >
+  <AspectRatioBase v-slot="slotProps" v-bind="calculatedProps">
     <slot v-bind="slotProps" />
-  </RekaAspectRatio>
+  </AspectRatioBase>
 </template>

@@ -1,43 +1,37 @@
-<script setup lang="ts" generic="T = boolean">
-import { computed, mergeProps, useAttrs } from 'vue'
-import type { CheckboxRootEmits, CheckboxRootProps } from 'reka-ui'
-import { CheckboxIndicator, CheckboxRoot, useForwardPropsEmits } from 'reka-ui'
-import { Check } from '@lucide/vue'
+<script setup lang="ts">
+import { computed, useAttrs } from 'vue'
+import { Checkbox as CheckboxBase } from '@/components/primitives/Checkbox'
 import { cn } from '@/lib/utils'
+import type { CheckboxEmits, CheckboxProps, CheckboxSlots, CheckboxValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<CheckboxRootProps<T>>()
-const emits = defineEmits<CheckboxRootEmits<T>>()
+const props = withDefaults(defineProps<CheckboxProps>(), {
+  trueValue: true,
+  falseValue: false,
+})
+defineEmits<CheckboxEmits>()
+defineSlots<CheckboxSlots>()
 
 const attrs = useAttrs()
-const forwarded = useForwardPropsEmits(props, emits)
-const rootProps = computed(() => {
-  const restAttrs = { ...attrs }
-  delete restAttrs.class
-  return mergeProps(restAttrs, forwarded.value)
-})
+const modelValue = defineModel<CheckboxValue | 'indeterminate' | null>()
+const calculatedUI = computed(() => ({
+  root: {
+    ...attrs,
+    as: props.as,
+    asChild: props.asChild,
+    defaultValue: props.defaultValue,
+    falseValue: props.falseValue,
+    trueValue: props.trueValue,
+    class: cn('focus-visible:border-primary focus-visible:ring-primary/50', attrs.class),
+  },
+}))
 </script>
 
 <template>
-  <CheckboxRoot
-    v-slot="slotProps"
-    v-bind="rootProps"
-    data-slot="checkbox"
-    :class="
-      cn(
-        'peer size-4 shrink-0 rounded-[4px] border border-input shadow-xs transition-shadow outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:aria-invalid:ring-destructive/40',
-        attrs.class,
-      )
-    "
-  >
-    <CheckboxIndicator
-      data-slot="checkbox-indicator"
-      class="grid place-content-center text-current transition-none"
-    >
-      <slot v-bind="slotProps">
-        <Check class="size-3.5" />
-      </slot>
-    </CheckboxIndicator>
-  </CheckboxRoot>
+  <CheckboxBase v-model="modelValue" v-bind="calculatedUI.root">
+    <template v-if="$slots.indicator" #default="slotProps">
+      <slot name="indicator" :state="slotProps.state" :value="slotProps.modelValue" />
+    </template>
+  </CheckboxBase>
 </template>

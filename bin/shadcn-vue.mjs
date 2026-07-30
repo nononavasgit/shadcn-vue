@@ -1,6 +1,7 @@
 #!/usr/bin/env node
+/* global console, process */
 
-import { init, update } from '../scripts/cli.mjs'
+import { init } from '../scripts/npm-cli.mjs'
 
 const args = process.argv.slice(2)
 const command = args.shift()
@@ -16,15 +17,11 @@ function option(name) {
 function help() {
   console.log(`Uso:
   shadcn-vue init [opciones]
-  shadcn-vue update [opciones]
 
 Opciones:
   --cwd <directorio>       Proyecto consumidor
   --package <nombre>       Paquete real (por defecto: @nononavas/shadcn-vue)
-  --alias <nombre>         Prefijo usado en imports
-  --app-dir <directorio>   Destino (por defecto: src/components/ui)
-  --skip-install           No instala paquete ni Tailwind
-  --force                  Reemplaza archivos aunque estén modificados`)
+  --skip-install           Muestra la configuración sin instalar dependencias`)
 }
 
 try {
@@ -33,21 +30,17 @@ try {
     process.exit(0)
   }
 
-  if (!['init', 'update'].includes(command)) {
+  if (command !== 'init') {
     throw new Error(`Comando desconocido: ${command}`)
   }
 
   const options = {
     cwd: option('--cwd'),
     packageName: option('--package'),
-    importAlias: option('--alias'),
-    appDirectory: option('--app-dir'),
     skipInstall: args.includes('--skip-install'),
-    force: args.includes('--force'),
   }
 
-  if (command === 'init') await init(options)
-  else await update(options)
+  await init(options)
 } catch (error) {
   console.error(`\nError: ${error.message}`)
   process.exit(1)

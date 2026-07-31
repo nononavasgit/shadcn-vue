@@ -1,9 +1,14 @@
-import type { ProgressRootProps } from 'reka-ui'
 import type { HTMLAttributes, SVGAttributes } from 'vue'
 
 export { default as ProgressCircular } from './ProgressCircular.vue'
 
+export type ProgressCircularValueFormatter = (
+  value: number | null | undefined,
+  max: number,
+) => string | undefined
+
 export interface ProgressCircularUI {
+  root?: HTMLAttributes
   svg?: SVGAttributes
   track?: SVGAttributes
   indicator?: SVGAttributes
@@ -13,8 +18,8 @@ export interface ProgressCircularUI {
 export interface ProgressCircularProps {
   value?: number | null
   max?: number
-  getValueLabel?: ProgressRootProps['getValueLabel']
-  getValueText?: ProgressRootProps['getValueText']
+  getValueLabel?: ProgressCircularValueFormatter
+  getValueText?: ProgressCircularValueFormatter
   label?: string
   color?: string
   trackColor?: string

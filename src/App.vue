@@ -1,242 +1,237 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { AlertDialog } from '@/components/ui/AlertDialog'
 import { Button } from '@/components/ui/Button'
-import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from '@/components/ui/ButtonGroup'
-import { Icon } from '@/components/ui/Icon'
+import { ProgressCircular } from '@/components/ui/ProgressCircular'
+import {
+  ToggleGroup,
+  type ToggleGroupItem,
+  type ToggleGroupValue,
+} from '@/components/ui/ToggleGroup'
 
-const controlledOpen = ref(false)
-const lastAction = ref('Ninguna')
+const alignment = ref<ToggleGroupValue>('center')
+const formats = ref<ToggleGroupValue[]>(['bold'])
+const view = ref<ToggleGroupValue>('list')
+const customSelection = ref<ToggleGroupValue[]>(['grid'])
+const progress = ref(64)
+
+const alignmentItems: ToggleGroupItem[] = [
+  { id: 'left', value: 'left', label: 'Izquierda', icon: 'chevronLeft' },
+  { id: 'center', value: 'center', label: 'Centro', icon: 'minus' },
+  { id: 'right', value: 'right', label: 'Derecha', icon: 'chevronRight' },
+]
+
+const formatItems: ToggleGroupItem[] = [
+  { id: 'bold', value: 'bold', label: 'Negrita' },
+  { id: 'italic', value: 'italic', label: 'Cursiva' },
+  { id: 'underline', value: 'underline', label: 'Subrayado' },
+]
+
+const viewItems: ToggleGroupItem[] = [
+  { id: 'list', value: 'list', label: 'Lista', icon: 'minus' },
+  { id: 'grid', value: 'grid', label: 'Cuadrícula', icon: 'check' },
+  { id: 'detail', value: 'detail', label: 'Detalle', icon: 'info', disabled: true },
+]
 </script>
 
 <template>
   <main class="mx-auto min-h-screen max-w-5xl space-y-10 p-6 md:p-10">
     <header class="space-y-2">
-      <h1 class="text-3xl font-bold">ButtonGroup y AlertDialog</h1>
+      <h1 class="text-3xl font-bold">ToggleGroup y ProgressCircular</h1>
       <p class="text-muted-foreground">
-        Ejemplos de composición, orientación, props funcionales y zonas UI normalizadas.
+        Ejemplos de selección, UI contextual y progreso SVG normalizado.
       </p>
     </header>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">ButtonGroup horizontal</h2>
-        <p class="text-sm text-muted-foreground">Botones unidos en una única fila.</p>
+        <h2 class="text-lg font-semibold">Selección única</h2>
+        <p class="text-sm text-muted-foreground">Valor actual: {{ alignment }}.</p>
       </div>
 
-      <div class="flex flex-wrap gap-5">
-        <ButtonGroup>
-          <Button label="Anterior" icon="chevronLeft" variant="outline" />
-          <Button label="Guardar" icon="save" variant="outline" />
-          <Button label="Siguiente" trailing-icon="chevronRight" variant="outline" />
-        </ButtonGroup>
-
-        <ButtonGroup>
-          <Button icon="chevronLeft" variant="outline" aria-label="Anterior" />
-          <Button icon="minus" variant="outline" aria-label="Alejar" />
-          <Button icon="chevronRight" variant="outline" aria-label="Siguiente" />
-        </ButtonGroup>
-      </div>
-    </section>
-
-    <section class="space-y-6 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Text y Separator</h2>
-        <p class="text-sm text-muted-foreground">
-          Los tres componentes exponen ui.root como HTMLAttributes.
-        </p>
-      </div>
-
-      <div class="flex flex-wrap gap-5">
-        <ButtonGroup>
-          <ButtonGroupText label="Total" />
-          <ButtonGroupSeparator />
-          <ButtonGroupText label="128 €" />
-          <ButtonGroupSeparator />
-          <Button label="Pagar" />
-        </ButtonGroup>
-
-        <ButtonGroup
-          :ui="{
-            root: { class: 'rounded-xl ring-2 ring-primary/20' },
-          }"
-        >
-          <ButtonGroupText
-            label="Filtro"
-            :ui="{
-              root: { class: 'bg-primary/5 font-semibold text-primary' },
-            }"
-          />
-          <ButtonGroupSeparator
-            :ui="{
-              root: { class: 'bg-primary/40' },
-            }"
-          />
-          <Button label="Activos" variant="outline" />
-          <Button label="Todos" variant="outline" />
-        </ButtonGroup>
-      </div>
-    </section>
-
-    <section class="space-y-6 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Orientación vertical</h2>
-        <p class="text-sm text-muted-foreground">
-          Separadores horizontales dentro del grupo vertical.
-        </p>
-      </div>
-
-      <ButtonGroup orientation="vertical" class="w-56">
-        <Button label="Perfil" icon="info" variant="outline" class="w-full justify-start" />
-        <ButtonGroupSeparator orientation="horizontal" />
-        <Button label="Guardar" icon="save" variant="outline" class="w-full justify-start" />
-        <ButtonGroupSeparator orientation="horizontal" />
-        <Button
-          label="Eliminar"
-          icon="trash2"
+      <div class="flex flex-wrap gap-4">
+        <ToggleGroup v-model="alignment" mandatory :items="alignmentItems" />
+        <ToggleGroup
+          default-value="left"
           variant="outline"
-          severity="error"
-          class="w-full justify-start"
+          severity="primary"
+          :items="alignmentItems"
         />
-      </ButtonGroup>
+      </div>
     </section>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">AlertDialog básico</h2>
-        <p class="text-sm text-muted-foreground">
-          Action y cancel reciben objetos ButtonProps normalizados.
-        </p>
+        <h2 class="text-lg font-semibold">Selección múltiple</h2>
+        <p class="text-sm text-muted-foreground">Valores: {{ formats.join(', ') || 'ninguno' }}.</p>
       </div>
 
-      <AlertDialog
-        label="¿Eliminar proyecto?"
-        description="Esta acción no se puede deshacer y eliminará todos sus datos."
-        icon="warning"
-        :cancel-button="{
-          label: 'Conservar proyecto',
-          variant: 'outline',
-          severity: 'secondary',
-        }"
-        :action-button="{
-          label: 'Eliminar definitivamente',
-          icon: 'trash2',
-          severity: 'error',
-        }"
-        @cancel="lastAction = 'Cancelado'"
-        @action="lastAction = 'Eliminado'"
-      >
-        <Button label="Eliminar proyecto" icon="trash2" severity="error" />
-      </AlertDialog>
-
-      <p class="text-sm text-muted-foreground">Última acción: {{ lastAction }}</p>
+      <ToggleGroup
+        v-model="formats"
+        type="multiple"
+        variant="outline"
+        :spacing="2"
+        :items="formatItems"
+      />
     </section>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Contenido y slots</h2>
-        <p class="text-sm text-muted-foreground">
-          El cuerpo y los botones pueden construirse mediante slots.
-        </p>
+        <h2 class="text-lg font-semibold">Orientación y tamaños</h2>
+        <p class="text-sm text-muted-foreground">Incluye un item deshabilitado.</p>
       </div>
 
-      <AlertDialog
-        label="Publicar cambios"
-        description="Revisa el resumen antes de continuar."
-        icon="info"
-      >
-        <Button label="Publicar" icon="save" variant="outline" />
+      <div class="grid gap-6 md:grid-cols-2">
+        <ToggleGroup
+          v-model="view"
+          orientation="vertical"
+          variant="outline"
+          class="w-48"
+          :items="viewItems"
+        />
 
-        <template #content>
-          <div class="space-y-3 rounded-lg bg-muted/50 p-4 text-sm">
-            <div class="flex justify-between">
-              <span class="text-muted-foreground">Archivos modificados</span>
-              <span class="font-medium">12</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-muted-foreground">Nueva versión</span>
-              <span class="font-medium">v2.4.0</span>
-            </div>
-          </div>
-        </template>
-
-        <template #cancel="{ close }">
-          <Button label="Volver" variant="outline" @click="close" />
-        </template>
-
-        <template #action="{ close }">
-          <Button label="Publicar ahora" icon="save" @click="close" />
-        </template>
-      </AlertDialog>
+        <div class="flex flex-wrap items-start gap-3">
+          <ToggleGroup
+            v-for="size in ['xs', 'sm', 'md', 'lg'] as const"
+            :key="size"
+            default-value="center"
+            :size="size"
+            variant="outline"
+            :items="alignmentItems"
+          />
+        </div>
+      </div>
     </section>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Estado controlado y UI</h2>
+        <h2 class="text-lg font-semibold">UI contextual y slots</h2>
         <p class="text-sm text-muted-foreground">
-          Estado: {{ controlledOpen ? 'abierto' : 'cerrado' }}.
+          Item, icon, label y trailingIcon se normalizan para cada contexto.
         </p>
       </div>
 
-      <AlertDialog
-        v-model:open="controlledOpen"
-        label="Confirmar configuración"
-        description="Se aplicarán los ajustes a todos los miembros del equipo."
-        icon="success"
-        :content="{ disableOutsidePointerEvents: true }"
+      <ToggleGroup
+        v-model="customSelection"
+        type="multiple"
+        color="#7c3aed"
+        variant="outline"
+        :spacing="2"
+        :items="viewItems"
         :ui="{
-          root: { 'data-example': 'controlled-alert-dialog' },
-          trigger: { class: 'rounded-lg ring-2 ring-success/20' },
-          content: { class: 'border-2 border-success/30 shadow-xl' },
-          header: { class: 'rounded-md bg-success/5 p-3' },
-          label: { class: 'text-success' },
-          icon: { class: 'size-5' },
-          description: { class: 'text-success/70' },
-          body: { class: 'py-6' },
-          footer: { class: 'border-t pt-4' },
-          cancel: { class: 'border-success/30' },
-          action: { class: 'bg-success text-success-foreground' },
+          root: { class: 'rounded-xl bg-primary/5 p-2' },
+          item: ({ selected }) => ({
+            class: selected ? 'ring-2 ring-primary/30' : 'opacity-80',
+            title: selected ? 'Elemento seleccionado' : 'Seleccionar elemento',
+          }),
+          icon: ({ selected }) => ({ class: selected ? 'scale-110' : '' }),
+          label: ({ selected }) => ({ class: selected ? 'font-bold' : '' }),
+          trailingIcon: { class: 'opacity-60' },
         }"
-        :cancel-button="{ label: 'Revisar' }"
-        :action-button="{ label: 'Aplicar', icon: 'check' }"
       >
-        <template #default="{ open }">
-          <Button :label="open ? 'AlertDialog abierto' : 'Abrir confirmación'" severity="success" />
+        <template #trailing="{ selected }">
+          <span class="text-[10px]">{{ selected ? 'ON' : 'OFF' }}</span>
         </template>
 
-        <template #content>
-          <p class="text-sm text-muted-foreground">
-            Los cambios estarán disponibles inmediatamente después de confirmar.
-          </p>
+        <template #leading-grid>
+          <span class="text-xs">#</span>
         </template>
-      </AlertDialog>
+      </ToggleGroup>
     </section>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Header y footer libres</h2>
+        <h2 class="text-lg font-semibold">ProgressCircular dinámico</h2>
+        <p class="text-sm text-muted-foreground">Progreso actual: {{ progress }}%.</p>
       </div>
 
-      <AlertDialog>
-        <Button label="Abrir composición libre" variant="outline" />
+      <div class="flex flex-wrap items-center gap-8">
+        <ProgressCircular
+          :value="progress"
+          :label="`${progress}%`"
+          aria-label="Progreso dinámico"
+        />
 
-        <template #header>
-          <div class="flex items-center gap-3">
-            <div class="grid size-10 place-content-center rounded-full bg-warning/10 text-warning">
-              <Icon name="warning" />
-            </div>
-            <div>
-              <h3 class="font-semibold">Sesión a punto de expirar</h3>
-              <p class="text-sm text-muted-foreground">Decide si quieres continuar conectado.</p>
-            </div>
-          </div>
-        </template>
+        <div class="flex flex-wrap gap-2">
+          <Button
+            label="Restar 10"
+            variant="outline"
+            @click="progress = Math.max(0, progress - 10)"
+          />
+          <Button label="Sumar 10" @click="progress = Math.min(100, progress + 10)" />
+          <Button label="Reiniciar" variant="plain" @click="progress = 0" />
+        </div>
+      </div>
+    </section>
 
-        <template #footer="{ close }">
-          <Button label="Cerrar sesión" variant="outline" severity="error" @click="close" />
-          <Button label="Continuar sesión" @click="close" />
-        </template>
-      </AlertDialog>
+    <section class="space-y-6 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Tamaños, grosor y colores</h2>
+      </div>
+
+      <div class="flex flex-wrap items-end gap-8">
+        <ProgressCircular :value="25" :size="56" :thickness="6" label="25%" />
+        <ProgressCircular
+          :value="50"
+          :size="80"
+          :thickness="8"
+          label="50%"
+          color="#2563eb"
+          track-color="#dbeafe"
+        />
+        <ProgressCircular
+          :value="75"
+          :size="112"
+          :thickness="10"
+          label="75%"
+          color="#16a34a"
+          track-color="#dcfce7"
+        />
+        <ProgressCircular :value="90" size="9rem" :thickness="12" label="90%" color="#ea580c" />
+      </div>
+    </section>
+
+    <section class="space-y-6 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Slot y UI SVG</h2>
+        <p class="text-sm text-muted-foreground">
+          Svg, track e indicator utilizan SVGAttributes normalizados.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-10">
+        <ProgressCircular
+          :value="68"
+          :size="128"
+          :thickness="9"
+          color="#7c3aed"
+          :ui="{
+            root: { class: 'rounded-full bg-violet-500/5 shadow-lg' },
+            svg: { class: 'size-full -rotate-90 drop-shadow-md' },
+            track: { class: 'stroke-violet-200' },
+            indicator: {
+              class: 'stroke-violet-600',
+              strokeLinecap: 'butt',
+            },
+            label: { class: 'text-violet-700' },
+          }"
+          aria-label="Progreso personalizado"
+        >
+          <template #label="{ percentage }">
+            <div class="flex flex-col items-center leading-none">
+              <span class="text-xl font-bold">{{ Math.round(percentage) }}%</span>
+              <span class="mt-1 text-[10px] font-normal">completado</span>
+            </div>
+          </template>
+        </ProgressCircular>
+
+        <ProgressCircular
+          :value="null"
+          :size="96"
+          :thickness="7"
+          label="…"
+          aria-label="Procesando"
+        />
+      </div>
     </section>
   </main>
 </template>

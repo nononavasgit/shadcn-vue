@@ -1,6 +1,6 @@
 import type { IconName } from './icons.ts'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { computed, HTMLAttributes, toValue } from 'vue'
+import { HTMLAttributes, toValue } from 'vue'
 
 export { default as Icon } from './Icon.vue'
 export type { IconName } from './icons.ts'

@@ -7,6 +7,7 @@ import {
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { toggleVariants } from '@/components/ui/Toggle'
 import { useColor } from '@/composables'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import type {
   ToggleGroupProps,
@@ -64,84 +65,91 @@ function resolveUI<T>(value: ToggleGroupUIValue<T> | undefined, context: ToggleG
     : value
 }
 
-const calculatedUI = computed(() => ({
-  root: {
-    ...attrs,
-    as: props.as,
-    asChild: props.asChild,
-    type: props.type,
-    defaultValue: props.defaultValue,
-    rovingFocus: props.rovingFocus,
-    orientation: props.orientation,
-    dir: props.dir,
-    loop: props.loop,
-    spacing: props.spacing,
-    class: cn(attrs.class),
-    style: [colorStyle.value, attrs.style],
-  },
-  items: props.items.map((item, index) => {
-    const context: ToggleGroupUIContext = {
-      item,
-      index,
-      selected: isSelected(item.value),
-      first: index === 0,
-      last: index === props.items.length - 1,
-    }
-    const itemUI = resolveUI(props.ui?.item, context)
-    const iconUI = resolveUI(props.ui?.icon, context)
-    const labelUI = resolveUI(props.ui?.label, context)
-    const trailingIconUI = resolveUI(props.ui?.trailingIcon, context)
-    const icon = normalizeIconProps(item.icon)
-    const trailingIcon = normalizeIconProps(item.trailingIcon)
-    const key = String(item.id)
+const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
 
-    return {
-      key,
-      data: item,
-      context,
-      slots: {
-        item: `item-${key}` as `item-${string}`,
-        leading: `leading-${key}` as `leading-${string}`,
-        trailing: `trailing-${key}` as `trailing-${string}`,
-      },
-      item: {
-        ...itemUI,
-        value: item.value,
-        disabled: item.disabled ?? itemUI?.disabled,
-        'data-variant': props.variant,
-        'data-severity': props.severity,
-        'data-size': props.size,
-        class: cn(
-          toggleVariants({
-            variant: props.variant,
-            severity: props.severity,
-            size: props.size,
-            color: Boolean(props.color),
-          }),
-          itemUI?.class,
-        ),
-        style: itemUI?.style,
-      },
-      icon: {
-        ...iconUI,
-        ...icon,
-        class: cn(iconUI?.class, icon?.class),
-        style: [iconUI?.style, icon?.style],
-      },
-      label: {
-        ...labelUI,
-        class: cn(labelUI?.class),
-        style: labelUI?.style,
-      },
-      trailingIcon: {
-        ...trailingIconUI,
-        ...trailingIcon,
-        class: cn(trailingIconUI?.class, trailingIcon?.class),
-        style: [trailingIconUI?.style, trailingIcon?.style],
-      },
-    }
-  }),
-}))
+  return {
+    root: {
+      ...attrs,
+      ...rootUI,
+      as: props.as,
+      asChild: props.asChild,
+      type: props.type,
+      defaultValue: props.defaultValue,
+      rovingFocus: props.rovingFocus,
+      orientation: props.orientation,
+      dir: props.dir,
+      loop: props.loop,
+      spacing: props.spacing,
+      class: cn(attrs.class, rootUI.class),
+      style: [colorStyle.value, attrs.style, rootUI.style],
+    },
+    items: props.items.map((item, index) => {
+      const context: ToggleGroupUIContext = {
+        item,
+        index,
+        selected: isSelected(item.value),
+        first: index === 0,
+        last: index === props.items.length - 1,
+      }
+      const itemUI = normalizeHTMLAttributes(resolveUI(props.ui?.item, context))
+      const iconUI = normalizeHTMLAttributes(resolveUI(props.ui?.icon, context))
+      const labelUI = normalizeHTMLAttributes(resolveUI(props.ui?.label, context))
+      const trailingIconUI = normalizeHTMLAttributes(resolveUI(props.ui?.trailingIcon, context))
+      const icon = normalizeIconProps(item.icon)
+      const trailingIcon = normalizeIconProps(item.trailingIcon)
+      const key = String(item.id)
+
+      return {
+        key,
+        data: item,
+        context,
+        slots: {
+          item: `item-${key}` as `item-${string}`,
+          leading: `leading-${key}` as `leading-${string}`,
+          trailing: `trailing-${key}` as `trailing-${string}`,
+        },
+        item: {
+          ...itemUI,
+          value: item.value,
+          disabled: item.disabled,
+          as: item.as,
+          asChild: item.asChild,
+          'data-variant': props.variant,
+          'data-severity': props.severity,
+          'data-size': props.size,
+          class: cn(
+            toggleVariants({
+              variant: props.variant,
+              severity: props.severity,
+              size: props.size,
+              color: Boolean(props.color),
+            }),
+            itemUI.class,
+          ),
+          style: itemUI.style,
+        },
+        icon: {
+          ...iconUI,
+          ...icon,
+          class: cn(iconUI.class),
+          style: [iconUI.style],
+        },
+        label: {
+          ...labelUI,
+          class: cn(labelUI.class),
+          style: labelUI.style,
+        },
+        trailingIcon: {
+          ...trailingIconUI,
+          ...trailingIcon,
+          class: cn(trailingIconUI.class),
+          style: [trailingIconUI.style],
+        },
+      }
+    }),
+  }
+})
 </script>
 
 <template>

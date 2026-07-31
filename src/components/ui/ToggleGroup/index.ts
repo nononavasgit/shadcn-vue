@@ -1,22 +1,22 @@
-import type { ButtonHTMLAttributes, Component, HTMLAttributes } from 'vue'
-import type { AcceptableValue } from 'reka-ui'
-import type { NormalizedIconProps, NormalizeIconProps } from '@/components/ui/Icon'
+import type { Component, HTMLAttributes } from 'vue'
+import type { IconName, IconProps } from '@/components/ui/Icon'
 import type { ToggleVariants } from '@/components/ui/Toggle'
 
 export { default as ToggleGroup } from './ToggleGroup.vue'
 
-export type ToggleGroupValue = AcceptableValue
+export type ToggleGroupValue = string | number | bigint | Record<string, unknown> | null
 
 export interface ToggleGroupItem {
   id: string | number
   value: ToggleGroupValue
   label?: string
-  icon?: NormalizeIconProps
-  trailingIcon?: NormalizeIconProps
+  icon?: IconName | IconProps
+  trailingIcon?: IconName | IconProps
   disabled?: boolean
+  as?: string | Component
+  asChild?: boolean
 }
 
-// Context
 export interface ToggleGroupUIContext {
   item: ToggleGroupItem
   index: number
@@ -27,20 +27,14 @@ export interface ToggleGroupUIContext {
 
 export type ToggleGroupUIValue<T> = T | ((context: ToggleGroupUIContext) => T)
 
-export type ToggleGroupItemUI = Omit<ButtonHTMLAttributes, 'value'> & {
-  as?: string | Component
-  asChild?: boolean
-}
-
-// UI
 export interface ToggleGroupUI {
-  item?: ToggleGroupUIValue<ToggleGroupItemUI>
-  icon?: ToggleGroupUIValue<NormalizedIconProps>
+  root?: HTMLAttributes
+  item?: ToggleGroupUIValue<HTMLAttributes>
+  icon?: ToggleGroupUIValue<HTMLAttributes>
   label?: ToggleGroupUIValue<HTMLAttributes>
-  trailingIcon?: ToggleGroupUIValue<NormalizedIconProps>
+  trailingIcon?: ToggleGroupUIValue<HTMLAttributes>
 }
 
-// Props
 export interface ToggleGroupProps {
   modelValue?: ToggleGroupValue | ToggleGroupValue[]
   defaultValue?: ToggleGroupValue | ToggleGroupValue[]
@@ -61,15 +55,12 @@ export interface ToggleGroupProps {
   ui?: ToggleGroupUI
 }
 
-// Emits
 export interface ToggleGroupEmits {
   'update:modelValue': [value: ToggleGroupValue | ToggleGroupValue[] | undefined]
 }
 
-// SlotProps
 export type ToggleGroupSlotProps = ToggleGroupUIContext
 
-// Slots
 export type ToggleGroupSlots = {
   default?(props: { modelValue: ToggleGroupValue | ToggleGroupValue[] | undefined }): unknown
   item?(props: ToggleGroupSlotProps): unknown

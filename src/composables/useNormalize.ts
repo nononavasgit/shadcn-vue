@@ -1,4 +1,4 @@
-import { HTMLAttributes } from 'vue'
+import type { HTMLAttributes, SVGAttributes } from 'vue'
 
 /** Normalizes HTML attributes */
 export function normalizeHTMLAttributes(value: HTMLAttributes | undefined): HTMLAttributes {
@@ -13,6 +13,22 @@ export function normalizeHTMLAttributes(value: HTMLAttributes | undefined): HTML
     title: title as string | undefined,
     role: role as string | undefined,
     tabindex: tabindex as HTMLAttributes['tabindex'],
+    ...attrs,
+  }
+}
+
+/** Normalizes SVG attributes */
+export function normalizeSVGAttributes(value: SVGAttributes | undefined): SVGAttributes {
+  if (!value) return {}
+
+  const { class: className, style, id, role, tabindex, ...attrs } = value
+
+  return {
+    class: className as SVGAttributes['class'],
+    style: style as SVGAttributes['style'],
+    id: id as string | undefined,
+    role: role as string | undefined,
+    tabindex: tabindex as SVGAttributes['tabindex'],
     ...attrs,
   }
 }

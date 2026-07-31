@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs, useSlots } from 'vue'
 import { Progress, ProgressIndicator } from '@/components/primitives/Progress'
+import { normalizeHTMLAttributes, normalizeSVGAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import type {
@@ -16,8 +17,14 @@ defineSlots<ProgressCircularSlots>()
 const props = withDefaults(defineProps<ProgressCircularProps>(), {
   value: 0,
   max: 100,
+  getValueLabel: undefined,
+  getValueText: undefined,
+  label: undefined,
+  color: undefined,
+  trackColor: undefined,
   size: 80,
   thickness: 8,
+  ui: undefined,
 })
 
 const attrs = useAttrs()
@@ -49,70 +56,81 @@ const slotProps = computed<ProgressCircularLabelSlotProps>(() => ({
   percentage: percentage.value,
 }))
 
-const calculatedUI = computed(() => ({
-  root: {
-    ...attrs,
-    modelValue: props.value,
-    max: props.max,
-    getValueLabel: props.getValueLabel,
-    getValueText: props.getValueText,
-    'aria-label': attrs['aria-label'],
-    'aria-valuetext': attrs['aria-valuetext'] || props.label,
-    class: cn(
-      'relative inline-grid shrink-0 place-items-center overflow-visible bg-transparent',
-      attrs.class,
-    ),
-    style: [
-      { width: cssSize.value, height: cssSize.value },
-      colorStyle.value,
-      trackColorStyle.value,
-      attrs.style,
-    ],
-  },
-  svg: {
-    'aria-hidden': true,
-    ...props.ui?.svg,
-    class: cn('size-full -rotate-90', props.ui?.svg?.class),
-  },
-  track: {
-    ...props.ui?.track,
-    cx: '50',
-    cy: '50',
-    r: radius.value,
-    'stroke-width': props.thickness,
-    class: cn(
-      'fill-none stroke-primary/20',
-      props.trackColor
-        ? 'stroke-(--progress-circular-track-color)'
-        : props.color && 'stroke-(--progress-circular-color)/20',
-      props.ui?.track?.class,
-    ),
-  },
-  indicator: {
-    ...props.ui?.indicator,
-    cx: '50',
-    cy: '50',
-    r: radius.value,
-    'stroke-width': props.thickness,
-    'stroke-linecap': 'round' as const,
-    'stroke-dasharray': circumference.value,
-    'stroke-dashoffset': dashOffset.value,
-    class: cn(
-      'h-auto w-auto flex-none fill-none stroke-primary transition-[stroke-dashoffset] duration-300 ease-out',
-      props.color && 'stroke-(--progress-circular-color)',
-      props.ui?.indicator?.class,
-    ),
-    style: props.ui?.indicator?.style,
-  },
-  label: {
-    'aria-hidden': true,
-    ...props.ui?.label,
-    class: cn(
-      'pointer-events-none absolute inset-0 z-10 flex items-center justify-center text-center text-sm font-semibold',
-      props.ui?.label?.class,
-    ),
-  },
-}))
+const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const svgUI = normalizeSVGAttributes(props.ui?.svg)
+  const trackUI = normalizeSVGAttributes(props.ui?.track)
+  const indicatorUI = normalizeSVGAttributes(props.ui?.indicator)
+  const labelUI = normalizeHTMLAttributes(props.ui?.label)
+
+  return {
+    root: {
+      ...attrs,
+      ...rootUI,
+      modelValue: props.value,
+      max: props.max,
+      getValueLabel: props.getValueLabel,
+      getValueText: props.getValueText,
+      'aria-label': rootUI['aria-label'] ?? attrs['aria-label'],
+      'aria-valuetext': rootUI['aria-valuetext'] ?? attrs['aria-valuetext'] ?? props.label,
+      class: cn(
+        'relative inline-grid shrink-0 place-items-center overflow-visible bg-transparent',
+        attrs.class,
+        rootUI.class,
+      ),
+      style: [
+        { width: cssSize.value, height: cssSize.value },
+        colorStyle.value,
+        trackColorStyle.value,
+        attrs.style,
+        rootUI.style,
+      ],
+    },
+    svg: {
+      ...svgUI,
+      'aria-hidden': true,
+      class: cn('size-full -rotate-90', svgUI.class),
+    },
+    track: {
+      ...trackUI,
+      cx: '50',
+      cy: '50',
+      r: radius.value,
+      'stroke-width': props.thickness,
+      class: cn(
+        'fill-none stroke-primary/20',
+        props.trackColor
+          ? 'stroke-(--progress-circular-track-color)'
+          : props.color && 'stroke-(--progress-circular-color)/20',
+        trackUI.class,
+      ),
+    },
+    indicator: {
+      ...indicatorUI,
+      cx: '50',
+      cy: '50',
+      r: radius.value,
+      'stroke-width': props.thickness,
+      'stroke-linecap': 'round' as const,
+      'stroke-dasharray': circumference.value,
+      'stroke-dashoffset': dashOffset.value,
+      class: cn(
+        'h-auto w-auto flex-none fill-none stroke-primary transition-[stroke-dashoffset] duration-300 ease-out',
+        props.color && 'stroke-(--progress-circular-color)',
+        indicatorUI.class,
+      ),
+      style: indicatorUI.style,
+    },
+    label: {
+      ...labelUI,
+      'aria-hidden': true,
+      class: cn(
+        'pointer-events-none absolute inset-0 z-10 flex items-center justify-center text-center text-sm font-semibold',
+        labelUI.class,
+      ),
+    },
+  }
+})
 </script>
 
 <template>

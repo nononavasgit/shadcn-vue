@@ -62,6 +62,7 @@ export type PaginationUIValue<T> = T | ((context: PaginationUIContext) => T)
 
 // UI
 export interface PaginationUI {
+  root?: HTMLAttributes
   content?: HTMLAttributes
   item?: PaginationUIValue<HTMLAttributes>
   ellipsis?: PaginationUIValue<HTMLAttributes>

@@ -10,6 +10,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/primitives/Pagination'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import type {
   PaginationGeneratedItem,
@@ -35,6 +36,7 @@ const props = withDefaults(defineProps<PaginationProps>(), {
   showLast: false,
   as: 'nav',
   asChild: false,
+  ui: undefined,
 })
 defineEmits<{ 'update:page': [value: number] }>()
 const slots = defineSlots<PaginationSlots>()
@@ -42,40 +44,36 @@ const slots = defineSlots<PaginationSlots>()
 const attrs = useAttrs()
 const model = defineModel<number>('page')
 
-const calculatedUI = computed(() => ({
-  root: {
-    ...attrs,
-    as: props.as,
-    asChild: props.asChild,
-    defaultPage: props.defaultPage,
-    total: props.total,
-    itemsPerPage: props.itemsPerPage,
-    siblingCount: props.siblingCount,
-    showEdges: props.showEdges,
-    disabled: props.disabled,
-    class: cn(attrs.class),
-  },
-  content: {
-    ...props.ui?.content,
-    class: cn(props.ui?.content?.class),
-  },
-  first: {
-    ...props.ui?.first,
-    class: cn(props.ui?.first?.class),
-  },
-  previous: {
-    ...props.ui?.previous,
-    class: cn(props.ui?.previous?.class),
-  },
-  next: {
-    ...props.ui?.next,
-    class: cn(props.ui?.next?.class),
-  },
-  last: {
-    ...props.ui?.last,
-    class: cn(props.ui?.last?.class),
-  },
-}))
+const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const contentUI = normalizeHTMLAttributes(props.ui?.content)
+  const firstUI = normalizeHTMLAttributes(props.ui?.first)
+  const previousUI = normalizeHTMLAttributes(props.ui?.previous)
+  const nextUI = normalizeHTMLAttributes(props.ui?.next)
+  const lastUI = normalizeHTMLAttributes(props.ui?.last)
+
+  return {
+    root: {
+      ...attrs,
+      ...rootUI,
+      as: props.as,
+      asChild: props.asChild,
+      defaultPage: props.defaultPage,
+      total: props.total,
+      itemsPerPage: props.itemsPerPage,
+      siblingCount: props.siblingCount,
+      showEdges: props.showEdges,
+      disabled: props.disabled,
+      class: cn(attrs.class, rootUI.class),
+      style: [attrs.style, rootUI.style],
+    },
+    content: { ...contentUI, class: cn(contentUI.class), style: contentUI.style },
+    first: { ...firstUI, class: cn(firstUI.class), style: firstUI.style },
+    previous: { ...previousUI, class: cn(previousUI.class), style: previousUI.style },
+    next: { ...nextUI, class: cn(nextUI.class), style: nextUI.style },
+    last: { ...lastUI, class: cn(lastUI.class), style: lastUI.style },
+  }
+})
 
 function resolveUI<T>(value: PaginationUIValue<T> | undefined, context: PaginationUIContext) {
   return typeof value === 'function'
@@ -93,8 +91,8 @@ function buildEntries(items: PaginationGeneratedItem[], root: PaginationRootSlot
       first: index === 0,
       last: index === items.length - 1,
     }
-    const itemUI = resolveUI(props.ui?.item, context)
-    const ellipsisUI = resolveUI(props.ui?.ellipsis, context)
+    const itemUI = normalizeHTMLAttributes(resolveUI(props.ui?.item, context))
+    const ellipsisUI = normalizeHTMLAttributes(resolveUI(props.ui?.ellipsis, context))
     const key = item.type === 'page' ? `page-${item.value}` : `ellipsis-${index}`
 
     return {
@@ -152,7 +150,7 @@ function getRootSlotProps(root: { page: number; pageCount: number }): Pagination
           :is-active="entry.context.active"
         >
           <slot :name="entry.slotName" v-bind="entry.context">
-            <slot :name="slots.item" v-bind="entry.context">
+            <slot name="item" v-bind="entry.context">
               {{ entry.data.value }}
             </slot>
           </slot>
@@ -170,11 +168,11 @@ function getRootSlotProps(root: { page: number; pageCount: number }): Pagination
       </template>
 
       <PaginationNext v-if="props.showNext" v-bind="calculatedUI.next">
-        <slot v-if="$slots.next" :name="slots.next" v-bind="getRootSlotProps(rootState)" />
+        <slot v-if="$slots.next" name="next" v-bind="getRootSlotProps(rootState)" />
       </PaginationNext>
 
       <PaginationLast v-if="props.showLast" v-bind="calculatedUI.last">
-        <slot v-if="$slots.last" :name="slots.last" v-bind="getRootSlotProps(rootState)" />
+        <slot v-if="$slots.last" name="last" v-bind="getRootSlotProps(rootState)" />
       </PaginationLast>
 
       <slot v-if="slots.postContent" name="postContent" v-bind="getRootSlotProps(rootState)" />

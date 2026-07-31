@@ -1,60 +1,81 @@
 <script setup lang="ts">
-import { Breadcrumb, type BreadcrumbItem } from '@/components/ui/Breadcrumb'
+import { ref } from 'vue'
+import { Button } from '@/components/ui/Button'
+import { Pagination } from '@/components/ui/Pagination'
 
-const basicItems: BreadcrumbItem[] = [
-  { id: 'home', label: 'Inicio', to: '/', icon: 'chevronLeft' },
-  { id: 'components', label: 'Componentes', to: '/components' },
-  { id: 'breadcrumb', label: 'Breadcrumb' },
-]
-
-const longPathItems: BreadcrumbItem[] = [
-  { id: 'home', label: 'Inicio', to: '/' },
-  { id: 'ellipsis', ellipsis: true },
-  { id: 'library', label: 'Biblioteca', to: '/library' },
-  { id: 'document', label: 'Documento actual' },
-]
-
-const contextualItems: BreadcrumbItem[] = [
-  { id: 'workspace', label: 'Espacio de trabajo', to: '/workspace', icon: 'info' },
-  { id: 'project', label: 'Proyecto Atlas', to: '/workspace/atlas', icon: 'save' },
-  { id: 'settings', label: 'Configuracion', icon: { name: 'warning', size: 'sm' } },
-]
+const basicPage = ref(1)
+const controlledPage = ref(4)
+const contextualPage = ref(6)
 </script>
 
 <template>
   <main class="mx-auto min-h-screen max-w-5xl space-y-10 p-6 md:p-10">
     <header class="space-y-2">
-      <h1 class="text-3xl font-bold">Breadcrumb</h1>
+      <h1 class="text-3xl font-bold">Pagination</h1>
       <p class="text-muted-foreground">
-        Ejemplos con items, iconos, elipsis, UI contextual y slots personalizados.
+        Ejemplos con estado controlado, extremos, UI contextual y slots personalizados.
       </p>
     </header>
 
     <section class="space-y-5 rounded-xl border p-5">
       <div>
         <h2 class="text-lg font-semibold">Uso basico</h2>
-        <p class="text-sm text-muted-foreground">
-          El ultimo elemento sin destino representa la pagina actual.
-        </p>
+        <p class="text-sm text-muted-foreground">Pagina actual: {{ basicPage }}.</p>
       </div>
 
-      <Breadcrumb :items="basicItems" />
+      <Pagination v-model:page="basicPage" :total="100" :items-per-page="10" />
     </section>
 
     <section class="space-y-5 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Ruta larga con elipsis</h2>
+        <h2 class="text-lg font-semibold">Estado controlado</h2>
         <p class="text-sm text-muted-foreground">
-          Un item con <code>ellipsis</code> resume niveles intermedios.
+          La pagina tambien puede cambiar desde controles externos.
         </p>
       </div>
 
-      <Breadcrumb
-        :items="longPathItems"
+      <Pagination
+        v-model:page="controlledPage"
+        :total="240"
+        :items-per-page="20"
+        :sibling-count="1"
         :ui="{
-          root: { 'aria-label': 'Ruta del documento' },
-          list: { class: 'rounded-lg bg-muted/50 px-3 py-2' },
-          ellipsis: { title: 'Niveles intermedios' },
+          root: { 'aria-label': 'Paginacion controlada' },
+          content: { class: 'rounded-lg border bg-muted/30 p-2' },
+        }"
+      >
+        <template #preContent="{ from, to, total }">
+          <span class="mr-3 text-sm text-muted-foreground">{{ from }}-{{ to }} de {{ total }}</span>
+        </template>
+      </Pagination>
+
+      <div class="flex flex-wrap gap-2">
+        <Button label="Pagina 1" size="sm" variant="outline" @click="controlledPage = 1" />
+        <Button label="Pagina 6" size="sm" variant="outline" @click="controlledPage = 6" />
+        <Button label="Ultima" size="sm" variant="outline" @click="controlledPage = 12" />
+      </div>
+    </section>
+
+    <section class="space-y-5 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Primera y ultima pagina</h2>
+        <p class="text-sm text-muted-foreground">
+          Controles de extremos visibles y botones anterior/siguiente ocultos.
+        </p>
+      </div>
+
+      <Pagination
+        :default-page="5"
+        :total="90"
+        :items-per-page="10"
+        show-first
+        show-last
+        :show-previous="false"
+        :show-next="false"
+        :ui="{
+          first: { class: 'border' },
+          last: { class: 'border' },
+          item: ({ active }) => ({ class: active ? 'bg-primary text-primary-foreground' : '' }),
         }"
       />
     </section>
@@ -63,23 +84,30 @@ const contextualItems: BreadcrumbItem[] = [
       <div>
         <h2 class="text-lg font-semibold">UI contextual</h2>
         <p class="text-sm text-muted-foreground">
-          Cada zona puede recibir una funcion con el item, indice y estado.
+          Los estilos de item y elipsis reciben el estado completo de paginacion.
         </p>
       </div>
 
-      <Breadcrumb
-        :items="contextualItems"
+      <Pagination
+        v-model:page="contextualPage"
+        :total="300"
+        :items-per-page="10"
+        :sibling-count="1"
+        show-first
+        show-last
         :ui="{
-          root: { class: 'rounded-lg border p-3' },
-          list: { class: 'gap-2' },
-          item: ({ last }) => ({ class: last ? 'font-semibold' : '' }),
-          link: ({ first }) => ({
-            class: first ? 'text-primary' : 'text-muted-foreground',
-            title: first ? 'Volver al inicio del espacio' : undefined,
+          root: { class: 'justify-start rounded-xl bg-muted/40 p-3' },
+          content: { class: 'flex-wrap' },
+          item: ({ active, first, last }) => ({
+            class: [
+              active && 'border-primary bg-primary/10 text-primary',
+              first && 'ring-1 ring-primary/30',
+              last && 'ring-1 ring-primary/30',
+            ],
           }),
-          page: { class: 'rounded-md bg-primary/10 px-2 py-1 text-primary' },
-          icon: ({ last }) => ({ class: last ? 'text-warning' : 'opacity-70' }),
-          separator: ({ index }) => ({ class: index === 0 ? 'text-primary' : '' }),
+          ellipsis: ({ index }) => ({ title: `Salto de paginas ${index + 1}` }),
+          previous: { title: 'Pagina anterior' },
+          next: { title: 'Pagina siguiente' },
         }"
       />
     </section>
@@ -88,48 +116,43 @@ const contextualItems: BreadcrumbItem[] = [
       <div>
         <h2 class="text-lg font-semibold">Slots globales</h2>
         <p class="text-sm text-muted-foreground">
-          Personalizacion compartida de iconos, separadores y elipsis.
+          Personalizacion del contenido de paginas, navegacion y elipsis.
         </p>
       </div>
 
-      <Breadcrumb :items="longPathItems">
-        <template #ellipsis>
-          <button type="button" class="rounded-md border px-2 py-0.5 text-xs">Mas</button>
+      <Pagination :default-page="5" :total="120" :items-per-page="10" show-first show-last>
+        <template #first>Inicio</template>
+        <template #previous>Atras</template>
+        <template #item="{ item, active }">
+          <span :class="active ? 'font-bold underline' : ''">
+            {{ item.type === 'page' ? item.value : '' }}
+          </span>
         </template>
-
-        <template #separator>
-          <span class="text-muted-foreground/50">/</span>
-        </template>
-      </Breadcrumb>
+        <template #ellipsis>---</template>
+        <template #next>Siguiente</template>
+        <template #last>Fin</template>
+      </Pagination>
     </section>
 
     <section class="space-y-5 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Slots individuales</h2>
+        <h2 class="text-lg font-semibold">Slots individuales y estado deshabilitado</h2>
         <p class="text-sm text-muted-foreground">
-          Los slots con el id del item tienen prioridad sobre los slots globales.
+          Un slot puede personalizar una pagina concreta mediante su numero.
         </p>
       </div>
 
-      <Breadcrumb :items="basicItems">
-        <template #icon-home>
+      <Pagination :default-page="2" :total="50" :items-per-page="10">
+        <template #item-2="{ active }">
           <span
-            class="grid size-5 place-items-center rounded-full bg-primary text-[10px] text-primary-foreground"
+            class="grid size-6 place-items-center rounded-full bg-primary text-primary-foreground"
           >
-            H
+            {{ active ? '2' : 'dos' }}
           </span>
         </template>
+      </Pagination>
 
-        <template #item-breadcrumb="{ item }">
-          <span class="rounded-full bg-secondary px-3 py-1 text-xs font-medium">
-            {{ item.label }}
-          </span>
-        </template>
-
-        <template #separator-components>
-          <span class="font-bold text-primary">:</span>
-        </template>
-      </Breadcrumb>
+      <Pagination :page="3" :total="50" :items-per-page="10" disabled />
     </section>
   </main>
 </template>

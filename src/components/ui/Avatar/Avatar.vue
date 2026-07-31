@@ -1,42 +1,57 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import type { ImgHTMLAttributes } from 'vue'
 import type { AvatarImageEmits } from 'reka-ui'
 import { Avatar as AvatarBase, AvatarFallback, AvatarImage } from '@/components/primitives/Avatar'
-import { Icon, useNormalizeIconProps } from '@/components/ui/Icon'
+import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import type { AvatarEmits, AvatarLoadingState, AvatarProps, AvatarSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<AvatarProps>()
+const props = withDefaults(defineProps<AvatarProps>(), {
+  src: undefined,
+  alt: undefined,
+  icon: undefined,
+  label: undefined,
+  ui: undefined,
+})
 const emit = defineEmits<AvatarEmits>()
 defineSlots<AvatarSlots>()
 
-const attrs = useAttrs() as ImgHTMLAttributes
-const icon = useNormalizeIconProps(() => props.icon)
-const calculatedUI = computed(() => ({
-  root: props.ui?.root,
-  image: props.src
-    ? {
-        ...props.ui?.image,
-        ...attrs,
-        src: props.src,
-        alt: props.alt,
-        class: cn(props.ui?.image?.class, attrs.class),
-      }
-    : undefined,
-  fallback: {
-    ...props.ui?.fallback,
-    ...attrs,
-    class: cn(props.ui?.fallback?.class, attrs.class),
-  },
-  icon: {
-    ...props.ui?.icon,
-    ...icon.value,
-    class: cn(props.ui?.icon?.class, icon.value?.class),
-  },
-}))
+const attrs = useAttrs()
+const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const imageUI = normalizeHTMLAttributes(props.ui?.image)
+  const fallbackUI = normalizeHTMLAttributes(props.ui?.fallback)
+  const iconUI = normalizeHTMLAttributes(props.ui?.icon)
+
+  return {
+    root: {
+      ...attrs,
+      ...rootUI,
+      class: cn(attrs.class, rootUI.class),
+      style: [attrs.style, rootUI.style],
+    },
+    image: props.src
+      ? {
+          ...imageUI,
+          src: props.src,
+          alt: props.alt,
+          class: cn(imageUI.class),
+        }
+      : undefined,
+    fallback: {
+      ...fallbackUI,
+      class: cn(fallbackUI.class),
+    },
+    icon: {
+      ...iconUI,
+      ...normalizeIconProps(props.icon),
+      class: cn(iconUI.class),
+    },
+  }
+})
 
 type OriginalLoadingState = AvatarImageEmits['loadingStatusChange'][0]
 
@@ -67,7 +82,7 @@ function handleLoadingStateChange(state: OriginalLoadingState) {
           v-bind="calculatedUI.icon"
           :name="calculatedUI.icon.name"
         />
-        <template v-else>{{ props.title }}</template>
+        <template v-else>{{ props.label }}</template>
       </slot>
     </AvatarFallback>
   </AvatarBase>

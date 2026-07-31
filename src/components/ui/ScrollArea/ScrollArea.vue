@@ -7,6 +7,7 @@ import {
   ScrollAreaViewport,
   ScrollBar,
 } from '@/components/primitives/ScrollArea'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import type { ScrollAreaProps, ScrollAreaSlots } from '.'
 
@@ -14,54 +15,68 @@ defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<ScrollAreaProps>(), {
   type: 'hover',
+  dir: undefined,
   scrollHideDelay: 600,
   orientation: 'vertical',
   forceMount: false,
   as: 'div',
   asChild: false,
+  ui: undefined,
 })
 defineSlots<ScrollAreaSlots>()
 
 const attrs = useAttrs()
-const calculatedUI = computed(() => ({
-  root: {
-    ...attrs,
-    type: props.type,
-    dir: props.dir,
-    scrollHideDelay: props.scrollHideDelay,
-    as: props.as,
-    asChild: props.asChild,
-    class: cn(attrs.class),
-  },
-  viewport: {
-    ...props.ui?.viewport,
-    class: cn(props.ui?.viewport?.class),
-  },
-  verticalScrollbar: {
-    ...props.ui?.verticalScrollbar,
-    orientation: 'vertical' as const,
-    forceMount: props.forceMount,
-    class: cn(props.ui?.verticalScrollbar?.class),
-  },
-  thumbVertical: {
-    ...props.ui?.thumbVertical,
-    class: cn(props.ui?.thumbVertical?.class),
-  },
-  horizontalScrollbar: {
-    ...props.ui?.horizontalScrollbar,
-    orientation: 'horizontal' as const,
-    forceMount: props.forceMount,
-    class: cn(props.ui?.horizontalScrollbar?.class),
-  },
-  thumbHorizontal: {
-    ...props.ui?.thumbHorizontal,
-    class: cn(props.ui?.thumbHorizontal?.class),
-  },
-  corner: {
-    ...props.ui?.corner,
-    class: cn(props.ui?.corner?.class),
-  },
-}))
+const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const viewportUI = normalizeHTMLAttributes(props.ui?.viewport)
+  const verticalScrollbarUI = normalizeHTMLAttributes(props.ui?.verticalScrollbar)
+  const horizontalScrollbarUI = normalizeHTMLAttributes(props.ui?.horizontalScrollbar)
+  const thumbVerticalUI = normalizeHTMLAttributes(props.ui?.thumbVertical)
+  const thumbHorizontalUI = normalizeHTMLAttributes(props.ui?.thumbHorizontal)
+  const cornerUI = normalizeHTMLAttributes(props.ui?.corner)
+
+  return {
+    root: {
+      ...attrs,
+      ...rootUI,
+      type: props.type,
+      dir: props.dir,
+      scrollHideDelay: props.scrollHideDelay,
+      as: props.as,
+      asChild: props.asChild,
+      class: cn(attrs.class, rootUI.class),
+      style: [attrs.style, rootUI.style],
+    },
+    viewport: {
+      ...viewportUI,
+      class: cn(viewportUI.class),
+    },
+    verticalScrollbar: {
+      ...verticalScrollbarUI,
+      orientation: 'vertical' as const,
+      forceMount: props.forceMount,
+      class: cn(verticalScrollbarUI.class),
+    },
+    thumbVertical: {
+      ...thumbVerticalUI,
+      class: cn(thumbVerticalUI.class),
+    },
+    horizontalScrollbar: {
+      ...horizontalScrollbarUI,
+      orientation: 'horizontal' as const,
+      forceMount: props.forceMount,
+      class: cn(horizontalScrollbarUI.class),
+    },
+    thumbHorizontal: {
+      ...thumbHorizontalUI,
+      class: cn(thumbHorizontalUI.class),
+    },
+    corner: {
+      ...cornerUI,
+      class: cn(cornerUI.class),
+    },
+  }
+})
 </script>
 
 <template>

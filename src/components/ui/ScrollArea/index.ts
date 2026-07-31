@@ -7,6 +7,7 @@ export type ScrollAreaDirection = 'ltr' | 'rtl'
 export type ScrollAreaOrientation = 'vertical' | 'horizontal' | 'both'
 
 export interface ScrollAreaUI {
+  root?: HTMLAttributes
   viewport?: HTMLAttributes
   verticalScrollbar?: HTMLAttributes
   horizontalScrollbar?: HTMLAttributes

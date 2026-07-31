@@ -3,34 +3,68 @@ import { computed, useAttrs } from 'vue'
 import {
   Card as CardBase,
   CardAction,
-  CardHeader,
   CardContent,
   CardDescription,
   CardFooter,
+  CardHeader,
   CardTitle,
 } from '@/components/primitives/Card'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import type { CardProps, CardSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<CardProps>()
+const props = withDefaults(defineProps<CardProps>(), {
+  label: undefined,
+  description: undefined,
+  ui: undefined,
+})
 defineSlots<CardSlots>()
 
 const attrs = useAttrs()
-const calculatedUI = computed(() => ({
-  root: {
-    ...props.ui?.root,
-    ...attrs,
-    class: cn(props.ui?.root?.class, attrs.class),
-  },
-  header: props.ui?.header,
-  label: props.ui?.label,
-  description: props.ui?.description,
-  action: props.ui?.action,
-  content: props.ui?.content,
-  footer: props.ui?.footer,
-}))
+const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const headerUI = normalizeHTMLAttributes(props.ui?.header)
+  const labelUI = normalizeHTMLAttributes(props.ui?.label)
+  const descriptionUI = normalizeHTMLAttributes(props.ui?.description)
+  const actionUI = normalizeHTMLAttributes(props.ui?.action)
+  const contentUI = normalizeHTMLAttributes(props.ui?.content)
+  const footerUI = normalizeHTMLAttributes(props.ui?.footer)
+
+  return {
+    root: {
+      ...attrs,
+      ...rootUI,
+      class: cn(attrs.class, rootUI.class),
+      style: [attrs.style, rootUI.style],
+    },
+    header: {
+      ...headerUI,
+      class: cn(headerUI.class),
+    },
+    label: {
+      ...labelUI,
+      class: cn(labelUI.class),
+    },
+    description: {
+      ...descriptionUI,
+      class: cn(descriptionUI.class),
+    },
+    action: {
+      ...actionUI,
+      class: cn(actionUI.class),
+    },
+    content: {
+      ...contentUI,
+      class: cn(contentUI.class),
+    },
+    footer: {
+      ...footerUI,
+      class: cn(footerUI.class),
+    },
+  }
+})
 </script>
 
 <template>

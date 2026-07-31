@@ -36,28 +36,15 @@ export type HoverCardSticky = keyof typeof STICKY_VALUES
 export type HoverCardPositionStrategy = keyof typeof POSITION_STRATEGIES
 export type HoverCardUpdatePositionStrategy = keyof typeof UPDATE_POSITION_STRATEGIES
 
-export type HoverCardNodeUI = Omit<HTMLAttributes, 'dir'> & {
+export interface HoverCardTriggerProps {
   as?: string | Component
   asChild?: boolean
-  dir?: 'ltr' | 'rtl'
 }
 
-export type HoverCardContentUI = HoverCardNodeUI & {
+export interface HoverCardContentProps {
+  as?: string | Component
+  asChild?: boolean
   forceMount?: boolean
-}
-
-export interface HoverCardUI {
-  trigger?: HoverCardNodeUI
-  content?: HoverCardContentUI
-}
-
-export interface HoverCardProps {
-  open?: boolean
-  defaultOpen?: boolean
-  content?: string
-  openDelay?: number
-  closeDelay?: number
-  enableTouch?: boolean
   side?: HoverCardSide
   sideOffset?: number
   align?: HoverCardAlign
@@ -69,7 +56,71 @@ export interface HoverCardProps {
   hideWhenDetached?: boolean
   positionStrategy?: HoverCardPositionStrategy
   updatePositionStrategy?: HoverCardUpdatePositionStrategy
-  forceMount?: boolean
+}
+
+export function normalizeHoverCardTriggerProps(
+  source: HoverCardTriggerProps | null | undefined,
+): HoverCardTriggerProps | undefined {
+  if (!source) return undefined
+
+  const { as, asChild } = source
+  return { as, asChild }
+}
+
+export function normalizeHoverCardContentProps(
+  source: HoverCardContentProps | null | undefined,
+): HoverCardContentProps | undefined {
+  if (!source) return undefined
+
+  const {
+    as,
+    asChild,
+    forceMount,
+    side,
+    sideOffset,
+    align,
+    alignOffset,
+    avoidCollisions,
+    collisionPadding,
+    arrowPadding,
+    sticky,
+    hideWhenDetached,
+    positionStrategy,
+    updatePositionStrategy,
+  } = source
+
+  return {
+    as,
+    asChild,
+    forceMount,
+    side,
+    sideOffset,
+    align,
+    alignOffset,
+    avoidCollisions,
+    collisionPadding,
+    arrowPadding,
+    sticky,
+    hideWhenDetached,
+    positionStrategy,
+    updatePositionStrategy,
+  }
+}
+export interface HoverCardUI {
+  root?: HTMLAttributes
+  trigger?: HTMLAttributes
+  content?: HTMLAttributes
+}
+
+export interface HoverCardProps {
+  open?: boolean
+  defaultOpen?: boolean
+  label?: string
+  openDelay?: number
+  closeDelay?: number
+  enableTouch?: boolean
+  trigger?: HoverCardTriggerProps
+  content?: HoverCardContentProps
   ui?: HoverCardUI
 }
 

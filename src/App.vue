@@ -1,237 +1,242 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button } from '@/components/ui/Button'
-import { ProgressCircular } from '@/components/ui/ProgressCircular'
-import {
-  ToggleGroup,
-  type ToggleGroupItem,
-  type ToggleGroupValue,
-} from '@/components/ui/ToggleGroup'
+import { Tabs, type TabItem, type TabsValue } from '@/components/ui/Tabs'
 
-const alignment = ref<ToggleGroupValue>('center')
-const formats = ref<ToggleGroupValue[]>(['bold'])
-const view = ref<ToggleGroupValue>('list')
-const customSelection = ref<ToggleGroupValue[]>(['grid'])
-const progress = ref(64)
+const activeAccountTab = ref<TabsValue>('account')
+const activeToolTab = ref<TabsValue>('search')
 
-const alignmentItems: ToggleGroupItem[] = [
-  { id: 'left', value: 'left', label: 'Izquierda', icon: 'chevronLeft' },
-  { id: 'center', value: 'center', label: 'Centro', icon: 'minus' },
-  { id: 'right', value: 'right', label: 'Derecha', icon: 'chevronRight' },
+const accountTabs: TabItem[] = [
+  {
+    id: 'account',
+    value: 'account',
+    label: 'Cuenta',
+    icon: 'info',
+    content: 'Gestiona el nombre visible, el correo y las preferencias principales de tu cuenta.',
+  },
+  {
+    id: 'security',
+    value: 'security',
+    label: 'Seguridad',
+    icon: 'success',
+    content: 'Configura la contraseña, la autenticación y las sesiones activas.',
+  },
+  {
+    id: 'billing',
+    value: 'billing',
+    label: 'Facturación',
+    icon: 'save',
+    content: 'Consulta tu plan, las facturas y el método de pago predeterminado.',
+  },
 ]
 
-const formatItems: ToggleGroupItem[] = [
-  { id: 'bold', value: 'bold', label: 'Negrita' },
-  { id: 'italic', value: 'italic', label: 'Cursiva' },
-  { id: 'underline', value: 'underline', label: 'Subrayado' },
-]
-
-const viewItems: ToggleGroupItem[] = [
-  { id: 'list', value: 'list', label: 'Lista', icon: 'minus' },
-  { id: 'grid', value: 'grid', label: 'Cuadrícula', icon: 'check' },
-  { id: 'detail', value: 'detail', label: 'Detalle', icon: 'info', disabled: true },
+const toolTabs: TabItem[] = [
+  {
+    id: 'search',
+    value: 'search',
+    label: 'Buscar',
+    icon: 'search',
+    trailingIcon: 'chevronRight',
+    forceMount: true,
+  },
+  {
+    id: 'saved',
+    value: 'saved',
+    label: 'Guardado',
+    icon: 'save',
+    contentProps: { forceMount: true },
+  },
+  {
+    id: 'alerts',
+    value: 'alerts',
+    label: 'Alertas',
+    icon: 'warning',
+    trigger: { disabled: true },
+  },
 ]
 </script>
 
 <template>
   <main class="mx-auto min-h-screen max-w-5xl space-y-10 p-6 md:p-10">
     <header class="space-y-2">
-      <h1 class="text-3xl font-bold">ToggleGroup y ProgressCircular</h1>
+      <h1 class="text-3xl font-bold">Tabs</h1>
       <p class="text-muted-foreground">
-        Ejemplos de selección, UI contextual y progreso SVG normalizado.
+        Ejemplos con variantes, orientación, props funcionales, UI contextual y slots.
       </p>
     </header>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Selección única</h2>
-        <p class="text-sm text-muted-foreground">Valor actual: {{ alignment }}.</p>
+        <h2 class="text-lg font-semibold">Uso básico</h2>
+        <p class="text-sm text-muted-foreground">Tab activa: {{ activeAccountTab }}.</p>
       </div>
 
-      <div class="flex flex-wrap gap-4">
-        <ToggleGroup v-model="alignment" mandatory :items="alignmentItems" />
-        <ToggleGroup
-          default-value="left"
-          variant="outline"
-          severity="primary"
-          :items="alignmentItems"
-        />
-      </div>
-    </section>
-
-    <section class="space-y-6 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Selección múltiple</h2>
-        <p class="text-sm text-muted-foreground">Valores: {{ formats.join(', ') || 'ninguno' }}.</p>
-      </div>
-
-      <ToggleGroup
-        v-model="formats"
-        type="multiple"
-        variant="outline"
-        :spacing="2"
-        :items="formatItems"
+      <Tabs
+        v-model="activeAccountTab"
+        :tabs="accountTabs"
+        :ui="{
+          content: { class: 'mt-4 min-h-28 border p-4 text-sm text-muted-foreground' },
+        }"
       />
     </section>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Orientación y tamaños</h2>
-        <p class="text-sm text-muted-foreground">Incluye un item deshabilitado.</p>
+        <h2 class="text-lg font-semibold">Variante line</h2>
+        <p class="text-sm text-muted-foreground">Indicador inferior para la tab activa.</p>
       </div>
 
-      <div class="grid gap-6 md:grid-cols-2">
-        <ToggleGroup
-          v-model="view"
-          orientation="vertical"
-          variant="outline"
-          class="w-48"
-          :items="viewItems"
-        />
-
-        <div class="flex flex-wrap items-start gap-3">
-          <ToggleGroup
-            v-for="size in ['xs', 'sm', 'md', 'lg'] as const"
-            :key="size"
-            default-value="center"
-            :size="size"
-            variant="outline"
-            :items="alignmentItems"
-          />
-        </div>
-      </div>
+      <Tabs
+        default-value="security"
+        variant="line"
+        :tabs="accountTabs"
+        :ui="{
+          list: { class: 'w-full justify-start border-b' },
+          content: { class: 'mt-0 rounded-none border-x border-b p-4 text-sm' },
+        }"
+      />
     </section>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">UI contextual y slots</h2>
-        <p class="text-sm text-muted-foreground">
-          Item, icon, label y trailingIcon se normalizan para cada contexto.
-        </p>
+        <h2 class="text-lg font-semibold">Orientación vertical</h2>
+        <p class="text-sm text-muted-foreground">Lista lateral y contenido flexible.</p>
       </div>
 
-      <ToggleGroup
-        v-model="customSelection"
-        type="multiple"
-        color="#7c3aed"
-        variant="outline"
-        :spacing="2"
-        :items="viewItems"
+      <Tabs
+        default-value="account"
+        orientation="vertical"
+        variant="line"
+        :tabs="accountTabs"
+        :list="{ as: 'div' }"
         :ui="{
-          root: { class: 'rounded-xl bg-primary/5 p-2' },
-          item: ({ selected }) => ({
-            class: selected ? 'ring-2 ring-primary/30' : 'opacity-80',
-            title: selected ? 'Elemento seleccionado' : 'Seleccionar elemento',
+          root: { class: 'min-h-56 gap-6' },
+          list: { class: 'w-40 border-r pr-3' },
+          trigger: { class: 'justify-start' },
+          contentWrapper: { class: 'rounded-lg border p-4' },
+          content: { class: 'mt-0 text-sm text-muted-foreground' },
+        }"
+      />
+    </section>
+
+    <section class="space-y-6 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Estado controlado y activación manual</h2>
+        <p class="text-sm text-muted-foreground">Herramienta activa: {{ activeToolTab }}.</p>
+      </div>
+
+      <Tabs
+        v-model="activeToolTab"
+        activation-mode="manual"
+        :unmount-on-hide="false"
+        variant="line"
+        :tabs="toolTabs"
+        :ui="{
+          root: { 'data-example': 'controlled-tabs' },
+          list: { class: 'w-full justify-start' },
+          trigger: ({ active }) => ({
+            class: active ? 'font-bold text-primary' : '',
+            title: active ? 'Tab activa' : 'Activar tab',
           }),
-          icon: ({ selected }) => ({ class: selected ? 'scale-110' : '' }),
-          label: ({ selected }) => ({ class: selected ? 'font-bold' : '' }),
-          trailingIcon: { class: 'opacity-60' },
+          icon: ({ active }) => ({ class: active ? 'scale-110 text-primary' : '' }),
+          label: ({ active }) => ({ class: active ? 'tracking-wide' : '' }),
+          trailingIcon: { class: 'opacity-50' },
+          content: { class: 'mt-4 min-h-32 rounded-lg border p-4' },
         }"
       >
-        <template #trailing="{ selected }">
-          <span class="text-[10px]">{{ selected ? 'ON' : 'OFF' }}</span>
+        <template #content-search="{ tab, active }">
+          <div class="space-y-2">
+            <h3 class="font-semibold">{{ tab.label }}</h3>
+            <p class="text-sm text-muted-foreground">
+              Contenido individual. Estado: {{ active ? 'activo' : 'inactivo' }}.
+            </p>
+          </div>
         </template>
 
-        <template #leading-grid>
-          <span class="text-xs">#</span>
+        <template #content="{ tab, active }">
+          <div class="space-y-2">
+            <h3 class="font-semibold">{{ tab.label }}</h3>
+            <p class="text-sm text-muted-foreground">
+              Contenido global. Estado: {{ active ? 'activo' : 'inactivo' }}.
+            </p>
+          </div>
         </template>
-      </ToggleGroup>
-    </section>
+      </Tabs>
 
-    <section class="space-y-6 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">ProgressCircular dinámico</h2>
-        <p class="text-sm text-muted-foreground">Progreso actual: {{ progress }}%.</p>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-8">
-        <ProgressCircular
-          :value="progress"
-          :label="`${progress}%`"
-          aria-label="Progreso dinámico"
-        />
-
-        <div class="flex flex-wrap gap-2">
-          <Button
-            label="Restar 10"
-            variant="outline"
-            @click="progress = Math.max(0, progress - 10)"
-          />
-          <Button label="Sumar 10" @click="progress = Math.min(100, progress + 10)" />
-          <Button label="Reiniciar" variant="plain" @click="progress = 0" />
-        </div>
+      <div class="flex flex-wrap gap-2">
+        <Button label="Buscar" variant="outline" @click="activeToolTab = 'search'" />
+        <Button label="Guardado" variant="outline" @click="activeToolTab = 'saved'" />
       </div>
     </section>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Tamaños, grosor y colores</h2>
-      </div>
-
-      <div class="flex flex-wrap items-end gap-8">
-        <ProgressCircular :value="25" :size="56" :thickness="6" label="25%" />
-        <ProgressCircular
-          :value="50"
-          :size="80"
-          :thickness="8"
-          label="50%"
-          color="#2563eb"
-          track-color="#dbeafe"
-        />
-        <ProgressCircular
-          :value="75"
-          :size="112"
-          :thickness="10"
-          label="75%"
-          color="#16a34a"
-          track-color="#dcfce7"
-        />
-        <ProgressCircular :value="90" size="9rem" :thickness="12" label="90%" color="#ea580c" />
-      </div>
-    </section>
-
-    <section class="space-y-6 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Slot y UI SVG</h2>
+        <h2 class="text-lg font-semibold">Slots de trigger</h2>
         <p class="text-sm text-muted-foreground">
-          Svg, track e indicator utilizan SVGAttributes normalizados.
+          Personalización global e individual de cada trigger.
         </p>
       </div>
 
-      <div class="flex flex-wrap items-center gap-10">
-        <ProgressCircular
-          :value="68"
-          :size="128"
-          :thickness="9"
-          color="#7c3aed"
-          :ui="{
-            root: { class: 'rounded-full bg-violet-500/5 shadow-lg' },
-            svg: { class: 'size-full -rotate-90 drop-shadow-md' },
-            track: { class: 'stroke-violet-200' },
-            indicator: {
-              class: 'stroke-violet-600',
-              strokeLinecap: 'butt',
-            },
-            label: { class: 'text-violet-700' },
-          }"
-          aria-label="Progreso personalizado"
-        >
-          <template #label="{ percentage }">
-            <div class="flex flex-col items-center leading-none">
-              <span class="text-xl font-bold">{{ Math.round(percentage) }}%</span>
-              <span class="mt-1 text-[10px] font-normal">completado</span>
-            </div>
-          </template>
-        </ProgressCircular>
+      <Tabs
+        default-value="account"
+        :tabs="accountTabs"
+        :ui="{
+          list: { class: 'gap-2 bg-transparent p-0' },
+          trigger: ({ active }) => ({
+            class: active ? 'border-primary bg-primary/10 text-primary' : 'border bg-background',
+          }),
+          content: { class: 'mt-4 rounded-lg bg-muted/40 p-4 text-sm' },
+        }"
+      >
+        <template #trigger-account="{ tab, active }">
+          <span class="flex items-center gap-2">
+            <span
+              :class="['size-2 rounded-full', active ? 'bg-primary' : 'bg-muted-foreground/40']"
+            />
+            {{ tab.label }}
+          </span>
+        </template>
 
-        <ProgressCircular
-          :value="null"
-          :size="96"
-          :thickness="7"
-          label="…"
-          aria-label="Procesando"
-        />
+        <template #trailing="{ active }">
+          <span v-if="active" class="text-[10px]">ACTIVA</span>
+        </template>
+      </Tabs>
+    </section>
+
+    <section class="space-y-6 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Props funcionales por tab</h2>
+        <p class="text-sm text-muted-foreground">
+          trigger y contentProps se filtran mediante normalizadores explícitos.
+        </p>
       </div>
+
+      <Tabs
+        default-value="first"
+        :list="{ as: 'nav' }"
+        :tabs="[
+          {
+            id: 'first',
+            value: 'first',
+            label: 'Primera',
+            trigger: { as: 'button' },
+            contentProps: { as: 'section', forceMount: true },
+            content: 'Panel montado permanentemente.',
+          },
+          {
+            id: 'second',
+            value: 'second',
+            label: 'Segunda',
+            trigger: { as: 'button' },
+            contentProps: { as: 'article' },
+            content: 'Panel renderizado como article.',
+          },
+        ]"
+        :ui="{
+          list: { 'aria-label': 'Ejemplo de props funcionales' },
+          content: { class: 'mt-4 rounded-lg border p-4 text-sm' },
+        }"
+      />
     </section>
   </main>
 </template>

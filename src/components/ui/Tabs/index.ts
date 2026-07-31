@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { ButtonHTMLAttributes, Component, HTMLAttributes } from 'vue'
-import type { NormalizeIconProps, NormalizedIconProps } from '@/components/ui/Icon'
+import type { Component, HTMLAttributes } from 'vue'
+import type { IconName, IconProps } from '@/components/ui/Icon'
 
 export { default as Tabs } from './Tabs.vue'
 
@@ -72,18 +72,60 @@ export const tabsVariants = {
 export type TabsVariants = VariantProps<typeof tabsVariants.list>
 export type TabsValue = string | number
 
+export interface TabsListProps {
+  as?: string | Component
+  asChild?: boolean
+}
+
+export interface TabsTriggerProps {
+  as?: string | Component
+  asChild?: boolean
+  disabled?: boolean
+}
+
+export interface TabsContentProps {
+  as?: string | Component
+  asChild?: boolean
+  forceMount?: boolean
+}
+
+export function normalizeTabsListProps(
+  source: TabsListProps | null | undefined,
+): TabsListProps | undefined {
+  if (!source) return undefined
+  const { as, asChild } = source
+  return { as, asChild }
+}
+
+export function normalizeTabsTriggerProps(
+  source: TabsTriggerProps | null | undefined,
+): TabsTriggerProps | undefined {
+  if (!source) return undefined
+  const { as, asChild, disabled } = source
+  return { as, asChild, disabled }
+}
+
+export function normalizeTabsContentProps(
+  source: TabsContentProps | null | undefined,
+): TabsContentProps | undefined {
+  if (!source) return undefined
+  const { as, asChild, forceMount } = source
+  return { as, asChild, forceMount }
+}
+
 export interface TabItem {
   id: string | number
   value: TabsValue
   label?: string
   content?: string
-  icon?: NormalizeIconProps
-  trailingIcon?: NormalizeIconProps
+  icon?: IconName | IconProps
+  trailingIcon?: IconName | IconProps
   disabled?: boolean
   forceMount?: boolean
+  trigger?: TabsTriggerProps
+  contentProps?: TabsContentProps
 }
 
-// Context
 export interface TabsUIContext {
   tab: TabItem
   index: number
@@ -94,29 +136,17 @@ export interface TabsUIContext {
 
 export type TabsUIValue<T> = T | ((context: TabsUIContext) => T)
 
-export type TabsNodeUI = Omit<HTMLAttributes, 'dir'> & {
-  as?: string | Component
-  asChild?: boolean
-  dir?: 'ltr' | 'rtl'
-}
-
-export type TabsTriggerUI = Omit<ButtonHTMLAttributes, 'value'> & {
-  as?: string | Component
-  asChild?: boolean
-}
-
-// UI
 export interface TabsUI {
-  list?: TabsNodeUI
+  root?: HTMLAttributes
+  list?: HTMLAttributes
   contentWrapper?: HTMLAttributes
-  trigger?: TabsUIValue<TabsTriggerUI>
-  icon?: TabsUIValue<NormalizedIconProps>
+  trigger?: TabsUIValue<HTMLAttributes>
+  icon?: TabsUIValue<HTMLAttributes>
   label?: TabsUIValue<HTMLAttributes>
-  trailingIcon?: TabsUIValue<NormalizedIconProps>
-  content?: TabsUIValue<TabsNodeUI>
+  trailingIcon?: TabsUIValue<HTMLAttributes>
+  content?: TabsUIValue<HTMLAttributes>
 }
 
-// Props
 export interface TabsProps {
   modelValue?: TabsValue
   defaultValue?: TabsValue
@@ -128,19 +158,17 @@ export interface TabsProps {
   variant?: TabsVariants['variant']
   as?: string | Component
   asChild?: boolean
+  list?: TabsListProps
   tabs?: TabItem[]
   ui?: TabsUI
 }
 
-// Emits
 export interface TabsEmits {
   'update:modelValue': [value: TabsValue]
 }
 
-// SlotProps
 export type TabsSlotProps = TabsUIContext
 
-// Slots
 export type TabsSlots = {
   trigger?(props: TabsSlotProps): unknown
   leading?(props: TabsSlotProps): unknown

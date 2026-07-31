@@ -8,6 +8,7 @@ import {
 import { Tabs, type TabItem, type TabsValue } from '@/components/ui/Tabs'
 import { Button } from '@/components/ui/Button'
 import { Empty } from '@/components/ui/Empty'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/RadioGroup'
 
 const alignmentItems: ToggleGroupItemData[] = [
   { id: 'left', value: 'left', label: 'Izquierda', icon: 'chevronLeft' },
@@ -69,10 +70,124 @@ const iconTabs: TabItem[] = [
 
 const activeAccountTab = ref<TabsValue>('account')
 const activeIconTab = ref<TabsValue>('search')
+const radioValue = ref('comfortable')
+const radioLayout = ref('card')
+const radioHorizontalValue = ref('monthly')
+const radioCustomValue = ref('pro')
+const radioItems = [
+  { value: 'default', label: 'Predeterminado' },
+  { value: 'comfortable', label: 'Cómodo', description: 'Más espacio entre elementos.' },
+  { value: 'compact', label: 'Compacto', disabled: true },
+]
 </script>
 
 <template>
   <main class="mx-auto min-h-screen max-w-6xl space-y-10 p-6 md:p-10">
+    <header class="space-y-2">
+      <h1 class="text-3xl font-bold">RadioGroup</h1>
+      <p class="max-w-3xl text-muted-foreground">
+        Selección única mediante composición de slots, sin array de items.
+      </p>
+    </header>
+
+    <section class="grid gap-6 rounded-xl border p-5 md:grid-cols-2">
+      <div class="space-y-3">
+        <div>
+          <h2 class="text-lg font-semibold">Selección vertical</h2>
+          <p class="text-sm text-muted-foreground">Valor: {{ radioValue }}</p>
+        </div>
+
+        <RadioGroup
+          v-model="radioValue"
+          :items="radioItems"
+          :ui="{
+            item: { class: 'rounded-md px-3 py-2 transition-colors hover:bg-muted' },
+            label: { class: 'text-primary' },
+          }"
+        >
+          <template #leading-comfortable>
+            <span aria-hidden="true" class="text-xs text-muted-foreground">★</span>
+          </template>
+          <template #trailing-comfortable="{ selected }">
+            <span v-if="selected" class="text-xs text-primary">Actual</span>
+          </template>
+        </RadioGroup>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <h2 class="text-lg font-semibold">Items personalizados</h2>
+          <p class="text-sm text-muted-foreground">
+            Cada item recibe sus propias props y contenido.
+          </p>
+        </div>
+
+        <RadioGroup v-model="radioLayout" class="gap-2">
+          <label
+            class="flex cursor-pointer items-center gap-3 rounded-md border p-3 text-sm has-[[data-state=checked]]:border-primary"
+          >
+            <RadioGroupItem value="card" />
+            <span>Tarjeta</span>
+          </label>
+          <label
+            class="flex cursor-pointer items-center gap-3 rounded-md border p-3 text-sm has-[[data-state=checked]]:border-primary"
+          >
+            <RadioGroupItem value="list" />
+            <span>Lista</span>
+          </label>
+        </RadioGroup>
+      </div>
+    </section>
+
+    <section class="grid gap-6 rounded-xl border p-5 md:grid-cols-2">
+      <div class="space-y-3">
+        <div>
+          <h2 class="text-lg font-semibold">Orientación horizontal</h2>
+          <p class="text-sm text-muted-foreground">Valor: {{ radioHorizontalValue }}</p>
+        </div>
+        <RadioGroup
+          v-model="radioHorizontalValue"
+          orientation="horizontal"
+          grouped
+          radio-position="right"
+          :items="[
+            { value: 'monthly', label: 'Mensual' },
+            { value: 'yearly', label: 'Anual' },
+          ]"
+        />
+      </div>
+      <div class="space-y-3">
+        <div>
+          <h2 class="text-lg font-semibold">Slot de item</h2>
+          <p class="text-sm text-muted-foreground">Personaliza el label sin escribir cada radio.</p>
+        </div>
+        <RadioGroup
+          v-model="radioCustomValue"
+          orientation="horizontal"
+          :items="[
+            { value: 'basic', label: 'Básico', description: 'Para proyectos pequeños.' },
+            {
+              value: 'pro',
+              label: 'Profesional',
+              description: 'Para equipos y proyectos avanzados.',
+            },
+          ]"
+        >
+          <template #item="{ item, selected }">
+            <label
+              :for="item.id ?? String(item.value)"
+              class="flex cursor-pointer items-center justify-between rounded-md border p-3 has-[[data-state=checked]]:border-primary"
+            >
+              <span :class="[selected ? 'text-red-500' : 'text-blue-500']">
+                <span class="block text-sm font-medium">{{ item.label }}</span>
+                <span class="block text-xs text-muted-foreground">{{ item.description }}</span>
+              </span>
+              <RadioGroupItem :id="item.id ?? String(item.value)" :value="item.value" />
+            </label>
+          </template>
+        </RadioGroup>
+      </div>
+    </section>
     <header class="space-y-2">
       <h1 class="text-3xl font-bold">ToggleGroup</h1>
       <p class="max-w-3xl text-muted-foreground">

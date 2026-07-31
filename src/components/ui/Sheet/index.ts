@@ -1,47 +1,81 @@
-import type { ButtonHTMLAttributes, Component, HTMLAttributes } from 'vue'
-import type { NormalizeIconProps, NormalizedIconProps } from '@/components/ui/Icon'
+import type { Component, HTMLAttributes } from 'vue'
+import type { IconName, IconProps } from '@/components/ui/Icon'
 
 export { default as Sheet } from './Sheet.vue'
 
 export type SheetSide = 'top' | 'right' | 'bottom' | 'left'
 
-export type SheetNodeUI = Omit<HTMLAttributes, 'dir'> & {
+export interface SheetTriggerProps {
   as?: string | Component
   asChild?: boolean
-  dir?: 'ltr' | 'rtl'
 }
 
-// UI
+export interface SheetContentProps {
+  as?: string | Component
+  asChild?: boolean
+  forceMount?: boolean
+  disableOutsidePointerEvents?: boolean
+  side?: SheetSide
+}
+
+export interface SheetCloseProps {
+  as?: string | Component
+  asChild?: boolean
+}
+
+export function normalizeSheetTriggerProps(
+  source: SheetTriggerProps | null | undefined,
+): SheetTriggerProps | undefined {
+  if (!source) return undefined
+  const { as, asChild } = source
+  return { as, asChild }
+}
+
+export function normalizeSheetContentProps(
+  source: SheetContentProps | null | undefined,
+): SheetContentProps | undefined {
+  if (!source) return undefined
+  const { as, asChild, forceMount, disableOutsidePointerEvents, side } = source
+  return { as, asChild, forceMount, disableOutsidePointerEvents, side }
+}
+
+export function normalizeSheetCloseProps(
+  source: SheetCloseProps | null | undefined,
+): SheetCloseProps | undefined {
+  if (!source) return undefined
+  const { as, asChild } = source
+  return { as, asChild }
+}
+
 export interface SheetUI {
-  trigger?: SheetNodeUI
-  content?: SheetNodeUI
+  root?: HTMLAttributes
+  trigger?: HTMLAttributes
+  content?: HTMLAttributes
   header?: HTMLAttributes
-  label?: SheetNodeUI
-  icon?: NormalizedIconProps
-  description?: SheetNodeUI
+  label?: HTMLAttributes
+  icon?: HTMLAttributes
+  description?: HTMLAttributes
   body?: HTMLAttributes
   footer?: HTMLAttributes
-  close?: HTMLAttributes & ButtonHTMLAttributes
+  close?: HTMLAttributes
 }
 
-// Props
 export interface SheetProps {
   open?: boolean
   defaultOpen?: boolean
   modal?: boolean
   block?: boolean
   unmountOnHide?: boolean
-  side?: SheetSide
   label?: string
   description?: string
-  icon?: NormalizeIconProps
+  icon?: IconName | IconProps
   showCloseButton?: boolean
-  forceMount?: boolean
-  disableOutsidePointerEvents?: boolean
+  trigger?: SheetTriggerProps
+  content?: SheetContentProps
+  close?: SheetCloseProps
   ui?: SheetUI
 }
 
-// Emits
 export interface SheetEmits {
   'update:open': [value: boolean]
   openAutoFocus: [event: Event]
@@ -52,13 +86,11 @@ export interface SheetEmits {
   interactOutside: [event: Event]
 }
 
-// SlotProps
 export interface SheetSlotProps {
   open: boolean
   close: () => void
 }
 
-// Slots
 export interface SheetSlots {
   default?(props: SheetSlotProps): unknown
   content?(props: SheetSlotProps): unknown

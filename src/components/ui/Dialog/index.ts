@@ -1,24 +1,60 @@
-import type { ButtonHTMLAttributes, Component, HTMLAttributes } from 'vue'
-import type { NormalizeIconProps, NormalizedIconProps } from '@/components/ui/Icon'
+import type { Component, HTMLAttributes } from 'vue'
+import type { IconName, IconProps } from '@/components/ui/Icon'
 
 export { default as Dialog } from './Dialog.vue'
 
-export type DialogNodeUI = Omit<HTMLAttributes, 'dir'> & {
+export interface DialogTriggerProps {
   as?: string | Component
   asChild?: boolean
-  dir?: 'ltr' | 'rtl'
+}
+
+export interface DialogContentProps {
+  as?: string | Component
+  asChild?: boolean
+  forceMount?: boolean
+  disableOutsidePointerEvents?: boolean
+}
+
+export interface DialogCloseProps {
+  as?: string | Component
+  asChild?: boolean
+}
+
+export function normalizeDialogTriggerProps(
+  source: DialogTriggerProps | null | undefined,
+): DialogTriggerProps | undefined {
+  if (!source) return undefined
+  const { as, asChild } = source
+  return { as, asChild }
+}
+
+export function normalizeDialogContentProps(
+  source: DialogContentProps | null | undefined,
+): DialogContentProps | undefined {
+  if (!source) return undefined
+  const { as, asChild, forceMount, disableOutsidePointerEvents } = source
+  return { as, asChild, forceMount, disableOutsidePointerEvents }
+}
+
+export function normalizeDialogCloseProps(
+  source: DialogCloseProps | null | undefined,
+): DialogCloseProps | undefined {
+  if (!source) return undefined
+  const { as, asChild } = source
+  return { as, asChild }
 }
 
 export interface DialogUI {
-  trigger?: DialogNodeUI
-  content?: DialogNodeUI
+  root?: HTMLAttributes
+  trigger?: HTMLAttributes
+  content?: HTMLAttributes
   header?: HTMLAttributes
-  title?: DialogNodeUI
-  icon?: NormalizedIconProps
-  description?: DialogNodeUI
+  title?: HTMLAttributes
+  icon?: HTMLAttributes
+  description?: HTMLAttributes
   body?: HTMLAttributes
   footer?: HTMLAttributes
-  close?: HTMLAttributes & ButtonHTMLAttributes
+  close?: HTMLAttributes
 }
 
 export interface DialogProps {
@@ -29,10 +65,11 @@ export interface DialogProps {
   unmountOnHide?: boolean
   label?: string
   description?: string
-  icon?: NormalizeIconProps
+  icon?: IconName | IconProps
   showCloseButton?: boolean
-  forceMount?: boolean
-  disableOutsidePointerEvents?: boolean
+  trigger?: DialogTriggerProps
+  content?: DialogContentProps
+  close?: DialogCloseProps
   ui?: DialogUI
 }
 

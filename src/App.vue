@@ -1,209 +1,248 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button } from '@/components/ui/Button'
-import { Label } from '@/components/ui/Label'
-import { Progress } from '@/components/ui/Progress'
+import { Dialog } from '@/components/ui/Dialog'
+import { Input } from '@/components/ui/Input'
+import { Sheet } from '@/components/ui/Sheet'
 
-const uploadProgress = ref(42)
+const name = ref('')
+const email = ref('usuario@ejemplo.com')
+const customInput = ref('Valor personalizado')
+const dialogOpen = ref(false)
+const sheetOpen = ref(false)
 </script>
 
 <template>
-  <main class="mx-auto min-h-screen max-w-4xl space-y-10 p-6 md:p-10">
+  <main class="mx-auto min-h-screen max-w-5xl space-y-10 p-6 md:p-10">
     <header class="space-y-2">
-      <h1 class="text-3xl font-bold">Label y Progress</h1>
+      <h1 class="text-3xl font-bold">Input, Dialog y Sheet</h1>
       <p class="text-muted-foreground">
-        Ejemplos de asociación de campos, accesibilidad, estados y personalización mediante ui.
+        Ejemplos con props funcionales agrupadas y atributos UI normalizados.
       </p>
     </header>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Label básico</h2>
-        <p class="text-sm text-muted-foreground">Asociación explícita mediante la prop for.</p>
+        <h2 class="text-lg font-semibold">Input</h2>
+        <p class="text-sm text-muted-foreground">Valores reactivos y estados habituales.</p>
       </div>
 
       <div class="grid gap-6 md:grid-cols-2">
-        <div class="space-y-2">
-          <Label for="name">Nombre</Label>
-          <input
-            id="name"
-            placeholder="Escribe tu nombre"
-            class="h-9 w-full rounded-md border bg-transparent px-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-          />
-        </div>
+        <label class="space-y-2">
+          <span class="text-sm font-medium">Nombre</span>
+          <Input v-model="name" placeholder="Escribe tu nombre" aria-label="Nombre" />
+          <span class="block text-xs text-muted-foreground">Valor: {{ name || 'vacío' }}</span>
+        </label>
 
-        <div class="space-y-2">
-          <Label for="email">
-            Correo electrónico
-            <span class="text-error" aria-hidden="true">*</span>
-          </Label>
-          <input
-            id="email"
-            type="email"
-            required
-            placeholder="nombre@ejemplo.com"
-            class="h-9 w-full rounded-md border bg-transparent px-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-          />
-        </div>
+        <label class="space-y-2">
+          <span class="text-sm font-medium">Correo electrónico</span>
+          <Input v-model="email" type="email" aria-label="Correo electrónico" />
+        </label>
+
+        <label class="space-y-2">
+          <span class="text-sm font-medium">Valor inicial</span>
+          <Input default-value="Contenido inicial" aria-label="Valor inicial" />
+        </label>
+
+        <label class="space-y-2">
+          <span class="text-sm font-medium">Deshabilitado</span>
+          <Input disabled value="No editable" aria-label="Input deshabilitado" />
+        </label>
       </div>
     </section>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Label personalizado</h2>
-        <p class="text-sm text-muted-foreground">Atributos HTML normalizados mediante ui.root.</p>
+        <h2 class="text-lg font-semibold">Input personalizado</h2>
+        <p class="text-sm text-muted-foreground">ui.root admite atributos HTML normalizados.</p>
       </div>
 
-      <div class="space-y-5">
-        <div class="space-y-2">
-          <Label
-            for="custom-field"
-            :ui="{
-              root: {
-                class: 'text-base font-bold text-primary',
-                title: 'Etiqueta personalizada',
-              },
-            }"
-          >
-            Campo personalizado
-          </Label>
-          <input
-            id="custom-field"
-            class="h-9 w-full rounded-md border border-primary/40 bg-primary/5 px-3 text-sm outline-none"
-          />
-        </div>
-
-        <Label as-child>
-          <label class="flex cursor-pointer items-center gap-3 rounded-lg border p-4">
-            <input type="checkbox" />
-            <span>
-              <span class="block font-medium">Aceptar condiciones</span>
-              <span class="block text-sm text-muted-foreground">
-                Label utiliza el elemento hijo como raíz.
-              </span>
-            </span>
-          </label>
-        </Label>
-      </div>
-    </section>
-
-    <section class="space-y-6 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Progress básico</h2>
-        <p class="text-sm text-muted-foreground">Carga actual: {{ uploadProgress }}%.</p>
-      </div>
-
-      <Progress
-        :value="uploadProgress"
-        :label="`${uploadProgress}%`"
-        aria-label="Progreso de carga"
-      />
-
-      <div class="flex flex-wrap gap-2">
-        <Button
-          label="Restar 10"
-          variant="outline"
-          @click="uploadProgress = Math.max(0, uploadProgress - 10)"
+      <div class="max-w-lg space-y-2">
+        <Input
+          v-model="customInput"
+          :ui="{
+            root: {
+              class:
+                'h-11 rounded-xl border-primary/40 bg-primary/5 font-medium text-primary shadow-sm',
+              title: 'Input personalizado',
+            },
+          }"
+          aria-label="Input personalizado"
         />
-        <Button label="Sumar 10" @click="uploadProgress = Math.min(100, uploadProgress + 10)" />
-        <Button label="Reiniciar" variant="plain" @click="uploadProgress = 0" />
+        <p class="text-sm text-muted-foreground">{{ customInput }}</p>
       </div>
     </section>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Valores y colores</h2>
-        <p class="text-sm text-muted-foreground">Diferentes valores máximos y colores.</p>
-      </div>
-
-      <div class="space-y-5">
-        <div class="space-y-2">
-          <div class="flex justify-between text-sm">
-            <span>Predeterminado</span>
-            <span>25%</span>
-          </div>
-          <Progress :value="25" aria-label="Progreso predeterminado" />
-        </div>
-
-        <div class="space-y-2">
-          <div class="flex justify-between text-sm">
-            <span>Éxito</span>
-            <span>75 / 100</span>
-          </div>
-          <Progress
-            :value="75"
-            color="#16a34a"
-            track-color="#dcfce7"
-            aria-label="Progreso correcto"
-          />
-        </div>
-
-        <div class="space-y-2">
-          <div class="flex justify-between text-sm">
-            <span>Escala personalizada</span>
-            <span>30 / 50</span>
-          </div>
-          <Progress
-            :value="30"
-            :max="50"
-            color="#7c3aed"
-            :get-value-text="(value, max) => `${value} de ${max} tareas`"
-            aria-label="Tareas completadas"
-          />
-        </div>
-      </div>
-    </section>
-
-    <section class="space-y-6 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Label mediante slot</h2>
-        <p class="text-sm text-muted-foreground">El slot recibe value, max y percentage.</p>
-      </div>
-
-      <Progress :value="68" color="#2563eb" aria-label="Descarga del archivo">
-        <template #label="{ value, max, percentage }">
-          Descargando {{ value }} / {{ max }} · {{ Math.round(percentage) }}%
-        </template>
-      </Progress>
-    </section>
-
-    <section class="space-y-6 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Personalización con ui</h2>
+        <h2 class="text-lg font-semibold">Dialog básico</h2>
         <p class="text-sm text-muted-foreground">
-          Root, indicator y label contienen únicamente HTMLAttributes.
+          Trigger, content y close contienen sus props funcionales.
         </p>
       </div>
 
-      <Progress
-        :value="82"
-        label="82% completado"
-        color="#ea580c"
+      <Dialog
+        label="Editar perfil"
+        description="Actualiza la información pública de tu perfil."
+        icon="info"
         :ui="{
-          root: {
-            class: 'h-6 rounded-lg ring-2 ring-orange-500/20',
-            title: 'Progreso personalizado',
-          },
-          indicator: {
-            class: 'rounded-lg bg-gradient-to-r from-orange-400 to-orange-600',
-          },
-          label: {
-            class: 'justify-start px-3 text-left font-bold tracking-wide',
+          close: {
+            class:
+              'rounded-full border border-primary/50 bg-primary/10 text-primary hover:bg-primary/20',
           },
         }"
-        aria-label="Progreso personalizado"
-      />
+      >
+        <Button label="Abrir Dialog" variant="outline" />
+
+        <template #content>
+          <div class="grid gap-4 py-2">
+            <label class="space-y-2">
+              <span class="text-sm font-medium">Nombre visible</span>
+              <Input default-value="Nononavas" aria-label="Nombre visible" />
+            </label>
+            <label class="space-y-2">
+              <span class="text-sm font-medium">Usuario</span>
+              <Input default-value="@nononavas" aria-label="Usuario" />
+            </label>
+          </div>
+        </template>
+
+        <template #footer="{ close }">
+          <Button label="Cancelar" variant="outline" @click="close" />
+          <Button label="Guardar" icon="save" @click="close" />
+        </template>
+      </Dialog>
     </section>
 
-    <section class="space-y-4 rounded-xl border p-5">
+    <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Estado indeterminado</h2>
+        <h2 class="text-lg font-semibold">Dialog controlado y UI</h2>
         <p class="text-sm text-muted-foreground">
-          Un valor null indica que todavía no se conoce el progreso.
+          Estado: {{ dialogOpen ? 'abierto' : 'cerrado' }}.
         </p>
       </div>
 
-      <Progress :value="null" label="Procesando…" aria-label="Procesando contenido" />
+      <Dialog
+        v-model:open="dialogOpen"
+        label="Confirmar operación"
+        description="Esta acción actualizará los datos seleccionados."
+        icon="warning"
+        :content="{ disableOutsidePointerEvents: true }"
+        :ui="{
+          root: { 'data-example': 'controlled-dialog' },
+          trigger: { class: 'rounded-lg ring-2 ring-warning/20' },
+          content: { class: 'border-2 border-warning/30 shadow-xl' },
+          header: { class: 'rounded-md bg-warning/5 p-3' },
+          title: { class: 'text-warning' },
+          icon: { class: 'size-5' },
+          description: { class: 'text-warning/70' },
+          body: { class: 'py-6' },
+          footer: { class: 'bg-muted/40' },
+          close: { class: 'text-warning', title: 'Cerrar confirmación' },
+        }"
+      >
+        <template #default="{ open }">
+          <Button :label="open ? 'Dialog abierto' : 'Abrir confirmación'" severity="warning" />
+        </template>
+
+        <template #content>
+          <p class="text-sm text-muted-foreground">
+            Revisa la información antes de confirmar la operación.
+          </p>
+        </template>
+
+        <template #footer="{ close }">
+          <Button label="Volver" variant="outline" @click="close" />
+          <Button label="Confirmar" severity="warning" @click="close" />
+        </template>
+      </Dialog>
+    </section>
+
+    <section class="space-y-6 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Sheet por posiciones</h2>
+        <p class="text-sm text-muted-foreground">La posición pertenece al objeto content.</p>
+      </div>
+
+      <div class="flex flex-wrap gap-3">
+        <Sheet
+          v-for="side in ['top', 'right', 'bottom', 'left'] as const"
+          :key="side"
+          :label="`Sheet ${side}`"
+          description="Contenido lateral con posición configurable."
+          :content="{ side }"
+        >
+          <Button :label="side" variant="outline" />
+
+          <template #content>
+            <div class="space-y-3 py-4">
+              <p class="text-sm text-muted-foreground">Este Sheet aparece desde {{ side }}.</p>
+              <Input placeholder="Campo de ejemplo" aria-label="Campo del Sheet" />
+            </div>
+          </template>
+
+          <template #footer="{ close }">
+            <Button label="Cerrar" class="w-full" @click="close" />
+          </template>
+        </Sheet>
+      </div>
+    </section>
+
+    <section class="space-y-6 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Sheet controlado y personalizado</h2>
+        <p class="text-sm text-muted-foreground">
+          Estado: {{ sheetOpen ? 'abierto' : 'cerrado' }}.
+        </p>
+      </div>
+
+      <Sheet
+        v-model:open="sheetOpen"
+        label="Configuración"
+        description="Personaliza las preferencias de la aplicación."
+        icon="save"
+        :trigger="{ asChild: true }"
+        :content="{
+          side: 'right',
+          forceMount: false,
+          disableOutsidePointerEvents: true,
+        }"
+        :close="{ as: 'button' }"
+        :ui="{
+          root: { 'data-example': 'custom-sheet' },
+          trigger: { class: 'rounded-lg ring-2 ring-primary/20' },
+          content: { class: 'w-full border-l-2 border-primary/30 sm:max-w-md' },
+          header: { class: 'bg-primary/5' },
+          label: { class: 'text-primary' },
+          icon: { class: 'size-5' },
+          description: { class: 'text-primary/70' },
+          body: { class: 'space-y-5 py-6' },
+          footer: { class: 'border-t bg-muted/30' },
+          close: { class: 'text-primary', title: 'Cerrar configuración' },
+        }"
+      >
+        <template #default="{ open }">
+          <Button :label="open ? 'Sheet abierto' : 'Abrir configuración'" />
+        </template>
+
+        <template #content>
+          <label class="block space-y-2">
+            <span class="text-sm font-medium">Nombre del espacio</span>
+            <Input default-value="Mi espacio" aria-label="Nombre del espacio" />
+          </label>
+          <label class="block space-y-2">
+            <span class="text-sm font-medium">Descripción</span>
+            <Input placeholder="Descripción opcional" aria-label="Descripción" />
+          </label>
+        </template>
+
+        <template #footer="{ close }">
+          <div class="flex w-full gap-2">
+            <Button label="Cancelar" variant="outline" class="flex-1" @click="close" />
+            <Button label="Guardar" icon="save" class="flex-1" @click="close" />
+          </div>
+        </template>
+      </Sheet>
     </section>
   </main>
 </template>

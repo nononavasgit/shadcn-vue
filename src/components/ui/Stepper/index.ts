@@ -1,29 +1,49 @@
-import type { StepperSeparatorProps } from 'reka-ui'
 import type { Component, HTMLAttributes } from 'vue'
-import type { NormalizeIconProps, NormalizedIconProps } from '@/components/ui/Icon'
+import type { IconName, IconProps } from '@/components/ui/Icon'
 
 export { default as Stepper } from './Stepper.vue'
 
 export type StepperState = 'completed' | 'active' | 'inactive'
-export type StepperNodeUI = Omit<HTMLAttributes, 'dir'> & {
+export interface StepperPrimitiveProps {
   as?: string | Component
   asChild?: boolean
-  dir?: 'ltr' | 'rtl'
 }
-export type StepperSeparatorUI = Omit<HTMLAttributes, 'orientation'> & StepperSeparatorProps
-
-export interface StepperStep {
-  key?: string | number
+export interface StepperItemProps extends StepperPrimitiveProps {
   step: number
-  label?: string
-  description?: string
-  icon?: NormalizeIconProps
-  content?: string
   disabled?: boolean
   completed?: boolean
 }
+export type StepperTriggerProps = StepperPrimitiveProps
+export type StepperIndicatorProps = StepperPrimitiveProps
+export type StepperTitleProps = StepperPrimitiveProps
+export type StepperDescriptionProps = StepperPrimitiveProps
+export type StepperSeparatorProps = StepperPrimitiveProps
 
-// Context UI
+export function normalizeStepperItemProps(source: StepperItemProps): StepperItemProps {
+  const { step, disabled, completed, as, asChild } = source
+  return { step, disabled, completed, as, asChild }
+}
+export function normalizeStepperPrimitiveProps<T extends StepperPrimitiveProps>(
+  source: T | null | undefined,
+): StepperPrimitiveProps | undefined {
+  if (!source) return undefined
+  const { as, asChild } = source
+  return { as, asChild }
+}
+
+export interface StepperStep extends StepperItemProps {
+  key?: string | number
+  label?: string
+  description?: string
+  icon?: IconName | IconProps
+  content?: string
+  trigger?: StepperTriggerProps
+  indicator?: StepperIndicatorProps
+  titleProps?: StepperTitleProps
+  descriptionProps?: StepperDescriptionProps
+  separator?: StepperSeparatorProps
+}
+
 export interface StepperUIContext {
   step: StepperStep
   index: number
@@ -33,22 +53,21 @@ export interface StepperUIContext {
   last: boolean
 }
 
-// UI
 export type StepperUIValue<T> = T | ((context: StepperUIContext) => T)
 export interface StepperUI {
+  root?: HTMLAttributes
   list?: HTMLAttributes
   item?: StepperUIValue<HTMLAttributes>
   trigger?: StepperUIValue<HTMLAttributes>
   indicator?: StepperUIValue<HTMLAttributes>
   header?: StepperUIValue<HTMLAttributes>
-  icon?: StepperUIValue<NormalizedIconProps>
+  icon?: StepperUIValue<HTMLAttributes>
   title?: StepperUIValue<HTMLAttributes>
   description?: StepperUIValue<HTMLAttributes>
-  separator?: StepperUIValue<StepperSeparatorUI>
+  separator?: StepperUIValue<HTMLAttributes>
   content?: StepperUIValue<HTMLAttributes>
 }
 
-// Props
 export interface StepperProps {
   steps?: StepperStep[]
   orientation?: 'vertical' | 'horizontal'
@@ -63,8 +82,6 @@ export interface StepperProps {
 export interface StepperEmits {
   'update:modelValue': [value: number | undefined]
 }
-
-// SlotProps
 export interface StepperSlotProps {
   value: number | undefined
   totalSteps: number
@@ -84,8 +101,6 @@ export interface StepperSlotProps {
   first: boolean
   last: boolean
 }
-
-// Slots
 export type StepperSlots = {
   default?(props: StepperSlotProps): unknown
   item?(props: StepperSlotProps): unknown

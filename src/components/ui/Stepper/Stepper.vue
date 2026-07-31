@@ -9,9 +9,11 @@ import {
   StepperTitle,
   StepperTrigger,
 } from '@/components/primitives/Stepper'
-import { Icon } from '@/components/ui/Icon'
+import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
+import { normalizeStepperItemProps, normalizeStepperPrimitiveProps } from '.'
 import type {
   StepperUIContext,
   StepperState,
@@ -26,6 +28,7 @@ defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<StepperProps>(), {
   orientation: 'horizontal',
   steps: () => [],
+  ui: undefined,
 })
 defineSlots<StepperSlots>()
 
@@ -51,7 +54,13 @@ interface StepperRootState {
   hasPrev: () => boolean
 }
 
+function resolveUI<T>(value: StepperUIValue<T> | undefined, context: StepperUIContext) {
+  return typeof value === 'function' ? (value as (context: StepperUIContext) => T)(context) : value
+}
+
 const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const listUI = normalizeHTMLAttributes(props.ui?.list)
   const currentStep = model.value
   const isVertical = props.orientation === 'vertical'
   const triggerClass = cn(
@@ -74,21 +83,19 @@ const calculatedUI = computed(() => {
   return {
     root: {
       ...attrs,
+      ...rootUI,
       as: props.as,
       asChild: props.asChild,
       orientation: props.orientation,
       dir: props.dir,
       linear: props.linear,
-      class: cn('block w-full', attrs.class),
-      style: [colorStyle.value, attrs.style],
+      class: cn('block w-full', attrs.class, rootUI.class),
+      style: [colorStyle.value, attrs.style, rootUI.style],
     },
     list: {
-      ...props.ui?.list,
-      class: cn(
-        'flex w-full',
-        isVertical ? 'flex-col gap-6' : 'items-start gap-2',
-        props.ui?.list?.class,
-      ),
+      ...listUI,
+      class: cn('flex w-full', isVertical ? 'flex-col gap-6' : 'items-start gap-2', listUI.class),
+      style: listUI.style,
     },
     steps: props.steps.map((step, index) => {
       const state: StepperState = step.completed
@@ -106,17 +113,21 @@ const calculatedUI = computed(() => {
         first: index === 0,
         last: index === props.steps.length - 1,
       }
-      const resolveUI = <T,>(value: StepperUIValue<T> | undefined): T | undefined =>
-        typeof value === 'function' ? (value as (context: StepperUIContext) => T)(context) : value
-      const itemUI = resolveUI(props.ui?.item)
-      const triggerUI = resolveUI(props.ui?.trigger)
-      const indicatorUI = resolveUI(props.ui?.indicator)
-      const headerUI = resolveUI(props.ui?.header)
-      const iconUI = resolveUI(props.ui?.icon)
-      const titleUI = resolveUI(props.ui?.title)
-      const descriptionUI = resolveUI(props.ui?.description)
-      const separatorUI = resolveUI(props.ui?.separator)
-      const contentUI = resolveUI(props.ui?.content)
+      const itemUI = normalizeHTMLAttributes(resolveUI(props.ui?.item, context))
+      const triggerUI = normalizeHTMLAttributes(resolveUI(props.ui?.trigger, context))
+      const indicatorUI = normalizeHTMLAttributes(resolveUI(props.ui?.indicator, context))
+      const headerUI = normalizeHTMLAttributes(resolveUI(props.ui?.header, context))
+      const iconUI = normalizeHTMLAttributes(resolveUI(props.ui?.icon, context))
+      const titleUI = normalizeHTMLAttributes(resolveUI(props.ui?.title, context))
+      const descriptionUI = normalizeHTMLAttributes(resolveUI(props.ui?.description, context))
+      const separatorUI = normalizeHTMLAttributes(resolveUI(props.ui?.separator, context))
+      const contentUI = normalizeHTMLAttributes(resolveUI(props.ui?.content, context))
+      const itemProps = normalizeStepperItemProps(step)
+      const trigger = normalizeStepperPrimitiveProps(step.trigger)
+      const indicator = normalizeStepperPrimitiveProps(step.indicator)
+      const title = normalizeStepperPrimitiveProps(step.titleProps)
+      const description = normalizeStepperPrimitiveProps(step.descriptionProps)
+      const separator = normalizeStepperPrimitiveProps(step.separator)
       const key = String(step.key ?? step.step)
       const slotNames = {
         item: `item-${key}`,
@@ -128,7 +139,7 @@ const calculatedUI = computed(() => {
         separator: `separator-${key}`,
         content: `content-${key}`,
       } as const
-      const icon = typeof step.icon === 'string' ? { name: step.icon } : step.icon
+      const icon = normalizeIconProps(step.icon)
 
       return {
         key,
@@ -137,57 +148,60 @@ const calculatedUI = computed(() => {
         slotNames,
         item: {
           ...itemUI,
-          step: step.step,
-          disabled: step.disabled,
-          completed: step.completed,
+          ...itemProps,
           class: cn(
             isVertical
               ? 'relative flex w-full items-start gap-4'
               : 'relative flex w-full flex-col items-center justify-center',
-            itemUI?.class,
+            itemUI.class,
           ),
           style: itemUI?.style,
         },
         trigger: {
           ...triggerUI,
-          class: cn(triggerClass, triggerUI?.class),
+          ...trigger,
+          class: cn(triggerClass, triggerUI.class),
           style: triggerUI?.style,
         },
         indicator: {
           ...indicatorUI,
-          class: cn(indicatorClass, indicatorUI?.class),
+          ...indicator,
+          class: cn(indicatorClass, indicatorUI.class),
           style: indicatorUI?.style,
         },
         header: {
           ...headerUI,
-          class: cn('flex min-w-0 flex-col', headerUI?.class),
+          class: cn('flex min-w-0 flex-col', headerUI.class),
           style: headerUI?.style,
         },
         icon: {
           ...iconUI,
           ...icon,
           name: icon?.name ?? 'check',
-          class: cn(iconUI?.class, icon?.class),
-          style: [iconUI?.style, icon?.style],
+          class: cn(iconUI.class),
+          style: iconUI.style,
         },
         title: {
           ...titleUI,
-          class: cn(titleUI?.class),
+          ...title,
+          class: cn(titleUI.class),
           style: titleUI?.style,
         },
         description: {
           ...descriptionUI,
-          class: cn(descriptionUI?.class),
+          ...description,
+          class: cn(descriptionUI.class),
           style: descriptionUI?.style,
         },
         separator: {
           ...separatorUI,
-          class: cn(separatorClass, separatorUI?.class),
+          ...separator,
+          class: cn(separatorClass, separatorUI.class),
           style: separatorUI?.style,
         },
         content: {
           ...contentUI,
-          class: cn('mt-6', contentUI?.class),
+          class: cn('mt-6', contentUI.class),
           style: contentUI?.style,
         },
         showHeader: Boolean(

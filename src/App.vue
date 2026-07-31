@@ -1,152 +1,211 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Accordion, type AccordionItem, type AccordionValue } from '@/components/ui/Accordion'
 import { Button } from '@/components/ui/Button'
+import { Stepper, type StepperStep } from '@/components/ui/Stepper'
 
-const faqItems: AccordionItem[] = [
+const checkoutSteps: StepperStep[] = [
   {
-    value: 'account',
-    label: 'Como creo una cuenta?',
-    content: 'Completa el formulario de registro y confirma tu correo electronico.',
+    key: 'account',
+    step: 1,
+    label: 'Cuenta',
+    description: 'Datos personales',
+    icon: 'info',
+    content: 'Completa tu nombre, correo y datos de contacto.',
   },
   {
-    value: 'password',
-    label: 'Puedo cambiar mi contrasena?',
-    content: 'Si. Puedes cambiarla desde el apartado de seguridad de tu perfil.',
+    key: 'shipping',
+    step: 2,
+    label: 'Envio',
+    description: 'Direccion de entrega',
+    content: 'Selecciona una direccion y el metodo de envio.',
   },
   {
-    value: 'billing',
-    label: 'Donde consulto mis facturas?',
-    content: 'Las facturas estan disponibles en la seccion de facturacion.',
+    key: 'payment',
+    step: 3,
+    label: 'Pago',
+    description: 'Metodo de pago',
+    icon: 'save',
+    content: 'Introduce los datos de pago y revisa el pedido.',
+  },
+  {
+    key: 'confirmation',
+    step: 4,
+    label: 'Confirmacion',
+    description: 'Pedido completado',
+    content: 'El pedido esta listo para ser confirmado.',
   },
 ]
 
-const featureItems: AccordionItem[] = [
+const settingsSteps: StepperStep[] = [
+  { key: 'profile', step: 1, label: 'Perfil', description: 'Informacion publica' },
+  { key: 'security', step: 2, label: 'Seguridad', description: 'Acceso y sesiones' },
   {
-    value: 'notifications',
+    key: 'notifications',
+    step: 3,
     label: 'Notificaciones',
-    content: 'Configura avisos por correo y push.',
-  },
-  { value: 'privacy', label: 'Privacidad', content: 'Controla la visibilidad de tu perfil.' },
-  {
-    value: 'sessions',
-    label: 'Sesiones',
-    content: 'Revisa los dispositivos con acceso.',
+    description: 'Correo y avisos push',
     disabled: true,
   },
 ]
 
-const advancedItems: AccordionItem[] = [
+const primitiveSteps: StepperStep[] = [
   {
-    value: 'summary',
-    label: 'Resumen',
-    content: 'Contenido renderizado como section.',
+    key: 'first',
+    step: 1,
+    label: 'Primer paso',
+    content: 'Item y elementos internos renderizados con props explicitas.',
+    as: 'li',
     trigger: { as: 'button' },
-    contentProps: { as: 'section', forceMount: true },
+    indicator: { as: 'span' },
+    titleProps: { as: 'h3' },
+    descriptionProps: { as: 'p' },
+    separator: { as: 'span' },
   },
   {
-    value: 'details',
-    label: 'Detalles',
-    content: 'Contenido renderizado como article.',
+    key: 'second',
+    step: 2,
+    label: 'Segundo paso',
+    description: 'Final del flujo',
+    content: 'Segundo contenido.',
+    as: 'li',
     trigger: { as: 'button', asChild: false },
-    contentProps: { as: 'article' },
+    indicator: { as: 'span' },
+    titleProps: { as: 'h3' },
   },
 ]
 
-const activeSection = ref<AccordionValue>('account')
-const openFeatures = ref<string[]>(['notifications', 'privacy'])
+const activeCheckoutStep = ref(1)
+const activeVerticalStep = ref(1)
+const activeLinearStep = ref(1)
+const activeCustomStep = ref(2)
+const activePrimitiveStep = ref(1)
 </script>
 
 <template>
   <main class="mx-auto min-h-screen max-w-5xl space-y-10 p-6 md:p-10">
     <header class="space-y-2">
-      <h1 class="text-3xl font-bold">Accordion</h1>
+      <h1 class="text-3xl font-bold">Stepper</h1>
       <p class="text-muted-foreground">
-        Ejemplos con seleccion simple y multiple, UI contextual, slots y props funcionales.
+        Ejemplos horizontales y verticales con UI contextual, slots y props funcionales.
       </p>
     </header>
 
     <section class="space-y-5 rounded-xl border p-5">
       <div>
         <h2 class="text-lg font-semibold">Uso basico</h2>
-        <p class="text-sm text-muted-foreground">Un unico elemento abierto y cierre permitido.</p>
+        <p class="text-sm text-muted-foreground">Paso activo: {{ activeCheckoutStep }}.</p>
       </div>
 
-      <Accordion
-        v-model="activeSection"
-        type="single"
-        collapsible
-        :items="faqItems"
-        :ui="{ root: { class: 'max-w-2xl' } }"
-      />
-
-      <p class="text-sm text-muted-foreground">Seccion activa: {{ activeSection || 'ninguna' }}</p>
+      <Stepper v-model="activeCheckoutStep" :steps="checkoutSteps" />
     </section>
 
     <section class="space-y-5 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Seleccion multiple</h2>
+        <h2 class="text-lg font-semibold">Navegacion desde el contenido</h2>
         <p class="text-sm text-muted-foreground">
-          Abiertos: {{ openFeatures.join(', ') || 'ninguno' }}.
+          Los slots reciben metodos para avanzar, retroceder o seleccionar un paso.
         </p>
       </div>
 
-      <Accordion
-        v-model="openFeatures"
-        type="multiple"
-        :items="featureItems"
+      <Stepper
+        v-model="activeCheckoutStep"
+        :steps="checkoutSteps"
+        :ui="{ content: { class: 'rounded-lg border bg-muted/30 p-4' } }"
+      >
+        <template #content="{ step, prevStep, nextStep, isFirstStep, isLastStep }">
+          <div class="space-y-4">
+            <div>
+              <h3 class="font-semibold">{{ step.label }}</h3>
+              <p class="text-sm text-muted-foreground">{{ step.content }}</p>
+            </div>
+            <div class="flex gap-2">
+              <Button
+                label="Anterior"
+                size="sm"
+                variant="outline"
+                :disabled="isFirstStep"
+                @click="prevStep"
+              />
+              <Button label="Siguiente" size="sm" :disabled="isLastStep" @click="nextStep" />
+            </div>
+          </div>
+        </template>
+      </Stepper>
+    </section>
+
+    <section class="space-y-5 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Orientacion vertical</h2>
+        <p class="text-sm text-muted-foreground">Flujo lateral con un paso deshabilitado.</p>
+      </div>
+
+      <Stepper
+        v-model="activeVerticalStep"
+        orientation="vertical"
+        :steps="settingsSteps"
         :ui="{
-          root: { class: 'max-w-2xl rounded-lg border px-4' },
-          item: ({ open }) => ({ class: open ? 'border-primary/40' : '' }),
+          root: { class: 'max-w-xl' },
+          content: { class: 'ml-14 rounded-md bg-muted/40 p-4 text-sm' },
         }"
-      />
+      >
+        <template #content="{ step }">Configuracion de {{ step.label?.toLowerCase() }}.</template>
+      </Stepper>
     </section>
 
     <section class="space-y-5 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Control externo</h2>
+        <h2 class="text-lg font-semibold">Flujo lineal</h2>
         <p class="text-sm text-muted-foreground">
-          El modelo puede cambiarse desde otros controles.
+          Solo permite avanzar siguiendo el orden de los pasos.
         </p>
       </div>
 
-      <div class="flex flex-wrap gap-2">
-        <Button label="Cuenta" size="sm" variant="outline" @click="activeSection = 'account'" />
-        <Button
-          label="Contrasena"
-          size="sm"
-          variant="outline"
-          @click="activeSection = 'password'"
-        />
-        <Button label="Cerrar" size="sm" variant="outline" @click="activeSection = undefined" />
-      </div>
-
-      <Accordion v-model="activeSection" type="single" collapsible :items="faqItems" />
+      <Stepper
+        v-model="activeLinearStep"
+        linear
+        color="#7c3aed"
+        :steps="checkoutSteps"
+        :ui="{ root: { 'aria-label': 'Proceso de compra lineal' } }"
+      >
+        <template #content="{ step, nextStep, isLastStep }">
+          <div class="flex items-center justify-between rounded-lg border p-4">
+            <span class="text-sm">{{ step.content }}</span>
+            <Button
+              :label="isLastStep ? 'Completado' : 'Continuar'"
+              size="sm"
+              :disabled="isLastStep"
+              @click="nextStep"
+            />
+          </div>
+        </template>
+      </Stepper>
     </section>
 
     <section class="space-y-5 rounded-xl border p-5">
       <div>
         <h2 class="text-lg font-semibold">UI contextual</h2>
         <p class="text-sm text-muted-foreground">
-          Cada zona recibe item, indice, estado abierto y posicion.
+          Cada zona conoce su estado, posicion e item asociado.
         </p>
       </div>
 
-      <Accordion
-        default-value="password"
-        type="single"
-        collapsible
-        :items="faqItems"
+      <Stepper
+        v-model="activeCustomStep"
+        :steps="checkoutSteps"
         :ui="{
-          root: { class: 'max-w-2xl rounded-xl bg-muted/30 p-3' },
-          item: ({ first, last }) => ({
-            class: [first && 'rounded-t-lg', last && 'rounded-b-lg border-b-0'],
+          root: { class: 'rounded-xl bg-muted/30 p-4' },
+          item: ({ active }) => ({ class: active ? 'scale-[1.02]' : '' }),
+          trigger: ({ active }) => ({ title: active ? 'Paso activo' : 'Seleccionar paso' }),
+          indicator: ({ state }) => ({
+            class: state === 'completed' ? 'ring-2 ring-success/40' : '',
           }),
-          trigger: ({ open }) => ({
-            class: open ? 'text-primary no-underline' : 'text-muted-foreground',
-            title: open ? 'Cerrar seccion' : 'Abrir seccion',
+          icon: ({ active }) => ({ class: active ? 'scale-110' : '' }),
+          title: ({ active }) => ({ class: active ? 'text-primary' : '' }),
+          description: ({ last }) => ({ class: last ? 'font-medium' : '' }),
+          separator: ({ state }) => ({
+            class: state === 'completed' ? 'opacity-100' : 'opacity-50',
           }),
-          content: ({ open }) => ({ class: open ? 'text-foreground' : '' }),
+          content: { class: 'rounded-lg bg-background p-4 shadow-sm' },
         }"
       />
     </section>
@@ -155,51 +214,46 @@ const openFeatures = ref<string[]>(['notifications', 'privacy'])
       <div>
         <h2 class="text-lg font-semibold">Slots globales e individuales</h2>
         <p class="text-sm text-muted-foreground">
-          Los slots asociados al value tienen prioridad sobre los globales.
+          Los slots asociados al key del step tienen prioridad sobre los globales.
         </p>
       </div>
 
-      <Accordion type="single" collapsible :items="faqItems">
-        <template #trigger="{ item, open }">
-          <span class="flex items-center gap-2">
-            <span
-              :class="['size-2 rounded-full', open ? 'bg-primary' : 'bg-muted-foreground/40']"
-            />
-            {{ item.label }}
-          </span>
+      <Stepper v-model="activeCustomStep" :steps="checkoutSteps">
+        <template #indicator="{ step, state }">
+          <span class="text-xs font-bold">{{ state === 'completed' ? 'OK' : step.step }}</span>
         </template>
 
-        <template #trigger-billing="{ open }">
-          <span class="font-semibold text-warning"
-            >Facturacion {{ open ? 'abierta' : 'cerrada' }}</span
-          >
+        <template #title="{ step, active }">
+          <span :class="active ? 'text-primary' : ''">{{ step.label }}</span>
         </template>
 
-        <template #content-password="{ item }">
-          <div class="rounded-md bg-primary/5 p-3">Contenido individual: {{ item.content }}</div>
+        <template #indicator-payment>
+          <span class="text-xs font-bold">EUR</span>
         </template>
 
-        <template #default="{ item }">
-          <span class="text-muted-foreground">Contenido global: {{ item.content }}</span>
+        <template #content-confirmation="{ step }">
+          <div class="rounded-lg border border-success/40 bg-success/5 p-4 text-sm">
+            Slot individual: {{ step.content }}
+          </div>
         </template>
-      </Accordion>
+      </Stepper>
     </section>
 
     <section class="space-y-5 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Props funcionales por item</h2>
+        <h2 class="text-lg font-semibold">Props funcionales normalizadas</h2>
         <p class="text-sm text-muted-foreground">
-          trigger y contentProps se filtran mediante normalizadores explicitos.
+          El item extiende StepperItemProps y los nodos internos filtran as y asChild.
         </p>
       </div>
 
-      <Accordion
-        type="single"
-        collapsible
-        :items="advancedItems"
+      <Stepper
+        v-model="activePrimitiveStep"
+        as="ol"
+        :steps="primitiveSteps"
         :ui="{
-          root: { class: 'max-w-2xl border-x px-4' },
-          content: { class: 'rounded-md bg-muted/40 px-3' },
+          root: { class: 'list-none' },
+          content: { class: 'rounded-md border p-4 text-sm' },
         }"
       />
     </section>

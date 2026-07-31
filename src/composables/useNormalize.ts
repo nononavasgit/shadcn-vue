@@ -1,18 +1,18 @@
-import { computed, toValue } from 'vue'
-import type { ComputedRef, MaybeRefOrGetter } from 'vue'
+import { HTMLAttributes } from 'vue'
 
-export type NormalizableValue<T extends object, K extends keyof T> = T | T[K] | null | undefined
+/** Normalizes HTML attributes */
+export function normalizeHTMLAttributes(value: HTMLAttributes | undefined): HTMLAttributes {
+  if (!value) return {}
 
-export function useNormalize<T extends object, K extends keyof T>(
-  source: MaybeRefOrGetter<NormalizableValue<T, K>>,
-  key: K,
-): ComputedRef<T | undefined> {
-  return computed(() => {
-    const value = toValue(source)
+  const { class: className, style, id, title, role, tabindex, ...attrs } = value
 
-    if (value == null) return undefined
-    if (typeof value === 'object') return value as T
-
-    return { [key]: value } as T
-  })
+  return {
+    class: className as HTMLAttributes['class'],
+    style: style as HTMLAttributes['style'],
+    id: id as string | undefined,
+    title: title as string | undefined,
+    role: role as string | undefined,
+    tabindex: tabindex as HTMLAttributes['tabindex'],
+    ...attrs,
+  }
 }

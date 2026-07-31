@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { button as ButtonBase } from '@/components/primitives/Button'
-import { Icon, useNormalizeIconProps } from '@/components/ui/Icon'
+import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import { buttonVariants, type ButtonEmits, type ButtonProps, type ButtonSlots } from '.'
@@ -27,9 +28,6 @@ const emit = defineEmits<ButtonEmits>()
 defineSlots<ButtonSlots>()
 
 const attrs = useAttrs()
-
-const leadingIcon = useNormalizeIconProps(() => props.icon)
-const trailingIcon = useNormalizeIconProps(() => props.trailingIcon)
 const { colorStyle } = useColor(
   computed(() => props.color),
   'button',
@@ -54,28 +52,36 @@ const calculatedVariants = computed(() => {
     .join(' ')
 })
 const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const iconUI = normalizeHTMLAttributes(props.ui?.icon)
+  const trailingIconUI = normalizeHTMLAttributes(props.ui?.trailingIcon)
+  const loadingIconUI = normalizeHTMLAttributes(props.ui?.loadingIcon)
+
   return {
     root: {
       ...attrs,
+      ...rootUI,
       as: props.as,
       asChild: props.asChild,
       'aria-busy': ariaBusy.value,
       'aria-disabled': ariaDisabled.value,
-      class: cn(calculatedVariants.value, attrs.class),
-      style: [colorStyle.value, attrs.style],
+      class: cn(calculatedVariants.value, attrs.class, rootUI.class),
+      style: [colorStyle.value, attrs.style, rootUI.style],
     },
     icon: {
-      ...leadingIcon.value,
-      class: cn(props.ui?.icon?.class, leadingIcon.value?.class),
+      ...iconUI,
+      ...normalizeIconProps(props.icon),
+      class: cn(iconUI.class),
     },
     trailingIcon: {
-      ...trailingIcon.value,
-      class: cn(props.ui?.trailingIcon?.class, trailingIcon.value?.class),
+      ...trailingIconUI,
+      ...normalizeIconProps(props.trailingIcon),
+      class: cn(trailingIconUI.class),
     },
     loadingIcon: {
+      ...loadingIconUI,
       name: 'spinner' as const,
-      ...props.ui?.loadingIcon,
-      class: cn('animate-spin', props.ui?.loadingIcon?.class),
+      class: cn('animate-spin', loadingIconUI.class),
     },
   }
 })

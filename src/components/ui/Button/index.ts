@@ -1,7 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { ButtonHTMLAttributes, Component, MaybeRefOrGetter } from 'vue'
-import type { NormalizedIconProps, NormalizeIconProps } from '@/components/ui/Icon'
-import { useNormalize } from '@/composables/useNormalize'
+import type { ButtonHTMLAttributes, Component, HTMLAttributes, MaybeRefOrGetter } from 'vue'
+import type { IconProps, IconName } from '@/components/ui/Icon'
 
 export { default as Button } from './Button.vue'
 
@@ -254,9 +253,10 @@ export const buttonVariants = cva('', {
 export type ButtonVariants = VariantProps<typeof buttonVariants>
 
 export interface ButtonUI {
-  icon?: NormalizedIconProps
-  trailingIcon?: NormalizedIconProps
-  loadingIcon?: NormalizedIconProps
+  root?: HTMLAttributes & ButtonHTMLAttributes
+  icon?: HTMLAttributes
+  trailingIcon?: HTMLAttributes
+  loadingIcon?: HTMLAttributes
 }
 
 export interface ButtonProps {
@@ -270,18 +270,9 @@ export interface ButtonProps {
   square?: ButtonVariants['square'] | boolean
   loading?: boolean
   color?: string
-  icon?: NormalizeIconProps
-  trailingIcon?: NormalizeIconProps
+  icon?: IconName | IconProps
+  trailingIcon?: IconName | IconProps
   ui?: ButtonUI
-}
-
-export type NormalizedButtonProps = ButtonProps & ButtonHTMLAttributes
-export type NormalizeButtonProps = string | NormalizedButtonProps
-
-export function useNormalizeButtonProps(
-  source: MaybeRefOrGetter<NormalizeButtonProps | null | undefined>,
-) {
-  return useNormalize<NormalizedButtonProps, 'label'>(source, 'label')
 }
 
 export interface ButtonEmits {

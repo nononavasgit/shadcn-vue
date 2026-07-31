@@ -7,15 +7,26 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
 } from '@/components/primitives/NumberField'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
-import type { NumberFieldEmits, NumberFieldProps, NumberFieldSlots } from '.'
+import {
+  normalizeNumberFieldDecrementProps,
+  normalizeNumberFieldIncrementProps,
+  type NumberFieldEmits,
+  type NumberFieldProps,
+  type NumberFieldSlots,
+} from '.'
 
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<NumberFieldProps>(), {
+  placeholder: undefined,
   showDecrement: true,
   showIncrement: true,
+  decrement: undefined,
+  increment: undefined,
+  ui: undefined,
 })
 defineEmits<NumberFieldEmits>()
 const slots = defineSlots<NumberFieldSlots>()
@@ -23,31 +34,47 @@ const attrs = useAttrs()
 const model = defineModel<number | null>()
 const { t } = useI18n()
 
-const calculatedUI = computed(() => ({
-  root: {
-    ...attrs,
-    class: cn(attrs.class),
-  },
-  content: {
-    ...props.ui?.content,
-    class: cn(props.ui?.content?.class),
-  },
-  decrement: {
-    ...props.ui?.decrement,
-    'aria-label': props.ui?.decrement?.['aria-label'] ?? t('decrement'),
-    class: cn(props.ui?.decrement?.class),
-  },
-  input: {
-    ...props.ui?.input,
-    placeholder: props.placeholder ?? props.ui?.input?.placeholder,
-    class: cn('focus-visible:border-primary focus-visible:ring-primary/50', props.ui?.input?.class),
-  },
-  increment: {
-    ...props.ui?.increment,
-    'aria-label': props.ui?.increment?.['aria-label'] ?? t('increment'),
-    class: cn(props.ui?.increment?.class),
-  },
-}))
+const calculatedUI = computed(() => {
+  // Normalize the UI props for each part of the NumberField component
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const contentUI = normalizeHTMLAttributes(props.ui?.content)
+  const decrementUI = normalizeHTMLAttributes(props.ui?.decrement)
+  const inputUI = normalizeHTMLAttributes(props.ui?.input)
+  const incrementUI = normalizeHTMLAttributes(props.ui?.increment)
+  // Normalize the decrement and increment props
+  const decrement = normalizeNumberFieldDecrementProps(props.decrement)
+  const increment = normalizeNumberFieldIncrementProps(props.increment)
+
+  return {
+    root: {
+      ...attrs,
+      ...rootUI,
+      class: cn(attrs.class, rootUI.class),
+      style: [attrs.style, rootUI.style],
+    },
+    content: {
+      ...contentUI,
+      class: cn(contentUI.class),
+    },
+    decrement: {
+      ...decrementUI,
+      ...decrement,
+      'aria-label': decrementUI['aria-label'] ?? t('decrement'),
+      class: cn(decrementUI.class),
+    },
+    input: {
+      ...inputUI,
+      placeholder: props.placeholder ?? inputUI.placeholder,
+      class: cn('focus-visible:border-primary focus-visible:ring-primary/50', inputUI.class),
+    },
+    increment: {
+      ...incrementUI,
+      ...increment,
+      'aria-label': incrementUI['aria-label'] ?? t('increment'),
+      class: cn(incrementUI.class),
+    },
+  }
+})
 </script>
 
 <template>

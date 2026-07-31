@@ -1,181 +1,158 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Button } from '@/components/ui/Button'
-import { Empty } from '@/components/ui/Empty'
 import { Icon } from '@/components/ui/Icon'
-import { Toggle } from '@/components/ui/Toggle'
+import { NumberField } from '@/components/ui/NumberField'
 
-const notifications = ref(false)
-const favorite = ref(true)
-const customToggle = ref(false)
+const quantity = ref(1)
+const temperature = ref(20)
+const price = ref(25)
+const customValue = ref(5)
 </script>
 
 <template>
-  <main class="mx-auto min-h-screen max-w-5xl space-y-10 p-6 md:p-10">
+  <main class="mx-auto min-h-screen max-w-4xl space-y-10 p-6 md:p-10">
     <header class="space-y-2">
-      <h1 class="text-3xl font-bold">Toggle y Empty</h1>
+      <h1 class="text-3xl font-bold">NumberField</h1>
       <p class="text-muted-foreground">
-        Ejemplos de estados, variantes, iconos, slots y personalización mediante ui.
+        Ejemplos con valores, límites, botones normalizados, slots y personalización mediante ui.
       </p>
     </header>
 
-    <section class="space-y-6 rounded-xl border p-5">
+    <section class="space-y-5 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Toggle básico</h2>
+        <h2 class="text-lg font-semibold">Uso básico</h2>
+        <p class="text-sm text-muted-foreground">Cantidad seleccionada: {{ quantity }}.</p>
+      </div>
+
+      <div class="max-w-xs">
+        <NumberField
+          v-model="quantity"
+          :min="0"
+          :max="10"
+          placeholder="Cantidad"
+          aria-label="Cantidad"
+        />
+      </div>
+    </section>
+
+    <section class="space-y-5 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Límites y pasos</h2>
         <p class="text-sm text-muted-foreground">
-          Notificaciones: {{ notifications ? 'activadas' : 'desactivadas' }}.
+          Temperatura: {{ temperature }} °C · Precio: {{ price }} €.
         </p>
       </div>
 
-      <div class="flex flex-wrap items-center gap-3">
-        <Toggle v-model="notifications" label="Notificaciones" icon="info" />
-        <Toggle v-model="favorite" label="Favorito" icon="success" variant="outline" />
-        <Toggle label="Deshabilitado" icon="x" disabled />
-        <Toggle icon="save" aria-label="Guardar" />
+      <div class="grid gap-5 md:grid-cols-2">
+        <label class="space-y-2">
+          <span class="text-sm font-medium">Temperatura</span>
+          <NumberField
+            v-model="temperature"
+            :min="-10"
+            :max="40"
+            :step="1"
+            aria-label="Temperatura"
+          />
+        </label>
+
+        <label class="space-y-2">
+          <span class="text-sm font-medium">Precio</span>
+          <NumberField v-model="price" :min="0" :max="100" :step="5" aria-label="Precio" />
+        </label>
       </div>
     </section>
 
-    <section class="space-y-6 rounded-xl border p-5">
+    <section class="space-y-5 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Variantes y severidades</h2>
-        <p class="text-sm text-muted-foreground">Combinaciones plain y outline.</p>
-      </div>
-
-      <div class="space-y-4">
-        <div
-          v-for="severity in [
-            'default',
-            'primary',
-            'secondary',
-            'warning',
-            'success',
-            'error',
-          ] as const"
-          :key="severity"
-          class="flex flex-wrap items-center gap-3"
-        >
-          <span class="w-24 text-sm font-medium">{{ severity }}</span>
-          <Toggle :label="`${severity} plain`" :severity="severity" />
-          <Toggle :label="`${severity} outline`" :severity="severity" variant="outline" />
-        </div>
-      </div>
-    </section>
-
-    <section class="space-y-6 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Tamaños e iconos</h2>
-        <p class="text-sm text-muted-foreground">Iconos iniciales y finales normalizados.</p>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-3">
-        <Toggle size="xs" label="Extra small" icon="minus" />
-        <Toggle size="sm" label="Small" icon="search" />
-        <Toggle size="md" label="Medium" icon="save" trailing-icon="check" />
-        <Toggle size="lg" label="Large" trailing-icon="chevronRight" variant="outline" />
-      </div>
-    </section>
-
-    <section class="space-y-6 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Slots y ui</h2>
+        <h2 class="text-lg font-semibold">Props de botones</h2>
         <p class="text-sm text-muted-foreground">
-          Estado personalizado: {{ customToggle ? 'on' : 'off' }}.
+          Increment y decrement aceptan exclusivamente as, asChild y disabled.
         </p>
       </div>
 
-      <Toggle
-        v-model="customToggle"
-        color="#7c3aed"
-        variant="outline"
-        :ui="{
-          root: { class: 'rounded-full shadow-sm' },
-          icon: { class: 'size-5' },
-          trailingIcon: { class: 'opacity-60' },
-        }"
-      >
-        <template #leading="{ pressed }">
-          <Icon :name="pressed ? 'success' : 'info'" />
-        </template>
+      <div class="grid gap-5 md:grid-cols-2">
+        <label class="space-y-2">
+          <span class="text-sm font-medium">Decremento deshabilitado</span>
+          <NumberField
+            :default-value="5"
+            :decrement="{ disabled: true }"
+            aria-label="Decremento deshabilitado"
+          />
+        </label>
 
-        <template #default="{ pressed }">
-          {{ pressed ? 'Personalización activa' : 'Personalización inactiva' }}
-        </template>
+        <label class="space-y-2">
+          <span class="text-sm font-medium">Incremento deshabilitado</span>
+          <NumberField
+            :default-value="5"
+            :increment="{ disabled: true }"
+            aria-label="Incremento deshabilitado"
+          />
+        </label>
 
-        <template #trailing="{ pressed }">
-          <span class="text-xs">{{ pressed ? 'ON' : 'OFF' }}</span>
-        </template>
-      </Toggle>
+        <label class="space-y-2">
+          <span class="text-sm font-medium">Solo incremento</span>
+          <NumberField :default-value="1" :show-decrement="false" aria-label="Solo incremento" />
+        </label>
+
+        <label class="space-y-2">
+          <span class="text-sm font-medium">Solo decremento</span>
+          <NumberField :default-value="10" :show-increment="false" aria-label="Solo decremento" />
+        </label>
+      </div>
     </section>
 
-    <section class="space-y-6 rounded-xl border p-5">
+    <section class="space-y-5 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Empty básico</h2>
-        <p class="text-sm text-muted-foreground">Estado vacío con props y acciones.</p>
+        <h2 class="text-lg font-semibold">Personalización con ui</h2>
+        <p class="text-sm text-muted-foreground">
+          Todas las zonas de NumberFieldUI contienen únicamente HTMLAttributes.
+        </p>
       </div>
 
-      <div class="grid gap-6 md:grid-cols-2">
-        <Empty
-          class="min-h-72 border"
-          label="No hay proyectos"
-          description="Crea tu primer proyecto para organizar y compartir el trabajo."
-        >
-          <Button label="Crear proyecto" icon="save" />
-        </Empty>
+      <div class="max-w-sm">
+        <NumberField
+          v-model="customValue"
+          :min="0"
+          :max="20"
+          :ui="{
+            root: { class: 'rounded-xl bg-primary/5 p-3' },
+            content: { class: 'rounded-lg ring-2 ring-primary/20' },
+            decrement: {
+              class: 'left-1 rounded-md text-primary hover:bg-primary/10',
+              title: 'Restar una unidad',
+            },
+            input: {
+              class: 'h-11 border-primary/30 bg-background font-semibold text-primary',
+            },
+            increment: {
+              class: 'right-1 rounded-md text-primary hover:bg-primary/10',
+              title: 'Sumar una unidad',
+            },
+          }"
+          aria-label="NumberField personalizado"
+        />
+      </div>
+    </section>
 
-        <Empty
-          class="min-h-72 border border-dashed"
-          label="No hay resultados"
-          description="Prueba con otros términos o elimina los filtros activos."
-          media-variant="icon"
-        >
-          <template #media>
-            <Icon name="search" />
+    <section class="space-y-5 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Slots personalizados</h2>
+        <p class="text-sm text-muted-foreground">
+          Los botones mantienen sus props funcionales y permiten cambiar su contenido.
+        </p>
+      </div>
+
+      <div class="max-w-xs">
+        <NumberField :default-value="3" :min="0" :max="10" aria-label="Controles personalizados">
+          <template #decrement>
+            <Icon name="chevronLeft" />
           </template>
 
-          <div class="flex flex-wrap justify-center gap-2">
-            <Button label="Limpiar filtros" variant="outline" />
-            <Button label="Nueva búsqueda" />
-          </div>
-        </Empty>
+          <template #increment>
+            <Icon name="chevronRight" />
+          </template>
+        </NumberField>
       </div>
-    </section>
-
-    <section class="space-y-6 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Empty personalizado</h2>
-        <p class="text-sm text-muted-foreground">
-          Todas las zonas utilizan atributos HTML normalizados.
-        </p>
-      </div>
-
-      <Empty
-        label="Todo está al día"
-        description="No tienes tareas pendientes. Vuelve más tarde para comprobar las novedades."
-        media-variant="icon"
-        :ui="{
-          root: {
-            class: 'min-h-80 border-2 border-primary/20 bg-primary/5 shadow-sm',
-          },
-          header: { class: 'max-w-lg' },
-          media: { class: 'size-14 rounded-full bg-primary/10 text-primary' },
-          label: { class: 'text-xl text-primary' },
-          description: { class: 'max-w-md' },
-          content: { class: 'flex-row gap-2' },
-        }"
-      >
-        <template #media>
-          <Icon name="success" size="lg" />
-        </template>
-
-        <template #label>¡Trabajo completado!</template>
-
-        <template #description>
-          Has completado todas las tareas disponibles y no queda ninguna acción pendiente.
-        </template>
-
-        <Button label="Actualizar" icon="spinner" variant="outline" />
-        <Button label="Ver historial" trailing-icon="chevronRight" />
-      </Empty>
     </section>
   </main>
 </template>

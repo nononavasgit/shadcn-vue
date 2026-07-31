@@ -275,6 +275,27 @@ export interface ButtonProps {
   ui?: ButtonUI
 }
 
+export function normalizeButtonProps(
+  source: ButtonProps | null | undefined,
+): ButtonProps | undefined {
+  if (!source) return undefined
+
+  return {
+    as: source.as,
+    asChild: source.asChild,
+    label: source.label,
+    variant: source.variant,
+    severity: source.severity,
+    size: source.size,
+    rounded: source.rounded,
+    square: source.square,
+    loading: source.loading,
+    color: source.color,
+    icon: source.icon,
+    trailingIcon: source.trailingIcon,
+    ui: source.ui,
+  }
+}
 export interface ButtonEmits {
   click: [event: PointerEvent]
 }

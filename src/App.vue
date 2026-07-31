@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Alert } from '@/components/ui/Alert'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Icon } from '@/components/ui/Icon'
@@ -70,6 +71,66 @@ import { Icon } from '@/components/ui/Icon'
             <Icon name="x" />
           </template>
         </Badge>
+      </div>
+    </section>
+    <section class="space-y-5 rounded-xl border p-5">
+      <h2 class="text-lg font-semibold">Alerts</h2>
+
+      <div class="space-y-4">
+        <Alert
+          label="Información"
+          description="Este es un mensaje informativo con las opciones predeterminadas."
+          icon="info"
+        />
+
+        <Alert
+          label="Cambios guardados"
+          description="Los cambios se han guardado correctamente."
+          icon="success"
+          severity="success"
+          variant="subtle"
+        />
+
+        <Alert
+          label="Revisa los datos"
+          description="Algunos campos necesitan tu atención antes de continuar."
+          icon="warning"
+          severity="warning"
+          variant="outline"
+          closable
+        />
+
+        <Alert
+          label="No se pudo completar la operación"
+          description="Inténtalo de nuevo o contacta con soporte si el problema continúa."
+          icon="error"
+          severity="error"
+          variant="solid"
+          closable
+          :close-button="{
+            label: 'Cerrar',
+            icon: 'x',
+            variant: 'plain',
+            size: 'sm',
+          }"
+        />
+
+        <Alert
+          label="Alert personalizado"
+          description="Root y botón de cierre personalizados mediante la propiedad ui."
+          icon="info"
+          color="#7c3aed"
+          closable
+          :ui="{
+            root: { class: 'border-2 shadow-sm' },
+            label: { class: 'font-bold' },
+            description: { class: 'italic' },
+            closeButton: {
+              class: 'top-3 right-3 ring-1 ring-current/20',
+              title: 'Cerrar alerta personalizada',
+            },
+          }"
+        />
       </div>
     </section>
   </main>

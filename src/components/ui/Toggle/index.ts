@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { Component } from 'vue'
-import type { NormalizedIconProps, NormalizeIconProps } from '@/components/ui/Icon'
+import type { Component, HTMLAttributes } from 'vue'
+import type { IconName, IconProps } from '@/components/ui/Icon'
 
 export { default as Toggle } from './Toggle.vue'
 
@@ -122,18 +122,18 @@ export const toggleVariants = cva('', {
 export type ToggleVariants = VariantProps<typeof toggleVariants>
 
 export interface ToggleUI {
-  icon?: NormalizedIconProps
-  trailingIcon?: NormalizedIconProps
+  root?: HTMLAttributes
+  icon?: HTMLAttributes
+  trailingIcon?: HTMLAttributes
 }
-
 export interface ToggleProps {
   modelValue?: boolean | null
   defaultValue?: boolean
   as?: string | Component
   asChild?: boolean
   label?: string
-  icon?: NormalizeIconProps
-  trailingIcon?: NormalizeIconProps
+  icon?: IconName | IconProps
+  trailingIcon?: IconName | IconProps
   variant?: ToggleVariants['variant']
   severity?: ToggleVariants['severity']
   size?: ToggleVariants['size']

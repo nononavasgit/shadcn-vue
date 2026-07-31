@@ -8,29 +8,58 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/primitives/Empty'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import type { EmptyProps, EmptySlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<EmptyProps>(), {
+  label: undefined,
+  description: undefined,
   mediaVariant: 'default',
+  ui: undefined,
 })
 defineSlots<EmptySlots>()
 
 const attrs = useAttrs()
-const calculatedUI = computed(() => ({
-  root: {
-    ...props.ui?.root,
-    ...attrs,
-    class: cn(props.ui?.root?.class, attrs.class),
-  },
-  header: props.ui?.header,
-  media: props.ui?.media,
-  label: props.ui?.label,
-  description: props.ui?.description,
-  content: props.ui?.content,
-}))
+const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const headerUI = normalizeHTMLAttributes(props.ui?.header)
+  const mediaUI = normalizeHTMLAttributes(props.ui?.media)
+  const labelUI = normalizeHTMLAttributes(props.ui?.label)
+  const descriptionUI = normalizeHTMLAttributes(props.ui?.description)
+  const contentUI = normalizeHTMLAttributes(props.ui?.content)
+
+  return {
+    root: {
+      ...attrs,
+      ...rootUI,
+      class: cn(attrs.class, rootUI.class),
+      style: [attrs.style, rootUI.style],
+    },
+    header: {
+      ...headerUI,
+      class: cn(headerUI.class),
+    },
+    media: {
+      ...mediaUI,
+      class: cn(mediaUI.class),
+    },
+    label: {
+      ...labelUI,
+      class: cn(labelUI.class),
+    },
+    description: {
+      ...descriptionUI,
+      class: cn(descriptionUI.class),
+    },
+    content: {
+      ...contentUI,
+      class: cn(contentUI.class),
+    },
+  }
+})
 </script>
 
 <template>

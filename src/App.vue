@@ -1,177 +1,181 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Button } from '@/components/ui/Button'
-import { Popover } from '@/components/ui/Popover'
+import { Empty } from '@/components/ui/Empty'
+import { Icon } from '@/components/ui/Icon'
+import { Toggle } from '@/components/ui/Toggle'
 
-const controlledOpen = ref(false)
+const notifications = ref(false)
+const favorite = ref(true)
+const customToggle = ref(false)
 </script>
 
 <template>
-  <main class="mx-auto min-h-screen max-w-4xl space-y-10 p-6 md:p-10">
+  <main class="mx-auto min-h-screen max-w-5xl space-y-10 p-6 md:p-10">
     <header class="space-y-2">
-      <h1 class="text-3xl font-bold">Popover</h1>
+      <h1 class="text-3xl font-bold">Toggle y Empty</h1>
       <p class="text-muted-foreground">
-        Ejemplos con props agrupadas, posiciones, estado controlado y personalización mediante ui.
+        Ejemplos de estados, variantes, iconos, slots y personalización mediante ui.
       </p>
     </header>
 
-    <section class="space-y-5 rounded-xl border p-5">
+    <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Uso básico</h2>
-        <p class="text-sm text-muted-foreground">Trigger y contenido mediante slots.</p>
-      </div>
-
-      <Popover>
-        <Button label="Abrir popover" variant="outline" />
-
-        <template #content="{ close }">
-          <div class="space-y-4">
-            <div class="space-y-1">
-              <h3 class="font-semibold">Preferencias</h3>
-              <p class="text-sm text-muted-foreground">
-                Configura las opciones principales de tu cuenta.
-              </p>
-            </div>
-            <Button label="Cerrar" size="sm" class="w-full" @click="close" />
-          </div>
-        </template>
-      </Popover>
-    </section>
-
-    <section class="space-y-5 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Posiciones</h2>
+        <h2 class="text-lg font-semibold">Toggle básico</h2>
         <p class="text-sm text-muted-foreground">
-          Las opciones de posición pertenecen al objeto content.
+          Notificaciones: {{ notifications ? 'activadas' : 'desactivadas' }}.
         </p>
       </div>
 
-      <div class="flex flex-wrap justify-center gap-4">
-        <Popover
-          v-for="side in ['top', 'right', 'bottom', 'left'] as const"
-          :key="side"
-          :content="{ side, sideOffset: 8 }"
+      <div class="flex flex-wrap items-center gap-3">
+        <Toggle v-model="notifications" label="Notificaciones" icon="info" />
+        <Toggle v-model="favorite" label="Favorito" icon="success" variant="outline" />
+        <Toggle label="Deshabilitado" icon="x" disabled />
+        <Toggle icon="save" aria-label="Guardar" />
+      </div>
+    </section>
+
+    <section class="space-y-6 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Variantes y severidades</h2>
+        <p class="text-sm text-muted-foreground">Combinaciones plain y outline.</p>
+      </div>
+
+      <div class="space-y-4">
+        <div
+          v-for="severity in [
+            'default',
+            'primary',
+            'secondary',
+            'warning',
+            'success',
+            'error',
+          ] as const"
+          :key="severity"
+          class="flex flex-wrap items-center gap-3"
         >
-          <Button :label="side" variant="outline" />
-
-          <template #content>
-            <p class="text-sm">Popover situado en {{ side }}.</p>
-          </template>
-        </Popover>
+          <span class="w-24 text-sm font-medium">{{ severity }}</span>
+          <Toggle :label="`${severity} plain`" :severity="severity" />
+          <Toggle :label="`${severity} outline`" :severity="severity" variant="outline" />
+        </div>
       </div>
     </section>
 
-    <section class="space-y-5 rounded-xl border p-5">
+    <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Props agrupadas</h2>
-        <p class="text-sm text-muted-foreground">
-          Trigger y content contienen únicamente las props funcionales de cada pieza.
-        </p>
+        <h2 class="text-lg font-semibold">Tamaños e iconos</h2>
+        <p class="text-sm text-muted-foreground">Iconos iniciales y finales normalizados.</p>
       </div>
 
-      <Popover
-        :trigger="{ asChild: true }"
-        :content="{
-          side: 'bottom',
-          align: 'start',
-          alignOffset: 12,
-          sideOffset: 8,
-          sticky: 'always',
-          forceMount: true,
-        }"
-      >
-        <Button label="Configuración avanzada" />
-
-        <template #content="{ close }">
-          <form class="space-y-4" @submit.prevent="close">
-            <div class="space-y-1">
-              <label for="popover-width" class="text-sm font-medium">Anchura</label>
-              <input
-                id="popover-width"
-                value="320px"
-                class="h-9 w-full rounded-md border bg-transparent px-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-              />
-            </div>
-            <div class="space-y-1">
-              <label for="popover-height" class="text-sm font-medium">Altura</label>
-              <input
-                id="popover-height"
-                value="240px"
-                class="h-9 w-full rounded-md border bg-transparent px-3 text-sm outline-none focus:ring-2 focus:ring-primary/30"
-              />
-            </div>
-            <Button type="submit" label="Aplicar" size="sm" class="w-full" />
-          </form>
-        </template>
-      </Popover>
+      <div class="flex flex-wrap items-center gap-3">
+        <Toggle size="xs" label="Extra small" icon="minus" />
+        <Toggle size="sm" label="Small" icon="search" />
+        <Toggle size="md" label="Medium" icon="save" trailing-icon="check" />
+        <Toggle size="lg" label="Large" trailing-icon="chevronRight" variant="outline" />
+      </div>
     </section>
 
-    <section class="space-y-5 rounded-xl border p-5">
+    <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Personalización con ui</h2>
+        <h2 class="text-lg font-semibold">Slots y ui</h2>
         <p class="text-sm text-muted-foreground">
-          Root, trigger y content admiten exclusivamente atributos HTML.
+          Estado personalizado: {{ customToggle ? 'on' : 'off' }}.
         </p>
       </div>
 
-      <Popover
-        :content="{ side: 'right', sideOffset: 12 }"
+      <Toggle
+        v-model="customToggle"
+        color="#7c3aed"
+        variant="outline"
         :ui="{
-          root: { 'data-example': 'custom-popover' },
-          trigger: { class: 'rounded-xl ring-2 ring-primary/20' },
-          content: {
-            class: 'w-80 border-2 border-primary/30 bg-primary/5 shadow-xl',
-          },
+          root: { class: 'rounded-full shadow-sm' },
+          icon: { class: 'size-5' },
+          trailingIcon: { class: 'opacity-60' },
         }"
       >
-        <Button label="Popover personalizado" />
-
-        <template #content="{ close }">
-          <div class="space-y-3">
-            <h3 class="font-semibold text-primary">Contenido personalizado</h3>
-            <p class="text-sm text-muted-foreground">Las clases proceden de ui.content.</p>
-            <Button label="Entendido" size="sm" variant="outline" @click="close" />
-          </div>
+        <template #leading="{ pressed }">
+          <Icon :name="pressed ? 'success' : 'info'" />
         </template>
-      </Popover>
+
+        <template #default="{ pressed }">
+          {{ pressed ? 'Personalización activa' : 'Personalización inactiva' }}
+        </template>
+
+        <template #trailing="{ pressed }">
+          <span class="text-xs">{{ pressed ? 'ON' : 'OFF' }}</span>
+        </template>
+      </Toggle>
     </section>
 
-    <section class="space-y-5 rounded-xl border p-5">
+    <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Estado controlado y modal</h2>
+        <h2 class="text-lg font-semibold">Empty básico</h2>
+        <p class="text-sm text-muted-foreground">Estado vacío con props y acciones.</p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2">
+        <Empty
+          class="min-h-72 border"
+          label="No hay proyectos"
+          description="Crea tu primer proyecto para organizar y compartir el trabajo."
+        >
+          <Button label="Crear proyecto" icon="save" />
+        </Empty>
+
+        <Empty
+          class="min-h-72 border border-dashed"
+          label="No hay resultados"
+          description="Prueba con otros términos o elimina los filtros activos."
+          media-variant="icon"
+        >
+          <template #media>
+            <Icon name="search" />
+          </template>
+
+          <div class="flex flex-wrap justify-center gap-2">
+            <Button label="Limpiar filtros" variant="outline" />
+            <Button label="Nueva búsqueda" />
+          </div>
+        </Empty>
+      </div>
+    </section>
+
+    <section class="space-y-6 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Empty personalizado</h2>
         <p class="text-sm text-muted-foreground">
-          Estado actual: {{ controlledOpen ? 'abierto' : 'cerrado' }}.
+          Todas las zonas utilizan atributos HTML normalizados.
         </p>
       </div>
 
-      <div class="flex flex-wrap gap-4">
-        <Popover v-model:open="controlledOpen" :content="{ sideOffset: 8 }">
-          <template #default="{ open }">
-            <Button :label="open ? 'Cerrar controlado' : 'Abrir controlado'" variant="outline" />
-          </template>
+      <Empty
+        label="Todo está al día"
+        description="No tienes tareas pendientes. Vuelve más tarde para comprobar las novedades."
+        media-variant="icon"
+        :ui="{
+          root: {
+            class: 'min-h-80 border-2 border-primary/20 bg-primary/5 shadow-sm',
+          },
+          header: { class: 'max-w-lg' },
+          media: { class: 'size-14 rounded-full bg-primary/10 text-primary' },
+          label: { class: 'text-xl text-primary' },
+          description: { class: 'max-w-md' },
+          content: { class: 'flex-row gap-2' },
+        }"
+      >
+        <template #media>
+          <Icon name="success" size="lg" />
+        </template>
 
-          <template #content="{ close }">
-            <div class="space-y-3">
-              <p class="text-sm">Este estado utiliza v-model:open.</p>
-              <Button label="Cerrar" size="sm" @click="close" />
-            </div>
-          </template>
-        </Popover>
+        <template #label>¡Trabajo completado!</template>
 
-        <Popover modal :content="{ side: 'bottom', sideOffset: 8 }">
-          <Button label="Abrir modal" />
+        <template #description>
+          Has completado todas las tareas disponibles y no queda ninguna acción pendiente.
+        </template>
 
-          <template #content="{ close }">
-            <div class="space-y-3">
-              <h3 class="font-semibold">Popover modal</h3>
-              <p class="text-sm text-muted-foreground">
-                La interacción queda contenida mientras está abierto.
-              </p>
-              <Button label="Cerrar" size="sm" @click="close" />
-            </div>
-          </template>
-        </Popover>
-      </div>
+        <Button label="Actualizar" icon="spinner" variant="outline" />
+        <Button label="Ver historial" trailing-icon="chevronRight" />
+      </Empty>
     </section>
   </main>
 </template>

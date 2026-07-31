@@ -155,7 +155,7 @@ const compactMode = ref(false)
         />
 
         <Spinner
-          :loading="false"
+          :loading="true"
           class="rounded-lg border p-4 md:col-span-2"
           :ui="{ content: { class: 'text-sm text-muted-foreground' } }"
         >

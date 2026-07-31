@@ -7,6 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/primitives/Tooltip'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import {
   ALIGNS,
@@ -24,10 +25,10 @@ defineSlots<TooltipSlots>()
 
 const props = withDefaults(defineProps<TooltipProps>(), {
   delayDuration: 0,
-  side: 'top',
-  sideOffset: 2,
-  align: 'center',
-  avoidCollisions: true,
+  trigger: undefined,
+  content: undefined,
+  arrow: undefined,
+  ui: undefined,
 })
 defineEmits<TooltipEmits>()
 
@@ -35,8 +36,13 @@ const attrs = useAttrs()
 const open = defineModel<boolean>('open')
 
 const calculatedUI = computed(() => {
-  const { forceMount: contentForceMount, ...contentUI } = props.ui?.content ?? {}
-  const arrowUI = props.ui?.arrow ?? {}
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const triggerUI = normalizeHTMLAttributes(props.ui?.trigger)
+  const contentUI = normalizeHTMLAttributes(props.ui?.content)
+  const arrowUI = normalizeHTMLAttributes(props.ui?.arrow)
+  const trigger = props.trigger
+  const content = props.content
+  const arrow = props.arrow
 
   return {
     provider: {
@@ -49,41 +55,53 @@ const calculatedUI = computed(() => {
     },
     root: {
       ...attrs,
+      ...rootUI,
       defaultOpen: props.defaultOpen,
       disableClosingTrigger: props.disableClosingTrigger,
       disableHoverableContent: props.disableHoverableContent,
       disabled: props.disabled,
       ignoreNonKeyboardFocus: props.ignoreNonKeyboardFocus,
+      class: cn(attrs.class, rootUI.class),
+      style: [attrs.style, rootUI.style],
     },
     trigger: {
-      ...props.ui?.trigger,
-      asChild: props.ui?.trigger?.asChild ?? true,
+      ...triggerUI,
+      as: trigger?.as,
+      asChild: trigger?.asChild ?? true,
+      class: cn(triggerUI.class),
+      style: triggerUI.style,
     },
     content: {
       ...contentUI,
-      align: ALIGNS[props.align],
-      alignOffset: props.alignOffset,
-      arrowPadding: props.arrowPadding,
-      avoidCollisions: props.avoidCollisions,
+      as: content?.as,
+      asChild: content?.asChild,
+      align: ALIGNS[content?.align ?? 'center'],
+      alignOffset: content?.alignOffset,
+      arrowPadding: content?.arrowPadding,
+      avoidCollisions: content?.avoidCollisions ?? true,
       class: cn('border border-zinc-200 bg-white text-zinc-950 shadow-md', contentUI.class),
-      collisionPadding: mapCollisionPadding(props.collisionPadding),
-      forceMount: props.forceMount ?? contentForceMount,
-      hideWhenDetached: props.hideWhenDetached,
-      positionStrategy: props.positionStrategy
-        ? POSITION_STRATEGIES[props.positionStrategy]
+      style: contentUI.style,
+      collisionPadding: mapCollisionPadding(content?.collisionPadding),
+      forceMount: content?.forceMount,
+      hideWhenDetached: content?.hideWhenDetached,
+      positionStrategy: content?.positionStrategy
+        ? POSITION_STRATEGIES[content.positionStrategy]
         : undefined,
-      side: SIDES[props.side],
-      sideOffset: props.sideOffset,
-      sticky: props.sticky ? STICKY_VALUES[props.sticky] : undefined,
-      updatePositionStrategy: props.updatePositionStrategy
-        ? UPDATE_POSITION_STRATEGIES[props.updatePositionStrategy]
+      side: SIDES[content?.side ?? 'top'],
+      sideOffset: content?.sideOffset ?? 2,
+      sticky: content?.sticky ? STICKY_VALUES[content.sticky] : undefined,
+      updatePositionStrategy: content?.updatePositionStrategy
+        ? UPDATE_POSITION_STRATEGIES[content.updatePositionStrategy]
         : undefined,
     },
     arrow: {
       ...arrowUI,
-      width: props.arrowWidth,
-      height: props.arrowHeight,
-      class: cn('', arrowUI.class),
+      as: arrow?.as,
+      asChild: arrow?.asChild,
+      width: arrow?.width,
+      height: arrow?.height,
+      class: cn(arrowUI.class),
+      style: arrowUI.style,
     },
   }
 })
@@ -97,7 +115,7 @@ const calculatedUI = computed(() => {
       </TooltipTrigger>
 
       <TooltipContent v-bind="calculatedUI.content">
-        <slot name="content" :open="slotProps.open">{{ props.content }}</slot>
+        <slot name="content" :open="slotProps.open">{{ props.label }}</slot>
 
         <TooltipArrow v-bind="calculatedUI.arrow" />
       </TooltipContent>

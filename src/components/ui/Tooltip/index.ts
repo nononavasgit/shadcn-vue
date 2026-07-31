@@ -36,34 +36,15 @@ export type TooltipSticky = keyof typeof STICKY_VALUES
 export type TooltipPositionStrategy = keyof typeof POSITION_STRATEGIES
 export type TooltipUpdatePositionStrategy = keyof typeof UPDATE_POSITION_STRATEGIES
 
-export type TooltipNodeUI = Omit<HTMLAttributes, 'dir'> & {
+export interface TooltipTriggerProps {
   as?: string | Component
   asChild?: boolean
-  dir?: 'ltr' | 'rtl'
 }
 
-export type TooltipContentUI = TooltipNodeUI & {
+export interface TooltipContentProps {
+  as?: string | Component
+  asChild?: boolean
   forceMount?: boolean
-}
-
-export type TooltipArrowUI = TooltipNodeUI
-
-export interface TooltipUI {
-  trigger?: TooltipNodeUI
-  content?: TooltipContentUI
-  arrow?: TooltipArrowUI
-}
-
-export interface TooltipProps {
-  open?: boolean
-  defaultOpen?: boolean
-  content?: string
-  delayDuration?: number
-  skipDelayDuration?: number
-  disableHoverableContent?: boolean
-  disableClosingTrigger?: boolean
-  disabled?: boolean
-  ignoreNonKeyboardFocus?: boolean
   side?: TooltipSide
   sideOffset?: number
   align?: TooltipAlign
@@ -71,13 +52,39 @@ export interface TooltipProps {
   avoidCollisions?: boolean
   collisionPadding?: number | Partial<Record<TooltipSide, number>>
   arrowPadding?: number
-  arrowWidth?: number
-  arrowHeight?: number
   sticky?: TooltipSticky
   hideWhenDetached?: boolean
   positionStrategy?: TooltipPositionStrategy
   updatePositionStrategy?: TooltipUpdatePositionStrategy
-  forceMount?: boolean
+}
+
+export interface TooltipArrowProps {
+  as?: string | Component
+  asChild?: boolean
+  width?: number
+  height?: number
+}
+
+export interface TooltipUI {
+  root?: HTMLAttributes
+  trigger?: HTMLAttributes
+  content?: HTMLAttributes
+  arrow?: HTMLAttributes
+}
+
+export interface TooltipProps {
+  open?: boolean
+  label?: string
+  defaultOpen?: boolean
+  delayDuration?: number
+  skipDelayDuration?: number
+  disableHoverableContent?: boolean
+  disableClosingTrigger?: boolean
+  disabled?: boolean
+  ignoreNonKeyboardFocus?: boolean
+  trigger?: TooltipTriggerProps
+  content?: TooltipContentProps
+  arrow?: TooltipArrowProps
   ui?: TooltipUI
 }
 

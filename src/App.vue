@@ -3,12 +3,18 @@ import { ref } from 'vue'
 import { Alert } from '@/components/ui/Alert'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
+import { Checkbox } from '@/components/ui/Checkbox'
 import { Icon } from '@/components/ui/Icon'
+import { Kbd, KbdGroup } from '@/components/ui/Kbd'
+import { Link } from '@/components/ui/Link'
 import { Spinner } from '@/components/ui/Spinner'
 import { Switch } from '@/components/ui/Switch'
+import { Time } from '@/components/ui/Time'
 
 const notifications = ref(true)
 const compactMode = ref(false)
+const acceptedTerms = ref(false)
+const selectedCheckbox = ref<string | boolean>('no')
 </script>
 
 <template>
@@ -202,6 +208,95 @@ const compactMode = ref(false)
             </template>
           </Switch>
         </label>
+      </div>
+    </section>
+    <section class="space-y-5 rounded-xl border p-5">
+      <h2 class="text-lg font-semibold">Kbd y Link</h2>
+
+      <div class="flex flex-wrap items-center gap-4">
+        <Kbd label="Esc" />
+        <Kbd :ui="{ root: { class: 'bg-primary text-primary-foreground' } }">⌘ K</Kbd>
+        <KbdGroup :ui="{ root: { class: 'rounded-md border p-2' } }">
+          <Kbd label="Ctrl" />
+          <span>+</span>
+          <Kbd label="S" />
+        </KbdGroup>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-4">
+        <Link to="/" label="Enlace interno" icon="chevronLeft" />
+        <Link
+          to="https://www.shadcn-vue.com"
+          label="Documentación externa"
+          trailing-icon="chevronRight"
+          variant="outline"
+        />
+        <Link
+          to="/"
+          label="Enlace personalizado"
+          :ui="{ root: { class: 'text-success underline decoration-dashed' } }"
+        />
+      </div>
+    </section>
+
+    <section class="space-y-5 rounded-xl border p-5">
+      <h2 class="text-lg font-semibold">Checkbox</h2>
+
+      <div class="space-y-4">
+        <label class="flex items-center gap-3">
+          <Checkbox v-model="acceptedTerms" aria-label="Aceptar términos" />
+          <span>Acepto los términos y condiciones: {{ acceptedTerms }}</span>
+        </label>
+
+        <label class="flex items-center gap-3">
+          <Checkbox
+            v-model="selectedCheckbox"
+            true-value="yes"
+            false-value="no"
+            aria-label="Seleccionar valor personalizado"
+            :ui="{ root: { class: 'data-[state=checked]:bg-success' } }"
+          />
+          <span>Valor personalizado: {{ selectedCheckbox }}</span>
+        </label>
+
+        <label class="flex items-center gap-3 opacity-60">
+          <Checkbox disabled aria-label="Checkbox deshabilitado" />
+          <span>Checkbox deshabilitado</span>
+        </label>
+
+        <label class="flex items-center gap-3">
+          <Checkbox aria-label="Checkbox con indicador personalizado">
+            <template #indicator="{ state }">
+              <span class="text-[10px]">{{ state === true ? '✓' : '' }}</span>
+            </template>
+          </Checkbox>
+          <span>Indicador mediante slot</span>
+        </label>
+      </div>
+    </section>
+
+    <section class="space-y-5 rounded-xl border p-5">
+      <h2 class="text-lg font-semibold">Time</h2>
+
+      <div class="flex flex-wrap items-center gap-6">
+        <Time datetime="2026-07-31T10:30:00.000Z" locale="es-ES" />
+
+        <Time
+          datetime="2026-07-31T18:45:00.000Z"
+          locale="es-ES"
+          :format="{ dateStyle: 'long', timeStyle: 'short' }"
+          :ui="{ root: { class: 'font-semibold text-primary' } }"
+        />
+
+        <Time
+          datetime="2026-08-01T08:00:00.000Z"
+          locale="es-ES"
+          :format="{ weekday: 'long', hour: '2-digit', minute: '2-digit' }"
+        >
+          <template #default="{ date }">
+            <span class="rounded-md bg-muted px-2 py-1">Próxima ejecución: {{ date }}</span>
+          </template>
+        </Time>
       </div>
     </section>
   </main>

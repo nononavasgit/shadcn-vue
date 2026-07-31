@@ -1,9 +1,13 @@
-import type { Component } from 'vue'
+import type { Component, HTMLAttributes } from 'vue'
 
 export { default as Checkbox } from './Checkbox.vue'
 
 export type CheckboxValue = boolean | string | number | bigint | Record<string, unknown>
 export type CheckboxState = boolean | 'indeterminate'
+
+export interface CheckboxUI {
+  root?: HTMLAttributes
+}
 
 export interface CheckboxProps {
   modelValue?: CheckboxValue | 'indeterminate' | null
@@ -12,6 +16,7 @@ export interface CheckboxProps {
   falseValue?: CheckboxValue
   as?: string | Component
   asChild?: boolean
+  ui?: CheckboxUI
 }
 
 export interface CheckboxEmits {

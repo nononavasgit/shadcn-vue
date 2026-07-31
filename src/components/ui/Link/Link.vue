@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, useAttrs, useSlots, mergeProps } from 'vue'
+import { computed, mergeProps, useAttrs, useSlots } from 'vue'
 import { RouterLink } from 'vue-router'
 import { Button } from '@/components/ui/Button'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import type { LinkProps, LinkSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
@@ -9,6 +10,7 @@ defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<LinkProps>(), {
   variant: 'link',
   replace: false,
+  ui: undefined,
 })
 defineSlots<LinkSlots>()
 
@@ -20,24 +22,32 @@ const isExternal = computed(
   () => typeof props.to === 'string' && /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(props.to),
 )
 const externalHref = computed(() => (typeof props.to === 'string' ? props.to : undefined))
-const calculatedProps = computed(() => {
+const calculatedUI = computed(() => {
   const buttonProps: Partial<LinkProps> = { ...props }
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
   delete buttonProps.to
   delete buttonProps.replace
 
-  return mergeProps(attrs, buttonProps, { as: 'a' })
+  buttonProps.ui = {
+    ...props.ui,
+    root: rootUI,
+  }
+
+  return {
+    root: mergeProps(attrs, buttonProps, { as: 'a' }),
+  }
 })
 </script>
 
 <template>
-  <Button v-if="isExternal" v-bind="calculatedProps" :href="externalHref">
+  <Button v-if="isExternal" v-bind="calculatedUI.root" :href="externalHref">
     <template v-for="slotName in slotNames" #[slotName]>
       <slot :name="slotName" />
     </template>
   </Button>
 
   <RouterLink v-else v-slot="{ href, navigate }" :to="props.to" :replace="props.replace" custom>
-    <Button v-bind="calculatedProps" :href="href" @click="navigate">
+    <Button v-bind="calculatedUI.root" :href="href" @click="navigate">
       <template v-for="slotName in slotNames" #[slotName]>
         <slot :name="slotName" />
       </template>

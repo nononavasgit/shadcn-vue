@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { Checkbox as CheckboxBase } from '@/components/primitives/Checkbox'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import type { CheckboxEmits, CheckboxProps, CheckboxSlots, CheckboxValue } from '.'
 
@@ -9,23 +10,34 @@ defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<CheckboxProps>(), {
   trueValue: true,
   falseValue: false,
+  ui: undefined,
 })
 defineEmits<CheckboxEmits>()
 defineSlots<CheckboxSlots>()
 
 const attrs = useAttrs()
 const modelValue = defineModel<CheckboxValue | 'indeterminate' | null>()
-const calculatedUI = computed(() => ({
-  root: {
-    ...attrs,
-    as: props.as,
-    asChild: props.asChild,
-    defaultValue: props.defaultValue,
-    falseValue: props.falseValue,
-    trueValue: props.trueValue,
-    class: cn('focus-visible:border-primary focus-visible:ring-primary/50', attrs.class),
-  },
-}))
+const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+
+  return {
+    root: {
+      ...attrs,
+      ...rootUI,
+      as: props.as,
+      asChild: props.asChild,
+      defaultValue: props.defaultValue,
+      falseValue: props.falseValue,
+      trueValue: props.trueValue,
+      class: cn(
+        'focus-visible:border-primary focus-visible:ring-primary/50',
+        attrs.class,
+        rootUI.class,
+      ),
+      style: [attrs.style, rootUI.style],
+    },
+  }
+})
 </script>
 
 <template>

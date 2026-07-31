@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { AspectRatio as AspectRatioBase } from '@/components/primitives/AspectRatio'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { cn } from '@/lib/utils'
 import type { AspectRatioProps, AspectRatioSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
@@ -11,16 +13,28 @@ const props = withDefaults(defineProps<AspectRatioProps>(), {
   ratio: 1,
   as: 'div',
   asChild: false,
+  ui: undefined,
 })
 const attrs = useAttrs()
-const calculatedProps = computed(() => ({
-  ...attrs,
-  ...props,
-}))
+const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+
+  return {
+    root: {
+      ...attrs,
+      ...rootUI,
+      ratio: props.ratio,
+      as: props.as,
+      asChild: props.asChild,
+      class: cn(attrs.class, rootUI.class),
+      style: [attrs.style, rootUI.style],
+    },
+  }
+})
 </script>
 
 <template>
-  <AspectRatioBase v-slot="slotProps" v-bind="calculatedProps">
+  <AspectRatioBase v-slot="slotProps" v-bind="calculatedUI.root">
     <slot v-bind="slotProps" />
   </AspectRatioBase>
 </template>

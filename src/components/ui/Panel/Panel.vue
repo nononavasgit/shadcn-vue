@@ -2,7 +2,8 @@
 import { computed, useAttrs } from 'vue'
 import { Button } from '@/components/ui/Button'
 import { Collapsible } from '@/components/ui/Collapsible'
-import { Icon, useNormalizeIconProps } from '@/components/ui/Icon'
+import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import { panelVariants, type PanelEmits, type PanelProps, type PanelSlots } from '.'
@@ -24,7 +25,6 @@ const { colorStyle } = useColor(
   computed(() => props.color),
   'panel',
 )
-const calculatedIcon = useNormalizeIconProps(() => props.icon)
 const calculatedOpen = computed({
   get: () => (props.collapsible ? open.value : true),
   set: (value: boolean) => {
@@ -32,49 +32,52 @@ const calculatedOpen = computed({
   },
 })
 
-const calculatedUI = computed(() => ({
-  root: {
-    ...attrs,
-    class: cn(attrs.class),
-    style: [colorStyle.value, attrs.style],
-  },
-  header: {
-    ...props.ui?.header,
-  },
-  trigger: {
-    as: props.collapsible ? undefined : 'span',
-    color: props.color,
-    severity: props.severity,
-    variant: props.variant,
-    class: cn(
-      'w-full',
-      calculatedOpen.value && 'rounded-br-none rounded-bl-none',
-      !props.collapsible && 'justify-start',
-    ),
-  },
-  icon: {
-    ...props.ui?.icon,
-    ...calculatedIcon.value,
-    class: cn(props.ui?.icon?.class, calculatedIcon.value?.class),
-  },
-  label: props.ui?.label,
-  arrows: {
-    ...props.ui?.arrows,
-    class: cn('ml-auto shrink-0', props.ui?.arrows?.class),
-  },
-  content: {
-    ...props.ui?.content,
-    class: cn(
-      panelVariants({
-        severity: props.severity,
-        variant: props.variant,
-        color: Boolean(props.color),
-      }),
-      'rounded-t-none border-t-0 p-[15px] text-card-foreground shadow-none',
-      props.ui?.content?.class,
-    ),
-  },
-}))
+const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const headerUI = normalizeHTMLAttributes(props.ui?.header)
+  const iconUI = normalizeHTMLAttributes(props.ui?.icon)
+  const labelUI = normalizeHTMLAttributes(props.ui?.label)
+  const arrowsUI = normalizeHTMLAttributes(props.ui?.arrows)
+  const contentUI = normalizeHTMLAttributes(props.ui?.content)
+  const icon = normalizeIconProps(props.icon)
+
+  return {
+    root: {
+      ...attrs,
+      ...rootUI,
+      class: cn(attrs.class, rootUI.class),
+      style: [colorStyle.value, attrs.style, rootUI.style],
+    },
+    header: { ...headerUI, class: cn(headerUI.class), style: headerUI.style },
+    trigger: {
+      as: props.collapsible ? undefined : 'span',
+      color: props.color,
+      severity: props.severity,
+      variant: props.variant,
+      class: cn(
+        'w-full',
+        calculatedOpen.value && 'rounded-br-none rounded-bl-none',
+        !props.collapsible && 'justify-start',
+      ),
+    },
+    icon: { ...iconUI, ...icon, class: cn(iconUI.class), style: iconUI.style },
+    label: { ...labelUI, class: cn(labelUI.class), style: labelUI.style },
+    arrows: { ...arrowsUI, class: cn('ml-auto shrink-0', arrowsUI.class), style: arrowsUI.style },
+    content: {
+      ...contentUI,
+      class: cn(
+        panelVariants({
+          severity: props.severity,
+          variant: props.variant,
+          color: Boolean(props.color),
+        }),
+        'rounded-t-none border-t-0 p-[15px] text-card-foreground shadow-none',
+        contentUI.class,
+      ),
+      style: contentUI.style,
+    },
+  }
+})
 </script>
 
 <template>

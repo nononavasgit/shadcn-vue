@@ -7,6 +7,7 @@ import {
   InputOTPSlot,
 } from '@/components/primitives/InputOTP'
 import { Icon } from '@/components/ui/Icon'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { INPUT_OTP_PATTERNS } from './patterns'
 import type {
@@ -69,7 +70,7 @@ const calculatedGroups = computed(() => {
       first: groupIndex === 0,
       last: groupIndex === allGroups.length - 1,
     }
-    const groupUI = resolveUI(props.ui?.group, context)
+    const groupUI = normalizeHTMLAttributes(resolveUI(props.ui?.group, context))
     const group = {
       key: `group-${groupIndex}`,
       context,
@@ -85,7 +86,7 @@ const calculatedGroups = computed(() => {
           firstInGroup: indexInGroup === 0,
           lastInGroup: indexInGroup === size - 1,
         }
-        const slotUI = resolveUI(props.ui?.slot, slotContext)
+        const slotUI = normalizeHTMLAttributes(resolveUI(props.ui?.slot, slotContext))
 
         return {
           key: `slot-${slotContext.index}`,
@@ -115,7 +116,7 @@ const calculatedGroups = computed(() => {
       previousGroup: group.context,
       nextGroup: nextGroup.context,
     }
-    const separatorUI = resolveUI(props.ui?.separator, separatorContext)
+    const separatorUI = normalizeHTMLAttributes(resolveUI(props.ui?.separator, separatorContext))
 
     return {
       ...group,
@@ -131,23 +132,29 @@ const calculatedGroups = computed(() => {
   })
 })
 
-const calculatedUI = computed(() => ({
-  root: {
-    ...attrs,
-    maxlength: props.maxlength,
-    defaultValue: props.defaultValue,
-    textAlign: props.textAlign,
-    inputmode: props.inputmode,
-    containerClass: props.containerClass,
-    pattern: props.pattern ? INPUT_OTP_PATTERNS[props.pattern] : undefined,
-    pushPasswordManagerStrategy: props.pushPasswordManagerStrategy,
-    noScriptCssFallback: props.noScriptCssFallback,
-    pasteTransformer: props.pasteTransformer,
-    onComplete: (value: string) => emit('complete', value),
-    onInput: (value: string) => emit('input', value),
-    class: cn(attrs.class),
-  },
-}))
+const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+
+  return {
+    root: {
+      ...attrs,
+      ...rootUI,
+      maxlength: props.maxlength,
+      defaultValue: props.defaultValue,
+      textAlign: props.textAlign,
+      inputmode: props.inputmode,
+      containerClass: props.containerClass,
+      pattern: props.pattern ? INPUT_OTP_PATTERNS[props.pattern] : undefined,
+      pushPasswordManagerStrategy: props.pushPasswordManagerStrategy,
+      noScriptCssFallback: props.noScriptCssFallback,
+      pasteTransformer: props.pasteTransformer,
+      onComplete: (value: string) => emit('complete', value),
+      onInput: (value: string) => emit('input', value),
+      class: cn(attrs.class, rootUI.class),
+      style: [attrs.style, rootUI.style],
+    },
+  }
+})
 </script>
 
 <template>

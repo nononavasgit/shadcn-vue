@@ -60,6 +60,7 @@ export interface InputOTPSeparatorContext {
 export type InputOTPUIValue<T, C> = T | ((context: C) => T)
 
 export interface InputOTPUI {
+  root?: HTMLAttributes
   group?: InputOTPUIValue<HTMLAttributes, InputOTPGroupContext>
   slot?: InputOTPUIValue<HTMLAttributes, InputOTPSlotContext>
   separator?: InputOTPUIValue<HTMLAttributes, InputOTPSeparatorContext>

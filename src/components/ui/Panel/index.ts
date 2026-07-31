@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
-import type { NormalizeIconProps, NormalizedIconProps } from '@/components/ui/Icon'
+import type { IconName, IconProps } from '@/components/ui/Icon'
 
 export { default as Panel } from './Panel.vue'
 
@@ -38,8 +38,9 @@ export const panelVariants = cva(
 export type PanelVariants = VariantProps<typeof panelVariants>
 
 export interface PanelUI {
+  root?: HTMLAttributes
   header?: HTMLAttributes
-  icon?: NormalizedIconProps
+  icon?: HTMLAttributes
   label?: HTMLAttributes
   arrows?: HTMLAttributes
   content?: HTMLAttributes
@@ -51,7 +52,7 @@ export interface PanelProps {
   severity?: PanelVariants['severity']
   color?: string
   label?: string
-  icon?: NormalizeIconProps
+  icon?: IconName | IconProps
   collapsible?: boolean
   ui?: PanelUI
 }

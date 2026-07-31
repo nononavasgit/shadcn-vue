@@ -1,8 +1,14 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { Alert } from '@/components/ui/Alert'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Icon } from '@/components/ui/Icon'
+import { Spinner } from '@/components/ui/Spinner'
+import { Switch } from '@/components/ui/Switch'
+
+const notifications = ref(true)
+const compactMode = ref(false)
 </script>
 
 <template>
@@ -131,6 +137,71 @@ import { Icon } from '@/components/ui/Icon'
             },
           }"
         />
+      </div>
+    </section>
+    <section class="space-y-5 rounded-xl border p-5">
+      <h2 class="text-lg font-semibold">Spinner</h2>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <Spinner class="min-h-24 rounded-lg border" />
+
+        <Spinner
+          class="min-h-24 rounded-lg border"
+          :ui="{
+            root: { class: 'bg-muted/40' },
+            loading: { class: 'min-h-24' },
+            icon: { class: 'size-7 text-primary' },
+          }"
+        />
+
+        <Spinner
+          :loading="false"
+          class="rounded-lg border p-4 md:col-span-2"
+          :ui="{ content: { class: 'text-sm text-muted-foreground' } }"
+        >
+          El contenido aparece cuando loading es false.
+        </Spinner>
+      </div>
+    </section>
+
+    <section class="space-y-5 rounded-xl border p-5">
+      <h2 class="text-lg font-semibold">Switch</h2>
+
+      <div class="space-y-4">
+        <label class="flex items-center justify-between gap-4 rounded-lg border p-4">
+          <span>
+            <span class="block font-medium">Notificaciones</span>
+            <span class="block text-sm text-muted-foreground">
+              Estado: {{ notifications ? 'activadas' : 'desactivadas' }}
+            </span>
+          </span>
+          <Switch v-model="notifications" aria-label="Activar notificaciones" />
+        </label>
+
+        <label class="flex items-center justify-between gap-4 rounded-lg border p-4">
+          <span class="font-medium">Modo compacto</span>
+          <Switch
+            v-model="compactMode"
+            aria-label="Activar modo compacto"
+            :ui="{ root: { class: 'data-[state=checked]:bg-success' } }"
+          />
+        </label>
+
+        <label class="flex items-center justify-between gap-4 rounded-lg border p-4 opacity-60">
+          <span class="font-medium">Opción deshabilitada</span>
+          <Switch disabled aria-label="Opción deshabilitada" />
+        </label>
+
+        <label class="flex items-center justify-between gap-4 rounded-lg border p-4">
+          <span class="font-medium">Thumb mediante slot</span>
+          <Switch aria-label="Switch con thumb personalizado">
+            <template #thumb="{ checked }">
+              <span class="flex size-full items-center justify-center text-[8px]">
+                {{ checked ? '✓' : '' }}
+              </span>
+            </template>
+          </Switch>
+        </label>
       </div>
     </section>
   </main>

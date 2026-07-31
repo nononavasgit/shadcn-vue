@@ -1,8 +1,12 @@
-import type { Component } from 'vue'
+import type { Component, HTMLAttributes } from 'vue'
 
 export { default as Switch } from './Switch.vue'
 
 export type SwitchValue = boolean | null
+
+export interface SwitchUI {
+  root?: HTMLAttributes
+}
 
 export interface SwitchProps {
   modelValue?: SwitchValue
@@ -14,6 +18,7 @@ export interface SwitchProps {
   as?: string | Component
   asChild?: boolean
   required?: boolean
+  ui?: SwitchUI
 }
 
 export interface SwitchEmits {

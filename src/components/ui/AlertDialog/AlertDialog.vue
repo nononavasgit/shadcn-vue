@@ -11,11 +11,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/primitives/AlertDialog'
-import { Button, useNormalizeButtonProps } from '@/components/ui/Button'
-import { Icon, useNormalizeIconProps } from '@/components/ui/Icon'
+import { Button, normalizeButtonProps } from '@/components/ui/Button'
+import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
-import type { AlertDialogEmits, AlertDialogProps, AlertDialogSlotProps, AlertDialogSlots } from '.'
+import {
+  normalizeAlertDialogContentProps,
+  normalizeAlertDialogTriggerProps,
+  type AlertDialogEmits,
+  type AlertDialogProps,
+  type AlertDialogSlotProps,
+  type AlertDialogSlots,
+} from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -24,14 +32,19 @@ const emit = defineEmits<AlertDialogEmits>()
 
 const props = withDefaults(defineProps<AlertDialogProps>(), {
   unmountOnHide: true,
+  label: undefined,
+  description: undefined,
+  icon: undefined,
+  actionButton: undefined,
+  cancelButton: undefined,
+  trigger: undefined,
+  content: undefined,
+  ui: undefined,
 })
 
 const slots = useSlots()
 const attrs = useAttrs()
 const open = defineModel<boolean>('open')
-const calculatedIcon = useNormalizeIconProps(() => props.icon)
-const calculatedActionButton = useNormalizeButtonProps(() => props.actionButton)
-const calculatedCancelButton = useNormalizeButtonProps(() => props.cancelButton)
 const { t } = useI18n()
 
 function getSlotProps(slotProps: { open: boolean; close: () => void }): AlertDialogSlotProps {
@@ -41,65 +54,95 @@ function getSlotProps(slotProps: { open: boolean; close: () => void }): AlertDia
   }
 }
 
-const calculatedUI = computed(() => ({
-  root: {
-    ...attrs,
-    defaultOpen: props.defaultOpen,
-    unmountOnHide: props.unmountOnHide,
-  },
-  trigger: {
-    ...props.ui?.trigger,
-    asChild: props.ui?.trigger?.asChild ?? true,
-  },
-  content: {
-    ...props.ui?.content,
-    forceMount: props.forceMount,
-    disableOutsidePointerEvents: props.disableOutsidePointerEvents ?? true,
-    onOpenAutoFocus: (event: Event) => emit('openAutoFocus', event),
-    onCloseAutoFocus: (event: Event) => emit('closeAutoFocus', event),
-    onEscapeKeyDown: (event: Event) => emit('escapeKeyDown', event),
-    onPointerDownOutside: (event: Event) => emit('pointerDownOutside', event),
-    onFocusOutside: (event: Event) => emit('focusOutside', event),
-    onInteractOutside: (event: Event) => emit('interactOutside', event),
-  },
-  header: {
-    ...props.ui?.header,
-  },
-  label: {
-    ...props.ui?.label,
-    class: cn('flex items-center gap-2', props.ui?.label?.class),
-  },
-  icon: {
-    'aria-hidden': true,
-    ...props.ui?.icon,
-    ...calculatedIcon.value,
-    class: cn(props.ui?.icon?.class, calculatedIcon.value?.class),
-  },
-  description: {
-    ...props.ui?.description,
-  },
-  body: {
-    ...props.ui?.body,
-    class: cn('min-h-0 overflow-y-auto', props.ui?.body?.class),
-  },
-  footer: {
-    ...props.ui?.footer,
-  },
-  cancel: {
-    label: t('cancel'),
-    variant: 'outline' as const,
-    severity: 'secondary' as const,
-    ...props.ui?.cancel,
-    ...calculatedCancelButton.value,
-    class: cn(props.ui?.cancel?.class, calculatedCancelButton.value?.class),
-  },
-  action: {
-    label: t('continue'),
-    ...props.ui?.action,
-    ...calculatedActionButton.value,
-    class: cn(props.ui?.action?.class, calculatedActionButton.value?.class),
-  },
-}))
+const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const triggerUI = normalizeHTMLAttributes(props.ui?.trigger)
+  const normalizedContentUI = normalizeHTMLAttributes(props.ui?.content)
+  const { dir: contentDirection, ...contentUI } = normalizedContentUI
+  const headerUI = normalizeHTMLAttributes(props.ui?.header)
+  const labelUI = normalizeHTMLAttributes(props.ui?.label)
+  const iconUI = normalizeHTMLAttributes(props.ui?.icon)
+  const descriptionUI = normalizeHTMLAttributes(props.ui?.description)
+  const bodyUI = normalizeHTMLAttributes(props.ui?.body)
+  const footerUI = normalizeHTMLAttributes(props.ui?.footer)
+  const actionUI = normalizeHTMLAttributes(props.ui?.action)
+  const cancelUI = normalizeHTMLAttributes(props.ui?.cancel)
+  const trigger = normalizeAlertDialogTriggerProps(props.trigger)
+  const content = normalizeAlertDialogContentProps(props.content)
+  const actionButton = normalizeButtonProps(props.actionButton)
+  const cancelButton = normalizeButtonProps(props.cancelButton)
+
+  void contentDirection
+
+  return {
+    root: {
+      ...attrs,
+      ...rootUI,
+      defaultOpen: props.defaultOpen,
+      unmountOnHide: props.unmountOnHide,
+      class: cn(attrs.class, rootUI.class),
+      style: [attrs.style, rootUI.style],
+    },
+    trigger: {
+      ...triggerUI,
+      ...trigger,
+      asChild: trigger?.asChild ?? true,
+      class: cn(triggerUI.class),
+    },
+    content: {
+      ...contentUI,
+      ...content,
+      disableOutsidePointerEvents: content?.disableOutsidePointerEvents ?? true,
+      onOpenAutoFocus: (event: Event) => emit('openAutoFocus', event),
+      onCloseAutoFocus: (event: Event) => emit('closeAutoFocus', event),
+      onEscapeKeyDown: (event: Event) => emit('escapeKeyDown', event),
+      onPointerDownOutside: (event: Event) => emit('pointerDownOutside', event),
+      onFocusOutside: (event: Event) => emit('focusOutside', event),
+      onInteractOutside: (event: Event) => emit('interactOutside', event),
+      class: cn(contentUI.class),
+    },
+    header: {
+      ...headerUI,
+      class: cn(headerUI.class),
+    },
+    label: {
+      ...labelUI,
+      class: cn('flex items-center gap-2', labelUI.class),
+    },
+    icon: {
+      'aria-hidden': true,
+      ...iconUI,
+      ...normalizeIconProps(props.icon),
+      class: cn(iconUI.class),
+    },
+    description: {
+      ...descriptionUI,
+      class: cn(descriptionUI.class),
+    },
+    body: {
+      ...bodyUI,
+      class: cn('min-h-0 overflow-y-auto', bodyUI.class),
+    },
+    footer: {
+      ...footerUI,
+      class: cn(footerUI.class),
+    },
+    cancel: {
+      ...cancelUI,
+      ...cancelButton,
+      label: cancelButton?.label ?? t('cancel'),
+      variant: cancelButton?.variant ?? ('outline' as const),
+      severity: cancelButton?.severity ?? ('secondary' as const),
+      class: cn(cancelUI.class),
+    },
+    action: {
+      ...actionUI,
+      ...actionButton,
+      label: actionButton?.label ?? t('continue'),
+      class: cn(actionUI.class),
+    },
+  }
+})
 </script>
 
 <template>

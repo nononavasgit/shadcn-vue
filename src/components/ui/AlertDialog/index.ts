@@ -1,45 +1,65 @@
 import type { Component, HTMLAttributes } from 'vue'
-import type { NormalizedButtonProps, NormalizeButtonProps } from '@/components/ui/Button'
-import type { NormalizeIconProps, NormalizedIconProps } from '@/components/ui/Icon'
+import type { ButtonProps } from '@/components/ui/Button'
+import type { IconName, IconProps } from '@/components/ui/Icon'
 
 export { default as AlertDialog } from './AlertDialog.vue'
 
-export type AlertDialogNodeUI = Omit<HTMLAttributes, 'dir'> & {
+export interface AlertDialogTriggerProps {
   as?: string | Component
   asChild?: boolean
-  dir?: 'ltr' | 'rtl'
 }
 
-// UI
+export interface AlertDialogContentProps {
+  as?: string | Component
+  asChild?: boolean
+  forceMount?: boolean
+  disableOutsidePointerEvents?: boolean
+}
+
+export function normalizeAlertDialogTriggerProps(
+  source: AlertDialogTriggerProps | null | undefined,
+): AlertDialogTriggerProps | undefined {
+  if (!source) return undefined
+  const { as, asChild } = source
+  return { as, asChild }
+}
+
+export function normalizeAlertDialogContentProps(
+  source: AlertDialogContentProps | null | undefined,
+): AlertDialogContentProps | undefined {
+  if (!source) return undefined
+  const { as, asChild, forceMount, disableOutsidePointerEvents } = source
+  return { as, asChild, forceMount, disableOutsidePointerEvents }
+}
+
 export interface AlertDialogUI {
-  trigger?: AlertDialogNodeUI
-  content?: AlertDialogNodeUI
+  root?: HTMLAttributes
+  trigger?: HTMLAttributes
+  content?: HTMLAttributes
   header?: HTMLAttributes
-  label?: AlertDialogNodeUI
-  icon?: NormalizedIconProps
-  description?: AlertDialogNodeUI
+  label?: HTMLAttributes
+  icon?: HTMLAttributes
+  description?: HTMLAttributes
   body?: HTMLAttributes
   footer?: HTMLAttributes
-  action?: NormalizedButtonProps
-  cancel?: NormalizedButtonProps
+  action?: HTMLAttributes
+  cancel?: HTMLAttributes
 }
 
-// Props
 export interface AlertDialogProps {
   open?: boolean
   defaultOpen?: boolean
   unmountOnHide?: boolean
   label?: string
   description?: string
-  icon?: NormalizeIconProps
-  actionButton?: NormalizeButtonProps
-  cancelButton?: NormalizeButtonProps
-  forceMount?: boolean
-  disableOutsidePointerEvents?: boolean
+  icon?: IconName | IconProps
+  actionButton?: ButtonProps
+  cancelButton?: ButtonProps
+  trigger?: AlertDialogTriggerProps
+  content?: AlertDialogContentProps
   ui?: AlertDialogUI
 }
 
-// Events
 export interface AlertDialogEmits {
   'update:open': [value: boolean]
   action: [event: PointerEvent]
@@ -52,13 +72,11 @@ export interface AlertDialogEmits {
   interactOutside: [event: Event]
 }
 
-// SlotProps
 export interface AlertDialogSlotProps {
   open: boolean
   close: () => void
 }
 
-// Slots
 export interface AlertDialogSlots {
   default?(props: AlertDialogSlotProps): unknown
   content?(props: AlertDialogSlotProps): unknown

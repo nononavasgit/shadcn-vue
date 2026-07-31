@@ -1,248 +1,242 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { AlertDialog } from '@/components/ui/AlertDialog'
 import { Button } from '@/components/ui/Button'
-import { Dialog } from '@/components/ui/Dialog'
-import { Input } from '@/components/ui/Input'
-import { Sheet } from '@/components/ui/Sheet'
+import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from '@/components/ui/ButtonGroup'
+import { Icon } from '@/components/ui/Icon'
 
-const name = ref('')
-const email = ref('usuario@ejemplo.com')
-const customInput = ref('Valor personalizado')
-const dialogOpen = ref(false)
-const sheetOpen = ref(false)
+const controlledOpen = ref(false)
+const lastAction = ref('Ninguna')
 </script>
 
 <template>
   <main class="mx-auto min-h-screen max-w-5xl space-y-10 p-6 md:p-10">
     <header class="space-y-2">
-      <h1 class="text-3xl font-bold">Input, Dialog y Sheet</h1>
+      <h1 class="text-3xl font-bold">ButtonGroup y AlertDialog</h1>
       <p class="text-muted-foreground">
-        Ejemplos con props funcionales agrupadas y atributos UI normalizados.
+        Ejemplos de composición, orientación, props funcionales y zonas UI normalizadas.
       </p>
     </header>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Input</h2>
-        <p class="text-sm text-muted-foreground">Valores reactivos y estados habituales.</p>
+        <h2 class="text-lg font-semibold">ButtonGroup horizontal</h2>
+        <p class="text-sm text-muted-foreground">Botones unidos en una única fila.</p>
       </div>
 
-      <div class="grid gap-6 md:grid-cols-2">
-        <label class="space-y-2">
-          <span class="text-sm font-medium">Nombre</span>
-          <Input v-model="name" placeholder="Escribe tu nombre" aria-label="Nombre" />
-          <span class="block text-xs text-muted-foreground">Valor: {{ name || 'vacío' }}</span>
-        </label>
+      <div class="flex flex-wrap gap-5">
+        <ButtonGroup>
+          <Button label="Anterior" icon="chevronLeft" variant="outline" />
+          <Button label="Guardar" icon="save" variant="outline" />
+          <Button label="Siguiente" trailing-icon="chevronRight" variant="outline" />
+        </ButtonGroup>
 
-        <label class="space-y-2">
-          <span class="text-sm font-medium">Correo electrónico</span>
-          <Input v-model="email" type="email" aria-label="Correo electrónico" />
-        </label>
-
-        <label class="space-y-2">
-          <span class="text-sm font-medium">Valor inicial</span>
-          <Input default-value="Contenido inicial" aria-label="Valor inicial" />
-        </label>
-
-        <label class="space-y-2">
-          <span class="text-sm font-medium">Deshabilitado</span>
-          <Input disabled value="No editable" aria-label="Input deshabilitado" />
-        </label>
+        <ButtonGroup>
+          <Button icon="chevronLeft" variant="outline" aria-label="Anterior" />
+          <Button icon="minus" variant="outline" aria-label="Alejar" />
+          <Button icon="chevronRight" variant="outline" aria-label="Siguiente" />
+        </ButtonGroup>
       </div>
     </section>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Input personalizado</h2>
-        <p class="text-sm text-muted-foreground">ui.root admite atributos HTML normalizados.</p>
-      </div>
-
-      <div class="max-w-lg space-y-2">
-        <Input
-          v-model="customInput"
-          :ui="{
-            root: {
-              class:
-                'h-11 rounded-xl border-primary/40 bg-primary/5 font-medium text-primary shadow-sm',
-              title: 'Input personalizado',
-            },
-          }"
-          aria-label="Input personalizado"
-        />
-        <p class="text-sm text-muted-foreground">{{ customInput }}</p>
-      </div>
-    </section>
-
-    <section class="space-y-6 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Dialog básico</h2>
+        <h2 class="text-lg font-semibold">Text y Separator</h2>
         <p class="text-sm text-muted-foreground">
-          Trigger, content y close contienen sus props funcionales.
+          Los tres componentes exponen ui.root como HTMLAttributes.
         </p>
       </div>
 
-      <Dialog
-        label="Editar perfil"
-        description="Actualiza la información pública de tu perfil."
-        icon="info"
-        :ui="{
-          close: {
-            class:
-              'rounded-full border border-primary/50 bg-primary/10 text-primary hover:bg-primary/20',
-          },
+      <div class="flex flex-wrap gap-5">
+        <ButtonGroup>
+          <ButtonGroupText label="Total" />
+          <ButtonGroupSeparator />
+          <ButtonGroupText label="128 €" />
+          <ButtonGroupSeparator />
+          <Button label="Pagar" />
+        </ButtonGroup>
+
+        <ButtonGroup
+          :ui="{
+            root: { class: 'rounded-xl ring-2 ring-primary/20' },
+          }"
+        >
+          <ButtonGroupText
+            label="Filtro"
+            :ui="{
+              root: { class: 'bg-primary/5 font-semibold text-primary' },
+            }"
+          />
+          <ButtonGroupSeparator
+            :ui="{
+              root: { class: 'bg-primary/40' },
+            }"
+          />
+          <Button label="Activos" variant="outline" />
+          <Button label="Todos" variant="outline" />
+        </ButtonGroup>
+      </div>
+    </section>
+
+    <section class="space-y-6 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Orientación vertical</h2>
+        <p class="text-sm text-muted-foreground">
+          Separadores horizontales dentro del grupo vertical.
+        </p>
+      </div>
+
+      <ButtonGroup orientation="vertical" class="w-56">
+        <Button label="Perfil" icon="info" variant="outline" class="w-full justify-start" />
+        <ButtonGroupSeparator orientation="horizontal" />
+        <Button label="Guardar" icon="save" variant="outline" class="w-full justify-start" />
+        <ButtonGroupSeparator orientation="horizontal" />
+        <Button
+          label="Eliminar"
+          icon="trash2"
+          variant="outline"
+          severity="error"
+          class="w-full justify-start"
+        />
+      </ButtonGroup>
+    </section>
+
+    <section class="space-y-6 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">AlertDialog básico</h2>
+        <p class="text-sm text-muted-foreground">
+          Action y cancel reciben objetos ButtonProps normalizados.
+        </p>
+      </div>
+
+      <AlertDialog
+        label="¿Eliminar proyecto?"
+        description="Esta acción no se puede deshacer y eliminará todos sus datos."
+        icon="warning"
+        :cancel-button="{
+          label: 'Conservar proyecto',
+          variant: 'outline',
+          severity: 'secondary',
         }"
+        :action-button="{
+          label: 'Eliminar definitivamente',
+          icon: 'trash2',
+          severity: 'error',
+        }"
+        @cancel="lastAction = 'Cancelado'"
+        @action="lastAction = 'Eliminado'"
       >
-        <Button label="Abrir Dialog" variant="outline" />
+        <Button label="Eliminar proyecto" icon="trash2" severity="error" />
+      </AlertDialog>
+
+      <p class="text-sm text-muted-foreground">Última acción: {{ lastAction }}</p>
+    </section>
+
+    <section class="space-y-6 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Contenido y slots</h2>
+        <p class="text-sm text-muted-foreground">
+          El cuerpo y los botones pueden construirse mediante slots.
+        </p>
+      </div>
+
+      <AlertDialog
+        label="Publicar cambios"
+        description="Revisa el resumen antes de continuar."
+        icon="info"
+      >
+        <Button label="Publicar" icon="save" variant="outline" />
 
         <template #content>
-          <div class="grid gap-4 py-2">
-            <label class="space-y-2">
-              <span class="text-sm font-medium">Nombre visible</span>
-              <Input default-value="Nononavas" aria-label="Nombre visible" />
-            </label>
-            <label class="space-y-2">
-              <span class="text-sm font-medium">Usuario</span>
-              <Input default-value="@nononavas" aria-label="Usuario" />
-            </label>
+          <div class="space-y-3 rounded-lg bg-muted/50 p-4 text-sm">
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">Archivos modificados</span>
+              <span class="font-medium">12</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-muted-foreground">Nueva versión</span>
+              <span class="font-medium">v2.4.0</span>
+            </div>
           </div>
         </template>
 
-        <template #footer="{ close }">
-          <Button label="Cancelar" variant="outline" @click="close" />
-          <Button label="Guardar" icon="save" @click="close" />
+        <template #cancel="{ close }">
+          <Button label="Volver" variant="outline" @click="close" />
         </template>
-      </Dialog>
+
+        <template #action="{ close }">
+          <Button label="Publicar ahora" icon="save" @click="close" />
+        </template>
+      </AlertDialog>
     </section>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Dialog controlado y UI</h2>
+        <h2 class="text-lg font-semibold">Estado controlado y UI</h2>
         <p class="text-sm text-muted-foreground">
-          Estado: {{ dialogOpen ? 'abierto' : 'cerrado' }}.
+          Estado: {{ controlledOpen ? 'abierto' : 'cerrado' }}.
         </p>
       </div>
 
-      <Dialog
-        v-model:open="dialogOpen"
-        label="Confirmar operación"
-        description="Esta acción actualizará los datos seleccionados."
-        icon="warning"
+      <AlertDialog
+        v-model:open="controlledOpen"
+        label="Confirmar configuración"
+        description="Se aplicarán los ajustes a todos los miembros del equipo."
+        icon="success"
         :content="{ disableOutsidePointerEvents: true }"
         :ui="{
-          root: { 'data-example': 'controlled-dialog' },
-          trigger: { class: 'rounded-lg ring-2 ring-warning/20' },
-          content: { class: 'border-2 border-warning/30 shadow-xl' },
-          header: { class: 'rounded-md bg-warning/5 p-3' },
-          title: { class: 'text-warning' },
+          root: { 'data-example': 'controlled-alert-dialog' },
+          trigger: { class: 'rounded-lg ring-2 ring-success/20' },
+          content: { class: 'border-2 border-success/30 shadow-xl' },
+          header: { class: 'rounded-md bg-success/5 p-3' },
+          label: { class: 'text-success' },
           icon: { class: 'size-5' },
-          description: { class: 'text-warning/70' },
+          description: { class: 'text-success/70' },
           body: { class: 'py-6' },
-          footer: { class: 'bg-muted/40' },
-          close: { class: 'text-warning', title: 'Cerrar confirmación' },
+          footer: { class: 'border-t pt-4' },
+          cancel: { class: 'border-success/30' },
+          action: { class: 'bg-success text-success-foreground' },
         }"
+        :cancel-button="{ label: 'Revisar' }"
+        :action-button="{ label: 'Aplicar', icon: 'check' }"
       >
         <template #default="{ open }">
-          <Button :label="open ? 'Dialog abierto' : 'Abrir confirmación'" severity="warning" />
+          <Button :label="open ? 'AlertDialog abierto' : 'Abrir confirmación'" severity="success" />
         </template>
 
         <template #content>
           <p class="text-sm text-muted-foreground">
-            Revisa la información antes de confirmar la operación.
+            Los cambios estarán disponibles inmediatamente después de confirmar.
           </p>
         </template>
-
-        <template #footer="{ close }">
-          <Button label="Volver" variant="outline" @click="close" />
-          <Button label="Confirmar" severity="warning" @click="close" />
-        </template>
-      </Dialog>
+      </AlertDialog>
     </section>
 
     <section class="space-y-6 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Sheet por posiciones</h2>
-        <p class="text-sm text-muted-foreground">La posición pertenece al objeto content.</p>
+        <h2 class="text-lg font-semibold">Header y footer libres</h2>
       </div>
 
-      <div class="flex flex-wrap gap-3">
-        <Sheet
-          v-for="side in ['top', 'right', 'bottom', 'left'] as const"
-          :key="side"
-          :label="`Sheet ${side}`"
-          description="Contenido lateral con posición configurable."
-          :content="{ side }"
-        >
-          <Button :label="side" variant="outline" />
+      <AlertDialog>
+        <Button label="Abrir composición libre" variant="outline" />
 
-          <template #content>
-            <div class="space-y-3 py-4">
-              <p class="text-sm text-muted-foreground">Este Sheet aparece desde {{ side }}.</p>
-              <Input placeholder="Campo de ejemplo" aria-label="Campo del Sheet" />
+        <template #header>
+          <div class="flex items-center gap-3">
+            <div class="grid size-10 place-content-center rounded-full bg-warning/10 text-warning">
+              <Icon name="warning" />
             </div>
-          </template>
-
-          <template #footer="{ close }">
-            <Button label="Cerrar" class="w-full" @click="close" />
-          </template>
-        </Sheet>
-      </div>
-    </section>
-
-    <section class="space-y-6 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Sheet controlado y personalizado</h2>
-        <p class="text-sm text-muted-foreground">
-          Estado: {{ sheetOpen ? 'abierto' : 'cerrado' }}.
-        </p>
-      </div>
-
-      <Sheet
-        v-model:open="sheetOpen"
-        label="Configuración"
-        description="Personaliza las preferencias de la aplicación."
-        icon="save"
-        :trigger="{ asChild: true }"
-        :content="{
-          side: 'right',
-          forceMount: false,
-          disableOutsidePointerEvents: true,
-        }"
-        :close="{ as: 'button' }"
-        :ui="{
-          root: { 'data-example': 'custom-sheet' },
-          trigger: { class: 'rounded-lg ring-2 ring-primary/20' },
-          content: { class: 'w-full border-l-2 border-primary/30 sm:max-w-md' },
-          header: { class: 'bg-primary/5' },
-          label: { class: 'text-primary' },
-          icon: { class: 'size-5' },
-          description: { class: 'text-primary/70' },
-          body: { class: 'space-y-5 py-6' },
-          footer: { class: 'border-t bg-muted/30' },
-          close: { class: 'text-primary', title: 'Cerrar configuración' },
-        }"
-      >
-        <template #default="{ open }">
-          <Button :label="open ? 'Sheet abierto' : 'Abrir configuración'" />
-        </template>
-
-        <template #content>
-          <label class="block space-y-2">
-            <span class="text-sm font-medium">Nombre del espacio</span>
-            <Input default-value="Mi espacio" aria-label="Nombre del espacio" />
-          </label>
-          <label class="block space-y-2">
-            <span class="text-sm font-medium">Descripción</span>
-            <Input placeholder="Descripción opcional" aria-label="Descripción" />
-          </label>
-        </template>
-
-        <template #footer="{ close }">
-          <div class="flex w-full gap-2">
-            <Button label="Cancelar" variant="outline" class="flex-1" @click="close" />
-            <Button label="Guardar" icon="save" class="flex-1" @click="close" />
+            <div>
+              <h3 class="font-semibold">Sesión a punto de expirar</h3>
+              <p class="text-sm text-muted-foreground">Decide si quieres continuar conectado.</p>
+            </div>
           </div>
         </template>
-      </Sheet>
+
+        <template #footer="{ close }">
+          <Button label="Cerrar sesión" variant="outline" severity="error" @click="close" />
+          <Button label="Continuar sesión" @click="close" />
+        </template>
+      </AlertDialog>
     </section>
   </main>
 </template>

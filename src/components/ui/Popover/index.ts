@@ -36,25 +36,15 @@ export type PopoverSticky = keyof typeof STICKY_VALUES
 export type PopoverPositionStrategy = keyof typeof POSITION_STRATEGIES
 export type PopoverUpdatePositionStrategy = keyof typeof UPDATE_POSITION_STRATEGIES
 
-export type PopoverNodeUI = Omit<HTMLAttributes, 'dir'> & {
+export interface PopoverTriggerProps {
   as?: string | Component
   asChild?: boolean
-  dir?: 'ltr' | 'rtl'
 }
 
-export type PopoverContentUI = PopoverNodeUI & {
+export interface PopoverContentProps {
+  as?: string | Component
+  asChild?: boolean
   forceMount?: boolean
-}
-
-export interface PopoverUI {
-  trigger?: PopoverNodeUI
-  content?: PopoverContentUI
-}
-
-export interface PopoverProps {
-  open?: boolean
-  defaultOpen?: boolean
-  modal?: boolean
   side?: PopoverSide
   sideOffset?: number
   sideFlip?: boolean
@@ -67,7 +57,20 @@ export interface PopoverProps {
   hideWhenDetached?: boolean
   positionStrategy?: PopoverPositionStrategy
   updatePositionStrategy?: PopoverUpdatePositionStrategy
-  forceMount?: boolean
+}
+
+export interface PopoverUI {
+  root?: HTMLAttributes
+  trigger?: HTMLAttributes
+  content?: HTMLAttributes
+}
+
+export interface PopoverProps {
+  open?: boolean
+  defaultOpen?: boolean
+  modal?: boolean
+  trigger?: PopoverTriggerProps
+  content?: PopoverContentProps
   ui?: PopoverUI
 }
 

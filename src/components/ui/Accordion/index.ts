@@ -3,20 +3,38 @@ import type { Component, HTMLAttributes } from 'vue'
 export { default as Accordion } from './Accordion.vue'
 
 export type AccordionValue = string | string[] | undefined
-
-export type AccordionNodeUI = Omit<HTMLAttributes, 'dir'> & {
-  as?: string | Component
-  asChild?: boolean
-  dir?: 'ltr' | 'rtl'
-}
-
-export type AccordionContentUI = AccordionNodeUI & { forceMount?: boolean }
 export type AccordionUIValue<T> = T | ((context: AccordionUIContext) => T)
 
+export interface AccordionTriggerProps {
+  as?: string | Component
+  asChild?: boolean
+}
+
+export interface AccordionContentProps extends AccordionTriggerProps {
+  forceMount?: boolean
+}
+
+export function normalizeAccordionTriggerProps(
+  source: AccordionTriggerProps | null | undefined,
+): AccordionTriggerProps | undefined {
+  if (!source) return undefined
+  const { as, asChild } = source
+  return { as, asChild }
+}
+
+export function normalizeAccordionContentProps(
+  source: AccordionContentProps | null | undefined,
+): AccordionContentProps | undefined {
+  if (!source) return undefined
+  const { as, asChild, forceMount } = source
+  return { as, asChild, forceMount }
+}
+
 export interface AccordionUI {
-  item?: AccordionUIValue<AccordionNodeUI>
-  trigger?: AccordionUIValue<AccordionNodeUI>
-  content?: AccordionUIValue<AccordionContentUI>
+  root?: HTMLAttributes
+  item?: AccordionUIValue<HTMLAttributes>
+  trigger?: AccordionUIValue<HTMLAttributes>
+  content?: AccordionUIValue<HTMLAttributes>
 }
 
 export interface AccordionItem {
@@ -25,6 +43,8 @@ export interface AccordionItem {
   content?: string
   disabled?: boolean
   forceMount?: boolean
+  trigger?: AccordionTriggerProps
+  contentProps?: AccordionContentProps
 }
 
 export interface AccordionUIContext {
@@ -43,6 +63,8 @@ export interface AccordionProps {
   dir?: 'ltr' | 'rtl'
   orientation?: 'horizontal' | 'vertical'
   unmountOnHide?: boolean
+  as?: string | Component
+  asChild?: boolean
   items?: AccordionItem[]
   ui?: AccordionUI
 }

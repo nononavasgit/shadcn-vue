@@ -6,7 +6,9 @@ import {
   AccordionItem as AccordionItemBase,
   AccordionTrigger,
 } from '@/components/primitives/Accordion'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
+import { normalizeAccordionContentProps, normalizeAccordionTriggerProps } from '.'
 import type {
   AccordionProps,
   AccordionSlotProps,
@@ -23,6 +25,8 @@ const props = withDefaults(defineProps<AccordionProps>(), {
   disabled: false,
   orientation: 'vertical',
   unmountOnHide: true,
+  as: 'div',
+  asChild: false,
   items: () => [],
   ui: undefined,
 })
@@ -31,71 +35,86 @@ defineSlots<AccordionSlots>()
 const model = defineModel<string | string[]>()
 const attrs = useAttrs()
 
-const calculatedUI = computed(() => ({
-  root: {
-    ...attrs,
-    type: props.type,
-    collapsible: props.collapsible,
-    defaultValue: props.defaultValue,
-    disabled: props.disabled,
-    dir: props.dir,
-    orientation: props.orientation,
-    unmountOnHide: props.unmountOnHide,
-    class: cn(attrs.class),
-  },
-  items: props.items.map((item, index) => {
-    const open = Array.isArray(model.value)
-      ? model.value.includes(item.value)
-      : model.value === item.value
-    const context: AccordionUIContext = {
-      item,
-      index,
-      open,
-      first: index === 0,
-      last: index === props.items.length - 1,
-    }
-    const resolveUI = <T,>(value: AccordionUIValue<T> | undefined): T | undefined =>
-      typeof value === 'function' ? (value as (context: AccordionUIContext) => T)(context) : value
-    const itemUI = resolveUI(props.ui?.item)
-    const triggerUI = resolveUI(props.ui?.trigger)
-    const contentUI = resolveUI(props.ui?.content)
-    const { forceMount, ...contentAttrs } = contentUI ?? {}
-    const slotProps: AccordionSlotProps = { item, index, open }
+function resolveUI<T>(value: AccordionUIValue<T> | undefined, context: AccordionUIContext) {
+  return typeof value === 'function'
+    ? (value as (context: AccordionUIContext) => T)(context)
+    : value
+}
 
-    return {
-      value: item.value,
-      data: item,
-      slotProps,
-      item: {
-        ...itemUI,
+const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+
+  return {
+    root: {
+      ...attrs,
+      ...rootUI,
+      type: props.type,
+      collapsible: props.collapsible,
+      defaultValue: props.defaultValue,
+      disabled: props.disabled,
+      dir: props.dir,
+      orientation: props.orientation,
+      unmountOnHide: props.unmountOnHide,
+      as: props.as,
+      asChild: props.asChild,
+      class: cn(attrs.class, rootUI.class),
+      style: [attrs.style, rootUI.style],
+    },
+    items: props.items.map((item, index) => {
+      const open = Array.isArray(model.value)
+        ? model.value.includes(item.value)
+        : model.value === item.value
+      const context: AccordionUIContext = {
+        item,
+        index,
+        open,
+        first: index === 0,
+        last: index === props.items.length - 1,
+      }
+      const itemUI = normalizeHTMLAttributes(resolveUI(props.ui?.item, context))
+      const triggerUI = normalizeHTMLAttributes(resolveUI(props.ui?.trigger, context))
+      const contentUI = normalizeHTMLAttributes(resolveUI(props.ui?.content, context))
+      const trigger = normalizeAccordionTriggerProps(item.trigger)
+      const content = normalizeAccordionContentProps(item.contentProps)
+      const slotProps: AccordionSlotProps = { item, index, open }
+
+      return {
         value: item.value,
-        disabled: item.disabled,
-        class: cn(itemUI?.class),
-        style: itemUI?.style,
-      },
-      trigger: {
-        ...triggerUI,
-        class: cn(triggerUI?.class),
-        style: triggerUI?.style,
-      },
-      content: {
-        ...contentAttrs,
-        forceMount: item.forceMount ?? forceMount,
-        class: cn(contentAttrs.class),
-        style: contentAttrs.style,
-      },
-    }
-  }),
-}))
+        data: item,
+        slotProps,
+        item: {
+          ...itemUI,
+          value: item.value,
+          disabled: item.disabled,
+          class: cn(itemUI.class),
+          style: itemUI.style,
+        },
+        trigger: {
+          ...triggerUI,
+          ...trigger,
+          class: cn(triggerUI.class),
+          style: triggerUI.style,
+        },
+        content: {
+          ...contentUI,
+          ...content,
+          forceMount: content?.forceMount ?? item.forceMount,
+          class: cn(contentUI.class),
+          style: contentUI.style,
+        },
+      }
+    }),
+  }
+})
 </script>
 
 <template>
-  <AccordionBase v-bind="calculatedUI.root" v-model="model">
+  <AccordionBase v-model="model" v-bind="calculatedUI.root">
     <AccordionItemBase v-for="item in calculatedUI.items" :key="item.value" v-bind="item.item">
       <AccordionTrigger v-bind="item.trigger">
         <slot :name="`trigger-${item.value}`" v-bind="item.slotProps">
           <slot name="trigger" v-bind="item.slotProps">
-            {{ item.data?.title }}
+            {{ item.data.title }}
           </slot>
         </slot>
       </AccordionTrigger>
@@ -103,7 +122,7 @@ const calculatedUI = computed(() => ({
       <AccordionContent v-bind="item.content">
         <slot :name="`content-${item.value}`" v-bind="item.slotProps">
           <slot v-bind="item.slotProps">
-            {{ item.data?.content }}
+            {{ item.data.content }}
           </slot>
         </slot>
       </AccordionContent>

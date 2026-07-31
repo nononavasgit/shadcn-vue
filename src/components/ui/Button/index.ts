@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { ButtonHTMLAttributes, Component, HTMLAttributes, MaybeRefOrGetter } from 'vue'
+import type { ButtonHTMLAttributes, Component, HTMLAttributes } from 'vue'
 import type { IconProps, IconName } from '@/components/ui/Icon'
 
 export { default as Button } from './Button.vue'

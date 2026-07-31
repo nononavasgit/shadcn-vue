@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { Badge as BadgeBase } from '@/components/primitives/Badge'
-import { Icon, useNormalizeIconProps } from '@/components/ui/Icon'
+import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import { badgeVariants, type BadgeProps, type BadgeSlots } from '.'
@@ -22,39 +23,43 @@ const props = withDefaults(defineProps<BadgeProps>(), {
 defineSlots<BadgeSlots>()
 
 const attrs = useAttrs()
-const leadingIcon = useNormalizeIconProps(() => props.icon)
-const trailingIcon = useNormalizeIconProps(() => props.trailingIcon)
 const { colorStyle } = useColor(
   computed(() => props.color),
   'badge',
 )
-const calculatedUI = computed(() => ({
-  root: {
-    ...attrs,
-    as: props.as,
-    asChild: props.asChild,
-    class: cn(
-      badgeVariants({
-        size: props.size,
-        variant: props.variant,
-        severity: props.severity,
-        color: Boolean(props.color),
-      }),
-      attrs.class,
-    ),
-    style: [colorStyle.value, attrs.style],
-  },
-  icon: {
-    ...props.ui?.icon,
-    ...leadingIcon.value,
-    class: cn(props.ui?.icon?.class, leadingIcon.value?.class),
-  },
-  trailingIcon: {
-    ...props.ui?.trailingIcon,
-    ...trailingIcon.value,
-    class: cn(props.ui?.trailingIcon?.class, trailingIcon.value?.class),
-  },
-}))
+const calculatedUI = computed(() => {
+  const calculatedVariants = badgeVariants({
+    size: props.size,
+    variant: props.variant,
+    severity: props.severity,
+    color: Boolean(props.color),
+  })
+
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const iconUI = normalizeHTMLAttributes(props.ui?.icon)
+  const trailingIconUI = normalizeHTMLAttributes(props.ui?.trailingIcon)
+
+  return {
+    root: {
+      ...attrs,
+      ...rootUI,
+      as: props.as,
+      asChild: props.asChild,
+      class: cn(calculatedVariants, attrs.class, rootUI.class),
+      style: [colorStyle.value, attrs.style, rootUI.style],
+    },
+    icon: {
+      ...iconUI,
+      ...normalizeIconProps(props.icon),
+      class: cn(iconUI.class),
+    },
+    trailingIcon: {
+      ...trailingIconUI,
+      ...normalizeIconProps(props.trailingIcon),
+      class: cn(trailingIconUI.class),
+    },
+  }
+})
 </script>
 
 <template>

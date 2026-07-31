@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Icon } from '@/components/ui/Icon'
 </script>
@@ -43,6 +44,32 @@ import { Icon } from '@/components/ui/Icon'
           loading
           :ui="{}"
         />
+      </div>
+    </section>
+    <section class="space-y-5 rounded-xl border p-5">
+      <h2 class="text-lg font-semibold">Badges</h2>
+      <div class="flex flex-wrap items-center gap-3">
+        <Badge label="Principal" />
+        <Badge label="Éxito" severity="success" icon="success" />
+        <Badge label="Advertencia" severity="warning" icon="warning" variant="soft" />
+        <Badge label="Error" severity="error" icon="error" variant="outline" />
+        <Badge label="Guardado" icon="save" trailing-icon="check" variant="subtle" />
+        <Badge label="Personalizado" color="#3b5553" />
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <Badge size="sm" label="Pequeño" />
+        <Badge size="md" label="Mediano" />
+        <Badge size="lg" label="Grande" />
+        <Badge label="Con slots">
+          <template #leading>
+            <Icon name="search" />
+          </template>
+          Resultado
+          <template #trailing>
+            <Icon name="x" />
+          </template>
+        </Badge>
       </div>
     </section>
   </main>

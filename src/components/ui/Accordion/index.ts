@@ -37,12 +37,20 @@ export interface AccordionUI {
   content?: AccordionUIValue<HTMLAttributes>
 }
 
-export interface AccordionItem {
+export interface AccordionItemProps {
   value: string
-  title?: string
-  content?: string
   disabled?: boolean
-  forceMount?: boolean
+  unmountOnHide?: boolean
+}
+
+export function normalizeAccordionItemProps(source: AccordionItemProps): AccordionItemProps {
+  const { value, disabled, unmountOnHide } = source
+  return { value, disabled, unmountOnHide }
+}
+
+export interface AccordionItem extends AccordionItemProps {
+  label?: string
+  content?: string
   trigger?: AccordionTriggerProps
   contentProps?: AccordionContentProps
 }

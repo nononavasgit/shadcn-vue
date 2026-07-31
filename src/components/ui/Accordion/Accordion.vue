@@ -8,7 +8,11 @@ import {
 } from '@/components/primitives/Accordion'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
-import { normalizeAccordionContentProps, normalizeAccordionTriggerProps } from '.'
+import {
+  normalizeAccordionContentProps,
+  normalizeAccordionItemProps,
+  normalizeAccordionTriggerProps,
+} from '.'
 import type {
   AccordionProps,
   AccordionSlotProps,
@@ -72,6 +76,7 @@ const calculatedUI = computed(() => {
         last: index === props.items.length - 1,
       }
       const itemUI = normalizeHTMLAttributes(resolveUI(props.ui?.item, context))
+      const itemProps = normalizeAccordionItemProps(item)
       const triggerUI = normalizeHTMLAttributes(resolveUI(props.ui?.trigger, context))
       const contentUI = normalizeHTMLAttributes(resolveUI(props.ui?.content, context))
       const trigger = normalizeAccordionTriggerProps(item.trigger)
@@ -84,8 +89,7 @@ const calculatedUI = computed(() => {
         slotProps,
         item: {
           ...itemUI,
-          value: item.value,
-          disabled: item.disabled,
+          ...itemProps,
           class: cn(itemUI.class),
           style: itemUI.style,
         },
@@ -98,7 +102,6 @@ const calculatedUI = computed(() => {
         content: {
           ...contentUI,
           ...content,
-          forceMount: content?.forceMount ?? item.forceMount,
           class: cn(contentUI.class),
           style: contentUI.style,
         },
@@ -114,7 +117,7 @@ const calculatedUI = computed(() => {
       <AccordionTrigger v-bind="item.trigger">
         <slot :name="`trigger-${item.value}`" v-bind="item.slotProps">
           <slot name="trigger" v-bind="item.slotProps">
-            {{ item.data.title }}
+            {{ item.data.label }}
           </slot>
         </slot>
       </AccordionTrigger>

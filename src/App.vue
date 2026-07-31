@@ -6,17 +6,17 @@ import { Button } from '@/components/ui/Button'
 const faqItems: AccordionItem[] = [
   {
     value: 'account',
-    title: 'Como creo una cuenta?',
+    label: 'Como creo una cuenta?',
     content: 'Completa el formulario de registro y confirma tu correo electronico.',
   },
   {
     value: 'password',
-    title: 'Puedo cambiar mi contrasena?',
+    label: 'Puedo cambiar mi contrasena?',
     content: 'Si. Puedes cambiarla desde el apartado de seguridad de tu perfil.',
   },
   {
     value: 'billing',
-    title: 'Donde consulto mis facturas?',
+    label: 'Donde consulto mis facturas?',
     content: 'Las facturas estan disponibles en la seccion de facturacion.',
   },
 ]
@@ -24,13 +24,13 @@ const faqItems: AccordionItem[] = [
 const featureItems: AccordionItem[] = [
   {
     value: 'notifications',
-    title: 'Notificaciones',
+    label: 'Notificaciones',
     content: 'Configura avisos por correo y push.',
   },
-  { value: 'privacy', title: 'Privacidad', content: 'Controla la visibilidad de tu perfil.' },
+  { value: 'privacy', label: 'Privacidad', content: 'Controla la visibilidad de tu perfil.' },
   {
     value: 'sessions',
-    title: 'Sesiones',
+    label: 'Sesiones',
     content: 'Revisa los dispositivos con acceso.',
     disabled: true,
   },
@@ -39,14 +39,14 @@ const featureItems: AccordionItem[] = [
 const advancedItems: AccordionItem[] = [
   {
     value: 'summary',
-    title: 'Resumen',
+    label: 'Resumen',
     content: 'Contenido renderizado como section.',
     trigger: { as: 'button' },
     contentProps: { as: 'section', forceMount: true },
   },
   {
     value: 'details',
-    title: 'Detalles',
+    label: 'Detalles',
     content: 'Contenido renderizado como article.',
     trigger: { as: 'button', asChild: false },
     contentProps: { as: 'article' },
@@ -165,7 +165,7 @@ const openFeatures = ref<string[]>(['notifications', 'privacy'])
             <span
               :class="['size-2 rounded-full', open ? 'bg-primary' : 'bg-muted-foreground/40']"
             />
-            {{ item.title }}
+            {{ item.label }}
           </span>
         </template>
 

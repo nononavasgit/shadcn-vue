@@ -6,6 +6,7 @@ import { Separator } from '@/components/ui/Separator'
 import { AspectRatio } from '@/components/ui/AspectRatio'
 import { Textarea } from '@/components/ui/Textarea'
 import { Input } from '@/components/ui/Input'
+import { Empty } from '@/components/ui/Empty'
 
 const comment = ref('')
 const name = ref('')
@@ -135,6 +136,35 @@ const name = ref('')
           <label for="invalid-input" class="text-sm font-medium">Inválido</label>
           <Input id="invalid-input" aria-invalid="true" placeholder="Campo requerido" />
         </div>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Empty</h2>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <Empty
+          label="No hay resultados"
+          description="Prueba a cambiar los filtros de búsqueda."
+          class="border"
+        >
+          <template #media>
+            <div class="flex size-10 items-center justify-center rounded-lg bg-muted text-xl">
+              🔍
+            </div>
+          </template>
+          <Button size="sm" variant="outline">Limpiar filtros</Button>
+        </Empty>
+
+        <Empty
+          media-variant="icon"
+          label="Tu lista está vacía"
+          description="Añade un elemento para empezar a organizar tu contenido."
+          class="border"
+        >
+          <template #media>＋</template>
+          <Button size="sm">Añadir elemento</Button>
+        </Empty>
       </div>
     </section>
   </main>

@@ -1,13 +1,5 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import {
-  Empty as EmptyBase,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from '@/components/primitives/Empty'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import type { EmptyProps, EmptySlots } from '.'
@@ -35,57 +27,78 @@ const calculatedUI = computed(() => {
     root: {
       ...attrs,
       ...rootUI,
-      class: cn(attrs.class, rootUI.class),
+      class: cn(
+        'flex min-w-0 flex-1 flex-col items-center justify-center gap-6 rounded-lg border-dashed p-6 text-center md:p-12',
+        attrs.class,
+        rootUI.class,
+      ),
       style: [attrs.style, rootUI.style],
     },
     header: {
       ...headerUI,
-      class: cn(headerUI.class),
+      class: cn('flex max-w-sm flex-col items-center gap-2 text-center', headerUI.class),
     },
     media: {
       ...mediaUI,
-      class: cn(mediaUI.class),
+      class: cn(
+        props.mediaVariant === 'icon' &&
+          'flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground [&_svg:not([class*=size-])]:size-6',
+        mediaUI.class,
+      ),
     },
     label: {
       ...labelUI,
-      class: cn(labelUI.class),
+      class: cn('text-lg font-medium tracking-tight', labelUI.class),
     },
     description: {
       ...descriptionUI,
-      class: cn(descriptionUI.class),
+      class: cn(
+        'text-sm/relaxed text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-primary',
+        descriptionUI.class,
+      ),
     },
     content: {
       ...contentUI,
-      class: cn(contentUI.class),
+      class: cn(
+        'flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm',
+        contentUI.class,
+      ),
     },
   }
 })
 </script>
 
 <template>
-  <EmptyBase v-bind="calculatedUI.root">
-    <EmptyHeader
+  <div v-bind="calculatedUI.root" data-slot="empty">
+    <div
       v-if="$slots.media || props.label || $slots.label || props.description || $slots.description"
       v-bind="calculatedUI.header"
+      data-slot="empty-header"
     >
-      <EmptyMedia v-if="$slots.media" v-bind="calculatedUI.media" :variant="props.mediaVariant">
+      <div
+        v-if="$slots.media"
+        v-bind="calculatedUI.media"
+        data-slot="empty-media"
+        :data-variant="props.mediaVariant"
+      >
         <slot name="media" />
-      </EmptyMedia>
+      </div>
 
-      <EmptyTitle v-if="props.label || $slots.label" v-bind="calculatedUI.label">
+      <div v-if="props.label || $slots.label" v-bind="calculatedUI.label" data-slot="empty-title">
         <slot name="label">{{ props.label }}</slot>
-      </EmptyTitle>
+      </div>
 
-      <EmptyDescription
+      <div
         v-if="props.description || $slots.description"
         v-bind="calculatedUI.description"
+        data-slot="empty-description"
       >
         <slot name="description">{{ props.description }}</slot>
-      </EmptyDescription>
-    </EmptyHeader>
+      </div>
+    </div>
 
-    <EmptyContent v-if="$slots.default" v-bind="calculatedUI.content">
+    <div v-if="$slots.default" v-bind="calculatedUI.content" data-slot="empty-content">
       <slot />
-    </EmptyContent>
-  </EmptyBase>
+    </div>
+  </div>
 </template>

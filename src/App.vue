@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/Textarea'
 import { Input } from '@/components/ui/Input'
 import { Empty } from '@/components/ui/Empty'
 import { Label } from '@/components/ui/Label'
+import { Kbd, KbdGroup } from '@/components/ui/Kbd'
 
 const comment = ref('')
 const name = ref('')
@@ -189,6 +190,34 @@ const name = ref('')
           <Label for="label-disabled">Campo deshabilitado</Label>
           <Input id="label-disabled" default-value="No editable" disabled />
         </div>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Kbd</h2>
+
+      <div class="space-y-3">
+        <p class="flex items-center gap-2 text-sm text-muted-foreground">
+          Abrir la búsqueda
+          <KbdGroup>
+            <Kbd>⌘</Kbd>
+            <Kbd>K</Kbd>
+          </KbdGroup>
+        </p>
+
+        <p class="flex items-center gap-2 text-sm text-muted-foreground">
+          Guardar cambios
+          <KbdGroup>
+            <Kbd label="Ctrl" />
+            <Kbd>+</Kbd>
+            <Kbd>S</Kbd>
+          </KbdGroup>
+        </p>
+
+        <p class="flex items-center gap-2 text-sm text-muted-foreground">
+          Tecla individual
+          <Kbd label="Esc" />
+        </p>
       </div>
     </section>
   </main>

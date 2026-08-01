@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { KbdGroup as KbdGroupBase } from '@/components/primitives/Kbd'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import type { KbdGroupProps, KbdGroupSlots } from '.'
@@ -20,7 +19,7 @@ const calculatedUI = computed(() => {
     root: {
       ...attrs,
       ...rootUI,
-      class: cn(attrs.class, rootUI.class),
+      class: cn('inline-flex items-center gap-1', attrs.class, rootUI.class),
       style: [attrs.style, rootUI.style],
     },
   }
@@ -28,7 +27,7 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <KbdGroupBase v-bind="calculatedUI.root">
+  <kbd v-bind="calculatedUI.root" data-slot="kbd-group">
     <slot />
-  </KbdGroupBase>
+  </kbd>
 </template>

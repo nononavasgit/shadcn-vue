@@ -5,17 +5,31 @@ export { default as RadioGroupItem } from './RadioGroupItem.vue'
 
 export type RadioGroupValue = string | number
 
-export interface RadioGroupItem {
+export interface RadioGroupItemProps {
   value: RadioGroupValue
-  label: string
-  id?: string
   disabled?: boolean
+  id?: string
+  name?: string
+  required?: boolean
+  as?: string | Component
+  asChild?: boolean
+}
+
+export function normalizeRadioGroupItemProps(source: RadioGroupItemProps): RadioGroupItemProps {
+  const { value, disabled, id, name, required, as, asChild } = source
+  return { value, disabled, id, name, required, as, asChild }
+}
+
+export interface RadioGroupOption extends RadioGroupItemProps {
+  label: string
   description?: string
 }
 
+export type RadioGroupItem = RadioGroupOption
+
 // Context RadioGroup
 export interface RadioGroupUIContext {
-  item: RadioGroupItem
+  item: RadioGroupOption
   index: number
   selected: boolean
 }
@@ -25,7 +39,7 @@ export type RadioGroupUIValue<T> = T | ((context: RadioGroupUIContext) => T)
 export interface RadioGroupUI {
   root?: HTMLAttributes
   item?: RadioGroupUIValue<HTMLAttributes>
-  radio?: RadioGroupUIValue<NormalizedRadioGroupItemProps>
+  radio?: RadioGroupUIValue<HTMLAttributes>
   content?: RadioGroupUIValue<HTMLAttributes>
   label?: RadioGroupUIValue<HTMLAttributes>
   description?: RadioGroupUIValue<HTMLAttributes>
@@ -45,25 +59,13 @@ export interface RadioGroupProps {
   rovingFocus?: boolean
   as?: string | Component
   asChild?: boolean
-  items?: RadioGroupItem[]
+  items?: RadioGroupOption[]
   ui?: RadioGroupUI
 }
 
 export interface RadioGroupEmits {
   'update:modelValue': [value: RadioGroupValue]
 }
-
-export interface RadioGroupItemProps {
-  value: RadioGroupValue
-  disabled?: boolean
-  id?: string
-  name?: string
-  required?: boolean
-  as?: string | Component
-  asChild?: boolean
-}
-
-export type NormalizedRadioGroupItemProps = RadioGroupItemProps & HTMLAttributes
 
 export interface RadioGroupSlots {
   default?(props: { modelValue: RadioGroupValue | undefined }): unknown

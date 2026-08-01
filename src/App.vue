@@ -1,173 +1,86 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import {
-  Command,
-  type CommandEntry,
-  type CommandGroup,
-  type CommandItem,
-} from '@/components/ui/Command'
+import { RadioGroup, RadioGroupItem, type RadioGroupOption } from '@/components/ui/RadioGroup'
 
-const simpleItems: CommandItem[] = [
-  { id: 'search', label: 'Buscar archivos', icon: 'search' },
-  { id: 'save', label: 'Guardar documento', icon: 'save' },
-  { id: 'delete', label: 'Eliminar elemento', icon: 'trash2', disabled: true },
+const planItems: RadioGroupOption[] = [
+  { value: 'free', label: 'Gratuito', description: 'Para probar las funciones basicas.' },
+  { value: 'pro', label: 'Profesional', description: 'Para proyectos y equipos pequenos.' },
+  { value: 'enterprise', label: 'Empresa', description: 'Soporte y controles avanzados.' },
 ]
-
-const groupedItems: CommandEntry[] = [
+const deliveryItems: RadioGroupOption[] = [
+  { value: 'standard', label: 'Estandar', description: 'Entrega en 3-5 dias.' },
+  { value: 'express', label: 'Express', description: 'Entrega el siguiente dia.' },
   {
-    id: 'suggestions',
-    label: 'Sugerencias',
-    items: [
-      { id: 'calendar', value: 'calendar', label: 'Calendario', icon: 'info' },
-      { id: 'search', value: 'search', label: 'Buscar', icon: 'search' },
-    ],
-  },
-  {
-    id: 'settings',
-    label: 'Configuracion',
-    separator: { as: 'div' },
-    items: [
-      { id: 'profile', value: 'profile', label: 'Perfil', icon: 'success' },
-      { id: 'billing', value: 'billing', label: 'Facturacion', icon: 'save' },
-      { id: 'security', value: 'security', label: 'Seguridad', icon: 'warning' },
-    ],
+    value: 'pickup',
+    label: 'Recogida',
+    description: 'No disponible temporalmente.',
+    disabled: true,
   },
 ]
-
-const primitiveItems: CommandEntry[] = [
-  {
-    id: 'actions',
-    label: 'Acciones',
-    as: 'section',
-    separator: { as: 'div' },
-    items: [
-      { id: 'first', value: 'first', label: 'Primera accion', as: 'button' },
-      { id: 'second', value: 'second', label: 'Segunda accion', as: 'button' },
-    ],
-  },
+const primitiveItems: RadioGroupOption[] = [
+  { value: 1, id: 'priority-low', label: 'Baja', as: 'button' },
+  { value: 2, id: 'priority-medium', label: 'Media', as: 'button' },
+  { value: 3, id: 'priority-high', label: 'Alta', as: 'button', required: true },
 ]
-
-const selectedCommand = ref<string>('calendar')
-const selectedCommands = ref<string[]>(['search', 'profile'])
-const lastSelection = ref('Ninguna')
-const searchValue = ref('')
-
-function handleSelect(item: CommandItem, group?: CommandGroup) {
-  lastSelection.value = group ? `${group.label}: ${item.label}` : (item.label ?? String(item.id))
-}
+const selectedPlan = ref('pro')
+const selectedDelivery = ref('standard')
+const selectedPriority = ref<number>(2)
+const customValue = ref('email')
 </script>
 
 <template>
   <main class="mx-auto min-h-screen max-w-5xl space-y-10 p-6 md:p-10">
     <header class="space-y-2">
-      <h1 class="text-3xl font-bold">Command</h1>
+      <h1 class="text-3xl font-bold">RadioGroup</h1>
       <p class="text-muted-foreground">
-        Ejemplos con busqueda, grupos, seleccion, UI contextual y slots personalizados.
+        Ejemplos con orientacion, estados, UI contextual, slots y primitives personalizados.
       </p>
     </header>
 
     <section class="space-y-5 rounded-xl border p-5">
       <div>
         <h2 class="text-lg font-semibold">Uso basico</h2>
-        <p class="text-sm text-muted-foreground">Seleccion emitida: {{ lastSelection }}.</p>
+        <p class="text-sm text-muted-foreground">Plan seleccionado: {{ selectedPlan }}.</p>
       </div>
-
-      <Command
-        :items="simpleItems"
-        placeholder="Escribe una accion..."
-        class="max-w-xl"
-        @select="handleSelect"
-      />
+      <RadioGroup v-model="selectedPlan" :items="planItems" class="max-w-xl" />
     </section>
 
     <section class="space-y-5 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Grupos y seleccion unica</h2>
-        <p class="text-sm text-muted-foreground">Valor seleccionado: {{ selectedCommand }}.</p>
+        <h2 class="text-lg font-semibold">Horizontal y agrupado</h2>
+        <p class="text-sm text-muted-foreground">Los radios se muestran a la derecha.</p>
       </div>
-
-      <Command
-        v-model="selectedCommand"
-        selectable
-        :items="groupedItems"
-        placeholder="Buscar comando..."
+      <RadioGroup
+        v-model="selectedDelivery"
+        orientation="horizontal"
+        grouped
+        radio-position="right"
+        :items="deliveryItems"
         :ui="{
-          root: { class: 'max-w-xl' },
-          inputWrapper: { class: 'bg-muted/30' },
-          list: { class: 'max-h-64' },
+          root: { class: 'max-w-3xl rounded-lg border p-2' },
+          item: { class: 'min-w-44 justify-between rounded-md p-3 hover:bg-muted/50' },
         }"
       />
     </section>
-
-    <section class="space-y-5 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Seleccion multiple</h2>
-        <p class="text-sm text-muted-foreground">
-          Valores: {{ selectedCommands.join(', ') || 'ninguno' }}.
-        </p>
-      </div>
-
-      <Command
-        v-model="selectedCommands"
-        multiple
-        selectable
-        selection-behavior="toggle"
-        :items="groupedItems"
-        :ui="{
-          root: { class: 'max-w-xl' },
-          indicator: ({ selected }) => ({ class: selected ? 'text-primary' : '' }),
-        }"
-      />
-    </section>
-
-    <section class="space-y-5 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Cabecera, pie y busqueda</h2>
-        <p class="text-sm text-muted-foreground">Busqueda actual: {{ searchValue || 'vacia' }}.</p>
-      </div>
-
-      <Command
-        :items="groupedItems"
-        :input="{ autoFocus: false }"
-        :ui="{
-          root: { class: 'max-w-xl' },
-          header: { class: 'border-b bg-muted/40 px-3 py-2 text-xs font-medium' },
-          footer: { class: 'border-t px-3 py-2 text-xs text-muted-foreground' },
-        }"
-        @search="searchValue = $event"
-      >
-        <template #header>Paleta de comandos</template>
-        <template #footer="{ search }">
-          {{ search ? `Filtrando por: ${search}` : 'Escribe para filtrar los resultados' }}
-        </template>
-      </Command>
-    </section>
-
     <section class="space-y-5 rounded-xl border p-5">
       <div>
         <h2 class="text-lg font-semibold">UI contextual</h2>
         <p class="text-sm text-muted-foreground">
-          Grupos e items reciben su posicion y estado de seleccion.
+          Cada zona conoce el item, su posicion y si esta seleccionado.
         </p>
       </div>
-
-      <Command
-        v-model="selectedCommand"
-        selectable
-        :items="groupedItems"
+      <RadioGroup
+        v-model="selectedPlan"
+        :items="planItems"
         :ui="{
-          root: { class: 'max-w-xl rounded-xl bg-muted/20' },
-          group: ({ first, last }) => ({
-            class: [first && 'pt-2', last && 'pb-2'],
+          root: { class: 'max-w-xl rounded-xl bg-muted/20 p-2' },
+          item: ({ selected }) => ({
+            class: selected ? 'rounded-lg bg-background p-3 shadow-sm' : 'rounded-lg p-3',
+            title: selected ? 'Opcion seleccionada' : 'Seleccionar opcion',
           }),
-          heading: ({ groupIndex }) => ({ class: groupIndex === 0 ? 'text-primary' : '' }),
-          item: ({ selected, firstItem }) => ({
-            class: [selected && 'bg-primary/10 text-primary', firstItem && 'mt-1'],
-            title: selected ? 'Comando seleccionado' : undefined,
-          }),
-          icon: ({ selected }) => ({ class: selected ? 'text-primary' : 'opacity-60' }),
-          label: ({ selected }) => ({ class: selected ? 'font-semibold' : '' }),
-          separator: { class: 'mx-2' },
+          radio: ({ selected }) => ({ class: selected ? 'ring-2 ring-primary/20' : '' }),
+          label: ({ selected }) => ({ class: selected ? 'text-primary' : '' }),
+          description: ({ index }) => ({ class: index === 0 ? 'italic' : '' }),
         }"
       />
     </section>
@@ -176,44 +89,57 @@ function handleSelect(item: CommandItem, group?: CommandGroup) {
       <div>
         <h2 class="text-lg font-semibold">Slots globales e individuales</h2>
         <p class="text-sm text-muted-foreground">
-          Los slots asociados al id tienen prioridad sobre los slots globales.
+          Los slots asociados al id o valor tienen prioridad sobre los globales.
         </p>
       </div>
-
-      <Command v-model="selectedCommand" selectable :items="groupedItems" class="max-w-xl">
-        <template #heading="{ group }">
-          <span class="tracking-wider uppercase">{{ group.label }}</span>
-        </template>
-
-        <template #icon="{ item }">
-          <span class="grid size-5 place-items-center rounded-full bg-muted text-[10px]">
-            {{ String(item.label).charAt(0) }}
+      <RadioGroup v-model="selectedDelivery" :items="deliveryItems" class="max-w-xl">
+        <template #leading="{ index }">
+          <span class="grid size-7 place-items-center rounded-full bg-muted text-xs">
+            {{ index + 1 }}
           </span>
         </template>
-
-        <template #item-security="{ item, selected }">
-          <div class="flex w-full items-center justify-between">
-            <span class="font-medium text-warning">{{ item.label }}</span>
-            <span class="text-xs">{{ selected ? 'Activa' : 'Abrir' }}</span>
-          </div>
+        <template #trailing="{ selected }">
+          <span class="ml-auto text-xs text-muted-foreground">
+            {{ selected ? 'Elegido' : 'Elegir' }}
+          </span>
         </template>
-      </Command>
+        <template #trailing-express>
+          <span class="ml-auto rounded-full bg-primary/10 px-2 py-1 text-xs text-primary">
+            Rapido
+          </span>
+        </template>
+      </RadioGroup>
     </section>
-
     <section class="space-y-5 rounded-xl border p-5">
       <div>
         <h2 class="text-lg font-semibold">Props funcionales normalizadas</h2>
         <p class="text-sm text-muted-foreground">
-          Items y grupos extienden sus props; input y list se filtran explicitamente.
+          Cada item extiende las props del primitive y solo reenvia las admitidas.
         </p>
       </div>
-
-      <Command
+      <RadioGroup
+        v-model="selectedPriority"
+        as="section"
+        name="priority"
         :items="primitiveItems"
-        :input="{ as: 'input', autoFocus: false }"
-        :list="{ as: 'div' }"
-        :ui="{ root: { class: 'max-w-xl' } }"
+        :ui="{
+          root: { class: 'max-w-xl' },
+          item: { class: 'rounded-md border p-3' },
+        }"
       />
+    </section>
+
+    <section class="space-y-5 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Composicion manual</h2>
+        <p class="text-sm text-muted-foreground">Valor seleccionado: {{ customValue }}.</p>
+      </div>
+      <RadioGroup v-model="customValue" class="flex max-w-xl gap-5">
+        <label class="flex items-center gap-2 text-sm">
+          <RadioGroupItem value="email" /> Correo
+        </label>
+        <label class="flex items-center gap-2 text-sm"> <RadioGroupItem value="sms" /> SMS </label>
+      </RadioGroup>
     </section>
   </main>
 </template>

@@ -1,211 +1,173 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Button } from '@/components/ui/Button'
-import { Stepper, type StepperStep } from '@/components/ui/Stepper'
+import {
+  Command,
+  type CommandEntry,
+  type CommandGroup,
+  type CommandItem,
+} from '@/components/ui/Command'
 
-const checkoutSteps: StepperStep[] = [
+const simpleItems: CommandItem[] = [
+  { id: 'search', label: 'Buscar archivos', icon: 'search' },
+  { id: 'save', label: 'Guardar documento', icon: 'save' },
+  { id: 'delete', label: 'Eliminar elemento', icon: 'trash2', disabled: true },
+]
+
+const groupedItems: CommandEntry[] = [
   {
-    key: 'account',
-    step: 1,
-    label: 'Cuenta',
-    description: 'Datos personales',
-    icon: 'info',
-    content: 'Completa tu nombre, correo y datos de contacto.',
+    id: 'suggestions',
+    label: 'Sugerencias',
+    items: [
+      { id: 'calendar', value: 'calendar', label: 'Calendario', icon: 'info' },
+      { id: 'search', value: 'search', label: 'Buscar', icon: 'search' },
+    ],
   },
   {
-    key: 'shipping',
-    step: 2,
-    label: 'Envio',
-    description: 'Direccion de entrega',
-    content: 'Selecciona una direccion y el metodo de envio.',
-  },
-  {
-    key: 'payment',
-    step: 3,
-    label: 'Pago',
-    description: 'Metodo de pago',
-    icon: 'save',
-    content: 'Introduce los datos de pago y revisa el pedido.',
-  },
-  {
-    key: 'confirmation',
-    step: 4,
-    label: 'Confirmacion',
-    description: 'Pedido completado',
-    content: 'El pedido esta listo para ser confirmado.',
+    id: 'settings',
+    label: 'Configuracion',
+    separator: { as: 'div' },
+    items: [
+      { id: 'profile', value: 'profile', label: 'Perfil', icon: 'success' },
+      { id: 'billing', value: 'billing', label: 'Facturacion', icon: 'save' },
+      { id: 'security', value: 'security', label: 'Seguridad', icon: 'warning' },
+    ],
   },
 ]
 
-const settingsSteps: StepperStep[] = [
-  { key: 'profile', step: 1, label: 'Perfil', description: 'Informacion publica' },
-  { key: 'security', step: 2, label: 'Seguridad', description: 'Acceso y sesiones' },
+const primitiveItems: CommandEntry[] = [
   {
-    key: 'notifications',
-    step: 3,
-    label: 'Notificaciones',
-    description: 'Correo y avisos push',
-    disabled: true,
+    id: 'actions',
+    label: 'Acciones',
+    as: 'section',
+    separator: { as: 'div' },
+    items: [
+      { id: 'first', value: 'first', label: 'Primera accion', as: 'button' },
+      { id: 'second', value: 'second', label: 'Segunda accion', as: 'button' },
+    ],
   },
 ]
 
-const primitiveSteps: StepperStep[] = [
-  {
-    key: 'first',
-    step: 1,
-    label: 'Primer paso',
-    content: 'Item y elementos internos renderizados con props explicitas.',
-    as: 'li',
-    trigger: { as: 'button' },
-    indicator: { as: 'span' },
-    titleProps: { as: 'h3' },
-    descriptionProps: { as: 'p' },
-    separator: { as: 'span' },
-  },
-  {
-    key: 'second',
-    step: 2,
-    label: 'Segundo paso',
-    description: 'Final del flujo',
-    content: 'Segundo contenido.',
-    as: 'li',
-    trigger: { as: 'button', asChild: false },
-    indicator: { as: 'span' },
-    titleProps: { as: 'h3' },
-  },
-]
+const selectedCommand = ref<string>('calendar')
+const selectedCommands = ref<string[]>(['search', 'profile'])
+const lastSelection = ref('Ninguna')
+const searchValue = ref('')
 
-const activeCheckoutStep = ref(1)
-const activeVerticalStep = ref(1)
-const activeLinearStep = ref(1)
-const activeCustomStep = ref(2)
-const activePrimitiveStep = ref(1)
+function handleSelect(item: CommandItem, group?: CommandGroup) {
+  lastSelection.value = group ? `${group.label}: ${item.label}` : (item.label ?? String(item.id))
+}
 </script>
 
 <template>
   <main class="mx-auto min-h-screen max-w-5xl space-y-10 p-6 md:p-10">
     <header class="space-y-2">
-      <h1 class="text-3xl font-bold">Stepper</h1>
+      <h1 class="text-3xl font-bold">Command</h1>
       <p class="text-muted-foreground">
-        Ejemplos horizontales y verticales con UI contextual, slots y props funcionales.
+        Ejemplos con busqueda, grupos, seleccion, UI contextual y slots personalizados.
       </p>
     </header>
 
     <section class="space-y-5 rounded-xl border p-5">
       <div>
         <h2 class="text-lg font-semibold">Uso basico</h2>
-        <p class="text-sm text-muted-foreground">Paso activo: {{ activeCheckoutStep }}.</p>
+        <p class="text-sm text-muted-foreground">Seleccion emitida: {{ lastSelection }}.</p>
       </div>
 
-      <Stepper v-model="activeCheckoutStep" :steps="checkoutSteps" />
+      <Command
+        :items="simpleItems"
+        placeholder="Escribe una accion..."
+        class="max-w-xl"
+        @select="handleSelect"
+      />
     </section>
 
     <section class="space-y-5 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Navegacion desde el contenido</h2>
-        <p class="text-sm text-muted-foreground">
-          Los slots reciben metodos para avanzar, retroceder o seleccionar un paso.
-        </p>
+        <h2 class="text-lg font-semibold">Grupos y seleccion unica</h2>
+        <p class="text-sm text-muted-foreground">Valor seleccionado: {{ selectedCommand }}.</p>
       </div>
 
-      <Stepper
-        v-model="activeCheckoutStep"
-        :steps="checkoutSteps"
-        :ui="{ content: { class: 'rounded-lg border bg-muted/30 p-4' } }"
-      >
-        <template #content="{ step, prevStep, nextStep, isFirstStep, isLastStep }">
-          <div class="space-y-4">
-            <div>
-              <h3 class="font-semibold">{{ step.label }}</h3>
-              <p class="text-sm text-muted-foreground">{{ step.content }}</p>
-            </div>
-            <div class="flex gap-2">
-              <Button
-                label="Anterior"
-                size="sm"
-                variant="outline"
-                :disabled="isFirstStep"
-                @click="prevStep"
-              />
-              <Button label="Siguiente" size="sm" :disabled="isLastStep" @click="nextStep" />
-            </div>
-          </div>
-        </template>
-      </Stepper>
-    </section>
-
-    <section class="space-y-5 rounded-xl border p-5">
-      <div>
-        <h2 class="text-lg font-semibold">Orientacion vertical</h2>
-        <p class="text-sm text-muted-foreground">Flujo lateral con un paso deshabilitado.</p>
-      </div>
-
-      <Stepper
-        v-model="activeVerticalStep"
-        orientation="vertical"
-        :steps="settingsSteps"
+      <Command
+        v-model="selectedCommand"
+        selectable
+        :items="groupedItems"
+        placeholder="Buscar comando..."
         :ui="{
           root: { class: 'max-w-xl' },
-          content: { class: 'ml-14 rounded-md bg-muted/40 p-4 text-sm' },
+          inputWrapper: { class: 'bg-muted/30' },
+          list: { class: 'max-h-64' },
         }"
-      >
-        <template #content="{ step }">Configuracion de {{ step.label?.toLowerCase() }}.</template>
-      </Stepper>
+      />
     </section>
 
     <section class="space-y-5 rounded-xl border p-5">
       <div>
-        <h2 class="text-lg font-semibold">Flujo lineal</h2>
+        <h2 class="text-lg font-semibold">Seleccion multiple</h2>
         <p class="text-sm text-muted-foreground">
-          Solo permite avanzar siguiendo el orden de los pasos.
+          Valores: {{ selectedCommands.join(', ') || 'ninguno' }}.
         </p>
       </div>
 
-      <Stepper
-        v-model="activeLinearStep"
-        linear
-        color="#7c3aed"
-        :steps="checkoutSteps"
-        :ui="{ root: { 'aria-label': 'Proceso de compra lineal' } }"
+      <Command
+        v-model="selectedCommands"
+        multiple
+        selectable
+        selection-behavior="toggle"
+        :items="groupedItems"
+        :ui="{
+          root: { class: 'max-w-xl' },
+          indicator: ({ selected }) => ({ class: selected ? 'text-primary' : '' }),
+        }"
+      />
+    </section>
+
+    <section class="space-y-5 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Cabecera, pie y busqueda</h2>
+        <p class="text-sm text-muted-foreground">Busqueda actual: {{ searchValue || 'vacia' }}.</p>
+      </div>
+
+      <Command
+        :items="groupedItems"
+        :input="{ autoFocus: false }"
+        :ui="{
+          root: { class: 'max-w-xl' },
+          header: { class: 'border-b bg-muted/40 px-3 py-2 text-xs font-medium' },
+          footer: { class: 'border-t px-3 py-2 text-xs text-muted-foreground' },
+        }"
+        @search="searchValue = $event"
       >
-        <template #content="{ step, nextStep, isLastStep }">
-          <div class="flex items-center justify-between rounded-lg border p-4">
-            <span class="text-sm">{{ step.content }}</span>
-            <Button
-              :label="isLastStep ? 'Completado' : 'Continuar'"
-              size="sm"
-              :disabled="isLastStep"
-              @click="nextStep"
-            />
-          </div>
+        <template #header>Paleta de comandos</template>
+        <template #footer="{ search }">
+          {{ search ? `Filtrando por: ${search}` : 'Escribe para filtrar los resultados' }}
         </template>
-      </Stepper>
+      </Command>
     </section>
 
     <section class="space-y-5 rounded-xl border p-5">
       <div>
         <h2 class="text-lg font-semibold">UI contextual</h2>
         <p class="text-sm text-muted-foreground">
-          Cada zona conoce su estado, posicion e item asociado.
+          Grupos e items reciben su posicion y estado de seleccion.
         </p>
       </div>
 
-      <Stepper
-        v-model="activeCustomStep"
-        :steps="checkoutSteps"
+      <Command
+        v-model="selectedCommand"
+        selectable
+        :items="groupedItems"
         :ui="{
-          root: { class: 'rounded-xl bg-muted/30 p-4' },
-          item: ({ active }) => ({ class: active ? 'scale-[1.02]' : '' }),
-          trigger: ({ active }) => ({ title: active ? 'Paso activo' : 'Seleccionar paso' }),
-          indicator: ({ state }) => ({
-            class: state === 'completed' ? 'ring-2 ring-success/40' : '',
+          root: { class: 'max-w-xl rounded-xl bg-muted/20' },
+          group: ({ first, last }) => ({
+            class: [first && 'pt-2', last && 'pb-2'],
           }),
-          icon: ({ active }) => ({ class: active ? 'scale-110' : '' }),
-          title: ({ active }) => ({ class: active ? 'text-primary' : '' }),
-          description: ({ last }) => ({ class: last ? 'font-medium' : '' }),
-          separator: ({ state }) => ({
-            class: state === 'completed' ? 'opacity-100' : 'opacity-50',
+          heading: ({ groupIndex }) => ({ class: groupIndex === 0 ? 'text-primary' : '' }),
+          item: ({ selected, firstItem }) => ({
+            class: [selected && 'bg-primary/10 text-primary', firstItem && 'mt-1'],
+            title: selected ? 'Comando seleccionado' : undefined,
           }),
-          content: { class: 'rounded-lg bg-background p-4 shadow-sm' },
+          icon: ({ selected }) => ({ class: selected ? 'text-primary' : 'opacity-60' }),
+          label: ({ selected }) => ({ class: selected ? 'font-semibold' : '' }),
+          separator: { class: 'mx-2' },
         }"
       />
     </section>
@@ -214,47 +176,43 @@ const activePrimitiveStep = ref(1)
       <div>
         <h2 class="text-lg font-semibold">Slots globales e individuales</h2>
         <p class="text-sm text-muted-foreground">
-          Los slots asociados al key del step tienen prioridad sobre los globales.
+          Los slots asociados al id tienen prioridad sobre los slots globales.
         </p>
       </div>
 
-      <Stepper v-model="activeCustomStep" :steps="checkoutSteps">
-        <template #indicator="{ step, state }">
-          <span class="text-xs font-bold">{{ state === 'completed' ? 'OK' : step.step }}</span>
+      <Command v-model="selectedCommand" selectable :items="groupedItems" class="max-w-xl">
+        <template #heading="{ group }">
+          <span class="tracking-wider uppercase">{{ group.label }}</span>
         </template>
 
-        <template #title="{ step, active }">
-          <span :class="active ? 'text-primary' : ''">{{ step.label }}</span>
+        <template #icon="{ item }">
+          <span class="grid size-5 place-items-center rounded-full bg-muted text-[10px]">
+            {{ String(item.label).charAt(0) }}
+          </span>
         </template>
 
-        <template #indicator-payment>
-          <span class="text-xs font-bold">EUR</span>
-        </template>
-
-        <template #content-confirmation="{ step }">
-          <div class="rounded-lg border border-success/40 bg-success/5 p-4 text-sm">
-            Slot individual: {{ step.content }}
+        <template #item-security="{ item, selected }">
+          <div class="flex w-full items-center justify-between">
+            <span class="font-medium text-warning">{{ item.label }}</span>
+            <span class="text-xs">{{ selected ? 'Activa' : 'Abrir' }}</span>
           </div>
         </template>
-      </Stepper>
+      </Command>
     </section>
 
     <section class="space-y-5 rounded-xl border p-5">
       <div>
         <h2 class="text-lg font-semibold">Props funcionales normalizadas</h2>
         <p class="text-sm text-muted-foreground">
-          El item extiende StepperItemProps y los nodos internos filtran as y asChild.
+          Items y grupos extienden sus props; input y list se filtran explicitamente.
         </p>
       </div>
 
-      <Stepper
-        v-model="activePrimitiveStep"
-        as="ol"
-        :steps="primitiveSteps"
-        :ui="{
-          root: { class: 'list-none' },
-          content: { class: 'rounded-md border p-4 text-sm' },
-        }"
+      <Command
+        :items="primitiveItems"
+        :input="{ as: 'input', autoFocus: false }"
+        :list="{ as: 'div' }"
+        :ui="{ root: { class: 'max-w-xl' } }"
       />
     </section>
   </main>

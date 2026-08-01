@@ -1,22 +1,58 @@
-import type { HTMLAttributes } from 'vue'
-import type { NormalizeIconProps, NormalizedIconProps } from '@/components/ui/Icon'
+import type { Component, HTMLAttributes } from 'vue'
+import type { IconName, IconProps } from '@/components/ui/Icon'
 import type { useFilter } from '@/composables'
 
 export { default as Command } from './Command.vue'
 
-export interface CommandItem {
-  /** Identificador único utilizado por los slots individuales. */
-  id: string | number
-  /** Valor seleccionado. Si se omite, se utiliza `id` convertido a texto. */
+export interface CommandPrimitiveProps {
+  as?: string | Component
+  asChild?: boolean
+}
+
+export interface CommandItemProps extends CommandPrimitiveProps {
   value?: string
-  label?: string
-  icon?: NormalizeIconProps
   disabled?: boolean
 }
 
-export interface CommandGroup {
+export type CommandGroupProps = CommandPrimitiveProps
+export type CommandListProps = CommandPrimitiveProps
+export interface CommandInputProps extends CommandPrimitiveProps {
+  autoFocus?: boolean
+  disabled?: boolean
+}
+
+export function normalizeCommandItemProps(source: CommandItemProps): CommandItemProps {
+  const { value, disabled, as, asChild } = source
+  return { value, disabled, as, asChild }
+}
+
+export function normalizeCommandPrimitiveProps<T extends CommandPrimitiveProps>(
+  source: T | null | undefined,
+): CommandPrimitiveProps | undefined {
+  if (!source) return undefined
+  const { as, asChild } = source
+  return { as, asChild }
+}
+
+export function normalizeCommandInputProps(
+  source: CommandInputProps | null | undefined,
+): CommandInputProps | undefined {
+  if (!source) return undefined
+  const { as, asChild, autoFocus, disabled } = source
+  return { as, asChild, autoFocus, disabled }
+}
+export interface CommandItem extends CommandItemProps {
+  /** Identificador único utilizado por los slots individuales. */
+  id: string | number
+  /** Etiqueta visible del elemento. */
+  label?: string
+  icon?: IconName | IconProps
+}
+
+export interface CommandGroup extends CommandGroupProps {
   id: string | number
   label?: string
+  separator?: CommandPrimitiveProps
   items: CommandItem[]
 }
 
@@ -52,6 +88,8 @@ export interface CommandItemContext {
 export type CommandUIValue<T, C> = T | ((context: C) => T)
 
 export interface CommandUI {
+  root?: HTMLAttributes
+  inputWrapper?: HTMLAttributes
   input?: HTMLAttributes
   list?: HTMLAttributes
   footer?: HTMLAttributes
@@ -60,7 +98,7 @@ export interface CommandUI {
   group?: CommandUIValue<HTMLAttributes, CommandGroupContext>
   heading?: CommandUIValue<HTMLAttributes, CommandGroupContext>
   item?: CommandUIValue<HTMLAttributes, CommandItemContext>
-  icon?: CommandUIValue<NormalizedIconProps, CommandItemContext>
+  icon?: CommandUIValue<HTMLAttributes, CommandItemContext>
   indicator?: CommandUIValue<HTMLAttributes, CommandItemContext>
   label?: CommandUIValue<HTMLAttributes, CommandItemContext>
   separator?: CommandUIValue<HTMLAttributes, CommandGroupContext>
@@ -80,6 +118,8 @@ export interface CommandProps {
   orientation?: 'horizontal' | 'vertical'
   highlightOnHover?: boolean
   selectionBehavior?: 'toggle' | 'replace'
+  input?: CommandInputProps
+  list?: CommandListProps
   ui?: CommandUI
 }
 

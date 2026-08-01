@@ -8,10 +8,16 @@ import {
   CommandSeparator,
 } from '@/components/primitives/Command'
 import { ListboxFilter } from '@/components/primitives/Listbox'
-import { Icon } from '@/components/ui/Icon'
+import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useFilter } from '@/composables'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
+import {
+  normalizeCommandInputProps,
+  normalizeCommandItemProps,
+  normalizeCommandPrimitiveProps,
+} from '.'
 import type {
   CommandEmits,
   CommandGroup as CommandGroupData,
@@ -36,6 +42,8 @@ const props = withDefaults(defineProps<CommandProps>(), {
   orientation: 'vertical',
   highlightOnHover: true,
   selectionBehavior: undefined,
+  input: undefined,
+  list: undefined,
   ui: undefined,
 })
 const emit = defineEmits<CommandEmits>()
@@ -65,6 +73,15 @@ watch(search, (value) => emit('search', value, filter))
 const calculatedUI = computed(() => {
   let groupIndex = 0
   let headlessIndex = 0
+  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const inputWrapperUI = normalizeHTMLAttributes(props.ui?.inputWrapper)
+  const inputUI = normalizeHTMLAttributes(props.ui?.input)
+  const listUI = normalizeHTMLAttributes(props.ui?.list)
+  const footerUI = normalizeHTMLAttributes(props.ui?.footer)
+  const headerUI = normalizeHTMLAttributes(props.ui?.header)
+  const emptyUI = normalizeHTMLAttributes(props.ui?.empty)
+  const input = normalizeCommandInputProps(props.input)
+  const list = normalizeCommandPrimitiveProps(props.list)
   const sourceGroups = props.items.reduce<
     Array<{
       key: string
@@ -102,6 +119,7 @@ const calculatedUI = computed(() => {
   return {
     root: {
       ...attrs,
+      ...rootUI,
       defaultValue: props.defaultValue,
       multiple: props.multiple,
       disabled: props.disabled,
@@ -109,31 +127,31 @@ const calculatedUI = computed(() => {
       orientation: props.orientation,
       highlightOnHover: props.highlightOnHover,
       selectionBehavior: props.selectionBehavior ?? (props.selectable ? 'toggle' : 'replace'),
-      class: cn('rounded-lg border shadow-sm', attrs.class),
+      class: cn('rounded-lg border shadow-sm', attrs.class, rootUI.class),
+      style: [attrs.style, rootUI.style],
+    },
+    inputWrapper: {
+      ...inputWrapperUI,
+      class: cn('flex h-9 items-center gap-2 border-b px-3', inputWrapperUI.class),
+      style: inputWrapperUI.style,
     },
     input: {
-      ...props.ui?.input,
+      ...inputUI,
+      ...input,
       placeholder: props.placeholder ?? t('commandPlaceholder'),
       class: cn(
         'placeholder:text-muted-foreground flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50',
-        props.ui?.input?.class,
+        inputUI.class,
       ),
+      style: inputUI.style,
     },
-    list: {
-      ...props.ui?.list,
-      class: cn(props.ui?.list?.class),
-    },
-    footer: {
-      ...props.ui?.footer,
-      class: cn(props.ui?.footer?.class),
-    },
-    header: {
-      ...props.ui?.header,
-      class: cn(props.ui?.header?.class),
-    },
+    list: { ...listUI, ...list, class: cn(listUI.class), style: listUI.style },
+    footer: { ...footerUI, class: cn(footerUI.class), style: footerUI.style },
+    header: { ...headerUI, class: cn(headerUI.class), style: headerUI.style },
     empty: {
-      ...props.ui?.empty,
-      class: cn('py-6 text-center text-sm', props.ui?.empty?.class),
+      ...emptyUI,
+      class: cn('py-6 text-center text-sm', emptyUI.class),
+      style: emptyUI.style,
     },
     emptyLabel: props.emptyLabel ?? t('noResults'),
     emptyState: Boolean(search.value) && !renderedGroups.some((group) => group.items.length > 0),
@@ -146,9 +164,17 @@ const calculatedUI = computed(() => {
             last: group.groupIndex === groupCount - 1,
           }
         : undefined
-      const groupUI = groupContext ? resolveUI(props.ui?.group, groupContext) : undefined
-      const headingUI = groupContext ? resolveUI(props.ui?.heading, groupContext) : undefined
-      const separatorUI = groupContext ? resolveUI(props.ui?.separator, groupContext) : undefined
+      const groupUI = normalizeHTMLAttributes(
+        groupContext ? resolveUI(props.ui?.group, groupContext) : undefined,
+      )
+      const headingUI = normalizeHTMLAttributes(
+        groupContext ? resolveUI(props.ui?.heading, groupContext) : undefined,
+      )
+      const separatorUI = normalizeHTMLAttributes(
+        groupContext ? resolveUI(props.ui?.separator, groupContext) : undefined,
+      )
+      const groupProps = normalizeCommandPrimitiveProps(group.data)
+      const separator = normalizeCommandPrimitiveProps(group.data?.separator)
       const groupKey = group.key
 
       return {
@@ -166,15 +192,17 @@ const calculatedUI = computed(() => {
         },
         group: {
           ...groupUI,
-          class: cn(groupUI?.class),
+          ...groupProps,
+          class: cn(groupUI.class),
         },
         heading: {
           ...headingUI,
-          class: cn(headingUI?.class),
+          class: cn(headingUI.class),
         },
         separator: {
           ...separatorUI,
-          class: cn(separatorUI?.class),
+          ...separator,
+          class: cn(separatorUI.class),
         },
         items: group.items.map((item, itemIndex) => {
           const value = item.value ?? String(item.id)
@@ -192,12 +220,13 @@ const calculatedUI = computed(() => {
             first: sectionIndex === 0,
             last: sectionIndex === sections.length - 1,
           }
-          const itemUI = resolveUI(props.ui?.item, context)
-          const indicatorUI = resolveUI(props.ui?.indicator, context)
-          const iconUI = resolveUI(props.ui?.icon, context)
-          const labelUI = resolveUI(props.ui?.label, context)
+          const itemUI = normalizeHTMLAttributes(resolveUI(props.ui?.item, context))
+          const indicatorUI = normalizeHTMLAttributes(resolveUI(props.ui?.indicator, context))
+          const iconUI = normalizeHTMLAttributes(resolveUI(props.ui?.icon, context))
+          const labelUI = normalizeHTMLAttributes(resolveUI(props.ui?.label, context))
           const itemKey = String(item.id)
-          const icon = typeof item.icon === 'string' ? { name: item.icon } : item.icon
+          const itemProps = normalizeCommandItemProps(item)
+          const icon = normalizeIconProps(item.icon)
 
           return {
             key: itemKey,
@@ -211,25 +240,25 @@ const calculatedUI = computed(() => {
             },
             item: {
               ...itemUI,
+              ...itemProps,
               value,
-              disabled: item.disabled,
-              class: cn(itemUI?.class),
+              class: cn(itemUI.class),
             },
             indicator: {
               ...indicatorUI,
               class: cn(
                 'ml-auto flex size-4 shrink-0 items-center justify-center',
-                indicatorUI?.class,
+                indicatorUI.class,
               ),
             },
             icon: {
               ...iconUI,
               ...icon,
-              class: cn(iconUI?.class, icon?.class),
+              class: cn(iconUI.class),
             },
             label: {
               ...labelUI,
-              class: cn(labelUI?.class),
+              class: cn(labelUI.class),
             },
           }
         }),
@@ -241,11 +270,7 @@ const calculatedUI = computed(() => {
 
 <template>
   <CommandBase v-bind="calculatedUI.root" v-model="model">
-    <div
-      v-if="props.filter"
-      data-slot="command-input-wrapper"
-      class="flex h-9 items-center gap-2 border-b px-3"
-    >
+    <div v-if="props.filter" data-slot="command-input-wrapper" v-bind="calculatedUI.inputWrapper">
       <slot name="inputIcon" :search="search">
         <Icon name="search" class="size-4 shrink-0 opacity-50" />
       </slot>
@@ -253,7 +278,7 @@ const calculatedUI = computed(() => {
         v-bind="calculatedUI.input"
         v-model="search"
         data-slot="command-input"
-        auto-focus
+        :auto-focus="calculatedUI.input.autoFocus ?? true"
       />
     </div>
 

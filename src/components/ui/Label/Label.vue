@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { Label as LabelBase } from '@/components/primitives/Label'
+import { Label as RekaLabel } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import type { LabelProps, LabelSlots } from '.'
@@ -27,7 +27,11 @@ const calculatedUI = computed(() => {
       as: props.as,
       asChild: props.asChild,
       for: props.for,
-      class: cn(attrs.class, rootUI.class),
+      class: cn(
+        'flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50',
+        attrs.class,
+        rootUI.class,
+      ),
       style: [attrs.style, rootUI.style],
     },
   }
@@ -35,7 +39,7 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <LabelBase v-bind="calculatedUI.root">
+  <RekaLabel v-bind="calculatedUI.root" data-slot="label">
     <slot />
-  </LabelBase>
+  </RekaLabel>
 </template>

@@ -7,6 +7,7 @@ import { AspectRatio } from '@/components/ui/AspectRatio'
 import { Textarea } from '@/components/ui/Textarea'
 import { Input } from '@/components/ui/Input'
 import { Empty } from '@/components/ui/Empty'
+import { Label } from '@/components/ui/Label'
 
 const comment = ref('')
 const name = ref('')
@@ -165,6 +166,29 @@ const name = ref('')
           <template #media>＋</template>
           <Button size="sm">Añadir elemento</Button>
         </Empty>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Label</h2>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="space-y-2">
+          <Label for="label-username">Nombre de usuario</Label>
+          <Input id="label-username" placeholder="usuario" />
+        </div>
+
+        <div class="space-y-2">
+          <Label for="label-email">
+            Email <span class="text-destructive">*</span>
+          </Label>
+          <Input id="label-email" type="email" placeholder="nombre@ejemplo.com" />
+        </div>
+
+        <div class="space-y-2 md:col-span-2">
+          <Label for="label-disabled">Campo deshabilitado</Label>
+          <Input id="label-disabled" default-value="No editable" disabled />
+        </div>
       </div>
     </section>
   </main>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAttrs } from 'vue'
-import { Label } from '@/components/primitives/Label'
+import { Label } from '@/components/ui/Label'
 import { cn } from '@/lib/utils'
 
 defineOptions({ inheritAttrs: false })

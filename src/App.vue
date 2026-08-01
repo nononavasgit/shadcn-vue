@@ -38,6 +38,10 @@ function reset() {
       </p>
     </div>
 
+    <Button rounded variant="outline">Limpiar</Button>
+    <Button loading variant="subtle">Guardar perfil</Button>
+    <Button variant="plain" icon="error" color="#ef4444" size="sm">Limpiar</Button>
+
     <form class="space-y-8" novalidate @submit.prevent="submit">
       <FieldSet
         legend="Información personal"

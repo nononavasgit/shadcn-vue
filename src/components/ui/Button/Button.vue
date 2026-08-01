@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { button as ButtonBase } from '@/components/primitives/Button'
+import { Primitive } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
@@ -65,7 +65,12 @@ const calculatedUI = computed(() => {
       asChild: props.asChild,
       'aria-busy': ariaBusy.value,
       'aria-disabled': ariaDisabled.value,
-      class: cn(calculatedVariants.value, attrs.class, rootUI.class),
+      class: cn(
+        'inline-flex shrink-0 items-center justify-center gap-2 rounded-md border border-transparent text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
+        calculatedVariants.value,
+        attrs.class,
+        rootUI.class,
+      ),
       style: [colorStyle.value, attrs.style, rootUI.style],
     },
     icon: {
@@ -98,7 +103,7 @@ function handleClick(event: PointerEvent) {
 </script>
 
 <template>
-  <ButtonBase v-bind="calculatedUI.root" @click="handleClick">
+  <Primitive v-bind="calculatedUI.root" @click="handleClick">
     <slot v-if="props.asChild" />
     <template v-else>
       <template v-if="props.loading">
@@ -124,5 +129,5 @@ function handleClick(event: PointerEvent) {
         />
       </slot>
     </template>
-  </ButtonBase>
+  </Primitive>
 </template>

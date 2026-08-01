@@ -1,6 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { ButtonHTMLAttributes, Component, HTMLAttributes } from 'vue'
+import type { ButtonHTMLAttributes, HTMLAttributes } from 'vue'
 import type { IconProps, IconName } from '@/components/ui/Icon'
+import type { PrimitiveProps } from 'reka-ui'
 
 export { default as Button } from './Button.vue'
 
@@ -259,9 +260,7 @@ export interface ButtonUI {
   loadingIcon?: HTMLAttributes
 }
 
-export interface ButtonProps {
-  as?: string | Component
-  asChild?: boolean
+export interface ButtonProps extends PrimitiveProps {
   label?: string
   variant?: ButtonVariants['variant']
   severity?: ButtonVariants['severity']

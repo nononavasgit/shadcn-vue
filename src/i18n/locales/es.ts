@@ -9,4 +9,6 @@ export default {
   noResults: 'No se encontraron resultados.',
   decrement: 'Disminuir',
   increment: 'Incrementar',
+  minimum: 'Mínimo',
+  maximum: 'Máximo',
 } satisfies Messages

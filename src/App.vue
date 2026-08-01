@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { RadioGroup, RadioGroupItem, type RadioGroupOption } from '@/components/ui/RadioGroup'
+import { Slider } from '@/components/ui/Slider'
 
 const planItems: RadioGroupOption[] = [
   { value: 'free', label: 'Gratuito', description: 'Para probar las funciones basicas.' },
@@ -26,6 +27,10 @@ const selectedPlan = ref('pro')
 const selectedDelivery = ref('standard')
 const selectedPriority = ref<number>(1)
 const customValue = ref('email')
+const sliderValue = ref([65])
+const rangeValue = ref([25, 75])
+const verticalValue = ref([40])
+const steppedValue = ref([30])
 </script>
 
 <template>
@@ -141,6 +146,68 @@ const customValue = ref('email')
         </label>
         <label class="flex items-center gap-2 text-sm"> <RadioGroupItem value="sms" /> SMS </label>
       </RadioGroup>
+    </section>
+
+    <section class="space-y-5 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Slider basico</h2>
+        <p class="text-sm text-muted-foreground">Valor actual: {{ sliderValue[0] }}.</p>
+      </div>
+      <Slider v-model="sliderValue" class="max-w-xl" />
+    </section>
+
+    <section class="space-y-5 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Slider de rango</h2>
+        <p class="text-sm text-muted-foreground">
+          Rango seleccionado: {{ rangeValue[0] }} - {{ rangeValue[1] }}.
+        </p>
+      </div>
+      <Slider
+        v-model="rangeValue"
+        :min="0"
+        :max="100"
+        :step="5"
+        class="max-w-xl"
+        :ui="{
+          thumb: ({ index }) => ({
+            class: index === 0 ? 'border-success' : 'border-warning',
+          }),
+        }"
+      />
+    </section>
+
+    <section class="space-y-5 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Orientacion vertical y UI contextual</h2>
+        <p class="text-sm text-muted-foreground">Valor vertical: {{ verticalValue[0] }}.</p>
+      </div>
+      <Slider
+        v-model="verticalValue"
+        orientation="vertical"
+        :ui="{
+          root: { class: 'h-48' },
+          track: { class: 'bg-muted' },
+          range: { class: 'bg-success' },
+          thumb: { class: 'border-success focus-visible:ring-success' },
+        }"
+      />
+    </section>
+
+    <section class="space-y-5 rounded-xl border p-5">
+      <div>
+        <h2 class="text-lg font-semibold">Props funcionales y slot del thumb</h2>
+        <p class="text-sm text-muted-foreground">Paso actual: {{ steppedValue[0] }}.</p>
+      </div>
+      <Slider v-model="steppedValue" :min="0" :max="60" :step="10" class="max-w-xl">
+        <template #thumb="{ value }">
+          <span
+            class="grid size-5 place-items-center rounded-full bg-primary text-[8px] text-white"
+          >
+            {{ value }}
+          </span>
+        </template>
+      </Slider>
     </section>
   </main>
 </template>

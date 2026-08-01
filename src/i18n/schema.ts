@@ -7,4 +7,6 @@ export interface Messages {
   noResults: string
   decrement: string
   increment: string
+  minimum: string
+  maximum: string
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
+import { Separator } from '@/components/ui/Separator'
 </script>
 
 <template>
@@ -21,5 +22,13 @@ import { Badge } from '@/components/ui/Badge'
     <Badge variant="solid" severity="primary" trailing-icon="check">Badge</Badge>
 
     <Badge variant="solid" label="New" color="#3b82f6" size="sm"></Badge>
+
+    <Separator :decorative="false"></Separator>
+
+    <div class="flex h-5 items-center gap-4">
+      <span>a</span>
+      <Separator :decorative="false" orientation="vertical"></Separator>
+      <span>b</span>
+    </div>
   </main>
 </template>

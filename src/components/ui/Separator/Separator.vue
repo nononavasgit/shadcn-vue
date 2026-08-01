@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { Separator as SeparatorBase } from '@/components/primitives/Separator'
+import { Separator as RekaSeparator } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import type { SeparatorProps } from '.'
@@ -25,7 +25,11 @@ const calculatedUI = computed(() => {
       decorative: props.decorative,
       as: props.as,
       asChild: props.asChild,
-      class: cn(attrs.class, rootUI.class),
+      class: cn(
+        'shrink-0 bg-border data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px data-[orientation=vertical]:self-stretch',
+        attrs.class,
+        rootUI.class,
+      ),
       style: [attrs.style, rootUI.style],
     },
   }
@@ -33,5 +37,5 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <SeparatorBase v-bind="calculatedUI.root" />
+  <RekaSeparator v-bind="calculatedUI.root" />
 </template>

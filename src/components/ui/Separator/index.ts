@@ -1,4 +1,5 @@
-import type { Component, HTMLAttributes } from 'vue'
+import type { HTMLAttributes } from 'vue'
+import { SeparatorProps as SeparatorPropsReka } from 'reka-ui'
 
 export { default as Separator } from './Separator.vue'
 
@@ -6,10 +7,6 @@ export interface SeparatorUI {
   root?: HTMLAttributes
 }
 
-export interface SeparatorProps {
-  orientation?: 'horizontal' | 'vertical'
-  decorative?: boolean
-  as?: string | Component
-  asChild?: boolean
+export interface SeparatorProps extends SeparatorPropsReka {
   ui?: SeparatorUI
 }

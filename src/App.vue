@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/Input'
 import { Empty } from '@/components/ui/Empty'
 import { Label } from '@/components/ui/Label'
 import { Kbd, KbdGroup } from '@/components/ui/Kbd'
+import { Card } from '@/components/ui/Card'
 
 const comment = ref('')
 const name = ref('')
@@ -48,7 +49,9 @@ const name = ref('')
         <div class="space-y-2">
           <p class="text-sm text-muted-foreground">16:9</p>
           <AspectRatio :ratio="16 / 9" class="overflow-hidden rounded-lg border bg-muted">
-            <div class="flex h-full items-center justify-center bg-linear-to-br from-primary/20 to-primary/5">
+            <div
+              class="flex h-full items-center justify-center bg-linear-to-br from-primary/20 to-primary/5"
+            >
               <span class="text-2xl font-semibold text-primary">16:9</span>
             </div>
           </AspectRatio>
@@ -57,7 +60,9 @@ const name = ref('')
         <div class="space-y-2">
           <p class="text-sm text-muted-foreground">4:3</p>
           <AspectRatio :ratio="4 / 3" class="overflow-hidden rounded-lg border bg-muted">
-            <div class="flex h-full items-center justify-center bg-linear-to-br from-success/20 to-success/5">
+            <div
+              class="flex h-full items-center justify-center bg-linear-to-br from-success/20 to-success/5"
+            >
               <span class="text-2xl font-semibold text-success">4:3</span>
             </div>
           </AspectRatio>
@@ -66,7 +71,9 @@ const name = ref('')
         <div class="space-y-2 md:col-span-2">
           <p class="text-sm text-muted-foreground">Personalizada (3:2)</p>
           <AspectRatio :ratio="3 / 2" class="overflow-hidden rounded-lg border bg-muted">
-            <div class="flex h-full items-center justify-center bg-linear-to-br from-warning/20 to-warning/5">
+            <div
+              class="flex h-full items-center justify-center bg-linear-to-br from-warning/20 to-warning/5"
+            >
               <span class="text-2xl font-semibold text-warning">3:2</span>
             </div>
           </AspectRatio>
@@ -79,23 +86,14 @@ const name = ref('')
 
       <div class="space-y-2">
         <label for="comment" class="text-sm font-medium">Comentario</label>
-        <Textarea
-          id="comment"
-          v-model="comment"
-          placeholder="Escribe un comentario..."
-          rows="4"
-        />
+        <Textarea id="comment" v-model="comment" placeholder="Escribe un comentario..." rows="4" />
         <p class="text-sm text-muted-foreground">{{ comment.length }} caracteres</p>
       </div>
 
       <div class="grid gap-4 md:grid-cols-2">
         <div class="space-y-2">
           <label for="prefilled" class="text-sm font-medium">Con valor inicial</label>
-          <Textarea
-            id="prefilled"
-            default-value="Este texto se puede editar."
-            rows="3"
-          />
+          <Textarea id="prefilled" default-value="Este texto se puede editar." rows="3" />
         </div>
 
         <div class="space-y-2">
@@ -180,9 +178,7 @@ const name = ref('')
         </div>
 
         <div class="space-y-2">
-          <Label for="label-email">
-            Email <span class="text-destructive">*</span>
-          </Label>
+          <Label for="label-email"> Email <span class="text-destructive">*</span> </Label>
           <Input id="label-email" type="email" placeholder="nombre@ejemplo.com" />
         </div>
 
@@ -218,6 +214,45 @@ const name = ref('')
           Tecla individual
           <Kbd label="Esc" />
         </p>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Card</h2>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <Card
+          label="Perfil de usuario"
+          description="Actualiza tus datos personales."
+          class="border"
+        >
+          <template #action>
+            <Button size="sm" variant="outline">Editar</Button>
+          </template>
+          <div class="space-y-2 text-sm text-muted-foreground">
+            <p><span class="font-medium text-foreground">Nombre:</span> María García</p>
+            <p><span class="font-medium text-foreground">Rol:</span> Diseñadora</p>
+          </div>
+          <template #footer>
+            <span class="text-xs text-muted-foreground">Actualizado hoy</span>
+          </template>
+        </Card>
+
+        <Card label="Estadísticas" description="Resumen de actividad" class="border">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="rounded-md bg-muted p-3">
+              <p class="text-2xl font-semibold">128</p>
+              <p class="text-xs text-muted-foreground">Proyectos</p>
+            </div>
+            <div class="rounded-md bg-muted p-3">
+              <p class="text-2xl font-semibold">94%</p>
+              <p class="text-xs text-muted-foreground">Completados</p>
+            </div>
+          </div>
+          <template #footer>
+            <Button size="sm" variant="plain">Ver detalles</Button>
+          </template>
+        </Card>
       </div>
     </section>
   </main>

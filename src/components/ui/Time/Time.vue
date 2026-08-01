@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { Time as TimeBase } from '@/components/primitives/Time'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useDates } from '@/composables/useDates'
 import { cn } from '@/lib/utils'
@@ -40,7 +39,7 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <TimeBase v-bind="calculatedUI.root">
+  <time v-bind="calculatedUI.root" data-slot="time">
     <slot :date="formattedDate">{{ formattedDate }}</slot>
-  </TimeBase>
+  </time>
 </template>

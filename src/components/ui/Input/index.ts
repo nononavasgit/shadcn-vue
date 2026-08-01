@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from 'vue'
+import type { PrimitiveProps } from 'reka-ui'
 
 export { default as Input } from './Input.vue'
 
@@ -8,7 +9,7 @@ export interface InputUI {
   root?: HTMLAttributes
 }
 
-export interface InputProps {
+export interface InputProps extends PrimitiveProps {
   modelValue?: InputValue
   defaultValue?: InputValue
   ui?: InputUI

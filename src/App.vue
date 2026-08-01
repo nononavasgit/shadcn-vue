@@ -5,8 +5,10 @@ import { Badge } from '@/components/ui/Badge'
 import { Separator } from '@/components/ui/Separator'
 import { AspectRatio } from '@/components/ui/AspectRatio'
 import { Textarea } from '@/components/ui/Textarea'
+import { Input } from '@/components/ui/Input'
 
 const comment = ref('')
+const name = ref('')
 </script>
 
 <template>
@@ -101,6 +103,37 @@ const comment = ref('')
             disabled
             rows="3"
           />
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Input</h2>
+
+      <div class="space-y-2">
+        <label for="name" class="text-sm font-medium">Nombre</label>
+        <Input id="name" v-model="name" placeholder="Escribe tu nombre..." />
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="space-y-2">
+          <label for="email" class="text-sm font-medium">Email</label>
+          <Input id="email" type="email" placeholder="nombre@ejemplo.com" />
+        </div>
+
+        <div class="space-y-2">
+          <label for="website" class="text-sm font-medium">Con valor inicial</label>
+          <Input id="website" default-value="https://ejemplo.com" />
+        </div>
+
+        <div class="space-y-2">
+          <label for="disabled-input" class="text-sm font-medium">Deshabilitado</label>
+          <Input id="disabled-input" default-value="No editable" disabled />
+        </div>
+
+        <div class="space-y-2">
+          <label for="invalid-input" class="text-sm font-medium">Inválido</label>
+          <Input id="invalid-input" aria-invalid="true" placeholder="Campo requerido" />
         </div>
       </div>
     </section>

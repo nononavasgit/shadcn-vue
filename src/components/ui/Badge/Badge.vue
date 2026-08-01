@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { Badge as BadgeBase } from '@/components/primitives/Badge'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import { badgeVariants, type BadgeProps, type BadgeSlots } from '.'
+import { Primitive } from 'reka-ui'
 
 defineOptions({ inheritAttrs: false })
 
@@ -63,7 +63,7 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <BadgeBase v-bind="calculatedUI.root">
+  <Primitive v-bind="calculatedUI.root">
     <slot name="leading">
       <Icon
         v-if="calculatedUI.icon.name"
@@ -81,5 +81,5 @@ const calculatedUI = computed(() => {
         :name="calculatedUI.trailingIcon.name"
       />
     </slot>
-  </BadgeBase>
+  </Primitive>
 </template>

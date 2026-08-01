@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
+import { computed, useAttrs, useId } from 'vue'
 import { RadioGroup as RadioGroupBase } from '@/components/primitives/RadioGroup'
 import { Label } from '@/components/ui/Label'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
@@ -31,6 +31,7 @@ defineSlots<RadioGroupSlots>()
 
 const attrs = useAttrs()
 const modelValue = defineModel<RadioGroupValue>()
+const radioGroupId = useId()
 
 function resolveUI<T>(
   value: T | ((context: RadioGroupUIContext) => T) | undefined,
@@ -74,6 +75,7 @@ const calculatedUI = computed(() => {
         selected: Object.is(modelValue.value, item.value),
       }
       const key = item.id ?? String(item.value)
+      const inputId = `${radioGroupId}-${key}`
       const itemUI = normalizeHTMLAttributes(resolveUI(props.ui?.item, context))
       const radioUI = normalizeHTMLAttributes(resolveUI(props.ui?.radio, context))
       const contentUI = normalizeHTMLAttributes(resolveUI(props.ui?.content, context))
@@ -92,7 +94,7 @@ const calculatedUI = computed(() => {
         },
         item: {
           ...itemUI,
-          for: key,
+          for: inputId,
           class: cn(
             'flex cursor-pointer items-center gap-2 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50',
             itemUI?.class,
@@ -101,7 +103,7 @@ const calculatedUI = computed(() => {
         radio: {
           ...radioUI,
           ...radioProps,
-          id: key,
+          id: inputId,
           class: cn(radioUI.class),
         },
         content: {

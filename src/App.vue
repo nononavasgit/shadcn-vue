@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Separator } from '@/components/ui/Separator'
 import { AspectRatio } from '@/components/ui/AspectRatio'
+import { Textarea } from '@/components/ui/Textarea'
+
+const comment = ref('')
 </script>
 
 <template>
@@ -61,6 +65,42 @@ import { AspectRatio } from '@/components/ui/AspectRatio'
               <span class="text-2xl font-semibold text-warning">3:2</span>
             </div>
           </AspectRatio>
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Textarea</h2>
+
+      <div class="space-y-2">
+        <label for="comment" class="text-sm font-medium">Comentario</label>
+        <Textarea
+          id="comment"
+          v-model="comment"
+          placeholder="Escribe un comentario..."
+          rows="4"
+        />
+        <p class="text-sm text-muted-foreground">{{ comment.length }} caracteres</p>
+      </div>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="space-y-2">
+          <label for="prefilled" class="text-sm font-medium">Con valor inicial</label>
+          <Textarea
+            id="prefilled"
+            default-value="Este texto se puede editar."
+            rows="3"
+          />
+        </div>
+
+        <div class="space-y-2">
+          <label for="disabled" class="text-sm font-medium">Deshabilitado</label>
+          <Textarea
+            id="disabled"
+            default-value="Este campo está deshabilitado."
+            disabled
+            rows="3"
+          />
         </div>
       </div>
     </section>

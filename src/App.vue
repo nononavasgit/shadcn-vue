@@ -10,9 +10,12 @@ import { Empty } from '@/components/ui/Empty'
 import { Label } from '@/components/ui/Label'
 import { Kbd, KbdGroup } from '@/components/ui/Kbd'
 import { Card } from '@/components/ui/Card'
+import { Switch } from '@/components/ui/Switch'
 
 const comment = ref('')
 const name = ref('')
+const notifications = ref(true)
+const automaticUpdates = ref(false)
 </script>
 
 <template>
@@ -253,6 +256,40 @@ const name = ref('')
             <Button size="sm" variant="plain">Ver detalles</Button>
           </template>
         </Card>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Switch</h2>
+
+      <div class="space-y-4">
+        <div class="flex items-center justify-between rounded-lg border p-4">
+          <div class="space-y-1">
+            <Label for="notifications-switch">Notificaciones</Label>
+            <p class="text-sm text-muted-foreground">Recibir avisos por email.</p>
+          </div>
+          <Switch id="notifications-switch" v-model="notifications" />
+        </div>
+
+        <div class="flex items-center justify-between rounded-lg border p-4">
+          <div class="space-y-1">
+            <Label for="updates-switch">Actualizaciones automáticas</Label>
+            <p class="text-sm text-muted-foreground">Instalar nuevas versiones automáticamente.</p>
+          </div>
+          <Switch id="updates-switch" v-model="automaticUpdates">
+            <template #thumb="{ checked }">
+              <span class="">{{ checked ? '✓' : '' }}</span>
+            </template>
+          </Switch>
+        </div>
+
+        <div class="flex items-center justify-between rounded-lg border p-4 opacity-70">
+          <div class="space-y-1">
+            <Label for="disabled-switch">Función no disponible</Label>
+            <p class="text-sm text-muted-foreground">Este ajuste está deshabilitado.</p>
+          </div>
+          <Switch id="disabled-switch" :default-value="true" disabled />
+        </div>
       </div>
     </section>
   </main>

@@ -1,4 +1,5 @@
-import type { Component, HTMLAttributes } from 'vue'
+import type { HTMLAttributes } from 'vue'
+import type { SwitchRootEmits, SwitchRootProps } from 'reka-ui'
 
 export { default as Switch } from './Switch.vue'
 
@@ -8,22 +9,11 @@ export interface SwitchUI {
   root?: HTMLAttributes
 }
 
-export interface SwitchProps {
-  modelValue?: SwitchValue
-  defaultValue?: boolean
-  disabled?: boolean
-  id?: string
-  name?: string
-  value?: string
-  as?: string | Component
-  asChild?: boolean
-  required?: boolean
+export interface SwitchProps extends SwitchRootProps<SwitchValue> {
   ui?: SwitchUI
 }
 
-export interface SwitchEmits {
-  'update:modelValue': [value: boolean]
-}
+export type SwitchEmits = SwitchRootEmits<SwitchValue>
 
 export interface SwitchSlotProps {
   value: SwitchValue

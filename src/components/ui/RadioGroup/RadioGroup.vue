@@ -74,7 +74,7 @@ const calculatedUI = computed(() => {
         index,
         selected: Object.is(modelValue.value, item.value),
       }
-      const key = item.id ?? String(item.value)
+      const key = String(item.value)
       const inputId = `${radioGroupId}-${key}`
       const itemUI = normalizeHTMLAttributes(resolveUI(props.ui?.item, context))
       const radioUI = normalizeHTMLAttributes(resolveUI(props.ui?.radio, context))

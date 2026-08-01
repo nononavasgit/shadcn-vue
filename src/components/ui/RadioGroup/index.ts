@@ -15,16 +15,17 @@ export interface RadioGroupItemProps {
   asChild?: boolean
 }
 
-export function normalizeRadioGroupItemProps(source: RadioGroupItemProps): RadioGroupItemProps {
-  const { value, disabled, id, name, required, as, asChild } = source
-  return { value, disabled, id, name, required, as, asChild }
+export function normalizeRadioGroupItemProps(
+  source: RadioGroupItemProps,
+): Pick<RadioGroupItemProps, 'value' | 'disabled'> {
+  const { value, disabled } = source
+  return { value, disabled }
 }
 
-export interface RadioGroupOption extends RadioGroupItemProps {
+export interface RadioGroupOption extends Pick<RadioGroupItemProps, 'value' | 'disabled'> {
   label: string
   description?: string
 }
-
 export type RadioGroupItem = RadioGroupOption
 
 // Context RadioGroup

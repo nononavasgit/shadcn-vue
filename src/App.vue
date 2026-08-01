@@ -18,13 +18,13 @@ const deliveryItems: RadioGroupOption[] = [
   },
 ]
 const primitiveItems: RadioGroupOption[] = [
-  { value: 1, id: 'priority-low', label: 'Baja', as: 'button' },
-  { value: 2, id: 'priority-medium', label: 'Media', as: 'button' },
-  { value: 3, id: 'priority-high', label: 'Alta', as: 'button', required: true },
+  { value: 1, label: 'Baja', disabled: true },
+  { value: 2, label: 'Media' },
+  { value: 3, label: 'Alta' },
 ]
 const selectedPlan = ref('pro')
 const selectedDelivery = ref('standard')
-const selectedPriority = ref<number>(2)
+const selectedPriority = ref<number>(1)
 const customValue = ref('email')
 </script>
 
@@ -117,6 +117,7 @@ const customValue = ref('email')
           Cada item extiende las props del primitive y solo reenvia las admitidas.
         </p>
       </div>
+      {{ selectedPriority }}
       <RadioGroup
         v-model="selectedPriority"
         as="section"

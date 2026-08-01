@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, useAttrs, watch } from 'vue'
-import { Announcer as AnnouncerBase } from '@/components/primitives/Announcer'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useAnnouncer } from '@/composables/useAnnouncer'
 import { cn } from '@/lib/utils'
@@ -43,7 +42,7 @@ const calculatedUI = computed(() => {
       'aria-atomic': props.atomic,
       'aria-live': ariaLive.value,
       role: role.value,
-      class: cn(attrs.class, rootUI.class),
+      class: cn('sr-only', attrs.class, rootUI.class),
       style: [attrs.style, rootUI.style],
     },
   }
@@ -53,7 +52,7 @@ defineExpose({ message, politeness, set, polite, assertive })
 </script>
 
 <template>
-  <AnnouncerBase v-bind="calculatedUI.root">
+  <span v-bind="calculatedUI.root" data-slot="announcer">
     <slot :message="message">{{ message }}</slot>
-  </AnnouncerBase>
+  </span>
 </template>

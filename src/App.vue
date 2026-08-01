@@ -2,6 +2,7 @@
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Separator } from '@/components/ui/Separator'
+import { AspectRatio } from '@/components/ui/AspectRatio'
 </script>
 
 <template>
@@ -30,5 +31,38 @@ import { Separator } from '@/components/ui/Separator'
       <Separator :decorative="false" orientation="vertical"></Separator>
       <span>b</span>
     </div>
+
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Aspect ratio</h2>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="space-y-2">
+          <p class="text-sm text-muted-foreground">16:9</p>
+          <AspectRatio :ratio="16 / 9" class="overflow-hidden rounded-lg border bg-muted">
+            <div class="flex h-full items-center justify-center bg-linear-to-br from-primary/20 to-primary/5">
+              <span class="text-2xl font-semibold text-primary">16:9</span>
+            </div>
+          </AspectRatio>
+        </div>
+
+        <div class="space-y-2">
+          <p class="text-sm text-muted-foreground">4:3</p>
+          <AspectRatio :ratio="4 / 3" class="overflow-hidden rounded-lg border bg-muted">
+            <div class="flex h-full items-center justify-center bg-linear-to-br from-success/20 to-success/5">
+              <span class="text-2xl font-semibold text-success">4:3</span>
+            </div>
+          </AspectRatio>
+        </div>
+
+        <div class="space-y-2 md:col-span-2">
+          <p class="text-sm text-muted-foreground">Personalizada (3:2)</p>
+          <AspectRatio :ratio="3 / 2" class="overflow-hidden rounded-lg border bg-muted">
+            <div class="flex h-full items-center justify-center bg-linear-to-br from-warning/20 to-warning/5">
+              <span class="text-2xl font-semibold text-warning">3:2</span>
+            </div>
+          </AspectRatio>
+        </div>
+      </div>
+    </section>
   </main>
 </template>

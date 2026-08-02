@@ -17,6 +17,7 @@ import { ProgressCircular } from '@/components/ui/ProgressCircular'
 import { ScrollArea } from '@/components/ui/ScrollArea'
 import { Toggle } from '@/components/ui/Toggle'
 import { ToggleGroup } from '@/components/ui/ToggleGroup'
+import { Tooltip } from '@/components/ui/Tooltip'
 
 const comment = ref('')
 const name = ref('')
@@ -489,6 +490,26 @@ const toggleFormatItems = [
             aria-label="Seleccionar periodo"
           />
         </div>
+      </div>
+    </section>
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Tooltip</h2>
+
+      <div class="flex flex-wrap items-center gap-4">
+        <Tooltip label="Guardar cambios">
+          <Button variant="outline" icon="save" aria-label="Guardar" />
+        </Tooltip>
+
+        <Tooltip label="Este tooltip aparece a la derecha" :content="{ side: 'right' }">
+          <Button variant="subtle">Posición derecha</Button>
+        </Tooltip>
+
+        <Tooltip>
+          <Button variant="plain">Contenido personalizado</Button>
+          <template #content="{ open }">
+            <span>{{ open ? 'Tooltip abierto' : 'Tooltip' }}</span>
+          </template>
+        </Tooltip>
       </div>
     </section>
   </main>

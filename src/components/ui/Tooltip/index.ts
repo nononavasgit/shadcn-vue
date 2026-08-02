@@ -1,4 +1,5 @@
-import type { Component, HTMLAttributes } from 'vue'
+import type { HTMLAttributes } from 'vue'
+import type { TooltipArrowProps as RekaTooltipArrowProps, TooltipContentEmits, TooltipContentProps as RekaTooltipContentProps, TooltipRootEmits, TooltipRootProps, TooltipTriggerProps as RekaTooltipTriggerProps } from 'reka-ui'
 
 export { default as Tooltip } from './Tooltip.vue'
 
@@ -36,34 +37,18 @@ export type TooltipSticky = keyof typeof STICKY_VALUES
 export type TooltipPositionStrategy = keyof typeof POSITION_STRATEGIES
 export type TooltipUpdatePositionStrategy = keyof typeof UPDATE_POSITION_STRATEGIES
 
-export interface TooltipTriggerProps {
-  as?: string | Component
-  asChild?: boolean
-}
+export type TooltipTriggerProps = RekaTooltipTriggerProps
 
-export interface TooltipContentProps {
-  as?: string | Component
-  asChild?: boolean
-  forceMount?: boolean
+export interface TooltipContentProps extends RekaTooltipContentProps {
   side?: TooltipSide
-  sideOffset?: number
   align?: TooltipAlign
-  alignOffset?: number
-  avoidCollisions?: boolean
   collisionPadding?: number | Partial<Record<TooltipSide, number>>
-  arrowPadding?: number
   sticky?: TooltipSticky
-  hideWhenDetached?: boolean
   positionStrategy?: TooltipPositionStrategy
   updatePositionStrategy?: TooltipUpdatePositionStrategy
 }
 
-export interface TooltipArrowProps {
-  as?: string | Component
-  asChild?: boolean
-  width?: number
-  height?: number
-}
+export type TooltipArrowProps = RekaTooltipArrowProps
 
 export interface TooltipUI {
   root?: HTMLAttributes
@@ -72,25 +57,16 @@ export interface TooltipUI {
   arrow?: HTMLAttributes
 }
 
-export interface TooltipProps {
-  open?: boolean
+export interface TooltipProps extends TooltipRootProps {
   label?: string
-  defaultOpen?: boolean
-  delayDuration?: number
   skipDelayDuration?: number
-  disableHoverableContent?: boolean
-  disableClosingTrigger?: boolean
-  disabled?: boolean
-  ignoreNonKeyboardFocus?: boolean
   trigger?: TooltipTriggerProps
   content?: TooltipContentProps
   arrow?: TooltipArrowProps
   ui?: TooltipUI
 }
 
-export interface TooltipEmits {
-  'update:open': [value: boolean]
-}
+export type TooltipEmits = TooltipRootEmits & TooltipContentEmits
 
 export interface TooltipSlotProps {
   open: boolean

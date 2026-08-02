@@ -1,4 +1,5 @@
-import type { Component, HTMLAttributes } from 'vue'
+import type { HTMLAttributes } from 'vue'
+import type { CheckboxRootEmits, CheckboxRootProps } from 'reka-ui'
 
 export { default as Checkbox } from './Checkbox.vue'
 
@@ -9,19 +10,11 @@ export interface CheckboxUI {
   root?: HTMLAttributes
 }
 
-export interface CheckboxProps {
-  modelValue?: CheckboxValue | 'indeterminate' | null
-  defaultValue?: CheckboxValue | 'indeterminate'
-  trueValue?: CheckboxValue
-  falseValue?: CheckboxValue
-  as?: string | Component
-  asChild?: boolean
+export interface CheckboxProps extends CheckboxRootProps<CheckboxValue> {
   ui?: CheckboxUI
 }
 
-export interface CheckboxEmits {
-  'update:modelValue': [value: CheckboxValue | 'indeterminate']
-}
+export type CheckboxEmits = CheckboxRootEmits<CheckboxValue>
 
 export interface CheckboxSlotProps {
   value: CheckboxValue | 'indeterminate'

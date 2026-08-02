@@ -11,11 +11,14 @@ import { Label } from '@/components/ui/Label'
 import { Kbd, KbdGroup } from '@/components/ui/Kbd'
 import { Card } from '@/components/ui/Card'
 import { Switch } from '@/components/ui/Switch'
+import { Checkbox } from '@/components/ui/Checkbox'
 
 const comment = ref('')
 const name = ref('')
 const notifications = ref(true)
 const automaticUpdates = ref(false)
+const termsAccepted = ref(false)
+const marketingEmails = ref(true)
 </script>
 
 <template>
@@ -289,6 +292,40 @@ const automaticUpdates = ref(false)
             <p class="text-sm text-muted-foreground">Este ajuste está deshabilitado.</p>
           </div>
           <Switch id="disabled-switch" :default-value="true" disabled />
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Checkbox</h2>
+
+      <div class="space-y-4">
+        <div class="flex items-start gap-3 rounded-lg border p-4">
+          <Checkbox id="terms-checkbox" v-model="termsAccepted" class="mt-0.5" />
+          <div class="space-y-1">
+            <Label for="terms-checkbox">Acepto los términos y condiciones</Label>
+            <p class="text-sm text-muted-foreground">Necesario para continuar.</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3 rounded-lg border p-4">
+          <Checkbox id="marketing-checkbox" v-model="marketingEmails" class="mt-0.5" />
+          <div class="space-y-1">
+            <Label for="marketing-checkbox">Recibir novedades</Label>
+            <p class="text-sm text-muted-foreground">Te enviaremos novedades ocasionalmente.</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3 rounded-lg border p-4">
+          <Checkbox id="custom-checkbox" default-value="indeterminate" class="mt-0.5">
+            <template #indicator="{ state }">
+              <span class="text-xs">{{ state === 'indeterminate' ? '−' : '✓' }}</span>
+            </template>
+          </Checkbox>
+          <div class="space-y-1">
+            <Label for="custom-checkbox">Selección parcial</Label>
+            <p class="text-sm text-muted-foreground">Indicador personalizado.</p>
+          </div>
         </div>
       </div>
     </section>

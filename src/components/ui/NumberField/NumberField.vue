@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
+import { Minus, Plus } from '@lucide/vue'
 import {
-  NumberField as NumberFieldBase,
-  NumberFieldContent,
   NumberFieldDecrement,
   NumberFieldIncrement,
   NumberFieldInput,
-} from '@/components/primitives/NumberField'
+  NumberFieldRoot,
+} from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
 import {
   normalizeNumberFieldDecrementProps,
   normalizeNumberFieldIncrementProps,
+  normalizeNumberFieldRootProps,
   type NumberFieldEmits,
   type NumberFieldProps,
   type NumberFieldSlots,
@@ -42,6 +43,7 @@ const calculatedUI = computed(() => {
   const inputUI = normalizeHTMLAttributes(props.ui?.input)
   const incrementUI = normalizeHTMLAttributes(props.ui?.increment)
   // Normalize the decrement and increment props
+  const root = normalizeNumberFieldRootProps(props)
   const decrement = normalizeNumberFieldDecrementProps(props.decrement)
   const increment = normalizeNumberFieldIncrementProps(props.increment)
 
@@ -49,57 +51,75 @@ const calculatedUI = computed(() => {
     root: {
       ...attrs,
       ...rootUI,
-      class: cn(attrs.class, rootUI.class),
+      ...root,
+      class: cn('grid gap-1.5', attrs.class, rootUI.class),
       style: [attrs.style, rootUI.style],
     },
     content: {
       ...contentUI,
-      class: cn(contentUI.class),
+      class: cn(
+        'relative [&>[data-slot=input]]:has-[[data-slot=decrement]]:pl-5 [&>[data-slot=input]]:has-[[data-slot=increment]]:pr-5',
+        contentUI.class,
+      ),
     },
     decrement: {
       ...decrementUI,
       ...decrement,
       'aria-label': decrementUI['aria-label'] ?? t('decrement'),
-      class: cn(decrementUI.class),
+      class: cn(
+        'absolute top-1/2 left-0 -translate-y-1/2 p-3 disabled:cursor-not-allowed disabled:opacity-20',
+        decrementUI.class,
+      ),
     },
     input: {
       ...inputUI,
       placeholder: props.placeholder ?? inputUI.placeholder,
-      class: cn('focus-visible:border-primary focus-visible:ring-primary/50', inputUI.class),
+      class: cn(
+        'flex h-9 w-full rounded-md border border-input bg-transparent py-1 text-center text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+        inputUI.class,
+      ),
     },
     increment: {
       ...incrementUI,
       ...increment,
       'aria-label': incrementUI['aria-label'] ?? t('increment'),
-      class: cn(incrementUI.class),
+      class: cn(
+        'absolute top-1/2 right-0 -translate-y-1/2 p-3 disabled:cursor-not-allowed disabled:opacity-20',
+        incrementUI.class,
+      ),
     },
   }
 })
 </script>
 
 <template>
-  <NumberFieldBase v-slot="rootSlotProps" v-model="model" v-bind="calculatedUI.root">
-    <NumberFieldContent v-bind="calculatedUI.content">
+  <NumberFieldRoot
+    v-slot="rootSlotProps"
+    v-model="model"
+    v-bind="calculatedUI.root"
+    data-slot="number-field"
+  >
+    <div v-bind="calculatedUI.content" data-slot="number-field-content">
       <NumberFieldDecrement
-        v-if="props.showDecrement && slots.decrement"
+        v-if="props.showDecrement"
         v-bind="calculatedUI.decrement"
+        data-slot="decrement"
       >
-        <slot name="decrement" v-bind="rootSlotProps" />
+        <slot name="decrement" v-bind="rootSlotProps"><Minus class="size-4" /></slot>
       </NumberFieldDecrement>
-      <NumberFieldDecrement v-else-if="props.showDecrement" v-bind="calculatedUI.decrement" />
 
       <slot v-if="slots.input" name="input" v-bind="rootSlotProps" />
-      <NumberFieldInput v-else v-bind="calculatedUI.input" />
+      <NumberFieldInput v-else v-bind="calculatedUI.input" data-slot="input" />
 
       <NumberFieldIncrement
-        v-if="props.showIncrement && slots.increment"
+        v-if="props.showIncrement"
         v-bind="calculatedUI.increment"
+        data-slot="increment"
       >
-        <slot name="increment" v-bind="rootSlotProps" />
+        <slot name="increment" v-bind="rootSlotProps"><Plus class="size-4" /></slot>
       </NumberFieldIncrement>
-      <NumberFieldIncrement v-else-if="props.showIncrement" v-bind="calculatedUI.increment" />
-    </NumberFieldContent>
+    </div>
 
     <slot v-bind="rootSlotProps" />
-  </NumberFieldBase>
+  </NumberFieldRoot>
 </template>

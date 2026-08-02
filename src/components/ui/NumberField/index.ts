@@ -1,18 +1,40 @@
-import type { Component, HTMLAttributes } from 'vue'
+import type { HTMLAttributes } from 'vue'
+import type {
+  NumberFieldDecrementProps as RekaNumberFieldDecrementProps,
+  NumberFieldIncrementProps as RekaNumberFieldIncrementProps,
+  NumberFieldRootEmits,
+  NumberFieldRootProps as RekaNumberFieldRootProps,
+} from 'reka-ui'
 
 export { default as NumberField } from './NumberField.vue'
 
-export interface NumberFieldIncrementProps {
-  as?: string | Component
-  asChild?: boolean
-  disabled?: boolean
-}
-
-export interface NumberFieldDecrementProps {
-  as?: string | Component
-  asChild?: boolean
-  disabled?: boolean
-}
+export type NumberFieldIncrementProps = Pick<
+  RekaNumberFieldIncrementProps,
+  'as' | 'asChild' | 'disabled'
+>
+export type NumberFieldDecrementProps = Pick<
+  RekaNumberFieldDecrementProps,
+  'as' | 'asChild' | 'disabled'
+>
+export type NumberFieldRootProps = Pick<
+  RekaNumberFieldRootProps,
+  | 'as'
+  | 'asChild'
+  | 'defaultValue'
+  | 'disabled'
+  | 'disableWheelChange'
+  | 'focusOnChange'
+  | 'formatOptions'
+  | 'invertWheelChange'
+  | 'min'
+  | 'max'
+  | 'modelValue'
+  | 'name'
+  | 'readonly'
+  | 'required'
+  | 'step'
+  | 'stepSnapping'
+>
 
 export function normalizeNumberFieldIncrementProps(
   source: NumberFieldIncrementProps | null | undefined,
@@ -31,6 +53,52 @@ export function normalizeNumberFieldDecrementProps(
   const { as, asChild, disabled } = source
   return { as, asChild, disabled }
 }
+
+export function normalizeNumberFieldRootProps(
+  source: NumberFieldRootProps | null | undefined,
+): NumberFieldRootProps | undefined {
+  if (!source) return undefined
+
+  const {
+    as,
+    asChild,
+    defaultValue,
+    disabled,
+    disableWheelChange,
+    focusOnChange,
+    formatOptions,
+    invertWheelChange,
+    min,
+    max,
+    modelValue,
+    name,
+    readonly,
+    required,
+    step,
+    stepSnapping,
+  } = source
+
+  return {
+    as,
+    asChild,
+    defaultValue,
+    disabled,
+    disableWheelChange,
+    focusOnChange,
+    formatOptions,
+    invertWheelChange,
+    min,
+    max,
+    modelValue,
+    name,
+    readonly,
+    required,
+    step,
+    stepSnapping,
+  }
+}
+
+// UI
 export interface NumberFieldUI {
   root?: HTMLAttributes
   content?: HTMLAttributes
@@ -39,8 +107,8 @@ export interface NumberFieldUI {
   increment?: HTMLAttributes
 }
 
-export interface NumberFieldProps {
-  modelValue?: number | null
+// Props
+export interface NumberFieldProps extends NumberFieldRootProps {
   placeholder?: string
   showDecrement?: boolean
   showIncrement?: boolean
@@ -49,16 +117,17 @@ export interface NumberFieldProps {
   ui?: NumberFieldUI
 }
 
-export interface NumberFieldEmits {
-  'update:modelValue': [value: number]
-}
+// Emits
+export type NumberFieldEmits = NumberFieldRootEmits
 
+// SlotProps
 export interface NumberFieldSlotProps {
   modelValue: number | undefined
   textValue: string
   readonly: boolean
 }
 
+// Slots
 export interface NumberFieldSlots {
   default?(props: NumberFieldSlotProps): unknown
   decrement?(props: NumberFieldSlotProps): unknown

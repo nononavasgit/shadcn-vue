@@ -78,9 +78,9 @@ export const tabsVariants = {
 
 export type TabsVariants = VariantProps<typeof tabsVariants.list>
 export type TabsValue = string | number
-export type TabsListProps = Omit<RekaTabsListProps, 'loop'>
-export type TabsTriggerProps = Omit<RekaTabsTriggerProps, 'value' | 'disabled'>
-export type TabsContentProps = Omit<RekaTabsContentProps, 'value' | 'forceMount'>
+export type TabsListProps = Pick<RekaTabsListProps, 'as' | 'asChild'>
+export type TabsTriggerProps = Pick<RekaTabsTriggerProps, 'as' | 'asChild'>
+export type TabsContentProps = Pick<RekaTabsContentProps, 'as' | 'asChild'>
 
 export function normalizeTabsListProps(
   source: TabsListProps | null | undefined,

@@ -28,7 +28,7 @@ import {
 defineOptions({ inheritAttrs: false })
 
 defineSlots<DialogSlots>()
-const emit = defineEmits<DialogEmits>()
+defineEmits<DialogEmits>()
 
 const props = withDefaults(defineProps<DialogProps>(), {
   modal: true,

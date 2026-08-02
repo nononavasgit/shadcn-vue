@@ -260,7 +260,7 @@ export interface ButtonUI {
   loadingIcon?: HTMLAttributes
 }
 
-export interface ButtonProps extends PrimitiveProps {
+export interface ButtonProps extends Pick<PrimitiveProps, 'as' | 'asChild'> {
   label?: string
   variant?: ButtonVariants['variant']
   severity?: ButtonVariants['severity']

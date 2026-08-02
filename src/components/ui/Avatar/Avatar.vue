@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import type { AvatarImageEmits } from 'reka-ui'
-import { Avatar as AvatarBase, AvatarFallback, AvatarImage } from '@/components/primitives/Avatar'
+import { AvatarFallback, AvatarImage, AvatarRoot } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import type { AvatarEmits, AvatarLoadingState, AvatarProps, AvatarSlots } from '.'
-
+import { normalizeImageProps, normalizeFallbackProps } from '.'
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<AvatarProps>(), {
@@ -30,20 +30,32 @@ const calculatedUI = computed(() => {
     root: {
       ...attrs,
       ...rootUI,
-      class: cn(attrs.class, rootUI.class),
+      as: props.as,
+      asChild: props.asChild,
+      class: cn(
+        'relative flex size-8 shrink-0 overflow-hidden rounded-full',
+        attrs.class,
+        rootUI.class,
+      ),
       style: [attrs.style, rootUI.style],
     },
     image: props.src
       ? {
           ...imageUI,
+          ...normalizeImageProps(props.image),
           src: props.src,
           alt: props.alt,
-          class: cn(imageUI.class),
+          class: cn('aspect-square size-full', imageUI.class),
         }
       : undefined,
     fallback: {
       ...fallbackUI,
-      class: cn(fallbackUI.class),
+      ...normalizeFallbackProps(props.fallback),
+      delayMs: props.delayMs,
+      class: cn(
+        'flex size-full items-center justify-center rounded-full bg-muted',
+        fallbackUI.class,
+      ),
     },
     icon: {
       ...iconUI,
@@ -68,14 +80,15 @@ function handleLoadingStateChange(state: OriginalLoadingState) {
 </script>
 
 <template>
-  <AvatarBase v-bind="calculatedUI.root">
+  <AvatarRoot v-bind="calculatedUI.root" data-slot="avatar">
     <AvatarImage
       v-if="calculatedUI.image"
       v-bind="calculatedUI.image"
+      data-slot="avatar-image"
       @loading-status-change="handleLoadingStateChange"
     />
 
-    <AvatarFallback v-bind="calculatedUI.fallback">
+    <AvatarFallback v-bind="calculatedUI.fallback" data-slot="avatar-fallback">
       <slot name="fallback">
         <Icon
           v-if="calculatedUI.icon.name"
@@ -85,5 +98,5 @@ function handleLoadingStateChange(state: OriginalLoadingState) {
         <template v-else>{{ props.label }}</template>
       </slot>
     </AvatarFallback>
-  </AvatarBase>
+  </AvatarRoot>
 </template>

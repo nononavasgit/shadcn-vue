@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { NumberField } from '@/components/ui/NumberField'
+import { Avatar } from '@/components/ui/Avatar'
 
 const quantity = ref<number | null>(2)
 const price = ref<number | null>(19.99)
@@ -69,6 +70,25 @@ const readonlyValue = ref<number | null>(42)
           <template #decrement>Menos</template>
           <template #increment>Mas</template>
         </NumberField>
+      </div>
+    </section>
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Avatar</h2>
+
+      <div class="flex flex-wrap items-center gap-4">
+        <Avatar src="https://i.pravatar.cc/96?img=12" alt="Perfil de Ana" class="size-10" />
+        <Avatar label="JD" class="size-10" />
+        <Avatar label="ML" class="size-12" />
+        <Avatar src="https://invalid.example/avatar.jpg" alt="Imagen no disponible" label="??" />
+        <Avatar :icon="{ name: 'check', color: 'blue' }" alt="Imagen no disponible" label="??" />
+      </div>
+
+      <div class="flex items-center gap-3 rounded-md border p-4">
+        <Avatar label="NV" class="size-14" />
+        <div>
+          <p class="font-medium">Nombre de usuario</p>
+          <p class="text-sm text-muted-foreground">Fallback con iniciales</p>
+        </div>
       </div>
     </section>
   </main>

@@ -1,5 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { Component, HTMLAttributes } from 'vue'
+import type { HTMLAttributes } from 'vue'
+import type { ToggleEmits as ToggleEmitsReka, ToggleProps as TogglePropsReka } from 'reka-ui'
 import type { IconName, IconProps } from '@/components/ui/Icon'
 
 export { default as Toggle } from './Toggle.vue'
@@ -126,11 +127,7 @@ export interface ToggleUI {
   icon?: HTMLAttributes
   trailingIcon?: HTMLAttributes
 }
-export interface ToggleProps {
-  modelValue?: boolean | null
-  defaultValue?: boolean
-  as?: string | Component
-  asChild?: boolean
+export interface ToggleProps extends TogglePropsReka {
   label?: string
   icon?: IconName | IconProps
   trailingIcon?: IconName | IconProps
@@ -141,9 +138,7 @@ export interface ToggleProps {
   ui?: ToggleUI
 }
 
-export interface ToggleEmits {
-  'update:modelValue': [value: boolean]
-}
+export type ToggleEmits = ToggleEmitsReka
 
 export interface ToggleSlotProps {
   modelValue: boolean

@@ -15,6 +15,7 @@ import { Checkbox } from '@/components/ui/Checkbox'
 import { Progress } from '@/components/ui/Progress'
 import { ProgressCircular } from '@/components/ui/ProgressCircular'
 import { ScrollArea } from '@/components/ui/ScrollArea'
+import { Toggle } from '@/components/ui/Toggle'
 
 const comment = ref('')
 const name = ref('')
@@ -26,6 +27,8 @@ const circularProgressPending = ref<number | null>(10)
 const progressValue = ref(32)
 const progressValueColored = ref(72)
 const progressPending = ref<number | null>(null)
+const boldActive = ref(false)
+const notificationsToggle = ref(true)
 const termsAccepted = ref(false)
 const marketingEmails = ref(true)
 </script>
@@ -414,6 +417,18 @@ const marketingEmails = ref(true)
             </div>
           </ScrollArea>
         </div>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Toggle</h2>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <Toggle v-model="boldActive" label="Negrita" variant="outline" />
+        <Toggle v-model="notificationsToggle" label="Notificaciones" severity="primary" />
+        <Toggle variant="outline" severity="success">
+          <template #default="{ pressed }">{{ pressed ? 'Activado' : 'Desactivado' }}</template>
+        </Toggle>
       </div>
     </section>
   </main>

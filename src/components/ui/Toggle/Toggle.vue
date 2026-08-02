@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { Toggle as ToggleBase } from '@/components/primitives/Toggle'
+import { Toggle as RekaToggle } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
-import { toggleVariants, type ToggleEmits, type ToggleProps, type ToggleSlots } from '.'
+import { toggleVariants, type ToggleProps, type ToggleSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -21,7 +21,6 @@ const props = withDefaults(defineProps<ToggleProps>(), {
   color: undefined,
   ui: undefined,
 })
-defineEmits<ToggleEmits>()
 defineSlots<ToggleSlots>()
 
 const attrs = useAttrs()
@@ -49,7 +48,15 @@ const calculatedUI = computed(() => {
       as: props.as,
       asChild: props.asChild,
       defaultValue: props.defaultValue,
-      class: cn(calculatedVariants, attrs.class, rootUI.class),
+      disabled: props.disabled,
+      name: props.name,
+      required: props.required,
+      class: cn(
+        'inline-flex shrink-0 items-center justify-center gap-2 rounded-md border border-transparent text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
+        calculatedVariants,
+        attrs.class,
+        rootUI.class,
+      ),
       style: [colorStyle.value, attrs.style, rootUI.style],
     },
     icon: {
@@ -67,7 +74,7 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <ToggleBase v-slot="slotProps" v-model="model" v-bind="calculatedUI.root">
+  <RekaToggle v-slot="slotProps" v-bind="calculatedUI.root" v-model="model" data-slot="toggle">
     <slot name="leading" v-bind="slotProps">
       <Icon
         v-if="calculatedUI.icon.name"
@@ -85,5 +92,5 @@ const calculatedUI = computed(() => {
         :name="calculatedUI.trailingIcon.name"
       />
     </slot>
-  </ToggleBase>
+  </RekaToggle>
 </template>

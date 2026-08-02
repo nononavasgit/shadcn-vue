@@ -16,6 +16,7 @@ import { Progress } from '@/components/ui/Progress'
 import { ProgressCircular } from '@/components/ui/ProgressCircular'
 import { ScrollArea } from '@/components/ui/ScrollArea'
 import { Toggle } from '@/components/ui/Toggle'
+import { ToggleGroup } from '@/components/ui/ToggleGroup'
 
 const comment = ref('')
 const name = ref('')
@@ -31,6 +32,18 @@ const boldActive = ref(false)
 const notificationsToggle = ref(true)
 const termsAccepted = ref(false)
 const marketingEmails = ref(true)
+const selectedView = ref('list')
+const selectedFormats = ref<string[]>(['bold'])
+const toggleViewItems = [
+  { id: 'list', value: 'list', label: 'Lista' },
+  { id: 'grid', value: 'grid', label: 'Cuadrícula' },
+  { id: 'kanban', value: 'kanban', label: 'Kanban' },
+]
+const toggleFormatItems = [
+  { id: 'bold', value: 'bold', label: 'Negrita' },
+  { id: 'italic', value: 'italic', label: 'Cursiva' },
+  { id: 'underline', value: 'underline', label: 'Subrayado' },
+]
 </script>
 
 <template>
@@ -429,6 +442,53 @@ const marketingEmails = ref(true)
         <Toggle variant="outline" severity="success">
           <template #default="{ pressed }">{{ pressed ? 'Activado' : 'Desactivado' }}</template>
         </Toggle>
+      </div>
+    </section>
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">ToggleGroup</h2>
+
+      <div class="space-y-5">
+        <div class="space-y-2">
+          <p class="text-sm text-muted-foreground">Vista seleccionada: {{ selectedView }}</p>
+          <ToggleGroup
+            v-model="selectedView"
+            :items="toggleViewItems"
+            variant="outline"
+            mandatory
+            aria-label="Seleccionar vista (obligatoria)"
+          />
+        </div>
+
+        <div class="space-y-2">
+          <p class="text-sm text-muted-foreground">
+            Formatos: {{ selectedFormats.join(', ') || 'ninguno' }}
+          </p>
+          <ToggleGroup
+            v-model="selectedFormats"
+            :items="toggleFormatItems"
+            type="multiple"
+            variant="outline"
+            :spacing="1"
+            aria-label="Seleccionar formatos"
+            mandatory
+          />
+        </div>
+
+        <div class="space-y-2">
+          <p class="text-sm text-muted-foreground">Grupo vertical con opción deshabilitada</p>
+          <ToggleGroup
+            :items="[
+              { id: 'day', value: 'day', label: 'Día' },
+              { id: 'week', value: 'week', label: 'Semana' },
+              { id: 'month', value: 'month', label: 'Mes', disabled: true },
+            ]"
+            orientation="vertical"
+            :variant="'plain'"
+            :color="'#3b82f6'"
+            :spacing="1"
+            aria-label="Seleccionar periodo"
+          />
+        </div>
       </div>
     </section>
   </main>

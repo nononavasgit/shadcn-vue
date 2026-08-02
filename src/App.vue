@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { NumberField } from '@/components/ui/NumberField'
 import { Avatar } from '@/components/ui/Avatar'
+import { Alert } from '@/components/ui/Alert'
 
 const quantity = ref<number | null>(2)
 const price = ref<number | null>(19.99)
@@ -89,6 +90,36 @@ const readonlyValue = ref<number | null>(42)
           <p class="font-medium">Nombre de usuario</p>
           <p class="text-sm text-muted-foreground">Fallback con iniciales</p>
         </div>
+      </div>
+    </section>
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Alert</h2>
+
+      <div class="space-y-3">
+        <Alert
+          label="Cambios guardados"
+          description="Tu perfil se ha actualizado correctamente."
+          icon="success"
+          severity="success"
+          variant="soft"
+        />
+
+        <Alert
+          label="Atencion"
+          description="Revisa los datos antes de continuar."
+          icon="warning"
+          severity="warning"
+          variant="outline"
+        />
+
+        <Alert
+          label="Error de conexion"
+          description="No se pudo completar la operacion."
+          icon="error"
+          severity="error"
+          variant="subtle"
+          closable
+        />
       </div>
     </section>
   </main>

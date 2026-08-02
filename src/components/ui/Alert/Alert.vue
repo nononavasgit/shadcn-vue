@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, ref, useAttrs, useSlots } from 'vue'
-import { Alert as AlertBase, AlertDescription, AlertTitle } from '@/components/primitives/Alert'
 import { Button, normalizeButtonProps } from '@/components/ui/Button'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
@@ -48,6 +47,7 @@ const calculatedUI = computed(() => {
       ...rootUI,
       role: props.decorative ? 'none' : 'alert',
       class: cn(
+        'relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current',
         calculatedVariants,
         props.closable && (closeButton?.label ? 'pr-24' : 'pr-12'),
         attrs.class,
@@ -61,10 +61,13 @@ const calculatedUI = computed(() => {
       ...normalizeIconProps(props.icon),
       class: cn(iconUI.class),
     },
-    label: labelUI,
+    label: {
+      ...labelUI,
+      class: cn('col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight', labelUI.class),
+    },
     description: {
       ...descriptionUI,
-      class: cn('text-current/80', descriptionUI.class),
+      class: cn('col-start-2 text-sm text-current/80 [&_p]:leading-relaxed', descriptionUI.class),
     },
     closeButton: {
       ...closeButtonUI,
@@ -91,7 +94,7 @@ function close() {
 }
 </script>
 <template>
-  <AlertBase v-if="visible" v-bind="calculatedUI.root">
+  <div v-if="visible" v-bind="calculatedUI.root" data-slot="alert">
     <slot v-if="calculatedUI.icon.name || slots.icon" name="icon" :close="close">
       <Icon
         v-if="calculatedUI.icon.name"
@@ -100,19 +103,19 @@ function close() {
       />
     </slot>
 
-    <AlertTitle v-if="props.label || slots.label" v-bind="calculatedUI.label">
+    <div v-if="props.label || slots.label" v-bind="calculatedUI.label" data-slot="alert-title">
       <slot name="label" :close="close">{{ props.label }}</slot>
-    </AlertTitle>
+    </div>
 
-    <AlertDescription
-      v-if="props.description || slots.description"
+    <div
+      v-if="props.description || slots.description" data-slot="alert-description"
       v-bind="calculatedUI.description"
     >
       <slot name="description" :close="close">{{ props.description }}</slot>
-    </AlertDescription>
+    </div>
 
     <slot v-if="props.closable" name="close" :close="close">
       <Button v-bind="calculatedUI.closeButton" @click="close" />
     </slot>
-  </AlertBase>
+  </div>
 </template>

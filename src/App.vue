@@ -14,6 +14,7 @@ import { Switch } from '@/components/ui/Switch'
 import { Checkbox } from '@/components/ui/Checkbox'
 import { Progress } from '@/components/ui/Progress'
 import { ProgressCircular } from '@/components/ui/ProgressCircular'
+import { ScrollArea } from '@/components/ui/ScrollArea'
 
 const comment = ref('')
 const name = ref('')
@@ -382,5 +383,38 @@ const marketingEmails = ref(true)
         -
       </Button>
     </div>
+
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">ScrollArea</h2>
+
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="space-y-2">
+          <p class="text-sm text-muted-foreground">Vertical</p>
+          <ScrollArea class="h-48 rounded-md border p-4">
+            <div class="space-y-4">
+              <div v-for="item in 12" :key="item" class="border-b pb-3 last:border-0">
+                <p class="font-medium">Elemento {{ item }}</p>
+                <p class="text-sm text-muted-foreground">Contenido desplazable de ejemplo.</p>
+              </div>
+            </div>
+          </ScrollArea>
+        </div>
+
+        <div class="space-y-2">
+          <p class="text-sm text-muted-foreground">Horizontal</p>
+          <ScrollArea orientation="horizontal" class="w-full rounded-md border p-4">
+            <div class="flex w-max gap-3">
+              <div
+                v-for="item in 8"
+                :key="item"
+                class="flex h-24 w-36 shrink-0 items-center justify-center rounded-md bg-muted text-sm"
+              >
+                Tarjeta {{ item }}
+              </div>
+            </div>
+          </ScrollArea>
+        </div>
+      </div>
+    </section>
   </main>
 </template>

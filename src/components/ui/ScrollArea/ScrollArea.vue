@@ -111,6 +111,10 @@ const calculatedUI = computed(() => {
       <ScrollAreaThumb v-bind="calculatedUI.thumbHorizontal" data-slot="scroll-area-thumb" />
     </ScrollAreaScrollbar>
 
-    <ScrollAreaCorner v-bind="calculatedUI.corner" data-slot="scroll-area-corner" />
+    <ScrollAreaCorner
+      v-if="props.orientation === 'both'"
+      v-bind="calculatedUI.corner"
+      data-slot="scroll-area-corner"
+    />
   </ScrollAreaRoot>
 </template>

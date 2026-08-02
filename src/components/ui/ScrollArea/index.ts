@@ -16,7 +16,7 @@ export interface ScrollAreaUI {
 }
 
 export interface ScrollAreaProps extends ScrollAreaRootProps {
-  orientation?: ScrollAreaScrollbarProps['orientation']
+  orientation?: ScrollAreaScrollbarProps['orientation'] | 'both'
   forceMount?: ScrollAreaScrollbarProps['forceMount']
   ui?: ScrollAreaUI
 }

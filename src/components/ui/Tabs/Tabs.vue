@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { Tabs as TabsBase, TabsContent, TabsList, TabsTrigger } from '@/components/primitives/Tabs'
+import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
@@ -52,7 +52,12 @@ const calculatedUI = computed(() => {
       activationMode: props.activationMode,
       unmountOnHide: props.unmountOnHide,
       'data-variant': props.variant,
-      class: cn(tabsVariants.root({ orientation: props.orientation }), attrs.class, rootUI.class),
+      class: cn(
+        'flex flex-col gap-2',
+        tabsVariants.root({ orientation: props.orientation }),
+        attrs.class,
+        rootUI.class,
+      ),
       style: [attrs.style, rootUI.style],
     },
     list: {
@@ -61,6 +66,7 @@ const calculatedUI = computed(() => {
       loop: props.loop,
       'data-variant': props.variant,
       class: cn(
+        'inline-flex h-9 w-fit items-center justify-center rounded-lg bg-muted p-[3px] text-muted-foreground aria-[orientation=vertical]:h-fit aria-[orientation=vertical]:flex-col',
         tabsVariants.list({
           variant: props.variant,
           orientation: props.orientation,
@@ -88,6 +94,7 @@ const calculatedUI = computed(() => {
       const trailingIconUI = normalizeHTMLAttributes(resolveUI(props.ui?.trailingIcon, context))
       const normalizedContentUI = normalizeHTMLAttributes(resolveUI(props.ui?.content, context))
       const { dir: contentDirection, ...contentUI } = normalizedContentUI
+
       const trigger = normalizeTabsTriggerProps(tab.trigger)
       const content = normalizeTabsContentProps(tab.contentProps)
       const icon = normalizeIconProps(tab.icon)
@@ -111,8 +118,9 @@ const calculatedUI = computed(() => {
           ...triggerUI,
           ...trigger,
           value: tab.value,
-          disabled: trigger?.disabled ?? tab.disabled,
+          disabled: tab.disabled,
           class: cn(
+            'inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap text-foreground transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:shadow-sm dark:text-muted-foreground dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 dark:data-[state=active]:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
             tabsVariants.trigger({
               variant: props.variant,
               orientation: props.orientation,
@@ -143,8 +151,11 @@ const calculatedUI = computed(() => {
           ...contentUI,
           ...content,
           value: tab.value,
-          forceMount: content?.forceMount ?? tab.forceMount,
-          class: cn('rounded-md focus-visible:ring-3 focus-visible:ring-ring/50', contentUI.class),
+          forceMount: tab.forceMount,
+          class: cn(
+            'flex-1 outline-none rounded-md focus-visible:ring-3 focus-visible:ring-ring/50',
+            contentUI.class,
+          ),
           style: contentUI.style,
         },
         'data-variant': props.variant,
@@ -155,9 +166,14 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <TabsBase v-model="model" v-bind="calculatedUI.root">
-    <TabsList v-bind="calculatedUI.list">
-      <TabsTrigger v-for="tab in calculatedUI.tabs" :key="tab.key" v-bind="tab.trigger">
+  <TabsRoot v-model="model" v-bind="calculatedUI.root" data-slot="tabs">
+    <TabsList v-bind="calculatedUI.list" data-slot="tabs-list">
+      <TabsTrigger
+        v-for="tab in calculatedUI.tabs"
+        :key="tab.key"
+        v-bind="tab.trigger"
+        data-slot="tabs-trigger"
+      >
         <slot :name="tab.slots.trigger" v-bind="tab.context">
           <slot name="trigger" v-bind="tab.context">
             <slot :name="tab.slots.leading" v-bind="tab.context">
@@ -189,7 +205,12 @@ const calculatedUI = computed(() => {
     </TabsList>
 
     <div v-bind="calculatedUI.contentWrapper" data-slot="tabs-content-wrapper">
-      <TabsContent v-for="tab in calculatedUI.tabs" :key="tab.key" v-bind="tab.content">
+      <TabsContent
+        v-for="tab in calculatedUI.tabs"
+        :key="tab.key"
+        v-bind="tab.content"
+        data-slot="tabs-content"
+      >
         <slot :name="tab.slots.content" v-bind="tab.context">
           <slot name="content" v-bind="tab.context">
             {{ tab.data.content }}
@@ -197,5 +218,5 @@ const calculatedUI = computed(() => {
         </slot>
       </TabsContent>
     </div>
-  </TabsBase>
+  </TabsRoot>
 </template>

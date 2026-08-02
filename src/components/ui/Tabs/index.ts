@@ -1,5 +1,12 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { Component, HTMLAttributes } from 'vue'
+import type { HTMLAttributes } from 'vue'
+import type {
+  TabsContentProps as RekaTabsContentProps,
+  TabsListProps as RekaTabsListProps,
+  TabsRootEmits,
+  TabsRootProps,
+  TabsTriggerProps as RekaTabsTriggerProps,
+} from 'reka-ui'
 import type { IconName, IconProps } from '@/components/ui/Icon'
 
 export { default as Tabs } from './Tabs.vue'
@@ -71,23 +78,9 @@ export const tabsVariants = {
 
 export type TabsVariants = VariantProps<typeof tabsVariants.list>
 export type TabsValue = string | number
-
-export interface TabsListProps {
-  as?: string | Component
-  asChild?: boolean
-}
-
-export interface TabsTriggerProps {
-  as?: string | Component
-  asChild?: boolean
-  disabled?: boolean
-}
-
-export interface TabsContentProps {
-  as?: string | Component
-  asChild?: boolean
-  forceMount?: boolean
-}
+export type TabsListProps = Omit<RekaTabsListProps, 'loop'>
+export type TabsTriggerProps = Omit<RekaTabsTriggerProps, 'value' | 'disabled'>
+export type TabsContentProps = Omit<RekaTabsContentProps, 'value' | 'forceMount'>
 
 export function normalizeTabsListProps(
   source: TabsListProps | null | undefined,
@@ -101,16 +94,16 @@ export function normalizeTabsTriggerProps(
   source: TabsTriggerProps | null | undefined,
 ): TabsTriggerProps | undefined {
   if (!source) return undefined
-  const { as, asChild, disabled } = source
-  return { as, asChild, disabled }
+  const { as, asChild } = source
+  return { as, asChild }
 }
 
 export function normalizeTabsContentProps(
   source: TabsContentProps | null | undefined,
 ): TabsContentProps | undefined {
   if (!source) return undefined
-  const { as, asChild, forceMount } = source
-  return { as, asChild, forceMount }
+  const { as, asChild } = source
+  return { as, asChild }
 }
 
 export interface TabItem {
@@ -126,6 +119,7 @@ export interface TabItem {
   contentProps?: TabsContentProps
 }
 
+// Context
 export interface TabsUIContext {
   tab: TabItem
   index: number
@@ -136,6 +130,7 @@ export interface TabsUIContext {
 
 export type TabsUIValue<T> = T | ((context: TabsUIContext) => T)
 
+// UI
 export interface TabsUI {
   root?: HTMLAttributes
   list?: HTMLAttributes
@@ -147,38 +142,29 @@ export interface TabsUI {
   content?: TabsUIValue<HTMLAttributes>
 }
 
-export interface TabsProps {
-  modelValue?: TabsValue
-  defaultValue?: TabsValue
-  orientation?: 'horizontal' | 'vertical'
-  dir?: 'ltr' | 'rtl'
-  activationMode?: 'automatic' | 'manual'
-  unmountOnHide?: boolean
+// Props
+export interface TabsProps extends TabsRootProps<TabsValue> {
   loop?: boolean
   variant?: TabsVariants['variant']
-  as?: string | Component
-  asChild?: boolean
   list?: TabsListProps
   tabs?: TabItem[]
   ui?: TabsUI
 }
 
-export interface TabsEmits {
-  'update:modelValue': [value: TabsValue]
-}
+// Emits
+export type TabsEmits = TabsRootEmits<TabsValue>
 
-export type TabsSlotProps = TabsUIContext
-
+// Slots
 export type TabsSlots = {
-  trigger?(props: TabsSlotProps): unknown
-  leading?(props: TabsSlotProps): unknown
-  label?(props: TabsSlotProps): unknown
-  trailing?(props: TabsSlotProps): unknown
-  content?(props: TabsSlotProps): unknown
+  trigger?(props: TabsUIContext): unknown
+  leading?(props: TabsUIContext): unknown
+  label?(props: TabsUIContext): unknown
+  trailing?(props: TabsUIContext): unknown
+  content?(props: TabsUIContext): unknown
 } & {
-  [name: `trigger-${string}`]: ((props: TabsSlotProps) => unknown) | undefined
-  [name: `leading-${string}`]: ((props: TabsSlotProps) => unknown) | undefined
-  [name: `label-${string}`]: ((props: TabsSlotProps) => unknown) | undefined
-  [name: `trailing-${string}`]: ((props: TabsSlotProps) => unknown) | undefined
-  [name: `content-${string}`]: ((props: TabsSlotProps) => unknown) | undefined
+  [name: `trigger-${string}`]: ((props: TabsUIContext) => unknown) | undefined
+  [name: `leading-${string}`]: ((props: TabsUIContext) => unknown) | undefined
+  [name: `label-${string}`]: ((props: TabsUIContext) => unknown) | undefined
+  [name: `trailing-${string}`]: ((props: TabsUIContext) => unknown) | undefined
+  [name: `content-${string}`]: ((props: TabsUIContext) => unknown) | undefined
 }

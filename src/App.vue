@@ -19,6 +19,7 @@ import { Toggle } from '@/components/ui/Toggle'
 import { ToggleGroup } from '@/components/ui/ToggleGroup'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { Slider } from '@/components/ui/Slider'
+import { Tabs } from '@/components/ui/Tabs'
 
 const comment = ref('')
 const name = ref('')
@@ -35,6 +36,7 @@ const notificationsToggle = ref(true)
 const termsAccepted = ref(false)
 const marketingEmails = ref(true)
 const sliderValue = ref<number[] | null>([35])
+const activeTab = ref('overview')
 const rangeSliderValue = ref<number[]>([25, 75])
 const selectedView = ref('list')
 const selectedFormats = ref<string[]>(['bold'])
@@ -540,6 +542,63 @@ const toggleFormatItems = [
           <span class="text-sm text-muted-foreground">Vertical</span>
         </div>
       </div>
+    </section>
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Tabs</h2>
+
+      <Tabs
+        v-model="activeTab"
+        variant="default"
+        :tabs="[
+          {
+            id: 'overview',
+            value: 'overview',
+            label: 'Resumen',
+            content: 'Consulta el resumen de tu actividad reciente.',
+          },
+          {
+            id: 'details',
+            value: 'details',
+            label: 'Detalles',
+            content: 'Aquí puedes revisar todos los detalles.',
+          },
+          {
+            id: 'settings',
+            value: 'settings',
+            label: 'Configuración',
+            content: 'Personaliza las opciones de esta vista.',
+          },
+        ]"
+      />
+
+      <p class="text-sm text-muted-foreground">Pestaña activa: {{ activeTab }}</p>
+
+      <Tabs
+        orientation="vertical"
+        variant="line"
+        :tabs="[
+          { id: 'profile', value: 'profile', label: 'Perfil', content: 'Datos del perfil.' },
+          { id: 'security', value: 'security', label: 'Seguridad', content: 'Opciones de seguridad.' },
+          { id: 'billing', value: 'billing', label: 'Facturación', content: 'Información de facturación.', disabled: true },
+        ]"
+      />
+
+      <Tabs
+        default-value="account"
+        activation-mode="manual"
+        variant="line"
+        :tabs="[
+          { id: 'account', value: 'account', label: 'Cuenta' },
+          { id: 'notifications', value: 'notifications', label: 'Notificaciones' },
+        ]"
+      >
+        <template #content="{ tab }">
+          <div class="rounded-md border p-4 text-sm">
+            <p class="font-medium">{{ tab.label }}</p>
+            <p class="mt-1 text-muted-foreground">Contenido personalizado mediante slot.</p>
+          </div>
+        </template>
+      </Tabs>
     </section>
   </main>
 </template>

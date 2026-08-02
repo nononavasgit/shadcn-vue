@@ -1,11 +1,7 @@
 import type { HTMLAttributes } from 'vue'
+import type { ProgressRootProps } from 'reka-ui'
 
 export { default as Progress } from './Progress.vue'
-
-export type ProgressValueFormatter = (
-  value: number | null | undefined,
-  max: number,
-) => string | undefined
 
 export interface ProgressUI {
   root?: HTMLAttributes
@@ -13,11 +9,7 @@ export interface ProgressUI {
   label?: HTMLAttributes
 }
 
-export interface ProgressProps {
-  value?: number | null
-  max?: number
-  getValueLabel?: ProgressValueFormatter
-  getValueText?: ProgressValueFormatter
+export interface ProgressProps extends ProgressRootProps {
   label?: string
   color?: string
   trackColor?: string
@@ -31,5 +23,6 @@ export interface ProgressLabelSlotProps {
 }
 
 export interface ProgressSlots {
+  indicator?(props: ProgressLabelSlotProps): unknown
   label?(props: ProgressLabelSlotProps): unknown
 }

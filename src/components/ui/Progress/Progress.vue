@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs, useSlots } from 'vue'
-import { Progress as ProgressBase, ProgressIndicator } from '@/components/primitives/Progress'
+import { ProgressIndicator, ProgressRoot } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
@@ -13,7 +13,6 @@ defineSlots<ProgressSlots>()
 const attrs = useAttrs()
 const slots = useSlots()
 const props = withDefaults(defineProps<ProgressProps>(), {
-  value: 0,
   max: 100,
   getValueLabel: undefined,
   getValueText: undefined,
@@ -22,6 +21,7 @@ const props = withDefaults(defineProps<ProgressProps>(), {
   trackColor: undefined,
   ui: undefined,
 })
+const modelValue = defineModel<number | null>({ default: 0 })
 
 const { colorStyle } = useColor(
   computed(() => props.color),
@@ -33,13 +33,13 @@ const { colorStyle: trackColorStyle } = useColor(
 )
 
 const percentage = computed(() => {
-  if (props.value === null) return 0
+  if (modelValue.value === null) return 0
 
-  return Math.min(100, Math.max(0, (props.value / props.max) * 100))
+  return Math.min(100, Math.max(0, (modelValue.value / props.max) * 100))
 })
 
 const slotProps = computed<ProgressLabelSlotProps>(() => ({
-  value: props.value,
+  value: modelValue.value,
   max: props.max,
   percentage: percentage.value,
 }))
@@ -53,13 +53,14 @@ const calculatedUI = computed(() => {
     root: {
       ...attrs,
       ...rootUI,
-      modelValue: props.value,
+      modelValue: modelValue.value,
       max: props.max,
       getValueLabel: props.getValueLabel,
       getValueText: props.getValueText,
       'aria-label': rootUI['aria-label'] ?? attrs['aria-label'],
       'aria-valuetext': rootUI['aria-valuetext'] ?? attrs['aria-valuetext'] ?? props.label,
       class: cn(
+        'relative h-2 w-full overflow-hidden rounded-full bg-primary/20',
         (props.label || slots.label) && 'h-4',
         props.trackColor
           ? 'bg-(--progress-track-color)'
@@ -71,7 +72,11 @@ const calculatedUI = computed(() => {
     },
     indicator: {
       ...indicatorUI,
-      class: cn(props.color && 'bg-(--progress-color)', indicatorUI.class),
+      class: cn(
+        'h-full w-full flex-1 bg-primary transition-all',
+        props.color && 'bg-(--progress-color)',
+        indicatorUI.class,
+      ),
     },
     label: {
       ...labelUI,
@@ -86,19 +91,17 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <ProgressBase v-bind="calculatedUI.root">
-    <template #indicator="{ percentage: indicatorPercentage }">
+  <ProgressRoot v-bind="calculatedUI.root" data-slot="progress">
+    <slot name="indicator" v-bind="slotProps">
       <ProgressIndicator
         v-bind="calculatedUI.indicator"
-        :style="[
-          { transform: `translateX(-${100 - indicatorPercentage}%)` },
-          calculatedUI.indicator.style,
-        ]"
+        data-slot="progress-indicator"
+        :style="[{ transform: `translateX(-${100 - percentage}%)` }, calculatedUI.indicator.style]"
       />
-    </template>
+    </slot>
 
     <span v-if="props.label || $slots.label" v-bind="calculatedUI.label">
       <slot name="label" v-bind="slotProps">{{ props.label }}</slot>
     </span>
-  </ProgressBase>
+  </ProgressRoot>
 </template>

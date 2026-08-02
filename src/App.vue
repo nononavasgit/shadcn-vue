@@ -12,11 +12,19 @@ import { Kbd, KbdGroup } from '@/components/ui/Kbd'
 import { Card } from '@/components/ui/Card'
 import { Switch } from '@/components/ui/Switch'
 import { Checkbox } from '@/components/ui/Checkbox'
+import { Progress } from '@/components/ui/Progress'
+import { ProgressCircular } from '@/components/ui/ProgressCircular'
 
 const comment = ref('')
 const name = ref('')
 const notifications = ref(true)
 const automaticUpdates = ref(false)
+const circularProgress = ref(45)
+const circularProgressColored = ref(78)
+const circularProgressPending = ref<number | null>(10)
+const progressValue = ref(32)
+const progressValueColored = ref(72)
+const progressPending = ref<number | null>(null)
 const termsAccepted = ref(false)
 const marketingEmails = ref(true)
 </script>
@@ -329,5 +337,50 @@ const marketingEmails = ref(true)
         </div>
       </div>
     </section>
+
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Progress</h2>
+
+      <div class="space-y-5">
+        <Progress v-model="progressValue" label="32%" />
+
+        <Progress v-model="progressValueColored" label="72%" color="#8b5cf6">
+          <template #label="{ percentage }">{{ Math.round(percentage) }}% completado</template>
+        </Progress>
+
+        <Progress v-model="progressPending" label="Procesando..." track-color="#e5e7eb" />
+      </div>
+    </section>
+
+    <div class="flex flex-wrap items-center gap-6">
+      <ProgressCircular v-model="circularProgress" />
+      <ProgressCircular
+        v-model="circularProgressColored"
+        :size="96"
+        :thickness="10"
+        color="#8b5cf6"
+      >
+        <template #label="{ percentage }">{{ Math.round(percentage) }}%</template>
+      </ProgressCircular>
+      <ProgressCircular
+        v-model="circularProgressPending"
+        :size="96"
+        :label="
+          circularProgressPending !== null ? `${Math.round(circularProgressPending)}%` : undefined
+        "
+      />
+      <Button
+        variant="outline"
+        @click="() => (circularProgressPending = (circularProgressPending ?? 0) + 10)"
+      >
+        +
+      </Button>
+      <Button
+        variant="outline"
+        @click="() => (circularProgressPending = (circularProgressPending ?? 0) - 10)"
+      >
+        -
+      </Button>
+    </div>
   </main>
 </template>

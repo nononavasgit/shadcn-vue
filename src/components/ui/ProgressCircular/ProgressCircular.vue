@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs, useSlots } from 'vue'
-import { Progress, ProgressIndicator } from '@/components/primitives/Progress'
+import { ProgressRoot, ProgressIndicator } from 'reka-ui'
 import { normalizeHTMLAttributes, normalizeSVGAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
@@ -15,7 +15,6 @@ defineOptions({ inheritAttrs: false })
 defineSlots<ProgressCircularSlots>()
 
 const props = withDefaults(defineProps<ProgressCircularProps>(), {
-  value: 0,
   max: 100,
   getValueLabel: undefined,
   getValueText: undefined,
@@ -26,6 +25,7 @@ const props = withDefaults(defineProps<ProgressCircularProps>(), {
   thickness: 8,
   ui: undefined,
 })
+const modelValue = defineModel<number | null>({ default: 0 })
 
 const attrs = useAttrs()
 const slots = useSlots()
@@ -40,9 +40,9 @@ const { colorStyle: trackColorStyle } = useColor(
 )
 
 const percentage = computed(() => {
-  if (props.value === null) return 0
+  if (modelValue.value === null) return 0
 
-  return Math.min(100, Math.max(0, (props.value / props.max) * 100))
+  return Math.min(100, Math.max(0, (modelValue.value / props.max) * 100))
 })
 
 const radius = computed(() => (100 - props.thickness) / 2)
@@ -51,7 +51,7 @@ const dashOffset = computed(() => circumference.value * (1 - percentage.value / 
 const cssSize = computed(() => (typeof props.size === 'number' ? `${props.size}px` : props.size))
 
 const slotProps = computed<ProgressCircularLabelSlotProps>(() => ({
-  value: props.value,
+  value: modelValue.value,
   max: props.max,
   percentage: percentage.value,
 }))
@@ -67,7 +67,7 @@ const calculatedUI = computed(() => {
     root: {
       ...attrs,
       ...rootUI,
-      modelValue: props.value,
+      modelValue: modelValue.value,
       max: props.max,
       getValueLabel: props.getValueLabel,
       getValueText: props.getValueText,
@@ -134,19 +134,17 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <Progress v-bind="calculatedUI.root">
-    <template #indicator>
-      <svg v-bind="calculatedUI.svg" viewBox="0 0 100 100">
-        <circle v-bind="calculatedUI.track" />
+  <ProgressRoot v-bind="calculatedUI.root">
+    <svg v-bind="calculatedUI.svg" viewBox="0 0 100 100">
+      <circle v-bind="calculatedUI.track" />
 
-        <ProgressIndicator as-child>
-          <circle v-bind="calculatedUI.indicator" />
-        </ProgressIndicator>
-      </svg>
-    </template>
+      <ProgressIndicator as-child>
+        <circle v-bind="calculatedUI.indicator" />
+      </ProgressIndicator>
+    </svg>
 
     <span v-if="props.label || slots.label" v-bind="calculatedUI.label">
       <slot name="label" v-bind="slotProps">{{ props.label }}</slot>
     </span>
-  </Progress>
+  </ProgressRoot>
 </template>

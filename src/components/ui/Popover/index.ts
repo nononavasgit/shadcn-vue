@@ -1,99 +1,180 @@
-import type { Component, HTMLAttributes } from 'vue'
+import type { HTMLAttributes, EmitsToProps } from 'vue'
+import type {
+  PopoverContentEmits,
+  PopoverContentProps as RekaPopoverContentProps,
+  PopoverRootProps as RekaPopoverRootProps,
+  PopoverPortalProps as RekaPopoverPortalProps,
+  PopoverArrowProps as RekaPopoverArrowProps,
+  PopoverRootEmits,
+} from 'reka-ui'
 
 export { default as Popover } from './Popover.vue'
 
-export const SIDES = {
-  top: 'top',
-  right: 'right',
-  bottom: 'bottom',
-  left: 'left',
-} as const
+// Types
+export type PopoverRootProps = Pick<RekaPopoverRootProps, 'open' | 'defaultOpen' | 'modal'>
+export type PopoverContentProps = Pick<
+  RekaPopoverContentProps,
+  | 'align'
+  | 'alignFlip'
+  | 'alignOffset'
+  | 'arrowPadding'
+  | 'avoidCollisions'
+  | 'collisionBoundary'
+  | 'collisionPadding'
+  | 'dir'
+  | 'disableOutsidePointerEvents'
+  | 'disableUpdateOnLayoutShift'
+  | 'forceMount'
+  | 'hideShiftedArrow'
+  | 'hideWhenDetached'
+  | 'positionStrategy'
+  | 'prioritizePosition'
+  | 'side'
+  | 'sideFlip'
+  | 'sideOffset'
+  | 'sticky'
+  | 'updatePositionStrategy'
+> &
+  Partial<
+    EmitsToProps<
+      Pick<
+        PopoverContentEmits,
+        | 'openAutoFocus'
+        | 'closeAutoFocus'
+        | 'escapeKeyDown'
+        | 'pointerDownOutside'
+        | 'focusOutside'
+        | 'interactOutside'
+      >
+    >
+  >
 
-export const ALIGNS = {
-  start: 'start',
-  center: 'center',
-  end: 'end',
-} as const
+export type PopoverPortalProps = Pick<
+  RekaPopoverPortalProps,
+  'defer' | 'disabled' | 'to' | 'forceMount'
+>
+export type PopoverArrowProps = Pick<RekaPopoverArrowProps, 'width' | 'height' | 'rounded'>
 
-export const STICKY_VALUES = {
-  partial: 'partial',
-  always: 'always',
-} as const
+export function normalizeRootProps(
+  source: PopoverRootProps | null | undefined,
+): PopoverRootProps | undefined {
+  if (!source) return undefined
 
-export const POSITION_STRATEGIES = {
-  absolute: 'absolute',
-  fixed: 'fixed',
-} as const
-
-export const UPDATE_POSITION_STRATEGIES = {
-  optimized: 'optimized',
-  always: 'always',
-} as const
-
-export type PopoverSide = keyof typeof SIDES
-export type PopoverAlign = keyof typeof ALIGNS
-export type PopoverSticky = keyof typeof STICKY_VALUES
-export type PopoverPositionStrategy = keyof typeof POSITION_STRATEGIES
-export type PopoverUpdatePositionStrategy = keyof typeof UPDATE_POSITION_STRATEGIES
-
-export interface PopoverTriggerProps {
-  as?: string | Component
-  asChild?: boolean
+  const { defaultOpen, modal, open } = source
+  return { defaultOpen, modal, open }
 }
 
-export interface PopoverContentProps {
-  as?: string | Component
-  asChild?: boolean
-  forceMount?: boolean
-  side?: PopoverSide
-  sideOffset?: number
-  sideFlip?: boolean
-  align?: PopoverAlign
-  alignOffset?: number
-  alignFlip?: boolean
-  avoidCollisions?: boolean
-  collisionPadding?: number | Partial<Record<PopoverSide, number>>
-  sticky?: PopoverSticky
-  hideWhenDetached?: boolean
-  positionStrategy?: PopoverPositionStrategy
-  updatePositionStrategy?: PopoverUpdatePositionStrategy
+export function normalizeContentProps(
+  source: PopoverContentProps | null | undefined,
+): PopoverContentProps | undefined {
+  if (!source) return undefined
+
+  const {
+    align,
+    alignFlip,
+    alignOffset,
+    arrowPadding,
+    avoidCollisions,
+    collisionBoundary,
+    collisionPadding,
+    dir,
+    disableOutsidePointerEvents,
+    disableUpdateOnLayoutShift,
+    forceMount,
+    hideShiftedArrow,
+    hideWhenDetached,
+    positionStrategy,
+    prioritizePosition,
+    side,
+    sideFlip,
+    sideOffset,
+    sticky,
+    updatePositionStrategy,
+    onCloseAutoFocus,
+    onEscapeKeyDown,
+    onFocusOutside,
+    onInteractOutside,
+    onOpenAutoFocus,
+    onPointerDownOutside,
+  } = source
+
+  return {
+    align,
+    alignFlip,
+    alignOffset,
+    arrowPadding,
+    avoidCollisions,
+    collisionBoundary,
+    collisionPadding,
+    dir,
+    disableOutsidePointerEvents,
+    disableUpdateOnLayoutShift,
+    forceMount,
+    hideShiftedArrow,
+    hideWhenDetached,
+    positionStrategy,
+    prioritizePosition,
+    side,
+    sideFlip,
+    sideOffset,
+    sticky,
+    updatePositionStrategy,
+    onCloseAutoFocus,
+    onEscapeKeyDown,
+    onFocusOutside,
+    onInteractOutside,
+    onOpenAutoFocus,
+    onPointerDownOutside,
+  }
 }
 
+export function normalizePortalProps(
+  source: PopoverPortalProps | null | undefined,
+): PopoverPortalProps | undefined {
+  if (!source) return undefined
+
+  const { defer, disabled, to, forceMount } = source
+  return { defer, disabled, to, forceMount }
+}
+
+export function normalizeArrowProps(
+  source: PopoverArrowProps | null | undefined,
+): PopoverArrowProps | undefined {
+  if (!source) return undefined
+
+  const { width, height, rounded } = source
+  return { width, height, rounded }
+}
+
+// UI
 export interface PopoverUI {
   root?: HTMLAttributes
   trigger?: HTMLAttributes
+  portal?: HTMLAttributes
   content?: HTMLAttributes
+  arrow?: HTMLAttributes
 }
 
-export interface PopoverProps {
-  open?: boolean
-  defaultOpen?: boolean
-  modal?: boolean
-  trigger?: PopoverTriggerProps
+// Props
+export interface PopoverProps extends PopoverRootProps {
+  arrow?: PopoverArrowProps
   content?: PopoverContentProps
+  portal?: PopoverPortalProps
+  showArrow?: boolean
   ui?: PopoverUI
 }
 
-export interface PopoverEmits {
-  'update:open': [value: boolean]
-}
+// Emits
+export type PopoverEmits = PopoverRootEmits
 
+// SlotProps
 export interface PopoverSlotProps {
   open: boolean
   close: () => void
 }
 
+// Slots
 export interface PopoverSlots {
   default?(props: PopoverSlotProps): unknown
   content?(props: PopoverSlotProps): unknown
-}
-
-export function mapCollisionPadding(
-  padding: number | Partial<Record<PopoverSide, number>> | undefined,
-) {
-  if (padding === undefined || typeof padding === 'number') return padding
-
-  return Object.fromEntries(
-    Object.entries(padding).map(([side, value]) => [SIDES[side as PopoverSide], value]),
-  ) as Partial<Record<(typeof SIDES)[PopoverSide], number>>
 }

@@ -1,96 +1,97 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import {
-  Popover as PopoverBase,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/primitives/Popover'
+import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger, PopoverArrow } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
-import {
-  ALIGNS,
-  mapCollisionPadding,
-  POSITION_STRATEGIES,
-  SIDES,
-  STICKY_VALUES,
-  UPDATE_POSITION_STRATEGIES,
-} from '.'
 import type { PopoverEmits, PopoverProps, PopoverSlots } from '.'
+import {
+  normalizeContentProps,
+  normalizePortalProps,
+  normalizeArrowProps,
+  normalizeRootProps,
+} from '.'
 
 defineOptions({ inheritAttrs: false })
 
 defineSlots<PopoverSlots>()
 
 const props = withDefaults(defineProps<PopoverProps>(), {
-  modal: false,
   trigger: undefined,
   content: undefined,
+  showArrow: false,
   ui: undefined,
 })
+
 defineEmits<PopoverEmits>()
 
 const attrs = useAttrs()
 const open = defineModel<boolean>('open')
 
 const calculatedUI = computed(() => {
+  // Normalize UI attributes
   const rootUI = normalizeHTMLAttributes(props.ui?.root)
   const triggerUI = normalizeHTMLAttributes(props.ui?.trigger)
-  const contentUI = normalizeHTMLAttributes(props.ui?.content)
-  const trigger = props.trigger
-  const content = props.content
+  const normalizedContentUI = normalizeHTMLAttributes(props.ui?.content)
+  const { dir: contentDirection, ...contentUI } = normalizedContentUI
+
+  void contentDirection
+  const arrowUI = normalizeHTMLAttributes(props.ui?.arrow)
+
+  // Normalize props
+  const rootProps = normalizeRootProps(props)
+  const portalProps = normalizePortalProps(props.portal)
+  const contentProps = normalizeContentProps(props.content)
+  const arrowProps = normalizeArrowProps(props.arrow)
 
   return {
     root: {
       ...attrs,
       ...rootUI,
-      defaultOpen: props.defaultOpen,
-      modal: props.modal,
+      ...rootProps,
       class: cn(attrs.class, rootUI.class),
       style: [attrs.style, rootUI.style],
     },
     trigger: {
       ...triggerUI,
-      as: trigger?.as,
-      asChild: trigger?.asChild ?? true,
+      asChild: true,
       class: cn(triggerUI.class),
       style: triggerUI.style,
     },
     content: {
       ...contentUI,
-      as: content?.as,
-      asChild: content?.asChild,
-      align: ALIGNS[content?.align ?? 'center'],
-      alignOffset: content?.alignOffset,
-      alignFlip: content?.alignFlip,
-      avoidCollisions: content?.avoidCollisions ?? true,
-      collisionPadding: mapCollisionPadding(content?.collisionPadding),
-      forceMount: content?.forceMount,
-      hideWhenDetached: content?.hideWhenDetached,
-      positionStrategy: content?.positionStrategy
-        ? POSITION_STRATEGIES[content.positionStrategy]
-        : undefined,
-      side: SIDES[content?.side ?? 'bottom'],
-      sideFlip: content?.sideFlip ?? true,
-      sideOffset: content?.sideOffset ?? 4,
-      sticky: content?.sticky ? STICKY_VALUES[content.sticky] : undefined,
-      updatePositionStrategy: content?.updatePositionStrategy
-        ? UPDATE_POSITION_STRATEGIES[content.updatePositionStrategy]
-        : undefined,
-      class: cn(contentUI.class),
+      ...contentProps,
+      sideOffset: contentProps?.sideOffset ?? 4,
+      collisionPadding: contentProps?.collisionPadding ?? 8,
+      class: cn(
+        'data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-72 max-w-(--reka-popover-content-available-width) origin-(--reka-popover-content-transform-origin) rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-hidden',
+        contentUI.class,
+      ),
       style: contentUI.style,
+    },
+    portal: {
+      ...portalProps,
+    },
+    arrow: {
+      ...arrowUI,
+      ...arrowProps,
+      class: cn('fill-popover', arrowUI.class),
+      style: arrowUI.style,
     },
   }
 })
 </script>
 
 <template>
-  <PopoverBase v-slot="slotProps" v-model:open="open" v-bind="calculatedUI.root">
+  <PopoverRoot v-slot="slotProps" v-bind="calculatedUI.root" v-model:open="open">
     <PopoverTrigger v-bind="calculatedUI.trigger">
-      <slot :open="slotProps.open" :close="slotProps.close" />
+      <slot :open="slotProps.open" :close="slotProps.close"></slot>
     </PopoverTrigger>
 
-    <PopoverContent v-if="$slots.content" v-bind="calculatedUI.content">
-      <slot name="content" :open="slotProps.open" :close="slotProps.close" />
-    </PopoverContent>
-  </PopoverBase>
+    <PopoverPortal v-bind="calculatedUI.portal">
+      <PopoverContent v-if="$slots.content" v-bind="calculatedUI.content">
+        <slot name="content" :open="slotProps.open" :close="slotProps.close" />
+        <PopoverArrow v-if="props.showArrow" v-bind="calculatedUI.arrow" />
+      </PopoverContent>
+    </PopoverPortal>
+  </PopoverRoot>
 </template>

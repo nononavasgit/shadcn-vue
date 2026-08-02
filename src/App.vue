@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { NumberField } from '@/components/ui/NumberField'
 import { Avatar } from '@/components/ui/Avatar'
 import { Alert } from '@/components/ui/Alert'
+import { Popover } from '@/components/ui/Popover'
+import { Button } from '@/components/ui/Button'
 
 const quantity = ref<number | null>(2)
 const price = ref<number | null>(19.99)
@@ -120,6 +122,39 @@ const readonlyValue = ref<number | null>(42)
           variant="subtle"
           closable
         />
+      </div>
+    </section>
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Popover</h2>
+
+      <div class="flex flex-wrap items-start gap-4">
+        <Popover>
+          <Button variant="outline">Abrir popover</Button>
+          <template #content="{ close }">
+            <div class="space-y-3">
+              <p class="font-medium">Opciones rapidas</p>
+              <p class="text-sm text-muted-foreground">Contenido dentro de un popover.</p>
+              <Button size="sm" @click="close">Cerrar</Button>
+            </div>
+          </template>
+        </Popover>
+
+        <Popover :content="{ side: 'right', align: 'start' }">
+          <Button variant="subtle">Posicion derecha</Button>
+          <template #content>
+            <div class="space-y-2 text-sm">
+              <p class="font-medium">Popover desplazado</p>
+              <p class="text-muted-foreground">Se abre a la derecha del trigger.</p>
+            </div>
+          </template>
+        </Popover>
+
+        <Popover :modal="true">
+          <Button variant="plain">Popover modal</Button>
+          <template #content>
+            <p class="text-sm">Este popover bloquea la interaccion exterior.</p>
+          </template>
+        </Popover>
       </div>
     </section>
   </main>

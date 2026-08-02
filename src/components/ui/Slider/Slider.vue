@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { Slider, SliderRange, SliderThumb, SliderTrack } from '@/components/primitives/Slider'
+import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<SliderProps>(), {
   asChild: false,
   ui: undefined,
 })
-defineEmits<SliderEmits>()
+const emit = defineEmits<SliderEmits>()
 defineSlots<SliderSlots>()
 
 const attrs = useAttrs()
@@ -101,14 +101,21 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <Slider v-slot="{ modelValue: values }" v-model="modelValue" v-bind="calculatedUI.root">
-    <SliderTrack v-bind="calculatedUI.track">
-      <SliderRange v-bind="calculatedUI.range" />
+    <SliderRoot
+    v-slot="{ modelValue: values }"
+    v-model="modelValue"
+    v-bind="calculatedUI.root"
+    data-slot="slider"
+    @value-commit="emit('valueCommit', $event)"
+  >
+    <SliderTrack v-bind="calculatedUI.track" data-slot="slider-track">
+      <SliderRange v-bind="calculatedUI.range" data-slot="slider-range" />
     </SliderTrack>
 
     <SliderThumb
       v-for="(value, index) in values ?? []"
       :key="index"
+      data-slot="slider-thumb"
       v-bind="
         calculatedUI.thumb({
           index,
@@ -121,5 +128,5 @@ const calculatedUI = computed(() => {
     >
       <slot name="thumb" :index="index" :value="value" :values="values ?? []" />
     </SliderThumb>
-  </Slider>
+  </SliderRoot>
 </template>

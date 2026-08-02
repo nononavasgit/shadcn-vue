@@ -18,6 +18,7 @@ import { ScrollArea } from '@/components/ui/ScrollArea'
 import { Toggle } from '@/components/ui/Toggle'
 import { ToggleGroup } from '@/components/ui/ToggleGroup'
 import { Tooltip } from '@/components/ui/Tooltip'
+import { Slider } from '@/components/ui/Slider'
 
 const comment = ref('')
 const name = ref('')
@@ -33,6 +34,8 @@ const boldActive = ref(false)
 const notificationsToggle = ref(true)
 const termsAccepted = ref(false)
 const marketingEmails = ref(true)
+const sliderValue = ref<number[] | null>([35])
+const rangeSliderValue = ref<number[]>([25, 75])
 const selectedView = ref('list')
 const selectedFormats = ref<string[]>(['bold'])
 const toggleViewItems = [
@@ -510,6 +513,32 @@ const toggleFormatItems = [
             <span>{{ open ? 'Tooltip abierto' : 'Tooltip' }}</span>
           </template>
         </Tooltip>
+      </div>
+    </section>
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Slider</h2>
+
+      <div class="space-y-5">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-sm">
+            <span>Volumen</span>
+            <span class="text-muted-foreground">{{ sliderValue?.[0] ?? 0 }}</span>
+          </div>
+          <Slider v-model="sliderValue" />
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-sm">
+            <span>Rango</span>
+            <span class="text-muted-foreground">{{ rangeSliderValue.join(' – ') }}</span>
+          </div>
+          <Slider v-model="rangeSliderValue" :step="5" />
+        </div>
+
+        <div class="flex h-40 items-center gap-4">
+          <Slider orientation="vertical" :default-value="[60]" aria-label="Progreso vertical" />
+          <span class="text-sm text-muted-foreground">Vertical</span>
+        </div>
       </div>
     </section>
   </main>

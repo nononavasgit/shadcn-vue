@@ -1,4 +1,5 @@
-import type { Component, HTMLAttributes } from 'vue'
+import type { HTMLAttributes } from 'vue'
+import type { SliderRootEmits, SliderRootProps } from 'reka-ui'
 
 export { default as Slider } from './Slider.vue'
 
@@ -21,30 +22,12 @@ export interface SliderThumbUIContext {
 export type SliderUIValue<T, C> = T | ((context: C) => T)
 
 // Props Slider
-export interface SliderProps {
-  modelValue?: number[] | null
-  defaultValue?: number[]
-  disabled?: boolean
-  orientation?: 'horizontal' | 'vertical'
-  dir?: 'ltr' | 'rtl'
-  inverted?: boolean
-  min?: number
-  max?: number
-  step?: number
-  minStepsBetweenThumbs?: number
-  thumbAlignment?: 'contain' | 'overflow'
-  as?: string | Component
-  asChild?: boolean
-  name?: string
-  required?: boolean
+export interface SliderProps extends SliderRootProps {
   ui?: SliderUI
 }
 
 // Emits Slider
-export interface SliderEmits {
-  'update:modelValue': [value: number[] | null | undefined]
-  valueCommit: [value: number[]]
-}
+export type SliderEmits = SliderRootEmits
 
 // SlotProps SlideThumb
 export interface SliderThumbSlotProps {

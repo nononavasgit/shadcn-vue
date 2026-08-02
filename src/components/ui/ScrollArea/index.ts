@@ -3,7 +3,7 @@ import type { ScrollAreaRootProps, ScrollAreaScrollbarProps } from 'reka-ui'
 
 export { default as ScrollArea } from './ScrollArea.vue'
 
-export type ScrollAreaOrientation = 'vertical' | 'horizontal' | 'both'
+export type ScrollAreaOrientation = ScrollAreaScrollbarProps['orientation'] | 'both'
 
 export interface ScrollAreaUI {
   root?: HTMLAttributes
@@ -16,7 +16,7 @@ export interface ScrollAreaUI {
 }
 
 export interface ScrollAreaProps extends ScrollAreaRootProps {
-  orientation?: ScrollAreaScrollbarProps['orientation'] | 'both'
+  orientation?: ScrollAreaOrientation
   forceMount?: ScrollAreaScrollbarProps['forceMount']
   ui?: ScrollAreaUI
 }

@@ -20,6 +20,7 @@ import { ToggleGroup } from '@/components/ui/ToggleGroup'
 import { Tooltip } from '@/components/ui/Tooltip'
 import { Slider } from '@/components/ui/Slider'
 import { Tabs } from '@/components/ui/Tabs'
+import { Dialog } from '@/components/ui/Dialog'
 
 const comment = ref('')
 const name = ref('')
@@ -37,6 +38,7 @@ const termsAccepted = ref(false)
 const marketingEmails = ref(true)
 const sliderValue = ref<number[] | null>([35])
 const activeTab = ref('overview')
+const dialogOpen = ref(false)
 const rangeSliderValue = ref<number[]>([25, 75])
 const selectedView = ref('list')
 const selectedFormats = ref<string[]>(['bold'])
@@ -578,8 +580,19 @@ const toggleFormatItems = [
         variant="line"
         :tabs="[
           { id: 'profile', value: 'profile', label: 'Perfil', content: 'Datos del perfil.' },
-          { id: 'security', value: 'security', label: 'Seguridad', content: 'Opciones de seguridad.' },
-          { id: 'billing', value: 'billing', label: 'Facturación', content: 'Información de facturación.', disabled: true },
+          {
+            id: 'security',
+            value: 'security',
+            label: 'Seguridad',
+            content: 'Opciones de seguridad.',
+          },
+          {
+            id: 'billing',
+            value: 'billing',
+            label: 'Facturación',
+            content: 'Información de facturación.',
+            disabled: true,
+          },
         ]"
       />
 
@@ -599,6 +612,47 @@ const toggleFormatItems = [
           </div>
         </template>
       </Tabs>
+    </section>
+    <section class="space-y-4">
+      <h2 class="text-lg font-semibold">Dialog</h2>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <Dialog label="Editar perfil" description="Actualiza tus datos personales.">
+          <Button variant="outline">Editar perfil</Button>
+
+          <template #content>
+            <div class="space-y-3">
+              <Input default-value="María García" placeholder="Nombre" />
+              <Input default-value="maria@ejemplo.com" type="email" placeholder="Email" />
+            </div>
+          </template>
+
+          <template #footer="{ close }">
+            <Button variant="plain" @click="close">Cancelar</Button>
+            <Button @click="close">Guardar cambios</Button>
+          </template>
+        </Dialog>
+
+        <Dialog
+          v-model:open="dialogOpen"
+          block
+          label="Dialog controlado"
+          description="Su estado se controla con v-model."
+          icon="info"
+        >
+          <Button variant="subtle">Abrir controlado</Button>
+
+          <template #content>
+            <p class="text-sm text-muted-foreground">
+              Estado: {{ dialogOpen ? 'abierto' : 'cerrado' }}
+            </p>
+          </template>
+
+          <template #footer="{ close }">
+            <Button variant="outline" @click="close">Cerrar</Button>
+          </template>
+        </Dialog>
+      </div>
     </section>
   </main>
 </template>

@@ -1,24 +1,18 @@
-import type { Component, HTMLAttributes } from 'vue'
+import type { HTMLAttributes } from 'vue'
+import type {
+  DialogCloseProps as RekaDialogCloseProps,
+  DialogContentProps as RekaDialogContentProps,
+  DialogRootEmits,
+  DialogRootProps,
+  DialogTriggerProps as RekaDialogTriggerProps,
+} from 'reka-ui'
 import type { IconName, IconProps } from '@/components/ui/Icon'
 
 export { default as Dialog } from './Dialog.vue'
 
-export interface DialogTriggerProps {
-  as?: string | Component
-  asChild?: boolean
-}
-
-export interface DialogContentProps {
-  as?: string | Component
-  asChild?: boolean
-  forceMount?: boolean
-  disableOutsidePointerEvents?: boolean
-}
-
-export interface DialogCloseProps {
-  as?: string | Component
-  asChild?: boolean
-}
+export type DialogTriggerProps = RekaDialogTriggerProps
+export type DialogContentProps = Pick<RekaDialogContentProps, 'as' | 'asChild'>
+export type DialogCloseProps = RekaDialogCloseProps
 
 export function normalizeDialogTriggerProps(
   source: DialogTriggerProps | null | undefined,
@@ -32,8 +26,8 @@ export function normalizeDialogContentProps(
   source: DialogContentProps | null | undefined,
 ): DialogContentProps | undefined {
   if (!source) return undefined
-  const { as, asChild, forceMount, disableOutsidePointerEvents } = source
-  return { as, asChild, forceMount, disableOutsidePointerEvents }
+  const { as, asChild } = source
+  return { as, asChild }
 }
 
 export function normalizeDialogCloseProps(
@@ -57,12 +51,10 @@ export interface DialogUI {
   close?: HTMLAttributes
 }
 
-export interface DialogProps {
-  open?: boolean
-  defaultOpen?: boolean
-  modal?: boolean
+export interface DialogProps extends DialogRootProps {
+  forceMount?: boolean
+  disableOutsidePointerEvents?: boolean
   block?: boolean
-  unmountOnHide?: boolean
   label?: string
   description?: string
   icon?: IconName | IconProps
@@ -73,15 +65,7 @@ export interface DialogProps {
   ui?: DialogUI
 }
 
-export interface DialogEmits {
-  'update:open': [value: boolean]
-  openAutoFocus: [event: Event]
-  closeAutoFocus: [event: Event]
-  escapeKeyDown: [event: Event]
-  pointerDownOutside: [event: Event]
-  focusOutside: [event: Event]
-  interactOutside: [event: Event]
-}
+export type DialogEmits = DialogRootEmits
 
 export interface DialogSlotProps {
   open: boolean

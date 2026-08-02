@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { computed, useAttrs, useSlots } from 'vue'
 import {
-  Dialog as DialogBase,
   DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
   DialogTitle,
   DialogTrigger,
-} from '@/components/primitives/Dialog'
+} from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { Separator } from '@/components/ui/Separator'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
@@ -100,34 +100,21 @@ const calculatedUI = computed(() => {
     content: {
       ...contentUI,
       ...content,
-      disableOutsidePointerEvents: content?.disableOutsidePointerEvents ?? props.modal,
-      onOpenAutoFocus: (event: Event) => emit('openAutoFocus', event),
-      onCloseAutoFocus: (event: Event) => emit('closeAutoFocus', event),
-      onEscapeKeyDown: (event: Event) => {
-        if (props.block) event.preventDefault()
-        emit('escapeKeyDown', event)
-      },
-      onPointerDownOutside: (event: Event) => {
-        if (props.block) event.preventDefault()
-        emit('pointerDownOutside', event)
-      },
-      onFocusOutside: (event: Event) => {
-        if (props.block) event.preventDefault()
-        emit('focusOutside', event)
-      },
-      onInteractOutside: (event: Event) => {
-        if (props.block) event.preventDefault()
-        emit('interactOutside', event)
-      },
-      class: cn(contentUI.class),
+      forceMount: props?.forceMount,
+      disableOutsidePointerEvents: props?.disableOutsidePointerEvents ?? props.modal,
+      class: cn(
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 pointer-events-auto fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-lg border bg-background p-6 shadow-lg duration-200 sm:max-w-lg',
+        'max-h-[90dvh] grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden',
+        contentUI.class,
+      ),
     },
     header: {
       ...headerUI,
-      class: cn(headerUI.class),
+      class: cn('flex flex-col gap-2 text-center sm:text-left', headerUI.class),
     },
     title: {
       ...titleUI,
-      class: cn('flex items-center gap-2', titleUI.class),
+      class: cn('text-lg leading-none font-semibold flex items-center gap-2', titleUI.class),
     },
     icon: {
       'aria-hidden': true,
@@ -137,7 +124,7 @@ const calculatedUI = computed(() => {
     },
     description: {
       ...descriptionUI,
-      class: cn(descriptionUI.class),
+      class: cn('text-sm text-muted-foreground', descriptionUI.class),
     },
     body: {
       ...bodyUI,
@@ -145,7 +132,7 @@ const calculatedUI = computed(() => {
     },
     footer: {
       ...footerUI,
-      class: cn(footerUI.class),
+      class: cn('flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', footerUI.class),
     },
     close: {
       ...closeUI,
@@ -161,57 +148,68 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <DialogBase v-slot="rootSlotProps" v-bind="calculatedUI.root" v-model:open="calculatedOpen">
-    <DialogTrigger v-bind="calculatedUI.trigger">
+  <DialogRoot
+    v-slot="rootSlotProps"
+    v-bind="calculatedUI.root"
+    v-model:open="calculatedOpen"
+    data-slot="dialog"
+  >
+    <DialogTrigger v-bind="calculatedUI.trigger" data-slot="dialog-trigger">
       <slot v-bind="getSlotProps(rootSlotProps)" />
     </DialogTrigger>
 
-    <DialogContent v-bind="calculatedUI.content">
-      <template v-if="props.showCloseButton && !props.block" #close>
-        <slot name="close" v-bind="getSlotProps(rootSlotProps)">
-          <DialogClose v-bind="calculatedUI.close">
-            <slot name="closeIcon" v-bind="getSlotProps(rootSlotProps)">
-              <Icon name="x" />
-            </slot>
-          </DialogClose>
-        </slot>
-      </template>
+    <DialogPortal>
+      <DialogOverlay
+        data-slot="dialog-overlay"
+        class="data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50"
+      />
+      <DialogContent v-bind="calculatedUI.content" data-slot="dialog-content">
+        <template v-if="props.showCloseButton && !props.block">
+          <slot name="close" v-bind="getSlotProps(rootSlotProps)">
+            <DialogClose v-bind="calculatedUI.close">
+              <slot name="closeIcon" v-bind="getSlotProps(rootSlotProps)">
+                <Icon name="x" />
+              </slot>
+            </DialogClose>
+          </slot>
+        </template>
 
-      <DialogHeader v-bind="calculatedUI.header">
-        <slot name="header" v-bind="getSlotProps(rootSlotProps)">
-          <DialogTitle v-if="props.label || slots.title" v-bind="calculatedUI.title">
-            <Icon
-              v-if="calculatedUI.icon.name"
-              v-bind="calculatedUI.icon"
-              :name="calculatedUI.icon.name"
-            />
-            <slot name="title" v-bind="getSlotProps(rootSlotProps)">
-              {{ props.label }}
-            </slot>
-          </DialogTitle>
+        <div v-bind="calculatedUI.header" data-slot="dialog-header">
+          <slot name="header" v-bind="getSlotProps(rootSlotProps)">
+            <DialogTitle v-if="props.label || slots.title" v-bind="calculatedUI.title">
+              <Icon
+                v-if="calculatedUI.icon.name"
+                v-bind="calculatedUI.icon"
+                :name="calculatedUI.icon.name"
+              />
+              <slot name="title" v-bind="getSlotProps(rootSlotProps)">
+                {{ props.label }}
+              </slot>
+            </DialogTitle>
 
-          <DialogDescription
-            v-if="props.description || slots.description"
-            v-bind="calculatedUI.description"
-          >
-            <slot name="description" v-bind="getSlotProps(rootSlotProps)">
-              {{ props.description }}
-            </slot>
-          </DialogDescription>
-        </slot>
-      </DialogHeader>
+            <DialogDescription
+              v-if="props.description || slots.description"
+              v-bind="calculatedUI.description"
+            >
+              <slot name="description" v-bind="getSlotProps(rootSlotProps)">
+                {{ props.description }}
+              </slot>
+            </DialogDescription>
+          </slot>
+        </div>
 
-      <Separator />
+        <Separator />
 
-      <div v-if="slots.content" v-bind="calculatedUI.body">
-        <slot name="content" v-bind="getSlotProps(rootSlotProps)" />
-      </div>
+        <div v-if="slots.content" v-bind="calculatedUI.body">
+          <slot name="content" v-bind="getSlotProps(rootSlotProps)" />
+        </div>
 
-      <Separator v-if="slots.footer" />
+        <Separator v-if="slots.footer" />
 
-      <DialogFooter v-if="slots.footer" v-bind="calculatedUI.footer">
-        <slot name="footer" v-bind="getSlotProps(rootSlotProps)" />
-      </DialogFooter>
-    </DialogContent>
-  </DialogBase>
+        <div v-if="slots.footer" v-bind="calculatedUI.footer" data-slot="dialog-footer">
+          <slot name="footer" v-bind="getSlotProps(rootSlotProps)" />
+        </div>
+      </DialogContent>
+    </DialogPortal>
+  </DialogRoot>
 </template>

@@ -1,160 +1,154 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { NumberField } from '@/components/ui/NumberField'
-import { Avatar } from '@/components/ui/Avatar'
-import { Alert } from '@/components/ui/Alert'
-import { Popover } from '@/components/ui/Popover'
-import { Button } from '@/components/ui/Button'
+import { Timeline } from '@/components/ui/Timeline'
+import type { TimelineItem, TimelineValue } from '@/components/ui/Timeline'
 
-const quantity = ref<number | null>(2)
-const price = ref<number | null>(19.99)
-const rating = ref<number | null>(4)
-const readonlyValue = ref<number | null>(42)
+const verticalTimelineValue = ref<TimelineValue>('review')
+const horizontalTimelineValue = ref<TimelineValue>('shipping')
+const slotsTimelineValue = ref<TimelineValue>('review')
+
+const projectTimelineItems: TimelineItem[] = [
+  {
+    value: 'briefing',
+    label: 'Briefing recibido',
+    description: 'Se han definido los objetivos y el alcance del proyecto.',
+  },
+  {
+    value: 'design',
+    label: 'Diseno aprobado',
+    description: 'La propuesta visual esta lista para pasar a desarrollo.',
+  },
+  {
+    value: 'review',
+    label: 'Revision final',
+    description: 'Estamos revisando los ultimos detalles antes de publicar.',
+  },
+  {
+    value: 'published',
+    label: 'Publicado',
+    description: 'El proyecto estara disponible para todos los usuarios.',
+  },
+]
+
+const orderTimelineItems: TimelineItem[] = [
+  {
+    value: 'payment',
+    label: 'Pago confirmado',
+    description: 'El pago se ha procesado correctamente.',
+  },
+  { value: 'preparing', label: 'Preparando pedido', description: 'El pedido esta en preparacion.' },
+  { value: 'shipping', label: 'Enviado', description: 'El paquete esta en camino.' },
+  { value: 'delivered', label: 'Entregado', description: 'Se entregara en la direccion indicada.' },
+]
+
+const slotsTimelineItems: TimelineItem[] = [
+  { value: 'briefing', label: 'Briefing', description: 'Objetivos definidos.' },
+  { value: 'design', label: 'Diseno', description: 'Propuesta visual preparada.' },
+  { value: 'review', label: 'Revision', description: 'Ultima revision antes de publicar.' },
+  { value: 'published', label: 'Publicado', description: 'Disponible para los usuarios.' },
+]
+
+// const verticalTimelineUI: TimelineUI = {
+//   root: { class: 'group/timeline flex-col gap-0' },
+//   item: { class: 'last:pb-0' },
+//   header: { class: 'relative min-h-6 flex-1' },
+//   label: { class: 'block' },
+//   description: { class: 'max-w-lg' },
+//   indicator: ({ active }) => ({
+//     class: active ? 'ring-4 ring-primary/15' : '',
+//   }),
+// }
+
+// const horizontalTimelineUI: TimelineUI = {
+//   root: { class: 'group/timeline flex-row gap-6 overflow-x-auto pb-4' },
+//   item: { class: 'min-w-48' },
+//   header: { class: 'relative min-h-6 flex-1' },
+//   label: { class: 'block' },
+//   description: { class: 'max-w-52' },
+// }
 </script>
 
 <template>
   <main class="mx-auto min-h-screen max-w-2xl space-y-8 p-6 md:p-10">
     <section class="space-y-4">
-      <h1 class="text-2xl font-semibold">NumberField</h1>
-      <p class="text-sm text-muted-foreground">
-        Ejemplos de campos numericos con controles, limites y formato.
-      </p>
-
-      <div class="space-y-2">
-        <label for="quantity" class="text-sm font-medium">Cantidad</label>
-        <NumberField id="quantity" v-model="quantity" :min="0" :max="10" />
-        <p class="text-sm text-muted-foreground">Valor actual: {{ quantity ?? 0 }}</p>
+      <div>
+        <h2 class="text-lg font-semibold">Timeline</h2>
+        <p class="text-sm text-muted-foreground">
+          Ejemplos vertical y horizontal con valor activo y estilos personalizados.
+        </p>
       </div>
 
-      <div class="space-y-2">
-        <label for="price" class="text-sm font-medium">Precio</label>
-        <NumberField
-          id="price"
-          v-model="price"
-          locale="es-ES"
-          :min="0"
-          :step="0.5"
-          :format-options="{ style: 'currency', currency: 'EUR' }"
+      <div class="space-y-3 rounded-lg border p-5">
+        <h3 class="font-medium">Seguimiento del proyecto</h3>
+        <Timeline
+          v-model:value="verticalTimelineValue"
+          :items="projectTimelineItems"
+          :ordered="false"
         />
-        <p class="text-sm text-muted-foreground">Precio: {{ price ?? 0 }} EUR</p>
+        <p class="text-sm text-muted-foreground">Paso activo: {{ verticalTimelineValue }}</p>
       </div>
 
-      <div class="space-y-2">
-        <label for="rating" class="text-sm font-medium">Valoracion (sin incremento)</label>
-        <NumberField
-          id="rating"
-          v-model="rating"
-          :min="0"
-          :max="5"
-          :step="0.5"
-          :show-increment="false"
+      <div class="space-y-3 rounded-lg border p-5">
+        <h3 class="font-medium">Estado del pedido</h3>
+        <Timeline
+          v-model:value="horizontalTimelineValue"
+          :items="orderTimelineItems"
+          :ordered="false"
+          orientation="horizontal"
         />
-      </div>
-
-      <div class="space-y-2">
-        <label for="readonly-number" class="text-sm font-medium">Solo lectura</label>
-        <NumberField id="readonly-number" v-model="readonlyValue" readonly />
-      </div>
-
-      <div class="space-y-2">
-        <label for="disabled-number" class="text-sm font-medium">Deshabilitado</label>
-        <NumberField id="disabled-number" :default-value="8" disabled />
-      </div>
-
-      <div class="space-y-2">
-        <label for="custom-number" class="text-sm font-medium">Controles personalizados</label>
-        <NumberField
-          id="custom-number"
-          :default-value="3"
-          placeholder="Ingrese un numero"
-          :min="0"
-          :max="10"
-        >
-          <template #decrement>Menos</template>
-          <template #increment>Mas</template>
-        </NumberField>
+        <p class="text-sm text-muted-foreground">Estado activo: {{ horizontalTimelineValue }}</p>
       </div>
     </section>
     <section class="space-y-4">
-      <h2 class="text-lg font-semibold">Avatar</h2>
-
-      <div class="flex flex-wrap items-center gap-4">
-        <Avatar src="https://i.pravatar.cc/96?img=12" alt="Perfil de Ana" class="size-10" />
-        <Avatar label="JD" class="size-10" />
-        <Avatar label="ML" class="size-12" />
-        <Avatar src="https://invalid.example/avatar.jpg" alt="Imagen no disponible" label="??" />
-        <Avatar :icon="{ name: 'check', color: 'blue' }" alt="Imagen no disponible" label="??" />
+      <div>
+        <h2 class="text-lg font-semibold">Slots personalizados</h2>
+        <p class="text-sm text-muted-foreground">
+          Personaliza el encabezado, los indicadores, las etiquetas y las descripciones por paso.
+        </p>
       </div>
 
-      <div class="flex items-center gap-3 rounded-md border p-4">
-        <Avatar label="NV" class="size-14" />
-        <div>
-          <p class="font-medium">Nombre de usuario</p>
-          <p class="text-sm text-muted-foreground">Fallback con iniciales</p>
-        </div>
-      </div>
-    </section>
-    <section class="space-y-4">
-      <h2 class="text-lg font-semibold">Alert</h2>
-
-      <div class="space-y-3">
-        <Alert
-          label="Cambios guardados"
-          description="Tu perfil se ha actualizado correctamente."
-          icon="success"
-          severity="success"
-          variant="soft"
-        />
-
-        <Alert
-          label="Atencion"
-          description="Revisa los datos antes de continuar."
-          icon="warning"
-          severity="warning"
-          variant="outline"
-        />
-
-        <Alert
-          label="Error de conexion"
-          description="No se pudo completar la operacion."
-          icon="error"
-          severity="error"
-          variant="subtle"
-          closable
-        />
-      </div>
-    </section>
-    <section class="space-y-4">
-      <h2 class="text-lg font-semibold">Popover</h2>
-
-      <div class="flex flex-wrap items-start gap-4">
-        <Popover>
-          <Button variant="outline">Abrir popover</Button>
-          <template #content="{ close }">
-            <div class="space-y-3">
-              <p class="font-medium">Opciones rapidas</p>
-              <p class="text-sm text-muted-foreground">Contenido dentro de un popover.</p>
-              <Button size="sm" @click="close">Cerrar</Button>
+      <div class="rounded-lg border p-5">
+        <Timeline v-model:value="slotsTimelineValue" :items="slotsTimelineItems" :ordered="false">
+          <template #header-briefing="{ item, index }">
+            <div class="flex flex-col gap-1">
+              <span class="text-xs font-medium text-muted-foreground">Paso {{ index + 1 }}</span>
+              <span class="font-semibold">{{ item.label }}</span>
             </div>
           </template>
-        </Popover>
 
-        <Popover :content="{ side: 'right', align: 'start' }">
-          <Button variant="subtle">Posicion derecha</Button>
-          <template #content>
-            <div class="space-y-2 text-sm">
-              <p class="font-medium">Popover desplazado</p>
-              <p class="text-muted-foreground">Se abre a la derecha del trigger.</p>
+          <template #indicator-briefing="{ index }">
+            <span class="text-[10px]">{{ index + 1 }}</span>
+          </template>
+          <template #indicator-design="{ index, completed }">
+            <span class="text-[10px]">{{ completed ? '✓' : index + 1 }}</span>
+          </template>
+          <template #indicator-review="{ active }">
+            <span v-if="active" class="size-1.5 rounded-full bg-current" />
+            <span v-else class="text-[10px]">3</span>
+          </template>
+          <template #indicator-published="{ completed }">
+            <span class="text-[10px]">{{ completed ? '✓' : '4' }}</span>
+          </template>
+
+          <template #label-review="{ item, active }">
+            <div class="flex items-center gap-2">
+              <span>{{ item.label }}</span>
+              <span
+                v-if="active"
+                class="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary"
+              >
+                Actual
+              </span>
             </div>
           </template>
-        </Popover>
 
-        <Popover :modal="true">
-          <Button variant="plain">Popover modal</Button>
-          <template #content>
-            <p class="text-sm">Este popover bloquea la interaccion exterior.</p>
+          <template #description-review="{ active }">
+            <p class="text-sm text-muted-foreground">
+              {{ active ? 'Este paso requiere tu aprobacion.' : 'Paso pendiente de revision.' }}
+            </p>
           </template>
-        </Popover>
+        </Timeline>
+        <p class="mt-4 text-sm text-muted-foreground">Paso activo: {{ slotsTimelineValue }}</p>
       </div>
     </section>
   </main>

@@ -1,83 +1,70 @@
 import type { HTMLAttributes } from 'vue'
 
-export { default as Timeline } from './Timeline.vue'
-export { default as TimelineContent } from './TimelineContent.vue'
-export { default as TimelineDate } from './TimelineDate.vue'
-export { default as TimelineHeader } from './TimelineHeader.vue'
-export { default as TimelineIndicator } from './TimelineIndicator.vue'
-export { default as TimelineItem } from './TimelineItem.vue'
-export { default as TimelineSeparator } from './TimelineSeparator.vue'
-export { default as TimelineTitle } from './TimelineTitle.vue'
-
-export type TimelineClass = HTMLAttributes['class']
 export type TimelineOrientation = 'vertical' | 'horizontal'
+export type TimelineValue = string | number
+export { default as Timeline } from './Timeline.vue'
 
+// Item
+export interface TimelineItem {
+  value: TimelineValue
+  label?: string
+  description?: string
+}
+
+// Context
+export interface TimelineItemContext {
+  item: TimelineItem
+  index: number
+  active: boolean
+  first: boolean
+  last: boolean
+  completed: boolean
+}
+
+export interface TimelineContext {
+  value?: TimelineValue
+  items?: TimelineItem[]
+}
+
+export type TimelineItemUIValue<T> = T | ((context: TimelineItemContext) => T)
+
+export function resolveTimelineItemUIValue<T>(
+  value: TimelineItemUIValue<T> | undefined,
+  context: TimelineItemContext,
+) {
+  return typeof value === 'function'
+    ? (value as (context: TimelineItemContext) => T)(context)
+    : value
+}
+
+// UI
+export interface TimelineUI {
+  root?: HTMLAttributes
+  item?: TimelineItemUIValue<HTMLAttributes>
+  header?: TimelineItemUIValue<HTMLAttributes>
+  separator?: TimelineItemUIValue<HTMLAttributes>
+  indicator?: TimelineItemUIValue<HTMLAttributes>
+  label?: TimelineItemUIValue<HTMLAttributes>
+  description?: TimelineItemUIValue<HTMLAttributes>
+}
+
+// Props
 export interface TimelineProps {
-  defaultValue?: number
-  value?: number
+  value?: TimelineValue
+  items: TimelineItem[]
   orientation?: TimelineOrientation
-  class?: TimelineClass
+  ui?: TimelineUI
 }
 
-export interface TimelineItemProps {
-  step: number
-  completed?: boolean
-  class?: TimelineClass
-}
-
-export interface TimelineHeaderProps {
-  class?: TimelineClass
-}
-
-export interface TimelineDateProps {
-  datetime?: string
-  class?: TimelineClass
-}
-
-export interface TimelineTitleProps {
-  class?: TimelineClass
-}
-
-export interface TimelineIndicatorProps {
-  class?: TimelineClass
-}
-
-export interface TimelineSeparatorProps {
-  class?: TimelineClass
-}
-
-export interface TimelineContentProps {
-  class?: TimelineClass
-}
-
-export interface TimelineSlots {
-  default?(): unknown
-}
-
-export interface TimelineItemSlots {
-  default?(): unknown
-}
-
-export interface TimelineHeaderSlots {
-  default?(): unknown
-}
-
-export interface TimelineDateSlots {
-  default?(): unknown
-}
-
-export interface TimelineTitleSlots {
-  default?(): unknown
-}
-
-export interface TimelineIndicatorSlots {
-  default?(): unknown
-}
-
-export interface TimelineSeparatorSlots {
-  default?(): unknown
-}
-
-export interface TimelineContentSlots {
-  default?(): unknown
+// Slots
+export type TimelineSlots = {
+  header?: ((props: TimelineContext) => unknown) | undefined
+  label?: ((props: TimelineContext) => unknown) | undefined
+  description?: ((props: TimelineContext) => unknown) | undefined
+  indicator?: ((props: TimelineContext) => unknown) | undefined
+} & {
+  [name: `header-${string}`]: ((props: TimelineItemContext) => unknown) | undefined
+  [name: `label-${string}`]: ((props: TimelineItemContext) => unknown) | undefined
+  [name: `indicator-${string}`]: ((props: TimelineItemContext) => unknown) | undefined
+  [name: `description-${string}`]: ((props: TimelineItemContext) => unknown) | undefined
 }

@@ -1,55 +1,120 @@
-import type { HTMLAttributes } from 'vue'
-import type { TooltipArrowProps as RekaTooltipArrowProps, TooltipContentEmits, TooltipContentProps as RekaTooltipContentProps, TooltipRootEmits, TooltipRootProps, TooltipTriggerProps as RekaTooltipTriggerProps } from 'reka-ui'
+import type { EmitsToProps, HTMLAttributes } from 'vue'
+import type {
+  TooltipArrowProps as RekaTooltipArrowProps,
+  TooltipContentEmits,
+  TooltipContentProps as RekaTooltipContentProps,
+  TooltipRootEmits,
+  TooltipRootProps as RekaTooltipRootProps,
+} from 'reka-ui'
 
 export { default as Tooltip } from './Tooltip.vue'
 
-export const SIDES = {
-  top: 'top',
-  right: 'right',
-  bottom: 'bottom',
-  left: 'left',
-} as const
+// Types
+export type TooltipRootProps = Pick<
+  RekaTooltipRootProps,
+  | 'open'
+  | 'defaultOpen'
+  | 'delayDuration'
+  | 'disableHoverableContent'
+  | 'disableClosingTrigger'
+  | 'disabled'
+  | 'ignoreNonKeyboardFocus'
+>
+export type TooltipContentProps = Pick<
+  RekaTooltipContentProps,
+  | 'align'
+  | 'alignOffset'
+  | 'ariaLabel'
+  | 'arrowPadding'
+  | 'avoidCollisions'
+  | 'collisionBoundary'
+  | 'collisionPadding'
+  | 'forceMount'
+  | 'hideWhenDetached'
+  | 'positionStrategy'
+  | 'side'
+  | 'sideOffset'
+  | 'sticky'
+  | 'updatePositionStrategy'
+> &
+  Partial<EmitsToProps<Pick<TooltipContentEmits, 'escapeKeyDown' | 'pointerDownOutside'>>>
+export type TooltipArrowProps = Pick<RekaTooltipArrowProps, 'width' | 'height'>
 
-export const ALIGNS = {
-  start: 'start',
-  center: 'center',
-  end: 'end',
-} as const
-
-export const STICKY_VALUES = {
-  partial: 'partial',
-  always: 'always',
-} as const
-
-export const POSITION_STRATEGIES = {
-  absolute: 'absolute',
-  fixed: 'fixed',
-} as const
-
-export const UPDATE_POSITION_STRATEGIES = {
-  optimized: 'optimized',
-  always: 'always',
-} as const
-
-export type TooltipSide = keyof typeof SIDES
-export type TooltipAlign = keyof typeof ALIGNS
-export type TooltipSticky = keyof typeof STICKY_VALUES
-export type TooltipPositionStrategy = keyof typeof POSITION_STRATEGIES
-export type TooltipUpdatePositionStrategy = keyof typeof UPDATE_POSITION_STRATEGIES
-
-export type TooltipTriggerProps = RekaTooltipTriggerProps
-
-export interface TooltipContentProps extends RekaTooltipContentProps {
-  side?: TooltipSide
-  align?: TooltipAlign
-  collisionPadding?: number | Partial<Record<TooltipSide, number>>
-  sticky?: TooltipSticky
-  positionStrategy?: TooltipPositionStrategy
-  updatePositionStrategy?: TooltipUpdatePositionStrategy
+export function normalizeRootProps(
+  source: TooltipRootProps | null | undefined,
+): TooltipRootProps | undefined {
+  if (!source) return undefined
+  const {
+    defaultOpen,
+    delayDuration,
+    disableClosingTrigger,
+    disableHoverableContent,
+    disabled,
+    ignoreNonKeyboardFocus,
+    open,
+  } = source
+  return {
+    defaultOpen,
+    delayDuration,
+    disableClosingTrigger,
+    disableHoverableContent,
+    disabled,
+    ignoreNonKeyboardFocus,
+    open,
+  }
 }
 
-export type TooltipArrowProps = RekaTooltipArrowProps
+export function normalizeContentProps(
+  source: TooltipContentProps | null | undefined,
+): TooltipContentProps | undefined {
+  if (!source) return undefined
+  const {
+    align,
+    alignOffset,
+    ariaLabel,
+    arrowPadding,
+    avoidCollisions,
+    collisionBoundary,
+    collisionPadding,
+    forceMount,
+    hideWhenDetached,
+    positionStrategy,
+    side,
+    sideOffset,
+    sticky,
+    updatePositionStrategy,
+    onEscapeKeyDown,
+    onPointerDownOutside,
+  } = source
+  return {
+    align,
+    alignOffset,
+    ariaLabel,
+    arrowPadding,
+    avoidCollisions,
+    collisionBoundary,
+    collisionPadding,
+    forceMount,
+    hideWhenDetached,
+    positionStrategy,
+    side,
+    sideOffset,
+    sticky,
+    updatePositionStrategy,
+    onEscapeKeyDown,
+    onPointerDownOutside,
+  }
+}
 
+export function normalizeArrowProps(
+  source: TooltipArrowProps | null | undefined,
+): TooltipArrowProps | undefined {
+  if (!source) return undefined
+  const { width, height } = source
+  return { width, height }
+}
+
+// UI
 export interface TooltipUI {
   root?: HTMLAttributes
   trigger?: HTMLAttributes
@@ -57,32 +122,24 @@ export interface TooltipUI {
   arrow?: HTMLAttributes
 }
 
+// Props
 export interface TooltipProps extends TooltipRootProps {
   label?: string
-  skipDelayDuration?: number
-  trigger?: TooltipTriggerProps
   content?: TooltipContentProps
   arrow?: TooltipArrowProps
   ui?: TooltipUI
 }
 
-export type TooltipEmits = TooltipRootEmits & TooltipContentEmits
+// Emits
+export type TooltipEmits = TooltipRootEmits
 
+// SlotProps
 export interface TooltipSlotProps {
   open: boolean
 }
 
+// Slots
 export interface TooltipSlots {
   default?(props: TooltipSlotProps): unknown
   content?(props: TooltipSlotProps): unknown
-}
-
-export function mapCollisionPadding(
-  padding: number | Partial<Record<TooltipSide, number>> | undefined,
-) {
-  if (padding === undefined || typeof padding === 'number') return padding
-
-  return Object.fromEntries(
-    Object.entries(padding).map(([side, value]) => [SIDES[side as TooltipSide], value]),
-  ) as Partial<Record<(typeof SIDES)[TooltipSide], number>>
 }

@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { Timeline } from '@/components/ui/Timeline'
 import type { TimelineItem, TimelineValue } from '@/components/ui/Timeline'
+import { Tooltip } from '@/components/ui/Tooltip'
 
 const verticalTimelineValue = ref<TimelineValue>('review')
 const horizontalTimelineValue = ref<TimelineValue>('shipping')
@@ -149,6 +150,37 @@ const slotsTimelineItems: TimelineItem[] = [
           </template>
         </Timeline>
         <p class="mt-4 text-sm text-muted-foreground">Paso activo: {{ slotsTimelineValue }}</p>
+      </div>
+    </section>
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-lg font-semibold">Tooltip</h2>
+        <p class="text-sm text-muted-foreground">
+          Ejemplos con etiqueta, contenido personalizado y props separadas para el contenido y la
+          flecha.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3 rounded-lg border p-5">
+        <Tooltip label="Guardar los cambios">
+          <button class="rounded-md border px-3 py-2 text-sm font-medium">Guardar</button>
+        </Tooltip>
+
+        <Tooltip :content="{ side: 'bottom', sideOffset: 8 }" :arrow="{ width: 12, height: 6 }">
+          <template #content>
+            <span class="font-medium">Contenido personalizado</span>
+          </template>
+          <button class="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground">
+            Ver más
+          </button>
+        </Tooltip>
+
+        <Tooltip
+          label="Tooltip con estilos personalizados"
+          :ui="{ content: { class: 'bg-slate-900 text-white border-slate-900' } }"
+        >
+          <button class="rounded-md bg-muted px-3 py-2 text-sm">Estilos</button>
+        </Tooltip>
       </div>
     </section>
   </main>

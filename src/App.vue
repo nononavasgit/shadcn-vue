@@ -1,186 +1,49 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Timeline } from '@/components/ui/Timeline'
-import type { TimelineItem, TimelineValue } from '@/components/ui/Timeline'
-import { Tooltip } from '@/components/ui/Tooltip'
+import { Pagination } from '@/components/ui/Pagination'
 
-const verticalTimelineValue = ref<TimelineValue>('review')
-const horizontalTimelineValue = ref<TimelineValue>('shipping')
-const slotsTimelineValue = ref<TimelineValue>('review')
-
-const projectTimelineItems: TimelineItem[] = [
-  {
-    value: 'briefing',
-    label: 'Briefing recibido',
-    description: 'Se han definido los objetivos y el alcance del proyecto.',
-  },
-  {
-    value: 'design',
-    label: 'Diseno aprobado',
-    description: 'La propuesta visual esta lista para pasar a desarrollo.',
-  },
-  {
-    value: 'review',
-    label: 'Revision final',
-    description: 'Estamos revisando los ultimos detalles antes de publicar.',
-  },
-  {
-    value: 'published',
-    label: 'Publicado',
-    description: 'El proyecto estara disponible para todos los usuarios.',
-  },
-]
-
-const orderTimelineItems: TimelineItem[] = [
-  {
-    value: 'payment',
-    label: 'Pago confirmado',
-    description: 'El pago se ha procesado correctamente.',
-  },
-  { value: 'preparing', label: 'Preparando pedido', description: 'El pedido esta en preparacion.' },
-  { value: 'shipping', label: 'Enviado', description: 'El paquete esta en camino.' },
-  { value: 'delivered', label: 'Entregado', description: 'Se entregara en la direccion indicada.' },
-]
-
-const slotsTimelineItems: TimelineItem[] = [
-  { value: 'briefing', label: 'Briefing', description: 'Objetivos definidos.' },
-  { value: 'design', label: 'Diseno', description: 'Propuesta visual preparada.' },
-  { value: 'review', label: 'Revision', description: 'Ultima revision antes de publicar.' },
-  { value: 'published', label: 'Publicado', description: 'Disponible para los usuarios.' },
-]
-
-// const verticalTimelineUI: TimelineUI = {
-//   root: { class: 'group/timeline flex-col gap-0' },
-//   item: { class: 'last:pb-0' },
-//   header: { class: 'relative min-h-6 flex-1' },
-//   label: { class: 'block' },
-//   description: { class: 'max-w-lg' },
-//   indicator: ({ active }) => ({
-//     class: active ? 'ring-4 ring-primary/15' : '',
-//   }),
-// }
-
-// const horizontalTimelineUI: TimelineUI = {
-//   root: { class: 'group/timeline flex-row gap-6 overflow-x-auto pb-4' },
-//   item: { class: 'min-w-48' },
-//   header: { class: 'relative min-h-6 flex-1' },
-//   label: { class: 'block' },
-//   description: { class: 'max-w-52' },
-// }
+const basicPaginationPage = ref(3)
+const customPaginationPage = ref(6)
 </script>
 
 <template>
   <main class="mx-auto min-h-screen max-w-2xl space-y-8 p-6 md:p-10">
     <section class="space-y-4">
       <div>
-        <h2 class="text-lg font-semibold">Timeline</h2>
+        <h2 class="text-lg font-semibold">Pagination</h2>
         <p class="text-sm text-muted-foreground">
-          Ejemplos vertical y horizontal con valor activo y estilos personalizados.
+          Ejemplos básico y personalizado usando directamente los componentes de Reka.
         </p>
       </div>
 
       <div class="space-y-3 rounded-lg border p-5">
-        <h3 class="font-medium">Seguimiento del proyecto</h3>
-        <Timeline
-          v-model:value="verticalTimelineValue"
-          :items="projectTimelineItems"
-          :ordered="false"
+        <h3 class="font-medium">Paginación básica</h3>
+        <Pagination
+          v-model:page="basicPaginationPage"
+          :total="100"
+          :items-per-page="10"
+          color="#4f4fff"
+          size="md"
         />
-        <p class="text-sm text-muted-foreground">Paso activo: {{ verticalTimelineValue }}</p>
+        <p class="text-center text-sm text-muted-foreground">
+          Página {{ basicPaginationPage }} de 10
+        </p>
       </div>
 
       <div class="space-y-3 rounded-lg border p-5">
-        <h3 class="font-medium">Estado del pedido</h3>
-        <Timeline
-          v-model:value="horizontalTimelineValue"
-          :items="orderTimelineItems"
-          :ordered="false"
-          orientation="horizontal"
-        />
-        <p class="text-sm text-muted-foreground">Estado activo: {{ horizontalTimelineValue }}</p>
-      </div>
-    </section>
-    <section class="space-y-4">
-      <div>
-        <h2 class="text-lg font-semibold">Slots personalizados</h2>
-        <p class="text-sm text-muted-foreground">
-          Personaliza el encabezado, los indicadores, las etiquetas y las descripciones por paso.
-        </p>
-      </div>
-
-      <div class="rounded-lg border p-5">
-        <Timeline v-model:value="slotsTimelineValue" :items="slotsTimelineItems" :ordered="false">
-          <template #header-briefing="{ item, index }">
-            <div class="flex flex-col gap-1">
-              <span class="text-xs font-medium text-muted-foreground">Paso {{ index + 1 }}</span>
-              <span class="font-semibold">{{ item.label }}</span>
-            </div>
-          </template>
-
-          <template #indicator-briefing="{ index }">
-            <span class="text-[10px]">{{ index + 1 }}</span>
-          </template>
-          <template #indicator-design="{ index, completed }">
-            <span class="text-[10px]">{{ completed ? '✓' : index + 1 }}</span>
-          </template>
-          <template #indicator-review="{ active }">
-            <span v-if="active" class="size-1.5 rounded-full bg-current" />
-            <span v-else class="text-[10px]">3</span>
-          </template>
-          <template #indicator-published="{ completed }">
-            <span class="text-[10px]">{{ completed ? '✓' : '4' }}</span>
-          </template>
-
-          <template #label-review="{ item, active }">
-            <div class="flex items-center gap-2">
-              <span>{{ item.label }}</span>
-              <span
-                v-if="active"
-                class="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary"
-              >
-                Actual
-              </span>
-            </div>
-          </template>
-
-          <template #description-review="{ active }">
-            <p class="text-sm text-muted-foreground">
-              {{ active ? 'Este paso requiere tu aprobacion.' : 'Paso pendiente de revision.' }}
-            </p>
-          </template>
-        </Timeline>
-        <p class="mt-4 text-sm text-muted-foreground">Paso activo: {{ slotsTimelineValue }}</p>
-      </div>
-    </section>
-    <section class="space-y-4">
-      <div>
-        <h2 class="text-lg font-semibold">Tooltip</h2>
-        <p class="text-sm text-muted-foreground">
-          Ejemplos con etiqueta, contenido personalizado y props separadas para el contenido y la
-          flecha.
-        </p>
-      </div>
-
-      <div class="flex flex-wrap items-center gap-3 rounded-lg border p-5">
-        <Tooltip label="Guardar los cambios">
-          <button class="rounded-md border px-3 py-2 text-sm font-medium">Guardar</button>
-        </Tooltip>
-
-        <Tooltip :content="{ side: 'bottom', sideOffset: 8 }" :arrow="{ width: 12, height: 6 }">
-          <template #content>
-            <span class="font-medium">Contenido personalizado</span>
-          </template>
-          <button class="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground">
-            Ver más
-          </button>
-        </Tooltip>
-
-        <Tooltip
-          label="Tooltip con estilos personalizados"
-          :ui="{ content: { class: 'bg-slate-900 text-white border-slate-900' } }"
+        <h3 class="font-medium">Controles y slots personalizados</h3>
+        <Pagination
+          v-model:page="customPaginationPage"
+          :total="240"
+          :items-per-page="20"
+          :sibling-count="1"
+          :show-controls="false"
         >
-          <button class="rounded-md bg-muted px-3 py-2 text-sm">Estilos</button>
-        </Tooltip>
+        </Pagination>
+        <p class="text-center text-sm text-muted-foreground">
+          Mostrando del {{ (customPaginationPage - 1) * 20 + 1 }} al
+          {{ Math.min(customPaginationPage * 20, 240) }} de 240 resultados
+        </p>
       </div>
     </section>
   </main>

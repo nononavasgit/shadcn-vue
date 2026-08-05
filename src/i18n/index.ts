@@ -58,8 +58,15 @@ export function setLocale(value?: string) {
 }
 
 export function useI18n() {
-  function t(key: TranslationKey) {
-    return translations[locale.value][key]
+  function t(key: TranslationKey, params?: Record<string, string | number>) {
+    const message = translations[locale.value][key]
+
+    if (!params) return message
+
+    return Object.entries(params).reduce(
+      (result, [name, value]) => result.replaceAll('{' + name + '}', String(value)),
+      message,
+    )
   }
 
   return {

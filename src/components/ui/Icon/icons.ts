@@ -5,6 +5,8 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronUp,
+  ChevronsLeft,
+  ChevronsRight,
   CircleAlert,
   CircleCheck,
   Info,
@@ -14,6 +16,7 @@ import {
   Trash2,
   X,
   Minus,
+  MoreHorizontal,
 } from '@lucide/vue'
 
 export const ICONS = {
@@ -23,6 +26,8 @@ export const ICONS = {
   chevronUp: ChevronUp,
   chevronRight: ChevronRight,
   chevronLeft: ChevronLeft,
+  chevronsLeft: ChevronsLeft,
+  chevronsRight: ChevronsRight,
   error: CircleAlert,
   success: CircleCheck,
   info: Info,
@@ -32,6 +37,7 @@ export const ICONS = {
   trash2: Trash2,
   x: X,
   minus: Minus,
+  moreHorizontal: MoreHorizontal,
 } as const
 
 export type IconName = keyof typeof ICONS

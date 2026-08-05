@@ -43,6 +43,39 @@ export const buttonVariants = cva('', {
     },
   },
   compoundVariants: [
+    {
+      variant: 'solid',
+      severity: 'neutral',
+      class: 'bg-foreground text-background hover:bg-foreground/90 active:bg-foreground/80',
+    },
+    {
+      variant: 'outline',
+      severity: 'neutral',
+      class:
+        'border-input text-foreground hover:bg-accent hover:text-accent-foreground active:bg-accent',
+    },
+    {
+      variant: 'plain',
+      severity: 'neutral',
+      class: 'text-foreground hover:bg-accent hover:text-accent-foreground active:bg-accent',
+    },
+    {
+      variant: 'subtle',
+      severity: 'neutral',
+      class:
+        'border-input bg-muted text-foreground hover:bg-accent hover:text-accent-foreground active:bg-accent',
+    },
+    {
+      variant: 'soft',
+      severity: 'neutral',
+      class:
+        'bg-muted text-foreground hover:bg-accent hover:text-accent-foreground active:bg-accent',
+    },
+    {
+      variant: 'link',
+      severity: 'neutral',
+      class: 'text-foreground',
+    },
     { square: true, size: 'xs', class: 'size-7 p-0' },
     { square: true, size: 'sm', class: 'size-8 p-0' },
     { square: true, size: 'md', class: 'size-9 p-0' },

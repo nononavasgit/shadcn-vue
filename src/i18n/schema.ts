@@ -9,4 +9,10 @@ export interface Messages {
   increment: string
   minimum: string
   maximum: string
+  first: string
+  previus: string
+  next: string
+  last: string
+  morePages: string
+  'page_{n}': string
 }

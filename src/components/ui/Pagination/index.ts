@@ -1,56 +1,46 @@
-import type { Component, HTMLAttributes } from 'vue'
+import type { HTMLAttributes } from 'vue'
+import type { IconName, IconProps } from '@/components/ui/Icon'
+import type { ButtonProps } from '@/components/ui/Button'
+import type { PaginationRootEmits, PaginationRootProps as RekaPaginationRootProps } from 'reka-ui'
 
 export { default as Pagination } from './Pagination.vue'
 
+export type PaginationIcon = IconName | IconProps
+
+// Types
+export type PaginationRootProps = Pick<
+  RekaPaginationRootProps,
+  'page' | 'defaultPage' | 'total' | 'itemsPerPage' | 'siblingCount' | 'showEdges' | 'disabled'
+>
+
+export function normalizeRootProps(
+  source: PaginationRootProps | null | undefined,
+): PaginationRootProps | undefined {
+  if (!source) return undefined
+
+  const { page, defaultPage, total, itemsPerPage, siblingCount, showEdges, disabled } = source
+  return {
+    page,
+    defaultPage,
+    total,
+    itemsPerPage,
+    siblingCount,
+    showEdges,
+    disabled,
+  }
+}
+
 export type PaginationGeneratedItem = { type: 'page'; value: number } | { type: 'ellipsis' }
 
-export interface PaginationProps {
-  /** Página controlada actualmente. */
+// Context
+export interface PaginationUIContext {
   page?: number
-  /** Página inicial cuando el componente no está controlado. */
-  defaultPage?: number
-  /** Número total de elementos. */
-  total?: number
-  /** Número de elementos mostrado por página. */
-  itemsPerPage?: number
-  /** Número de páginas hermanas alrededor de la página activa. */
-  siblingCount?: number
-  /** Muestra siempre los extremos y genera puntos suspensivos cuando hacen falta. */
-  showEdges?: boolean
-  /** Deshabilita toda la paginación. */
-  disabled?: boolean
-  /** Muestra el botón de primera página. */
-  showFirst?: boolean
-  /** Muestra el botón de página anterior. */
-  showPrevious?: boolean
-  /** Muestra el botón de página siguiente. */
-  showNext?: boolean
-  /** Muestra el botón de última página. */
-  showLast?: boolean
-  /** Elemento o componente utilizado como raíz. */
-  as?: string | Component
-  /** Renderiza el hijo como raíz. */
-  asChild?: boolean
-  ui?: PaginationUI
-}
-
-// Emits
-export interface PaginationEmits {
-  'update:page': [value: number]
-}
-
-// SlotProps
-export interface PaginationRootSlotProps {
-  page: number
   pageCount: number
   total: number
   itemsPerPage: number
-  from: number
-  to: number
 }
 
-// Context
-export interface PaginationUIContext extends PaginationRootSlotProps {
+export interface PaginationItemUIContext extends PaginationUIContext {
   item: PaginationGeneratedItem
   index: number
   active: boolean
@@ -59,33 +49,65 @@ export interface PaginationUIContext extends PaginationRootSlotProps {
 }
 
 export type PaginationUIValue<T> = T | ((context: PaginationUIContext) => T)
+export type PaginationItemUIValue<T> = T | ((context: PaginationItemUIContext) => T)
+
+export function resolvePaginationUIValue<T>(
+  value: PaginationUIValue<T> | undefined,
+  context: PaginationUIContext,
+): T | undefined {
+  return typeof value === 'function'
+    ? (value as (context: PaginationUIContext) => T)(context)
+    : value
+}
+export function resolvePaginationItemUIValue<T>(
+  value: PaginationItemUIValue<T> | undefined,
+  context: PaginationItemUIContext,
+): T | undefined {
+  return typeof value === 'function'
+    ? (value as (context: PaginationItemUIContext) => T)(context)
+    : value
+}
 
 // UI
 export interface PaginationUI {
-  root?: HTMLAttributes
-  content?: HTMLAttributes
-  item?: PaginationUIValue<HTMLAttributes>
-  ellipsis?: PaginationUIValue<HTMLAttributes>
-  first?: HTMLAttributes
-  previous?: HTMLAttributes
-  next?: HTMLAttributes
-  last?: HTMLAttributes
+  item?: PaginationItemUIValue<HTMLAttributes>
+  ellipsis?: PaginationItemUIValue<HTMLAttributes>
+  root?: PaginationUIValue<HTMLAttributes>
+  list?: PaginationUIValue<HTMLAttributes>
+  first?: PaginationUIValue<HTMLAttributes>
+  previous?: PaginationUIValue<HTMLAttributes>
+  next?: PaginationUIValue<HTMLAttributes>
+  last?: PaginationUIValue<HTMLAttributes>
 }
 
-//
-export type PaginationSlotProps = PaginationUIContext
+// Props
+export interface PaginationProps extends PaginationRootProps {
+  showControls?: boolean
+  color?: ButtonProps['color']
+  variant?: ButtonProps['variant']
+  size?: ButtonProps['size']
+  severity?: ButtonProps['severity']
+  activeColor?: ButtonProps['color']
+  activeVariant?: ButtonProps['variant']
+  firstIcon?: PaginationIcon
+  prevIcon?: PaginationIcon
+  nextIcon?: PaginationIcon
+  lastIcon?: PaginationIcon
+  ellipsisIcon?: PaginationIcon
+  ui?: PaginationUI
+}
+
+// Emits
+export type PaginationEmits = PaginationRootEmits
 
 // Slots
 export type PaginationSlots = {
-  preContent?(props: PaginationRootSlotProps): unknown
-  postContent?(props: PaginationRootSlotProps): unknown
-  item?(props: PaginationSlotProps): unknown
-  ellipsis?(props: PaginationSlotProps): unknown
-  first?(props: PaginationRootSlotProps): unknown
-  previous?(props: PaginationRootSlotProps): unknown
-  next?(props: PaginationRootSlotProps): unknown
-  last?(props: PaginationRootSlotProps): unknown
-} & {
-  [name: `item-${number}`]: ((props: PaginationSlotProps) => unknown) | undefined
-  [name: `ellipsis-${number}`]: ((props: PaginationSlotProps) => unknown) | undefined
+  preContent?(props: PaginationUIContext): unknown
+  postContent?(props: PaginationUIContext): unknown
+  item?(props: PaginationItemUIContext): unknown
+  ellipsis?(props: PaginationItemUIContext): unknown
+  first?(props: PaginationUIContext): unknown
+  previous?(props: PaginationUIContext): unknown
+  next?(props: PaginationUIContext): unknown
+  last?(props: PaginationUIContext): unknown
 }

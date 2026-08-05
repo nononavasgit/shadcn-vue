@@ -11,4 +11,10 @@ export default {
   increment: 'Incrementar',
   minimum: 'Mínimo',
   maximum: 'Máximo',
+  first: 'Primera página',
+  previus: 'Página anterior',
+  next: 'Página siguiente',
+  last: 'Última página',
+  'page_{n}': 'Página {n}',
+  morePages: 'Más páginas',
 } satisfies Messages

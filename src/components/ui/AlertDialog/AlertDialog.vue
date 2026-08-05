@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { computed, useAttrs, useSlots } from 'vue'
 import {
-  AlertDialog as AlertDialogBase,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
+  AlertDialogOverlay,
+  AlertDialogPortal,
+  AlertDialogRoot,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/primitives/AlertDialog'
+} from 'reka-ui'
 import { Button, normalizeButtonProps } from '@/components/ui/Button'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
@@ -20,8 +20,8 @@ import {
   normalizeAlertDialogContentProps,
   normalizeAlertDialogTriggerProps,
   type AlertDialogEmits,
+  type AlertDialogContext,
   type AlertDialogProps,
-  type AlertDialogSlotProps,
   type AlertDialogSlots,
 } from '.'
 
@@ -47,7 +47,7 @@ const attrs = useAttrs()
 const open = defineModel<boolean>('open')
 const { t } = useI18n()
 
-function getSlotProps(slotProps: { open: boolean; close: () => void }): AlertDialogSlotProps {
+function getContext(slotProps: { open: boolean; close: () => void }): AlertDialogContext {
   return {
     open: slotProps.open,
     close: slotProps.close,
@@ -57,6 +57,7 @@ function getSlotProps(slotProps: { open: boolean; close: () => void }): AlertDia
 const calculatedUI = computed(() => {
   const rootUI = normalizeHTMLAttributes(props.ui?.root)
   const triggerUI = normalizeHTMLAttributes(props.ui?.trigger)
+  const overlayUI = normalizeHTMLAttributes(props.ui?.overlay)
   const normalizedContentUI = normalizeHTMLAttributes(props.ui?.content)
   const { dir: contentDirection, ...contentUI } = normalizedContentUI
   const headerUI = normalizeHTMLAttributes(props.ui?.header)
@@ -89,25 +90,30 @@ const calculatedUI = computed(() => {
       asChild: trigger?.asChild ?? true,
       class: cn(triggerUI.class),
     },
+    overlay: {
+      ...overlayUI,
+      class: cn(
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50',
+        overlayUI.class,
+      ),
+      style: overlayUI.style,
+    },
     content: {
       ...contentUI,
       ...content,
       disableOutsidePointerEvents: content?.disableOutsidePointerEvents ?? true,
-      onOpenAutoFocus: (event: Event) => emit('openAutoFocus', event),
-      onCloseAutoFocus: (event: Event) => emit('closeAutoFocus', event),
-      onEscapeKeyDown: (event: Event) => emit('escapeKeyDown', event),
-      onPointerDownOutside: (event: Event) => emit('pointerDownOutside', event),
-      onFocusOutside: (event: Event) => emit('focusOutside', event),
-      onInteractOutside: (event: Event) => emit('interactOutside', event),
-      class: cn(contentUI.class),
+      class: cn(
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 pointer-events-auto fixed top-1/2 left-1/2 z-50 grid max-h-[90dvh] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 grid-rows-[auto_minmax(0,1fr)_auto] gap-4 overflow-hidden rounded-lg border bg-background p-6 shadow-lg duration-200 sm:max-w-lg',
+        contentUI.class,
+      ),
     },
     header: {
       ...headerUI,
-      class: cn(headerUI.class),
+      class: cn('flex flex-col gap-2 text-center sm:text-left', headerUI.class),
     },
     label: {
       ...labelUI,
-      class: cn('flex items-center gap-2', labelUI.class),
+      class: cn('flex items-center gap-2 text-lg leading-none font-semibold', labelUI.class),
     },
     icon: {
       'aria-hidden': true,
@@ -117,7 +123,7 @@ const calculatedUI = computed(() => {
     },
     description: {
       ...descriptionUI,
-      class: cn(descriptionUI.class),
+      class: cn('text-sm text-muted-foreground', descriptionUI.class),
     },
     body: {
       ...bodyUI,
@@ -125,7 +131,7 @@ const calculatedUI = computed(() => {
     },
     footer: {
       ...footerUI,
-      class: cn(footerUI.class),
+      class: cn('flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', footerUI.class),
     },
     cancel: {
       ...cancelUI,
@@ -146,58 +152,82 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <AlertDialogBase v-slot="rootSlotProps" v-bind="calculatedUI.root" v-model:open="open">
-    <AlertDialogTrigger v-bind="calculatedUI.trigger">
-      <slot v-bind="getSlotProps(rootSlotProps)" />
+  <AlertDialogRoot
+    v-slot="rootSlotProps"
+    v-bind="calculatedUI.root"
+    v-model:open="open"
+    data-slot="alert-dialog"
+  >
+    <AlertDialogTrigger v-bind="calculatedUI.trigger" data-slot="alert-dialog-trigger">
+      <slot v-bind="getContext(rootSlotProps)" />
     </AlertDialogTrigger>
 
-    <AlertDialogContent v-bind="calculatedUI.content">
-      <AlertDialogHeader
-        v-if="props.label || props.description || slots.header || slots.label || slots.description"
-        v-bind="calculatedUI.header"
-      >
-        <slot name="header" v-bind="getSlotProps(rootSlotProps)">
-          <AlertDialogTitle v-if="props.label || slots.label" v-bind="calculatedUI.label">
-            <Icon
-              v-if="calculatedUI.icon.name"
-              v-bind="calculatedUI.icon"
-              :name="calculatedUI.icon.name"
-            />
-            <slot name="label" v-bind="getSlotProps(rootSlotProps)">
-              {{ props.label }}
-            </slot>
-          </AlertDialogTitle>
+    <AlertDialogPortal>
+      <AlertDialogOverlay v-bind="calculatedUI.overlay" data-slot="alert-dialog-overlay" />
+      <AlertDialogContent v-bind="calculatedUI.content" data-slot="alert-dialog-content">
+        <div
+          v-if="
+            props.label || props.description || slots.header || slots.label || slots.description
+          "
+          v-bind="calculatedUI.header"
+          data-slot="alert-dialog-header"
+        >
+          <slot name="header" v-bind="getContext(rootSlotProps)">
+            <AlertDialogTitle
+              v-if="props.label || slots.label"
+              v-bind="calculatedUI.label"
+              data-slot="alert-dialog-title"
+            >
+              <Icon
+                v-if="calculatedUI.icon.name"
+                v-bind="calculatedUI.icon"
+                :name="calculatedUI.icon.name"
+              />
+              <slot name="label" v-bind="getContext(rootSlotProps)">
+                {{ props.label }}
+              </slot>
+            </AlertDialogTitle>
 
-          <AlertDialogDescription
-            v-if="props.description || slots.description"
-            v-bind="calculatedUI.description"
-          >
-            <slot name="description" v-bind="getSlotProps(rootSlotProps)">
-              {{ props.description }}
-            </slot>
-          </AlertDialogDescription>
-        </slot>
-      </AlertDialogHeader>
+            <AlertDialogDescription
+              v-if="props.description || slots.description"
+              v-bind="calculatedUI.description"
+              data-slot="alert-dialog-description"
+            >
+              <slot name="description" v-bind="getContext(rootSlotProps)">
+                {{ props.description }}
+              </slot>
+            </AlertDialogDescription>
+          </slot>
+        </div>
 
-      <div v-if="slots.content" v-bind="calculatedUI.body">
-        <slot name="content" v-bind="getSlotProps(rootSlotProps)" />
-      </div>
+        <div v-if="slots.content" v-bind="calculatedUI.body">
+          <slot name="content" v-bind="getContext(rootSlotProps)" />
+        </div>
 
-      <AlertDialogFooter v-bind="calculatedUI.footer">
-        <slot name="footer" v-bind="getSlotProps(rootSlotProps)">
-          <AlertDialogCancel as-child @click="emit('cancel', $event)">
-            <slot name="cancel" v-bind="getSlotProps(rootSlotProps)">
-              <Button v-bind="calculatedUI.cancel" />
-            </slot>
-          </AlertDialogCancel>
+        <div v-bind="calculatedUI.footer" data-slot="alert-dialog-footer">
+          <slot name="footer" v-bind="getContext(rootSlotProps)">
+            <AlertDialogCancel
+              as-child
+              data-slot="alert-dialog-cancel"
+              @click="emit('cancel', $event)"
+            >
+              <slot name="cancel" v-bind="getContext(rootSlotProps)">
+                <Button v-bind="calculatedUI.cancel" />
+              </slot>
+            </AlertDialogCancel>
 
-          <AlertDialogAction as-child @click="emit('action', $event)">
-            <slot name="action" v-bind="getSlotProps(rootSlotProps)">
-              <Button v-bind="calculatedUI.action" />
-            </slot>
-          </AlertDialogAction>
-        </slot>
-      </AlertDialogFooter>
-    </AlertDialogContent>
-  </AlertDialogBase>
+            <AlertDialogAction
+              as-child
+              data-slot="alert-dialog-action"
+              @click="emit('action', $event)"
+            >
+              <slot name="action" v-bind="getContext(rootSlotProps)">
+                <Button v-bind="calculatedUI.action" />
+              </slot>
+            </AlertDialogAction>
+          </slot>
+        </div>
+      </AlertDialogContent>
+    </AlertDialogPortal>
+  </AlertDialogRoot>
 </template>

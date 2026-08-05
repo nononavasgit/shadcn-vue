@@ -1,20 +1,30 @@
-import type { Component, HTMLAttributes } from 'vue'
+import type {
+  AlertDialogContentEmits as RekaAlertDialogContentEmits,
+  AlertDialogContentProps as RekaAlertDialogContentProps,
+  AlertDialogEmits as RekaAlertDialogEmits,
+  AlertDialogProps as RekaAlertDialogProps,
+  AlertDialogTriggerProps as RekaAlertDialogTriggerProps,
+} from 'reka-ui'
+import type { HTMLAttributes } from 'vue'
 import type { ButtonProps } from '@/components/ui/Button'
 import type { IconName, IconProps } from '@/components/ui/Icon'
 
 export { default as AlertDialog } from './AlertDialog.vue'
 
-export interface AlertDialogTriggerProps {
-  as?: string | Component
-  asChild?: boolean
+export type AlertDialogRootProps = Pick<RekaAlertDialogProps, 'defaultOpen' | 'unmountOnHide'>
+export type AlertDialogTriggerProps = Pick<RekaAlertDialogTriggerProps, 'as' | 'asChild'>
+
+export type AlertDialogContentEventProps = {
+  [K in keyof RekaAlertDialogContentEmits as `on${Capitalize<string & K>}`]?: (
+    ...args: RekaAlertDialogContentEmits[K]
+  ) => void
 }
 
-export interface AlertDialogContentProps {
-  as?: string | Component
-  asChild?: boolean
-  forceMount?: boolean
-  disableOutsidePointerEvents?: boolean
-}
+export type AlertDialogContentProps = Pick<
+  RekaAlertDialogContentProps,
+  'as' | 'asChild' | 'forceMount' | 'disableOutsidePointerEvents'
+> &
+  AlertDialogContentEventProps
 
 export function normalizeAlertDialogTriggerProps(
   source: AlertDialogTriggerProps | null | undefined,
@@ -28,13 +38,50 @@ export function normalizeAlertDialogContentProps(
   source: AlertDialogContentProps | null | undefined,
 ): AlertDialogContentProps | undefined {
   if (!source) return undefined
-  const { as, asChild, forceMount, disableOutsidePointerEvents } = source
-  return { as, asChild, forceMount, disableOutsidePointerEvents }
+  const {
+    as,
+    asChild,
+    forceMount,
+    disableOutsidePointerEvents,
+    onOpenAutoFocus,
+    onCloseAutoFocus,
+    onEscapeKeyDown,
+    onPointerDownOutside,
+    onFocusOutside,
+    onInteractOutside,
+  } = source
+  return {
+    as,
+    asChild,
+    forceMount,
+    disableOutsidePointerEvents,
+    onOpenAutoFocus,
+    onCloseAutoFocus,
+    onEscapeKeyDown,
+    onPointerDownOutside,
+    onFocusOutside,
+    onInteractOutside,
+  }
 }
 
+// Props
+export interface AlertDialogProps extends AlertDialogRootProps {
+  open?: boolean
+  label?: string
+  description?: string
+  icon?: IconName | IconProps
+  actionButton?: ButtonProps
+  cancelButton?: ButtonProps
+  trigger?: AlertDialogTriggerProps
+  content?: AlertDialogContentProps
+  ui?: AlertDialogUI
+}
+
+// UI
 export interface AlertDialogUI {
   root?: HTMLAttributes
   trigger?: HTMLAttributes
+  overlay?: HTMLAttributes
   content?: HTMLAttributes
   header?: HTMLAttributes
   label?: HTMLAttributes
@@ -46,44 +93,26 @@ export interface AlertDialogUI {
   cancel?: HTMLAttributes
 }
 
-export interface AlertDialogProps {
-  open?: boolean
-  defaultOpen?: boolean
-  unmountOnHide?: boolean
-  label?: string
-  description?: string
-  icon?: IconName | IconProps
-  actionButton?: ButtonProps
-  cancelButton?: ButtonProps
-  trigger?: AlertDialogTriggerProps
-  content?: AlertDialogContentProps
-  ui?: AlertDialogUI
-}
-
-export interface AlertDialogEmits {
-  'update:open': [value: boolean]
-  action: [event: PointerEvent]
-  cancel: [event: PointerEvent]
-  openAutoFocus: [event: Event]
-  closeAutoFocus: [event: Event]
-  escapeKeyDown: [event: Event]
-  pointerDownOutside: [event: Event]
-  focusOutside: [event: Event]
-  interactOutside: [event: Event]
-}
-
-export interface AlertDialogSlotProps {
+// Context
+export interface AlertDialogContext {
   open: boolean
   close: () => void
 }
 
+// Emits
+export type AlertDialogEmits = RekaAlertDialogEmits & {
+  action: [event: PointerEvent]
+  cancel: [event: PointerEvent]
+}
+
+// Slots
 export interface AlertDialogSlots {
-  default?(props: AlertDialogSlotProps): unknown
-  content?(props: AlertDialogSlotProps): unknown
-  header?(props: AlertDialogSlotProps): unknown
-  label?(props: AlertDialogSlotProps): unknown
-  description?(props: AlertDialogSlotProps): unknown
-  footer?(props: AlertDialogSlotProps): unknown
-  action?(props: AlertDialogSlotProps): unknown
-  cancel?(props: AlertDialogSlotProps): unknown
+  default?(props: AlertDialogContext): unknown
+  content?(props: AlertDialogContext): unknown
+  header?(props: AlertDialogContext): unknown
+  label?(props: AlertDialogContext): unknown
+  description?(props: AlertDialogContext): unknown
+  footer?(props: AlertDialogContext): unknown
+  action?(props: AlertDialogContext): unknown
+  cancel?(props: AlertDialogContext): unknown
 }

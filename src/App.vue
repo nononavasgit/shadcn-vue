@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { AlertDialog } from '@/components/ui/AlertDialog'
 import { Breadcrumb, type BreadcrumbItem } from '@/components/ui/Breadcrumb'
 import { HoverCard } from '@/components/ui/HoverCard'
 import { Pagination } from '@/components/ui/Pagination'
@@ -36,10 +37,50 @@ const customPaginationPage = ref(6)
 const hoverCardOpen = ref(false)
 const basicStepperValue = ref(1)
 const customStepperValue = ref(2)
+const alertDialogOpen = ref(false)
 </script>
 
 <template>
   <main class="mx-auto min-h-screen max-w-2xl space-y-8 p-6 md:p-10">
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-lg font-semibold">AlertDialog</h2>
+        <p class="text-sm text-muted-foreground">
+          Ejemplos de confirmaciÃ³n bÃ¡sica y contenido personalizado.
+        </p>
+      </div>
+
+      <div class="grid gap-4 rounded-lg border p-5 sm:grid-cols-2">
+        <AlertDialog
+          label="Eliminar proyecto"
+          description="Esta acciÃ³n no se puede deshacer."
+          :action-button="{ label: 'Eliminar', severity: 'error' }"
+        >
+          <button class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted">
+            Abrir alerta
+          </button>
+        </AlertDialog>
+
+        <AlertDialog
+          v-model:open="alertDialogOpen"
+          label="Publicar cambios"
+          icon="info"
+          :action-button="{ label: 'Publicar' }"
+          :cancel-button="{ label: 'Volver' }"
+        >
+          <button class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted">
+            Revisar publicaciÃ³n
+          </button>
+          <template #content="{ close }">
+            <div class="rounded-md bg-muted p-3 text-sm">
+              Los cambios serÃ¡n visibles para todos los usuarios.
+              <button class="ml-2 underline" @click="close">Cerrar</button>
+            </div>
+          </template>
+        </AlertDialog>
+      </div>
+    </section>
+
     <section class="space-y-4">
       <div>
         <h2 class="text-lg font-semibold">Stepper</h2>

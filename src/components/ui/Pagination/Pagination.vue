@@ -47,13 +47,6 @@ const props = withDefaults(defineProps<PaginationProps>(), {
   ellipsisIcon: 'moreHorizontal',
   as: 'nav',
   asChild: false,
-  content: undefined,
-  item: undefined,
-  ellipsis: undefined,
-  first: undefined,
-  previous: undefined,
-  next: undefined,
-  last: undefined,
   ui: undefined,
 })
 defineEmits<PaginationEmits>()
@@ -111,7 +104,7 @@ const calculatedUI = computed(() => {
     },
     list: {
       ...listUI,
-      class: cn('flex flex-row items-center gap-1', listUI.class),
+      class: cn('flex flex-wrap flex-row items-center gap-1', listUI.class),
       style: listUI.style,
     },
     first: {

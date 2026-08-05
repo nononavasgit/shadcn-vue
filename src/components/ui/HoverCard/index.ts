@@ -1,64 +1,47 @@
-import type { Component, HTMLAttributes } from 'vue'
+import type { HTMLAttributes } from 'vue'
+import type {
+  HoverCardContentProps as RekaHoverCardContentProps,
+  HoverCardRootEmits,
+  HoverCardRootProps as RekaHoverCardRootProps,
+  HoverCardTriggerProps as RekaHoverCardTriggerProps,
+} from 'reka-ui'
 
 export { default as HoverCard } from './HoverCard.vue'
 
-export const SIDES = {
-  top: 'top',
-  right: 'right',
-  bottom: 'bottom',
-  left: 'left',
-} as const
+// Types
+export type HoverCardRootProps = Pick<
+  RekaHoverCardRootProps,
+  'open' | 'defaultOpen' | 'openDelay' | 'closeDelay' | 'enableTouch'
+>
+export type HoverCardTriggerProps = Pick<RekaHoverCardTriggerProps, 'as' | 'asChild'>
+export type HoverCardContentProps = Pick<
+  RekaHoverCardContentProps,
+  | 'as'
+  | 'asChild'
+  | 'forceMount'
+  | 'side'
+  | 'sideOffset'
+  | 'align'
+  | 'alignOffset'
+  | 'avoidCollisions'
+  | 'collisionPadding'
+  | 'arrowPadding'
+  | 'sticky'
+  | 'hideWhenDetached'
+  | 'positionStrategy'
+  | 'updatePositionStrategy'
+>
 
-export const ALIGNS = {
-  start: 'start',
-  center: 'center',
-  end: 'end',
-} as const
+export function normalizeRootProps(
+  source: HoverCardRootProps | null | undefined,
+): HoverCardRootProps | undefined {
+  if (!source) return undefined
 
-export const STICKY_VALUES = {
-  partial: 'partial',
-  always: 'always',
-} as const
-
-export const POSITION_STRATEGIES = {
-  absolute: 'absolute',
-  fixed: 'fixed',
-} as const
-
-export const UPDATE_POSITION_STRATEGIES = {
-  optimized: 'optimized',
-  always: 'always',
-} as const
-
-export type HoverCardSide = keyof typeof SIDES
-export type HoverCardAlign = keyof typeof ALIGNS
-export type HoverCardSticky = keyof typeof STICKY_VALUES
-export type HoverCardPositionStrategy = keyof typeof POSITION_STRATEGIES
-export type HoverCardUpdatePositionStrategy = keyof typeof UPDATE_POSITION_STRATEGIES
-
-export interface HoverCardTriggerProps {
-  as?: string | Component
-  asChild?: boolean
+  const { defaultOpen, open, openDelay, closeDelay, enableTouch } = source
+  return { defaultOpen, open, openDelay, closeDelay, enableTouch }
 }
 
-export interface HoverCardContentProps {
-  as?: string | Component
-  asChild?: boolean
-  forceMount?: boolean
-  side?: HoverCardSide
-  sideOffset?: number
-  align?: HoverCardAlign
-  alignOffset?: number
-  avoidCollisions?: boolean
-  collisionPadding?: number | Partial<Record<HoverCardSide, number>>
-  arrowPadding?: number
-  sticky?: HoverCardSticky
-  hideWhenDetached?: boolean
-  positionStrategy?: HoverCardPositionStrategy
-  updatePositionStrategy?: HoverCardUpdatePositionStrategy
-}
-
-export function normalizeHoverCardTriggerProps(
+export function normalizeTriggerProps(
   source: HoverCardTriggerProps | null | undefined,
 ): HoverCardTriggerProps | undefined {
   if (!source) return undefined
@@ -67,7 +50,7 @@ export function normalizeHoverCardTriggerProps(
   return { as, asChild }
 }
 
-export function normalizeHoverCardContentProps(
+export function normalizeContentProps(
   source: HoverCardContentProps | null | undefined,
 ): HoverCardContentProps | undefined {
   if (!source) return undefined
@@ -112,37 +95,24 @@ export interface HoverCardUI {
   content?: HTMLAttributes
 }
 
-export interface HoverCardProps {
-  open?: boolean
-  defaultOpen?: boolean
+// Props
+export interface HoverCardProps extends HoverCardRootProps {
   label?: string
-  openDelay?: number
-  closeDelay?: number
-  enableTouch?: boolean
   trigger?: HoverCardTriggerProps
   content?: HoverCardContentProps
   ui?: HoverCardUI
 }
 
-export interface HoverCardEmits {
-  'update:open': [value: boolean]
-}
+// Emits
+export type HoverCardEmits = HoverCardRootEmits
 
-export interface HoverCardSlotProps {
+// SlotProps
+export interface HoverCarcUIContext {
   open: boolean
 }
 
+// Slots
 export interface HoverCardSlots {
-  default?(props: HoverCardSlotProps): unknown
-  content?(props: HoverCardSlotProps): unknown
-}
-
-export function mapCollisionPadding(
-  padding: number | Partial<Record<HoverCardSide, number>> | undefined,
-) {
-  if (padding === undefined || typeof padding === 'number') return padding
-
-  return Object.fromEntries(
-    Object.entries(padding).map(([side, value]) => [SIDES[side as HoverCardSide], value]),
-  ) as Partial<Record<(typeof SIDES)[HoverCardSide], number>>
+  default?(props: HoverCarcUIContext): unknown
+  content?(props: HoverCarcUIContext): unknown
 }

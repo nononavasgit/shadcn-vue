@@ -1,22 +1,9 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import {
-  HoverCard as HoverCardBase,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@/components/primitives/HoverCard'
+import { HoverCardContent, HoverCardPortal, HoverCardRoot, HoverCardTrigger } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
-import {
-  ALIGNS,
-  mapCollisionPadding,
-  normalizeHoverCardContentProps,
-  normalizeHoverCardTriggerProps,
-  POSITION_STRATEGIES,
-  SIDES,
-  STICKY_VALUES,
-  UPDATE_POSITION_STRATEGIES,
-} from '.'
+import { normalizeContentProps, normalizeRootProps, normalizeTriggerProps } from '.'
 import type { HoverCardEmits, HoverCardProps, HoverCardSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
@@ -41,8 +28,9 @@ const calculatedUI = computed(() => {
   const triggerUI = normalizeHTMLAttributes(props.ui?.trigger)
   const normalizedContentUI = normalizeHTMLAttributes(props.ui?.content)
   const { dir: contentDirection, ...contentUI } = normalizedContentUI
-  const trigger = normalizeHoverCardTriggerProps(props.trigger)
-  const content = normalizeHoverCardContentProps(props.content)
+  const rootProps = normalizeRootProps(props)
+  const triggerProps = normalizeTriggerProps(props.trigger)
+  const contentProps = normalizeContentProps(props.content)
 
   void contentDirection
 
@@ -50,41 +38,25 @@ const calculatedUI = computed(() => {
     root: {
       ...attrs,
       ...rootUI,
-      defaultOpen: props.defaultOpen,
-      openDelay: props.openDelay,
-      closeDelay: props.closeDelay,
-      enableTouch: props.enableTouch,
+      ...rootProps,
       class: cn(attrs.class, rootUI.class),
       style: [attrs.style, rootUI.style],
     },
     trigger: {
       ...triggerUI,
-      as: trigger?.as,
-      asChild: trigger?.asChild ?? true,
+      ...triggerProps,
+      asChild: triggerProps?.asChild ?? true,
       class: cn(triggerUI.class),
       style: triggerUI.style,
     },
     content: {
       ...contentUI,
-      as: content?.as,
-      asChild: content?.asChild,
-      align: ALIGNS[content?.align ?? 'center'],
-      alignOffset: content?.alignOffset,
-      arrowPadding: content?.arrowPadding,
-      avoidCollisions: content?.avoidCollisions ?? true,
-      collisionPadding: mapCollisionPadding(content?.collisionPadding),
-      forceMount: content?.forceMount,
-      hideWhenDetached: content?.hideWhenDetached,
-      positionStrategy: content?.positionStrategy
-        ? POSITION_STRATEGIES[content.positionStrategy]
-        : undefined,
-      side: SIDES[content?.side ?? 'bottom'],
-      sideOffset: content?.sideOffset ?? 4,
-      sticky: content?.sticky ? STICKY_VALUES[content.sticky] : undefined,
-      updatePositionStrategy: content?.updatePositionStrategy
-        ? UPDATE_POSITION_STRATEGIES[content.updatePositionStrategy]
-        : undefined,
-      class: cn(contentUI.class),
+      ...contentProps,
+      sideOffset: contentProps?.sideOffset ?? 4,
+      class: cn(
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-64 origin-(--reka-hover-card-content-transform-origin) rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-hidden',
+        contentUI.class,
+      ),
       style: contentUI.style,
     },
   }
@@ -92,16 +64,24 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <HoverCardBase v-slot="slotProps" v-model:open="open" v-bind="calculatedUI.root">
-    <HoverCardTrigger v-bind="calculatedUI.trigger">
+  <HoverCardRoot
+    v-slot="slotProps"
+    v-bind="calculatedUI.root"
+    v-model:open="open"
+    data-slot="hover-card"
+  >
+    <HoverCardTrigger v-bind="calculatedUI.trigger" data-slot="hover-card-trigger">
       <slot :open="slotProps.open" />
     </HoverCardTrigger>
 
-    <HoverCardContent
-      v-if="$slots.content || props.label !== undefined"
-      v-bind="calculatedUI.content"
-    >
-      <slot name="content" :open="slotProps.open">{{ props.label }}</slot>
-    </HoverCardContent>
-  </HoverCardBase>
+    <HoverCardPortal>
+      <HoverCardContent
+        v-if="$slots.content || props.label !== undefined"
+        v-bind="calculatedUI.content"
+        data-slot="hover-card-content"
+      >
+        <slot name="content" :open="slotProps.open">{{ props.label }}</slot>
+      </HoverCardContent>
+    </HoverCardPortal>
+  </HoverCardRoot>
 </template>

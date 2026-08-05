@@ -1,39 +1,68 @@
+import type {
+  PinInputInputProps as RekaPinInputInputProps,
+  PinInputRootProps as RekaPinInputRootProps,
+} from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
-import type { OTPInputProps, RenderProps } from 'vue-input-otp'
-import type { InputOTPPattern } from './patterns'
 
 export { default as InputOTP } from './InputOTP.vue'
-export { INPUT_OTP_PATTERNS } from './patterns'
-export type { InputOTPPattern } from './patterns'
 
-export type InputOTPTextAlign = NonNullable<OTPInputProps['textAlign']>
-export type InputOTPInputMode = NonNullable<OTPInputProps['inputmode']>
-export type InputOTPPasswordManagerStrategy = NonNullable<
-  OTPInputProps['pushPasswordManagerStrategy']
+export type InputOTPType = NonNullable<RekaPinInputRootProps['type']>
+export type InputOTPValue = string[] | number[]
+export type InputOTPRootProps = Pick<
+  RekaPinInputRootProps,
+  | 'as'
+  | 'asChild'
+  | 'defaultValue'
+  | 'placeholder'
+  | 'mask'
+  | 'otp'
+  | 'type'
+  | 'dir'
+  | 'disabled'
+  | 'id'
+  | 'name'
+  | 'required'
 >
+export type InputOTPInputProps = Pick<RekaPinInputInputProps, 'as' | 'asChild' | 'disabled'>
 
-export interface InputOTPProps extends Pick<
-  OTPInputProps,
-  | 'containerClass'
-  | 'inputmode'
-  | 'noScriptCssFallback'
-  | 'pasteTransformer'
-  | 'pushPasswordManagerStrategy'
-  | 'textAlign'
-> {
-  modelValue?: string
-  defaultValue?: string
+export function normalizeInputOTPInputProps(
+  source: InputOTPInputProps | null | undefined,
+): InputOTPInputProps | undefined {
+  if (!source) return undefined
+  const { as, asChild, disabled } = source
+  return { as, asChild, disabled }
+}
+
+// Props
+export interface InputOTPProps extends Omit<InputOTPRootProps, 'defaultValue'> {
+  modelValue?: InputOTPValue
+  defaultValue?: InputOTPValue
   maxlength?: number
   groups?: number[]
   separator?: boolean
-  pattern?: InputOTPPattern
+  input?: InputOTPInputProps
   ui?: InputOTPUI
 }
 
-export interface InputOTPEmits {
-  'update:modelValue': [value: string | undefined]
-  complete: [value: string]
-  input: [value: string]
+// UI
+export type InputOTPUIValue<T, C> = T | ((context: C) => T)
+export interface InputOTPUI {
+  root?: HTMLAttributes
+  group?: InputOTPUIValue<HTMLAttributes, InputOTPGroupContext>
+  input?: InputOTPUIValue<HTMLAttributes, InputOTPInputContext>
+  separator?: InputOTPUIValue<HTMLAttributes, InputOTPSeparatorContext>
+}
+
+export function resolveInputOTPUIValue<T, C>(
+  value: InputOTPUIValue<T, C> | undefined,
+  context: C,
+): T | undefined {
+  return typeof value === 'function' ? (value as (context: C) => T)(context) : value
+}
+
+// Context
+export interface InputOTPContext {
+  modelValue: InputOTPValue
 }
 
 export interface InputOTPGroupContext {
@@ -44,7 +73,7 @@ export interface InputOTPGroupContext {
   last: boolean
 }
 
-export interface InputOTPSlotContext extends InputOTPGroupContext {
+export interface InputOTPInputContext extends InputOTPGroupContext {
   index: number
   indexInGroup: number
   firstInGroup: boolean
@@ -57,19 +86,15 @@ export interface InputOTPSeparatorContext {
   nextGroup: InputOTPGroupContext
 }
 
-export type InputOTPUIValue<T, C> = T | ((context: C) => T)
-
-export interface InputOTPUI {
-  root?: HTMLAttributes
-  group?: InputOTPUIValue<HTMLAttributes, InputOTPGroupContext>
-  slot?: InputOTPUIValue<HTMLAttributes, InputOTPSlotContext>
-  separator?: InputOTPUIValue<HTMLAttributes, InputOTPSeparatorContext>
+// Emits
+export interface InputOTPEmits {
+  'update:modelValue': [value: InputOTPValue]
+  complete: [value: InputOTPValue]
 }
 
-export type InputOTPRootSlotProps = RenderProps
-
+// Slots
 export type InputOTPSlots = {
-  default?(props: InputOTPRootSlotProps): unknown
+  default?(props: InputOTPContext): unknown
   separator?(props: InputOTPSeparatorContext): unknown
 } & {
   [name: `separator-${number}`]: ((props: InputOTPSeparatorContext) => unknown) | undefined

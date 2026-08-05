@@ -3,6 +3,20 @@ import { ref } from 'vue'
 import { Breadcrumb, type BreadcrumbItem } from '@/components/ui/Breadcrumb'
 import { HoverCard } from '@/components/ui/HoverCard'
 import { Pagination } from '@/components/ui/Pagination'
+import { Stepper, type StepperStep } from '@/components/ui/Stepper'
+import { Button } from '@/components/ui/Button'
+
+const basicStepperSteps: StepperStep[] = [
+  { step: 1, label: 'Cuenta', description: 'Datos personales' },
+  { step: 2, label: 'Perfil', description: 'Preferencias' },
+  { step: 3, label: 'Confirmar', description: 'Revisa los datos' },
+]
+
+const customStepperSteps: StepperStep[] = [
+  { step: 1, label: 'Proyecto', icon: 'info', content: 'Configura los datos del proyecto.' },
+  { step: 2, label: 'Equipo', content: 'Invita a las personas que colaborarÃ¡n.' },
+  { step: 3, label: 'Listo', icon: 'check', content: 'Todo preparado para empezar.' },
+]
 
 const basicBreadcrumbItems: BreadcrumbItem[] = [
   { id: 'home', label: 'Inicio', to: '/' },
@@ -20,10 +34,47 @@ const customBreadcrumbItems: BreadcrumbItem[] = [
 const basicPaginationPage = ref(3)
 const customPaginationPage = ref(6)
 const hoverCardOpen = ref(false)
+const basicStepperValue = ref(1)
+const customStepperValue = ref(2)
 </script>
 
 <template>
   <main class="mx-auto min-h-screen max-w-2xl space-y-8 p-6 md:p-10">
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-lg font-semibold">Stepper</h2>
+        <p class="text-sm text-muted-foreground">
+          Ejemplos horizontal y vertical usando directamente los componentes de Reka.
+        </p>
+      </div>
+
+      <div class="space-y-3 rounded-lg border p-5">
+        <h3 class="font-medium">Stepper bÃ¡sico</h3>
+        <Stepper v-model="basicStepperValue" :steps="basicStepperSteps" />
+        <p class="text-sm text-muted-foreground">Paso activo: {{ basicStepperValue }}</p>
+      </div>
+
+      <div class="space-y-3 rounded-lg border p-5">
+        <h3 class="font-medium">Stepper vertical personalizado</h3>
+        <Stepper
+          v-model="customStepperValue"
+          :steps="customStepperSteps"
+          orientation="vertical"
+          :linear="false"
+          color="#7c3aed"
+          :ui="{
+            content: { class: '' },
+            title: ({ active }) => ({ class: active ? 'text-violet-600' : undefined }),
+          }"
+        >
+          <template #content="slotProps">
+            {{ slotProps.step?.content }}
+            <Button @click="() => slotProps.nextStep()">Eyy</Button></template
+          >
+        </Stepper>
+      </div>
+    </section>
+
     <section class="space-y-4">
       <div>
         <h2 class="text-lg font-semibold">Pagination</h2>

@@ -1,27 +1,20 @@
 <script setup lang="ts">
-import { computed, useAttrs, useSlots } from 'vue'
+import { computed, ref, useAttrs, useSlots } from 'vue'
 import {
-  Stepper as StepperBase,
   StepperDescription,
   StepperIndicator,
   StepperItem,
+  StepperRoot,
   StepperSeparator,
   StepperTitle,
   StepperTrigger,
-} from '@/components/primitives/Stepper'
+} from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
-import { normalizeStepperItemProps, normalizeStepperPrimitiveProps } from '.'
-import type {
-  StepperUIContext,
-  StepperState,
-  StepperProps,
-  StepperSlotProps,
-  StepperSlots,
-  StepperUIValue,
-} from '.'
+import { normalizeStepperItemProps, resolveStepperUIValue } from '.'
+import type { StepperUIContext, StepperState, StepperProps, StepperSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -35,18 +28,13 @@ defineSlots<StepperSlots>()
 const attrs = useAttrs()
 const slots = useSlots()
 const model = defineModel<number>()
+const stepper = ref<StepperRootInstance>()
 const { colorStyle } = useColor(
   computed(() => props.color),
   'stepper',
 )
 
-interface StepperRootState {
-  modelValue: number | undefined
-  totalSteps: number
-  isNextDisabled: boolean
-  isPrevDisabled: boolean
-  isFirstStep: boolean
-  isLastStep: boolean
+interface StepperRootInstance {
   goToStep: (step: number) => void
   nextStep: () => void
   prevStep: () => void
@@ -54,8 +42,24 @@ interface StepperRootState {
   hasPrev: () => boolean
 }
 
-function resolveUI<T>(value: StepperUIValue<T> | undefined, context: StepperUIContext) {
-  return typeof value === 'function' ? (value as (context: StepperUIContext) => T)(context) : value
+function goToStep(step: number) {
+  stepper.value?.goToStep(step)
+}
+
+function nextStep() {
+  stepper.value?.nextStep()
+}
+
+function prevStep() {
+  stepper.value?.prevStep()
+}
+
+function hasNext() {
+  return stepper.value?.hasNext() ?? false
+}
+
+function hasPrev() {
+  return stepper.value?.hasPrev() ?? false
 }
 
 const calculatedUI = computed(() => {
@@ -106,28 +110,41 @@ const calculatedUI = computed(() => {
             ? 'completed'
             : 'inactive'
       const context: StepperUIContext = {
+        value: currentStep,
+        totalSteps: props.steps.length,
         step,
         index,
         state,
         active: state === 'active',
         first: index === 0,
         last: index === props.steps.length - 1,
+        isNextDisabled:
+          index === props.steps.length - 1 || Boolean(props.steps[index + 1]?.disabled),
+        isPrevDisabled: index === 0 || Boolean(props.steps[index - 1]?.disabled),
+        isFirstStep: currentStep === props.steps[0]?.step,
+        isLastStep: currentStep === props.steps.at(-1)?.step,
+        goToStep,
+        nextStep,
+        prevStep,
+        hasNext,
+        hasPrev,
       }
-      const itemUI = normalizeHTMLAttributes(resolveUI(props.ui?.item, context))
-      const triggerUI = normalizeHTMLAttributes(resolveUI(props.ui?.trigger, context))
-      const indicatorUI = normalizeHTMLAttributes(resolveUI(props.ui?.indicator, context))
-      const headerUI = normalizeHTMLAttributes(resolveUI(props.ui?.header, context))
-      const iconUI = normalizeHTMLAttributes(resolveUI(props.ui?.icon, context))
-      const titleUI = normalizeHTMLAttributes(resolveUI(props.ui?.title, context))
-      const descriptionUI = normalizeHTMLAttributes(resolveUI(props.ui?.description, context))
-      const separatorUI = normalizeHTMLAttributes(resolveUI(props.ui?.separator, context))
-      const contentUI = normalizeHTMLAttributes(resolveUI(props.ui?.content, context))
+      const itemUI = normalizeHTMLAttributes(resolveStepperUIValue(props.ui?.item, context))
+      const triggerUI = normalizeHTMLAttributes(resolveStepperUIValue(props.ui?.trigger, context))
+      const indicatorUI = normalizeHTMLAttributes(
+        resolveStepperUIValue(props.ui?.indicator, context),
+      )
+      const headerUI = normalizeHTMLAttributes(resolveStepperUIValue(props.ui?.header, context))
+      const iconUI = normalizeHTMLAttributes(resolveStepperUIValue(props.ui?.icon, context))
+      const titleUI = normalizeHTMLAttributes(resolveStepperUIValue(props.ui?.title, context))
+      const descriptionUI = normalizeHTMLAttributes(
+        resolveStepperUIValue(props.ui?.description, context),
+      )
+      const separatorUI = normalizeHTMLAttributes(
+        resolveStepperUIValue(props.ui?.separator, context),
+      )
+      const contentUI = normalizeHTMLAttributes(resolveStepperUIValue(props.ui?.content, context))
       const itemProps = normalizeStepperItemProps(step)
-      const trigger = normalizeStepperPrimitiveProps(step.trigger)
-      const indicator = normalizeStepperPrimitiveProps(step.indicator)
-      const title = normalizeStepperPrimitiveProps(step.titleProps)
-      const description = normalizeStepperPrimitiveProps(step.descriptionProps)
-      const separator = normalizeStepperPrimitiveProps(step.separator)
       const key = String(step.key ?? step.step)
       const slotNames = {
         item: `item-${key}`,
@@ -150,6 +167,7 @@ const calculatedUI = computed(() => {
           ...itemUI,
           ...itemProps,
           class: cn(
+            'group flex items-center gap-2 data-[disabled]:pointer-events-none',
             isVertical
               ? 'relative flex w-full items-start gap-4'
               : 'relative flex w-full flex-col items-center justify-center',
@@ -159,14 +177,20 @@ const calculatedUI = computed(() => {
         },
         trigger: {
           ...triggerUI,
-          ...trigger,
-          class: cn(triggerClass, triggerUI.class),
+          class: cn(
+            'flex flex-col items-center gap-1 rounded-md p-1 text-center',
+            triggerClass,
+            triggerUI.class,
+          ),
           style: triggerUI?.style,
         },
         indicator: {
           ...indicatorUI,
-          ...indicator,
-          class: cn(indicatorClass, indicatorUI.class),
+          class: cn(
+            'inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors group-data-[state=active]:bg-primary group-data-[state=active]:text-primary-foreground group-data-[state=completed]:bg-primary group-data-[state=completed]:text-primary-foreground group-data-[disabled]:opacity-50',
+            indicatorClass,
+            indicatorUI.class,
+          ),
           style: indicatorUI?.style,
         },
         header: {
@@ -183,20 +207,21 @@ const calculatedUI = computed(() => {
         },
         title: {
           ...titleUI,
-          ...title,
-          class: cn(titleUI.class),
+          class: cn('text-base font-semibold whitespace-nowrap', titleUI.class),
           style: titleUI?.style,
         },
         description: {
           ...descriptionUI,
-          ...description,
-          class: cn(descriptionUI.class),
+          class: cn('text-sm text-muted-foreground', descriptionUI.class),
           style: descriptionUI?.style,
         },
         separator: {
           ...separatorUI,
-          ...separator,
-          class: cn(separatorClass, separatorUI.class),
+          class: cn(
+            'bg-muted transition-colors group-data-[disabled]:bg-muted group-data-[disabled]:opacity-50 group-data-[state=completed]:bg-primary',
+            separatorClass,
+            separatorUI.class,
+          ),
           style: separatorUI?.style,
         },
         content: {
@@ -221,20 +246,6 @@ const calculatedUI = computed(() => {
         showContent: Boolean(
           step.content || slots.default || slots.content || slots[slotNames.content],
         ),
-        getSlotProps: (root: StepperRootState): StepperSlotProps => ({
-          value: root.modelValue,
-          totalSteps: root.totalSteps,
-          isNextDisabled: root.isNextDisabled,
-          isPrevDisabled: root.isPrevDisabled,
-          isFirstStep: root.isFirstStep,
-          isLastStep: root.isLastStep,
-          goToStep: root.goToStep,
-          nextStep: root.nextStep,
-          prevStep: root.prevStep,
-          hasNext: root.hasNext,
-          hasPrev: root.hasPrev,
-          ...context,
-        }),
       }
     }),
   }
@@ -242,19 +253,30 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <StepperBase v-slot="rootState" v-bind="calculatedUI.root" v-model="model">
+  <StepperRoot
+    ref="stepper"
+    v-slot="rootState"
+    v-bind="calculatedUI.root"
+    v-model="model"
+    data-slot="stepper"
+  >
     <div v-bind="calculatedUI.list" data-slot="stepper-list">
-      <StepperItem v-for="item in calculatedUI.steps" :key="item.key" v-bind="item.item">
-        <slot :name="item.slotNames.item" v-bind="item.getSlotProps(rootState)">
-          <slot name="item" v-bind="item.getSlotProps(rootState)">
-            <StepperTrigger v-bind="item.trigger">
-              <slot :name="item.slotNames.header" v-bind="item.getSlotProps(rootState)">
-                <slot name="header" v-bind="item.getSlotProps(rootState)">
-                  <StepperIndicator v-bind="item.indicator">
-                    <slot :name="item.slotNames.indicator" v-bind="item.getSlotProps(rootState)">
-                      <slot name="indicator" v-bind="item.getSlotProps(rootState)">
-                        <slot :name="item.slotNames.icon" v-bind="item.getSlotProps(rootState)">
-                          <slot name="icon" v-bind="item.getSlotProps(rootState)">
+      <StepperItem
+        v-for="item in calculatedUI.steps"
+        :key="item.key"
+        v-bind="item.item"
+        data-slot="stepper-item"
+      >
+        <slot :name="item.slotNames.item" v-bind="item.context">
+          <slot name="item" v-bind="item.context">
+            <StepperTrigger v-bind="item.trigger" data-slot="stepper-trigger">
+              <slot :name="item.slotNames.header" v-bind="item.context">
+                <slot name="header" v-bind="item.context">
+                  <StepperIndicator v-bind="item.indicator" data-slot="stepper-indicator">
+                    <slot :name="item.slotNames.indicator" v-bind="item.context">
+                      <slot name="indicator" v-bind="item.context">
+                        <slot :name="item.slotNames.icon" v-bind="item.context">
+                          <slot name="icon" v-bind="item.context">
                             <Icon
                               v-if="item.data.icon || item.context.state === 'completed'"
                               v-bind="item.icon"
@@ -267,20 +289,25 @@ const calculatedUI = computed(() => {
                   </StepperIndicator>
 
                   <div v-if="item.showHeader" v-bind="item.header">
-                    <StepperTitle v-if="item.showTitle" v-bind="item.title">
-                      <slot :name="item.slotNames.title" v-bind="item.getSlotProps(rootState)">
-                        <slot name="title" v-bind="item.getSlotProps(rootState)">
+                    <StepperTitle
+                      v-if="item.showTitle"
+                      v-bind="item.title"
+                      data-slot="stepper-title"
+                    >
+                      <slot :name="item.slotNames.title" v-bind="item.context">
+                        <slot name="title" v-bind="item.context">
                           {{ item.data.label }}
                         </slot>
                       </slot>
                     </StepperTitle>
 
-                    <StepperDescription v-if="item.showDescription" v-bind="item.description">
-                      <slot
-                        :name="item.slotNames.description"
-                        v-bind="item.getSlotProps(rootState)"
-                      >
-                        <slot name="description" v-bind="item.getSlotProps(rootState)">
+                    <StepperDescription
+                      v-if="item.showDescription"
+                      v-bind="item.description"
+                      data-slot="stepper-description"
+                    >
+                      <slot :name="item.slotNames.description" v-bind="item.context">
+                        <slot name="description" v-bind="item.context">
                           {{ item.data.description }}
                         </slot>
                       </slot>
@@ -291,9 +318,9 @@ const calculatedUI = computed(() => {
             </StepperTrigger>
 
             <template v-if="!item.context.last">
-              <slot :name="item.slotNames.separator" v-bind="item.getSlotProps(rootState)">
-                <slot name="separator" v-bind="item.getSlotProps(rootState)">
-                  <StepperSeparator v-bind="item.separator" />
+              <slot :name="item.slotNames.separator" v-bind="item.context">
+                <slot name="separator" v-bind="item.context">
+                  <StepperSeparator v-bind="item.separator" data-slot="stepper-separator" />
                 </slot>
               </slot>
             </template>
@@ -308,14 +335,14 @@ const calculatedUI = computed(() => {
         v-bind="item.content"
         data-slot="stepper-content"
       >
-        <slot :name="item.slotNames.content" v-bind="item.getSlotProps(rootState)">
-          <slot name="content" v-bind="item.getSlotProps(rootState)">
-            <slot v-bind="item.getSlotProps(rootState)">
+        <slot :name="item.slotNames.content" v-bind="item.context">
+          <slot name="content" v-bind="item.context">
+            <slot v-bind="item.context">
               {{ item.data.content }}
             </slot>
           </slot>
         </slot>
       </div>
     </template>
-  </StepperBase>
+  </StepperRoot>
 </template>

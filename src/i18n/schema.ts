@@ -13,6 +13,7 @@ export interface Messages {
   previus: string
   next: string
   last: string
+  more: string
   morePages: string
   'page_{n}': string
 }

@@ -16,5 +16,6 @@ export default {
   next: 'Next page',
   last: 'Last page',
   'page_{n}': 'Page {n}',
+  more: 'More',
   morePages: 'More pages',
 } satisfies Messages

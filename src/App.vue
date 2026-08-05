@@ -1,7 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { Breadcrumb, type BreadcrumbItem } from '@/components/ui/Breadcrumb'
 import { HoverCard } from '@/components/ui/HoverCard'
 import { Pagination } from '@/components/ui/Pagination'
+
+const basicBreadcrumbItems: BreadcrumbItem[] = [
+  { id: 'home', label: 'Inicio', to: '/' },
+  { id: 'components', label: 'Componentes', to: '/components' },
+  { id: 'breadcrumb', label: 'Breadcrumb' },
+]
+
+const customBreadcrumbItems: BreadcrumbItem[] = [
+  { id: 'home', label: 'Inicio', to: '/', icon: 'info' },
+  { id: 'ellipsis', ellipsis: true },
+  { id: 'navigation', label: 'Navegación', to: '/components/navigation' },
+  { id: 'breadcrumb', label: 'Breadcrumb' },
+]
 
 const basicPaginationPage = ref(3)
 const customPaginationPage = ref(6)
@@ -84,6 +98,33 @@ const hoverCardOpen = ref(false)
             </template>
           </HoverCard>
         </div>
+      </div>
+    </section>
+
+    <section class="space-y-4">
+      <div>
+        <h2 class="text-lg font-semibold">Breadcrumb</h2>
+        <p class="text-sm text-muted-foreground">
+          Ejemplos básico y personalizado con navegación, iconos y slots.
+        </p>
+      </div>
+
+      <div class="space-y-3 rounded-lg border p-5">
+        <h3 class="font-medium">Breadcrumb básico</h3>
+        <Breadcrumb :items="basicBreadcrumbItems" />
+      </div>
+
+      <div class="space-y-3 rounded-lg border p-5">
+        <h3 class="font-medium">Iconos personalizados</h3>
+        <Breadcrumb
+          :items="customBreadcrumbItems"
+          :ellipsis-icon="{ name: 'moreHorizontal', color: '#71717a' }"
+          :separator-icon="{ name: 'chevronRight', size: 'sm' }"
+          :ui="{
+            page: { class: 'font-semibold' },
+            separator: { class: 'text-primary' },
+          }"
+        />
       </div>
     </section>
   </main>

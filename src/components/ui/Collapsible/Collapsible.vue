@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import {
-  Collapsible as CollapsibleBase,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/primitives/Collapsible'
+import { CollapsibleContent, CollapsibleRoot, CollapsibleTrigger } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
-import { normalizeCollapsibleContentProps, normalizeCollapsibleTriggerProps } from '.'
+import {
+  normalizeCollapsibleContentProps,
+  normalizeCollapsibleTriggerProps,
+  resolveCollapsibleUIValue,
+} from '.'
 import type { CollapsibleEmits, CollapsibleProps, CollapsibleSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
@@ -23,9 +23,12 @@ const attrs = useAttrs()
 const open = defineModel<boolean>('open')
 
 const calculatedUI = computed(() => {
+  const context = { open: open.value ?? false }
   const rootUI = normalizeHTMLAttributes(props.ui?.root)
-  const triggerUI = normalizeHTMLAttributes(props.ui?.trigger)
-  const normalizedContentUI = normalizeHTMLAttributes(props.ui?.content)
+  const triggerUI = normalizeHTMLAttributes(resolveCollapsibleUIValue(props.ui?.trigger, context))
+  const normalizedContentUI = normalizeHTMLAttributes(
+    resolveCollapsibleUIValue(props.ui?.content, context),
+  )
   const { dir: contentDirection, ...contentUI } = normalizedContentUI
   const trigger = normalizeCollapsibleTriggerProps(props.trigger)
   const content = normalizeCollapsibleContentProps(props.content)
@@ -37,6 +40,7 @@ const calculatedUI = computed(() => {
       ...rootUI,
       as: props.as,
       asChild: props.asChild,
+      defaultOpen: props.defaultOpen,
       disabled: props.disabled,
       unmountOnHide: props.unmountOnHide,
       class: cn(attrs.class, rootUI.class),
@@ -55,12 +59,21 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <CollapsibleBase v-slot="slotProps" v-model:open="open" v-bind="calculatedUI.root">
-    <CollapsibleTrigger v-bind="calculatedUI.trigger"
-      ><slot :open="slotProps.open"
-    /></CollapsibleTrigger>
-    <CollapsibleContent v-if="$slots.content" v-bind="calculatedUI.content"
-      ><slot name="content" :open="slotProps.open"
-    /></CollapsibleContent>
-  </CollapsibleBase>
+  <CollapsibleRoot
+    v-slot="context"
+    v-model:open="open"
+    v-bind="calculatedUI.root"
+    data-slot="collapsible"
+  >
+    <CollapsibleTrigger v-bind="calculatedUI.trigger" data-slot="collapsible-trigger">
+      <slot v-bind="context" />
+    </CollapsibleTrigger>
+    <CollapsibleContent
+      v-if="$slots.content"
+      v-bind="calculatedUI.content"
+      data-slot="collapsible-content"
+    >
+      <slot name="content" v-bind="context" />
+    </CollapsibleContent>
+  </CollapsibleRoot>
 </template>

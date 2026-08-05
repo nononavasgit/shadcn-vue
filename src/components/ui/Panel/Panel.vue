@@ -6,7 +6,13 @@ import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
-import { panelVariants, type PanelEmits, type PanelProps, type PanelSlots } from '.'
+import {
+  panelVariants,
+  resolvePanelUIValue,
+  type PanelEmits,
+  type PanelProps,
+  type PanelSlots,
+} from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -33,12 +39,13 @@ const calculatedOpen = computed({
 })
 
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
-  const headerUI = normalizeHTMLAttributes(props.ui?.header)
-  const iconUI = normalizeHTMLAttributes(props.ui?.icon)
-  const labelUI = normalizeHTMLAttributes(props.ui?.label)
-  const arrowsUI = normalizeHTMLAttributes(props.ui?.arrows)
-  const contentUI = normalizeHTMLAttributes(props.ui?.content)
+  const context = { open: calculatedOpen.value }
+  const rootUI = normalizeHTMLAttributes(resolvePanelUIValue(props.ui?.root, context))
+  const headerUI = normalizeHTMLAttributes(resolvePanelUIValue(props.ui?.header, context))
+  const iconUI = normalizeHTMLAttributes(resolvePanelUIValue(props.ui?.icon, context))
+  const labelUI = normalizeHTMLAttributes(resolvePanelUIValue(props.ui?.label, context))
+  const arrowsUI = normalizeHTMLAttributes(resolvePanelUIValue(props.ui?.arrows, context))
+  const contentUI = normalizeHTMLAttributes(resolvePanelUIValue(props.ui?.content, context))
   const icon = normalizeIconProps(props.icon)
 
   return {
@@ -81,6 +88,7 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
+  {{ calculatedOpen }}
   <Collapsible v-model:open="calculatedOpen" v-bind="calculatedUI.root">
     <template #default="{ open: isOpen }">
       <div v-bind="calculatedUI?.header">
@@ -110,7 +118,7 @@ const calculatedUI = computed(() => {
 
     <template v-if="$slots.default" #content>
       <div v-bind="calculatedUI.content">
-        <slot />
+        <slot :open="calculatedOpen" />
       </div>
     </template>
   </Collapsible>

@@ -1,68 +1,56 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Accordion, type AccordionItem } from '@/components/ui/Accordion'
+import { Collapsible } from '@/components/ui/Collapsible'
+import { Panel } from '@/components/ui/Panel'
 
-const accordionItems: AccordionItem[] = [
-  {
-    value: 'account',
-    label: 'Â¿CÃ³mo creo una cuenta?',
-    description: 'Puedes crearla desde la pantalla de registro usando tu correo electrÃ³nico.',
-    icon: 'info',
-  },
-  {
-    value: 'billing',
-    label: 'Â¿Puedo cambiar mi plan?',
-    description: 'SÃ­, puedes cambiarlo en cualquier momento desde la configuraciÃ³n.',
-    icon: {
-      name: 'save',
-      color: 'red',
-    },
-  },
-  {
-    value: 'support',
-    label: 'Â¿CÃ³mo contacto con soporte?',
-    description: 'EscrÃ­benos desde el centro de ayuda y responderemos lo antes posible.',
-    icon: 'chevronDown',
-  },
-]
-
-const accordionValue = ref('account')
+const collapsibleOpen = ref(false)
+const panelOpen = ref(false)
 </script>
 
 <template>
   <main class="mx-auto min-h-screen max-w-2xl space-y-8 p-6 md:p-10">
     <section class="space-y-4">
       <div>
-        <h2 class="text-lg font-semibold">Accordion</h2>
+        <h2 class="text-lg font-semibold">Collapsible y Panel</h2>
         <p class="text-sm text-muted-foreground">
-          Ejemplos con selecciÃ³n simple y personalizaciÃ³n mediante UI y slots.
+          Ejemplos controlados con contextos compartidos entre UI y slots.
         </p>
       </div>
 
       <div class="space-y-3 rounded-lg border p-5">
-        <Accordion
-          v-model="accordionValue"
-          icon-drop-down-close="error"
-          :icon-drop-down-open="'check'"
-          :items="accordionItems"
-        />
-      </div>
-
-      <div class="space-y-3 rounded-lg border p-5">
-        <Accordion
-          type="multiple"
-          :items="accordionItems"
-          :default-value="['account', 'billing']"
+        <Collapsible
+          v-model:open="collapsibleOpen"
           :ui="{
-            trigger: ({ open }) => ({ class: open ? 'text-primary' : undefined }),
-            content: { class: 'text-muted-foreground' },
+            content: ({ open }) => ({
+              class: ['pt-3 text-sm text-muted-foreground', open && 'animate-in fade-in'],
+            }),
           }"
         >
-          <template #trigger-support="{ item, open }">
-            {{ item.label }} {{ open ? 'âˆ’' : '+' }}
+          <button class="rounded-md border px-3 py-2 text-sm font-medium hover:bg-muted">
+            {{ collapsibleOpen ? 'Ocultar detalles' : 'Mostrar detalles' }}
+          </button>
+          <template #content>
+            Este contenido usa directamente los componentes Collapsible de Reka.
           </template>
-        </Accordion>
+        </Collapsible>
       </div>
+
+      {{ panelOpen }}
+      <Panel
+        v-model:open="panelOpen"
+        label="ConfiguraciÃ³n del proyecto"
+        icon="info"
+        severity="primary"
+        variant="subtle"
+        :collapsible="false"
+        :ui="{
+          label: ({ open }) => ({ class: open ? 'text-violet-500' : undefined }),
+        }"
+      >
+        <template #default="{ open }">
+          Estado actual del panel: {{ open ? 'abierto' : 'cerrado' }}.
+        </template>
+      </Panel>
     </section>
   </main>
 </template>

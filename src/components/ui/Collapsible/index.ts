@@ -1,15 +1,22 @@
-import type { Component, HTMLAttributes } from 'vue'
+import type {
+  CollapsibleContentProps as RekaCollapsibleContentProps,
+  CollapsibleRootEmits,
+  CollapsibleRootProps as RekaCollapsibleRootProps,
+  CollapsibleTriggerProps as RekaCollapsibleTriggerProps,
+} from 'reka-ui'
+import type { HTMLAttributes } from 'vue'
 
 export { default as Collapsible } from './Collapsible.vue'
 
-export interface CollapsibleTriggerProps {
-  as?: string | Component
-  asChild?: boolean
-}
-
-export interface CollapsibleContentProps extends CollapsibleTriggerProps {
-  forceMount?: boolean
-}
+export type CollapsibleRootProps = Pick<
+  RekaCollapsibleRootProps,
+  'as' | 'asChild' | 'defaultOpen' | 'disabled' | 'unmountOnHide'
+>
+export type CollapsibleTriggerProps = Pick<RekaCollapsibleTriggerProps, 'as' | 'asChild'>
+export type CollapsibleContentProps = Pick<
+  RekaCollapsibleContentProps,
+  'as' | 'asChild' | 'forceMount'
+>
 
 export function normalizeCollapsibleTriggerProps(
   source: CollapsibleTriggerProps | null | undefined,
@@ -27,30 +34,42 @@ export function normalizeCollapsibleContentProps(
   return { as, asChild, forceMount }
 }
 
-export interface CollapsibleUI {
-  root?: HTMLAttributes
-  trigger?: HTMLAttributes
-  content?: HTMLAttributes
-}
-
-export interface CollapsibleProps {
+// Props
+export interface CollapsibleProps extends CollapsibleRootProps {
   open?: boolean
-  disabled?: boolean
-  unmountOnHide?: boolean
-  as?: string | Component
-  asChild?: boolean
   trigger?: CollapsibleTriggerProps
   content?: CollapsibleContentProps
   ui?: CollapsibleUI
 }
 
-export interface CollapsibleEmits {
-  'update:open': [value: boolean]
+export type CollapsibleUIValue<T> = T | ((context: CollapsibleContext) => T)
+
+// UI
+export interface CollapsibleUI {
+  root?: HTMLAttributes
+  trigger?: CollapsibleUIValue<HTMLAttributes>
+  content?: CollapsibleUIValue<HTMLAttributes>
 }
-export interface CollapsibleSlotProps {
+
+export function resolveCollapsibleUIValue<T>(
+  value: CollapsibleUIValue<T> | undefined,
+  context: CollapsibleContext,
+): T | undefined {
+  return typeof value === 'function'
+    ? (value as (context: CollapsibleContext) => T)(context)
+    : value
+}
+
+// Context
+export interface CollapsibleContext {
   open: boolean
 }
+
+// Emits
+export type CollapsibleEmits = CollapsibleRootEmits
+
+// Slots
 export interface CollapsibleSlots {
-  default?(props: CollapsibleSlotProps): unknown
-  content?(props: CollapsibleSlotProps): unknown
+  default?(props: CollapsibleContext): unknown
+  content?(props: CollapsibleContext): unknown
 }

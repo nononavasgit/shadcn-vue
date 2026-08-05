@@ -1,4 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority'
+import type { CollapsibleRootEmits } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 import type { IconName, IconProps } from '@/components/ui/Icon'
 
@@ -37,15 +38,7 @@ export const panelVariants = cva(
 
 export type PanelVariants = VariantProps<typeof panelVariants>
 
-export interface PanelUI {
-  root?: HTMLAttributes
-  header?: HTMLAttributes
-  icon?: HTMLAttributes
-  label?: HTMLAttributes
-  arrows?: HTMLAttributes
-  content?: HTMLAttributes
-}
-
+// Props
 export interface PanelProps {
   open?: boolean
   variant?: PanelVariants['variant']
@@ -57,17 +50,36 @@ export interface PanelProps {
   ui?: PanelUI
 }
 
-export interface PanelEmits {
-  'update:open': [value: boolean]
+// UI
+export type PanelUIValue<T> = T | ((context: PanelContext) => T)
+export interface PanelUI {
+  root?: PanelUIValue<HTMLAttributes>
+  header?: PanelUIValue<HTMLAttributes>
+  icon?: PanelUIValue<HTMLAttributes>
+  label?: PanelUIValue<HTMLAttributes>
+  arrows?: PanelUIValue<HTMLAttributes>
+  content?: PanelUIValue<HTMLAttributes>
 }
 
-export interface PanelSlotProps {
-  open: boolean
+export function resolvePanelUIValue<T>(
+  value: PanelUIValue<T> | undefined,
+  context: PanelContext,
+): T | undefined {
+  return typeof value === 'function' ? (value as (context: PanelContext) => T)(context) : value
 }
 
+// Context
+export interface PanelContext {
+  open?: boolean
+}
+
+// Emits
+export type PanelEmits = CollapsibleRootEmits
+
+// Slots
 export interface PanelSlots {
-  default?(): unknown
-  label?(props: PanelSlotProps): unknown
-  icon?(props: PanelSlotProps): unknown
-  arrows?(props: PanelSlotProps): unknown
+  default?(props: PanelContext): unknown
+  label?(props: PanelContext): unknown
+  icon?(props: PanelContext): unknown
+  arrows?(props: PanelContext): unknown
 }

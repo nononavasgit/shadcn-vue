@@ -2,6 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
 import type { SliderEmits, SliderProps, SliderSlots, SliderThumbUIContext } from '.'
@@ -76,9 +77,7 @@ const calculatedUI = computed(() => {
       style: rangeUI.style,
     },
     thumb: (context: SliderThumbUIContext) => {
-      const thumbUI = normalizeHTMLAttributes(
-        typeof props.ui?.thumb === 'function' ? props.ui.thumb(context) : props.ui?.thumb,
-      )
+      const thumbUI = normalizeHTMLAttributes(useResolve(props.ui?.thumb, context))
       const rangeAriaLabel =
         context.values.length === 2
           ? context.index === 0
@@ -101,7 +100,7 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-    <SliderRoot
+  <SliderRoot
     v-slot="{ modelValue: values }"
     v-model="modelValue"
     v-bind="calculatedUI.root"

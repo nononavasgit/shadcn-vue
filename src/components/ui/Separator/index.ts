@@ -10,3 +10,12 @@ export interface SeparatorUI {
 export interface SeparatorProps extends SeparatorPropsReka {
   ui?: SeparatorUI
 }
+
+export function normalizeSeparatorProps(
+  source: SeparatorProps | null | undefined,
+): SeparatorProps | undefined {
+  if (!source) return undefined
+
+  const { as, asChild, orientation, decorative, ui } = source
+  return { as, asChild, orientation, decorative, ui }
+}

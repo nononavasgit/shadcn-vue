@@ -3,6 +3,7 @@ import type {
   PinInputRootProps as RekaPinInputRootProps,
 } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
+import { useResolve } from '@/composables/useResolve'
 
 export { default as InputOTP } from './InputOTP.vue'
 
@@ -57,7 +58,7 @@ export function resolveInputOTPUIValue<T, C>(
   value: InputOTPUIValue<T, C> | undefined,
   context: C,
 ): T | undefined {
-  return typeof value === 'function' ? (value as (context: C) => T)(context) : value
+  return useResolve(value, context)
 }
 
 // Context

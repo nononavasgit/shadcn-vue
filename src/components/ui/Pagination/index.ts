@@ -2,6 +2,7 @@ import type { HTMLAttributes } from 'vue'
 import type { IconName, IconProps } from '@/components/ui/Icon'
 import type { ButtonProps } from '@/components/ui/Button'
 import type { PaginationRootEmits, PaginationRootProps as RekaPaginationRootProps } from 'reka-ui'
+import { useResolve } from '@/composables/useResolve'
 
 export { default as Pagination } from './Pagination.vue'
 
@@ -55,17 +56,13 @@ export function resolvePaginationUIValue<T>(
   value: PaginationUIValue<T> | undefined,
   context: PaginationUIContext,
 ): T | undefined {
-  return typeof value === 'function'
-    ? (value as (context: PaginationUIContext) => T)(context)
-    : value
+  return useResolve(value, context)
 }
 export function resolvePaginationItemUIValue<T>(
   value: PaginationItemUIValue<T> | undefined,
   context: PaginationItemUIContext,
 ): T | undefined {
-  return typeof value === 'function'
-    ? (value as (context: PaginationItemUIContext) => T)(context)
-    : value
+  return useResolve(value, context)
 }
 
 // UI

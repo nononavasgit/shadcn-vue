@@ -5,6 +5,7 @@ import type {
 } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 import type { IconName, IconProps } from '@/components/ui/Icon'
+import { useResolve } from '@/composables/useResolve'
 
 export { default as Stepper } from './Stepper.vue'
 
@@ -28,7 +29,7 @@ export function resolveStepperUIValue<T>(
   value: StepperUIValue<T> | undefined,
   context: StepperUIContext,
 ): T | undefined {
-  return typeof value === 'function' ? (value as (context: StepperUIContext) => T)(context) : value
+  return useResolve(value, context)
 }
 
 export interface StepperStep extends StepperItemProps {

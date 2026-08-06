@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from 'vue'
+import { useResolve } from '@/composables/useResolve'
 
 export type TimelineOrientation = 'vertical' | 'horizontal'
 export type TimelineValue = string | number
@@ -32,9 +33,7 @@ export function resolveTimelineItemUIValue<T>(
   value: TimelineItemUIValue<T> | undefined,
   context: TimelineItemContext,
 ) {
-  return typeof value === 'function'
-    ? (value as (context: TimelineItemContext) => T)(context)
-    : value
+  return useResolve(value, context)
 }
 
 // UI

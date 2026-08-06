@@ -2,6 +2,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import type { CollapsibleRootEmits } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 import type { IconName, IconProps } from '@/components/ui/Icon'
+import { useResolve } from '@/composables/useResolve'
 
 export { default as Panel } from './Panel.vue'
 
@@ -65,7 +66,7 @@ export function resolvePanelUIValue<T>(
   value: PanelUIValue<T> | undefined,
   context: PanelContext,
 ): T | undefined {
-  return typeof value === 'function' ? (value as (context: PanelContext) => T)(context) : value
+  return useResolve(value, context)
 }
 
 // Context

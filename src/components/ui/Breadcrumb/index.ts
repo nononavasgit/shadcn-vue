@@ -1,6 +1,7 @@
 import type { HTMLAttributes } from 'vue'
 import type { IconName, IconProps } from '@/components/ui/Icon'
 import type { LinkProps } from '@/components/ui/Link'
+import { useResolve } from '@/composables/useResolve'
 
 export { default as Breadcrumb } from './Breadcrumb.vue'
 
@@ -35,9 +36,7 @@ export function resolveBreadcrumbItemUIValue<T>(
   value: BreadcrumbItemUIValue<T> | undefined,
   context: BreadcrumbItemUIContext,
 ): T | undefined {
-  return typeof value === 'function'
-    ? (value as (context: BreadcrumbItemUIContext) => T)(context)
-    : value
+  return useResolve(value, context)
 }
 
 // UI

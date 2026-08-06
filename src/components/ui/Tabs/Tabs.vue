@@ -3,6 +3,7 @@ import { computed, useAttrs } from 'vue'
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
 import {
   normalizeTabsContentProps,
@@ -10,7 +11,7 @@ import {
   normalizeTabsTriggerProps,
   tabsVariants,
 } from '.'
-import type { TabsProps, TabsSlots, TabsUIContext, TabsUIValue, TabsValue } from '.'
+import type { TabsProps, TabsSlots, TabsUIContext, TabsValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -29,10 +30,6 @@ defineSlots<TabsSlots>()
 
 const attrs = useAttrs()
 const model = defineModel<TabsValue>()
-
-function resolveUI<T>(value: TabsUIValue<T> | undefined, context: TabsUIContext) {
-  return typeof value === 'function' ? (value as (context: TabsUIContext) => T)(context) : value
-}
 
 const calculatedUI = computed(() => {
   const rootUI = normalizeHTMLAttributes(props.ui?.root)
@@ -88,11 +85,11 @@ const calculatedUI = computed(() => {
         first: index === 0,
         last: index === props.tabs.length - 1,
       }
-      const triggerUI = normalizeHTMLAttributes(resolveUI(props.ui?.trigger, context))
-      const iconUI = normalizeHTMLAttributes(resolveUI(props.ui?.icon, context))
-      const labelUI = normalizeHTMLAttributes(resolveUI(props.ui?.label, context))
-      const trailingIconUI = normalizeHTMLAttributes(resolveUI(props.ui?.trailingIcon, context))
-      const normalizedContentUI = normalizeHTMLAttributes(resolveUI(props.ui?.content, context))
+      const triggerUI = normalizeHTMLAttributes(useResolve(props.ui?.trigger, context))
+      const iconUI = normalizeHTMLAttributes(useResolve(props.ui?.icon, context))
+      const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
+      const trailingIconUI = normalizeHTMLAttributes(useResolve(props.ui?.trailingIcon, context))
+      const normalizedContentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
       const { dir: contentDirection, ...contentUI } = normalizedContentUI
 
       const trigger = normalizeTabsTriggerProps(tab.trigger)

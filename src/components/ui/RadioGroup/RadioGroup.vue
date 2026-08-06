@@ -3,6 +3,7 @@ import { computed, useAttrs, useId } from 'vue'
 import { RadioGroup as RadioGroupBase } from '@/components/primitives/RadioGroup'
 import { Label } from '@/components/ui/Label'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
 import { normalizeRadioGroupItemProps } from '.'
 import RadioGroupItem from './RadioGroupItem.vue'
@@ -32,15 +33,6 @@ defineSlots<RadioGroupSlots>()
 const attrs = useAttrs()
 const modelValue = defineModel<RadioGroupValue>()
 const radioGroupId = useId()
-
-function resolveUI<T>(
-  value: T | ((context: RadioGroupUIContext) => T) | undefined,
-  context: RadioGroupUIContext,
-) {
-  return typeof value === 'function'
-    ? (value as (context: RadioGroupUIContext) => T)(context)
-    : value
-}
 
 const calculatedUI = computed(() => {
   const rootUI = normalizeHTMLAttributes(props.ui?.root)
@@ -76,11 +68,11 @@ const calculatedUI = computed(() => {
       }
       const key = String(item.value)
       const inputId = `${radioGroupId}-${key}`
-      const itemUI = normalizeHTMLAttributes(resolveUI(props.ui?.item, context))
-      const radioUI = normalizeHTMLAttributes(resolveUI(props.ui?.radio, context))
-      const contentUI = normalizeHTMLAttributes(resolveUI(props.ui?.content, context))
-      const labelUI = normalizeHTMLAttributes(resolveUI(props.ui?.label, context))
-      const descriptionUI = normalizeHTMLAttributes(resolveUI(props.ui?.description, context))
+      const itemUI = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+      const radioUI = normalizeHTMLAttributes(useResolve(props.ui?.radio, context))
+      const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
+      const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
+      const descriptionUI = normalizeHTMLAttributes(useResolve(props.ui?.description, context))
       const radioProps = normalizeRadioGroupItemProps(item)
 
       return {

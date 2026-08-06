@@ -138,6 +138,47 @@ export interface ToggleProps extends TogglePropsReka {
   ui?: ToggleUI
 }
 
+export function normalizeToggleProps(
+  source: ToggleProps | null | undefined,
+): ToggleProps | undefined {
+  if (!source) return undefined
+
+  const {
+    as,
+    asChild,
+    name,
+    required,
+    defaultValue,
+    modelValue,
+    disabled,
+    label,
+    icon,
+    trailingIcon,
+    variant,
+    severity,
+    size,
+    color,
+    ui,
+  } = source
+
+  return {
+    as,
+    asChild,
+    name,
+    required,
+    defaultValue,
+    modelValue,
+    disabled,
+    label,
+    icon,
+    trailingIcon,
+    variant,
+    severity,
+    size,
+    color,
+    ui,
+  }
+}
 export type ToggleEmits = ToggleEmitsReka
 
 export interface ToggleSlotProps {

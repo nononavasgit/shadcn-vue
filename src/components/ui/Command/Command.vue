@@ -10,6 +10,7 @@ import {
 import { ListboxFilter } from '@/components/primitives/Listbox'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { useFilter } from '@/composables'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
@@ -26,7 +27,6 @@ import type {
   CommandItemContext,
   CommandProps,
   CommandSlots,
-  CommandUIValue,
 } from '.'
 
 defineOptions({ inheritAttrs: false })
@@ -55,10 +55,6 @@ const attrs = useAttrs()
 const slots = useSlots()
 const { t } = useI18n()
 const filter = useFilter({ sensitivity: 'base' })
-
-function resolveUI<T, C>(value: CommandUIValue<T, C> | undefined, context: C): T | undefined {
-  return typeof value === 'function' ? (value as (context: C) => T)(context) : value
-}
 
 function isCommandGroup(item: CommandItem | CommandGroupData): item is CommandGroupData {
   return 'items' in item && Array.isArray(item.items)
@@ -165,13 +161,13 @@ const calculatedUI = computed(() => {
           }
         : undefined
       const groupUI = normalizeHTMLAttributes(
-        groupContext ? resolveUI(props.ui?.group, groupContext) : undefined,
+        groupContext ? useResolve(props.ui?.group, groupContext) : undefined,
       )
       const headingUI = normalizeHTMLAttributes(
-        groupContext ? resolveUI(props.ui?.heading, groupContext) : undefined,
+        groupContext ? useResolve(props.ui?.heading, groupContext) : undefined,
       )
       const separatorUI = normalizeHTMLAttributes(
-        groupContext ? resolveUI(props.ui?.separator, groupContext) : undefined,
+        groupContext ? useResolve(props.ui?.separator, groupContext) : undefined,
       )
       const groupProps = normalizeCommandPrimitiveProps(group.data)
       const separator = normalizeCommandPrimitiveProps(group.data?.separator)
@@ -220,10 +216,10 @@ const calculatedUI = computed(() => {
             first: sectionIndex === 0,
             last: sectionIndex === sections.length - 1,
           }
-          const itemUI = normalizeHTMLAttributes(resolveUI(props.ui?.item, context))
-          const indicatorUI = normalizeHTMLAttributes(resolveUI(props.ui?.indicator, context))
-          const iconUI = normalizeHTMLAttributes(resolveUI(props.ui?.icon, context))
-          const labelUI = normalizeHTMLAttributes(resolveUI(props.ui?.label, context))
+          const itemUI = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+          const indicatorUI = normalizeHTMLAttributes(useResolve(props.ui?.indicator, context))
+          const iconUI = normalizeHTMLAttributes(useResolve(props.ui?.icon, context))
+          const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
           const itemKey = String(item.id)
           const itemProps = normalizeCommandItemProps(item)
           const icon = normalizeIconProps(item.icon)

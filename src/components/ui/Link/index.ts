@@ -10,5 +10,40 @@ export type LinkProps = Omit<ButtonProps, 'as' | 'asChild' | 'ui'> &
     ui?: LinkUI
   }
 
+export function normalizeLinkProps(source: LinkProps | null | undefined): LinkProps | undefined {
+  if (!source) return undefined
+
+  const {
+    label,
+    variant,
+    severity,
+    size,
+    rounded,
+    square,
+    loading,
+    color,
+    icon,
+    trailingIcon,
+    to,
+    replace,
+    ui,
+  } = source
+
+  return {
+    label,
+    variant,
+    severity,
+    size,
+    rounded,
+    square,
+    loading,
+    color,
+    icon,
+    trailingIcon,
+    to,
+    replace,
+    ui,
+  }
+}
 export type LinkEmits = ButtonEmits
 export type LinkSlots = ButtonSlots

@@ -5,6 +5,7 @@ import type {
   CollapsibleTriggerProps as RekaCollapsibleTriggerProps,
 } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
+import { useResolve } from '@/composables/useResolve'
 
 export { default as Collapsible } from './Collapsible.vue'
 
@@ -55,9 +56,7 @@ export function resolveCollapsibleUIValue<T>(
   value: CollapsibleUIValue<T> | undefined,
   context: CollapsibleContext,
 ): T | undefined {
-  return typeof value === 'function'
-    ? (value as (context: CollapsibleContext) => T)(context)
-    : value
+  return useResolve(value, context)
 }
 
 // Context

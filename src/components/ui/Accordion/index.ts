@@ -7,6 +7,7 @@ import type {
 } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 import type { IconName, IconProps } from '@/components/ui/Icon'
+import { useResolve } from '@/composables/useResolve'
 
 export { default as Accordion } from './Accordion.vue'
 
@@ -65,9 +66,7 @@ export function resolveAccordionUIValue<T>(
   value: AccordionUIValue<T> | undefined,
   context: AccordionUIContext,
 ): T | undefined {
-  return typeof value === 'function'
-    ? (value as (context: AccordionUIContext) => T)(context)
-    : value
+  return useResolve(value, context)
 }
 
 // Props

@@ -1,7 +1,11 @@
 import type { HTMLAttributes } from 'vue'
 import type { IconName, IconProps } from '@/components/ui/Icon'
 import type { ToggleVariants } from '@/components/ui/Toggle'
-import type { ToggleGroupItemProps as RekaToggleGroupItemProps, ToggleGroupRootEmits, ToggleGroupRootProps } from 'reka-ui'
+import type {
+  ToggleGroupItemProps as RekaToggleGroupItemProps,
+  ToggleGroupRootEmits,
+  ToggleGroupRootProps,
+} from 'reka-ui'
 
 export { default as ToggleGroup } from './ToggleGroup.vue'
 
@@ -32,7 +36,9 @@ export interface ToggleGroupUI {
   trailingIcon?: ToggleGroupUIValue<HTMLAttributes>
 }
 
-export interface ToggleGroupProps extends ToggleGroupRootProps<ToggleGroupValue | ToggleGroupValue[]> {
+export interface ToggleGroupProps extends ToggleGroupRootProps<
+  ToggleGroupValue | ToggleGroupValue[]
+> {
   variant?: ToggleVariants['variant']
   severity?: ToggleVariants['severity']
   size?: ToggleVariants['size']
@@ -43,6 +49,57 @@ export interface ToggleGroupProps extends ToggleGroupRootProps<ToggleGroupValue 
   ui?: ToggleGroupUI
 }
 
+export function normalizeToggleGroupProps(
+  source: ToggleGroupProps | null | undefined,
+): ToggleGroupProps | undefined {
+  if (!source) return undefined
+
+  const {
+    as,
+    asChild,
+    name,
+    required,
+    type,
+    modelValue,
+    defaultValue,
+    dir,
+    loop,
+    rovingFocus,
+    disabled,
+    orientation,
+    variant,
+    severity,
+    size,
+    color,
+    spacing,
+    mandatory,
+    items,
+    ui,
+  } = source
+
+  return {
+    as,
+    asChild,
+    name,
+    required,
+    type,
+    modelValue,
+    defaultValue,
+    dir,
+    loop,
+    rovingFocus,
+    disabled,
+    orientation,
+    variant,
+    severity,
+    size,
+    color,
+    spacing,
+    mandatory,
+    items,
+    ui,
+  }
+}
 export type ToggleGroupEmits = ToggleGroupRootEmits
 
 export type ToggleGroupSlotProps = ToggleGroupUIContext

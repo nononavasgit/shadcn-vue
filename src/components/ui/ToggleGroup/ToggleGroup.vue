@@ -6,14 +6,9 @@ import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { toggleVariants } from '@/components/ui/Toggle'
 import { useColor } from '@/composables'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import type {
-  ToggleGroupProps,
-  ToggleGroupSlots,
-  ToggleGroupUIContext,
-  ToggleGroupUIValue,
-  ToggleGroupValue,
-} from '.'
+import type { ToggleGroupProps, ToggleGroupSlots, ToggleGroupUIContext, ToggleGroupValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -68,12 +63,6 @@ function updateModel(value: ToggleGroupValue | ToggleGroupValue[] | undefined) {
   model.value = value
 }
 
-function resolveUI<T>(value: ToggleGroupUIValue<T> | undefined, context: ToggleGroupUIContext) {
-  return typeof value === 'function'
-    ? (value as (context: ToggleGroupUIContext) => T)(context)
-    : value
-}
-
 const calculatedUI = computed(() => {
   const rootUI = normalizeHTMLAttributes(props.ui?.root)
 
@@ -116,10 +105,10 @@ const calculatedUI = computed(() => {
         first: index === 0,
         last: index === props.items.length - 1,
       }
-      const itemUI = normalizeHTMLAttributes(resolveUI(props.ui?.item, context))
-      const iconUI = normalizeHTMLAttributes(resolveUI(props.ui?.icon, context))
-      const labelUI = normalizeHTMLAttributes(resolveUI(props.ui?.label, context))
-      const trailingIconUI = normalizeHTMLAttributes(resolveUI(props.ui?.trailingIcon, context))
+      const itemUI = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+      const iconUI = normalizeHTMLAttributes(useResolve(props.ui?.icon, context))
+      const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
+      const trailingIconUI = normalizeHTMLAttributes(useResolve(props.ui?.trailingIcon, context))
       const icon = normalizeIconProps(item.icon)
       const trailingIcon = normalizeIconProps(item.trailingIcon)
       const key = String(item.id)

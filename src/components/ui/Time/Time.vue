@@ -2,8 +2,9 @@
 import { computed, useAttrs } from 'vue'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useDates } from '@/composables/useDates'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import type { TimeProps, TimeSlots } from '.'
+import type { TimeContext, TimeProps, TimeSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -22,8 +23,18 @@ const formattedDate = computed(() =>
     format: props.format,
   }),
 )
+const timeContext = computed<TimeContext>(() => {
+  const { ui, ...timeProps } = props
+  void ui
+
+  return {
+    props: timeProps,
+    date: formattedDate.value,
+  }
+})
+
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, timeContext.value))
 
   return {
     root: {
@@ -40,6 +51,6 @@ const calculatedUI = computed(() => {
 
 <template>
   <time v-bind="calculatedUI.root" data-slot="time">
-    <slot :date="formattedDate">{{ formattedDate }}</slot>
+    <slot v-bind="timeContext">{{ formattedDate }}</slot>
   </time>
 </template>

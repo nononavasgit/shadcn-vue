@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { Breadcrumb, Checkbox, Input, Switch, Textarea } from '@/components/ui'
+import { Breadcrumb, Checkbox, Input, Kbd, KbdGroup, Switch, Textarea, Time } from '@/components/ui'
 import { ConfigProvider } from '@/components/provider'
 
 const breadcrumbItems = [
@@ -56,6 +56,27 @@ const switchUI = {
 const checkboxUI = {
   root: ({ state }) => ({
     class: state === true ? 'ring-2 ring-primary/30' : undefined,
+  }),
+}
+
+const timeValue = '2026-08-07T12:30:00.000Z'
+
+const timeUI = {
+  root: ({ date }) => ({
+    class: 'font-medium text-primary',
+    title: date,
+  }),
+}
+
+const kbdUI = {
+  root: ({ props }) => ({
+    class: props.label === 'Ctrl' ? 'bg-primary/10 text-primary' : undefined,
+  }),
+}
+
+const kbdGroupUI = {
+  root: () => ({
+    class: 'rounded-md border border-dashed p-2',
   }),
 }
 </script>
@@ -126,6 +147,35 @@ const checkboxUI = {
         <div class="space-y-1 text-sm text-muted-foreground">
           <p>Switch: {{ switchValue ? 'activado' : 'desactivado' }}</p>
           <p>Checkbox: {{ checkboxValue ? 'marcado' : 'sin marcar' }}</p>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Time y Kbd examples</h2>
+
+        <div class="space-y-3">
+          <Time :datetime="timeValue" :ui="timeUI">
+            <template #default="{ date, props }">
+              <span :title="props.locale?.toString()">{{ date }}</span>
+            </template>
+          </Time>
+
+          <div class="flex items-center gap-2">
+            <span>Atajo:</span>
+            <Kbd label="Ctrl" :ui="kbdUI">
+              <template #default="{ props }">
+                {{ props.label }}
+              </template>
+            </Kbd>
+            <span>+</span>
+            <Kbd label="K">K</Kbd>
+          </div>
+
+          <KbdGroup :ui="kbdGroupUI">
+            <Kbd label="Ctrl" />
+            <span>+</span>
+            <Kbd label="K" />
+          </KbdGroup>
         </div>
       </section>
     </main>

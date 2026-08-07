@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import type { KbdProps, KbdSlots } from '.'
+import type { KbdContext, KbdProps, KbdSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -12,9 +13,18 @@ const props = withDefaults(defineProps<KbdProps>(), {
 })
 defineSlots<KbdSlots>()
 
+const kbdContext = computed<KbdContext>(() => {
+  const { ui, ...kbdProps } = props
+  void ui
+
+  return {
+    props: kbdProps,
+  }
+})
+
 const attrs = useAttrs()
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, kbdContext.value))
 
   return {
     root: {
@@ -35,6 +45,6 @@ const calculatedUI = computed(() => {
 
 <template>
   <kbd v-bind="calculatedUI.root" data-slot="kbd">
-    <slot>{{ props.label }}</slot>
+    <slot v-bind="kbdContext">{{ props.label }}</slot>
   </kbd>
 </template>

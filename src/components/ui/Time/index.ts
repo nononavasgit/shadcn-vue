@@ -3,10 +3,6 @@ import type { DateValue } from '@/composables/useDates'
 
 export { default as Time } from './Time.vue'
 
-export interface TimeUI {
-  root?: HTMLAttributes
-}
-
 export interface TimeProps {
   datetime: DateValue
   locale?: string | string[]
@@ -14,10 +10,17 @@ export interface TimeProps {
   ui?: TimeUI
 }
 
-export interface TimeSlotProps {
+export type TimeFn<T> = T | ((context: TimeContext) => T)
+
+export interface TimeUI {
+  root?: TimeFn<HTMLAttributes>
+}
+
+export interface TimeContext {
+  props: Omit<TimeProps, 'ui'>
   date: string
 }
 
 export interface TimeSlots {
-  default?(props: TimeSlotProps): unknown
+  default?(props: TimeContext): unknown
 }

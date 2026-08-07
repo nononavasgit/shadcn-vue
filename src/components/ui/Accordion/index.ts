@@ -6,19 +6,17 @@ import type {
   AccordionTriggerProps as RekaAccordionTriggerProps,
 } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
-import type { IconName, IconProps } from '@/components/ui/Icon'
-import { useResolve } from '@/composables/useResolve'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
 
 export { default as Accordion } from './Accordion.vue'
 
 export type AccordionValue = string | string[] | undefined
-export type AccordionUIValue<T> = T | ((context: AccordionUIContext) => T)
 
 export type AccordionRootProps = Pick<
   RekaAccordionRootProps,
   | 'type'
   | 'collapsible'
-  | 'defaultValue'
+  | 'modelValue'
   | 'disabled'
   | 'dir'
   | 'orientation'
@@ -57,38 +55,38 @@ export function normalizeAccordionItemProps(source: AccordionItemProps): Accordi
 export interface AccordionItem extends AccordionItemProps {
   label?: string
   description?: string
-  icon?: IconName | IconProps
+  icon?: NormalizeIconProps
   trigger?: AccordionTriggerProps
   content?: AccordionContentProps
-}
-
-export function resolveAccordionUIValue<T>(
-  value: AccordionUIValue<T> | undefined,
-  context: AccordionUIContext,
-): T | undefined {
-  return useResolve(value, context)
 }
 
 // Props
 export interface AccordionProps extends AccordionRootProps {
   items?: AccordionItem[]
-  iconDropDownOpen?: IconName | IconProps
-  iconDropDownClose?: IconName | IconProps
+  iconDropDownOpen?: NormalizeIconProps
+  iconDropDownClose?: NormalizeIconProps
   ui?: AccordionUI
 }
 
+// Fn
+export type AccordionFn<T> = T | ((context: AccordionContext) => T)
+export type AccordionItemFn<T> = T | ((context: AccordionItemContext) => T)
+
 // UI
 export interface AccordionUI {
-  root?: HTMLAttributes
-  item?: AccordionUIValue<HTMLAttributes>
-  trigger?: AccordionUIValue<HTMLAttributes>
-  icon?: AccordionUIValue<HTMLAttributes>
-  iconDropdown?: AccordionUIValue<HTMLAttributes>
-  content?: AccordionUIValue<HTMLAttributes>
+  root?: AccordionFn<HTMLAttributes>
+  item?: AccordionItemFn<HTMLAttributes>
+  trigger?: AccordionItemFn<HTMLAttributes>
+  content?: AccordionItemFn<HTMLAttributes>
 }
 
 // Context
-export interface AccordionUIContext {
+export interface AccordionContext {
+  props: Omit<AccordionProps, 'ui'>
+  value: AccordionValue
+}
+
+export interface AccordionItemContext extends AccordionContext {
   item: AccordionItem
   index: number
   open: boolean
@@ -101,9 +99,15 @@ export type AccordionEmits = AccordionRootEmits
 
 // Slots
 export type AccordionSlots = {
-  trigger?(props: AccordionUIContext): unknown
-  default?(props: AccordionUIContext): unknown
+  trigger?(props: AccordionItemContext): unknown
+  content?(props: AccordionItemContext): unknown
+  icon?(props: AccordionItemContext): unknown
+  label?(props: AccordionItemContext): unknown
+  iconDropdown?(props: AccordionItemContext): unknown
 } & {
-  [name: `trigger-${string}`]: ((props: AccordionUIContext) => unknown) | undefined
-  [name: `content-${string}`]: ((props: AccordionUIContext) => unknown) | undefined
+  [name: `trigger-${string}`]: ((props: AccordionItemContext) => unknown) | undefined
+  [name: `icon-${string}`]: ((props: AccordionItemContext) => unknown) | undefined
+  [name: `label-${string}`]: ((props: AccordionItemContext) => unknown) | undefined
+  [name: `iconDropdown-${string}`]: ((props: AccordionItemContext) => unknown) | undefined
+  [name: `content-${string}`]: ((props: AccordionItemContext) => unknown) | undefined
 }

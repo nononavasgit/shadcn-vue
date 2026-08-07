@@ -9,14 +9,20 @@ import {
 } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
 import {
   normalizeAccordionContentProps,
   normalizeAccordionItemProps,
   normalizeAccordionTriggerProps,
-  resolveAccordionUIValue,
 } from '.'
-import type { AccordionProps, AccordionSlots, AccordionUIContext } from '.'
+import type {
+  AccordionContext,
+  AccordionItemContext,
+  AccordionProps,
+  AccordionSlots,
+  AccordionValue,
+} from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -35,11 +41,21 @@ const props = withDefaults(defineProps<AccordionProps>(), {
 })
 defineSlots<AccordionSlots>()
 
-const model = defineModel<string | string[]>()
+const model = defineModel<AccordionValue>()
 const attrs = useAttrs()
 
+const accordionContext = computed<AccordionContext>(() => {
+  const { ui, ...accordionProps } = props
+  void ui
+
+  return {
+    props: accordionProps,
+    value: model.value,
+  }
+})
+
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, accordionContext.value))
 
   return {
     root: {
@@ -47,7 +63,6 @@ const calculatedUI = computed(() => {
       ...rootUI,
       type: props.type,
       collapsible: props.collapsible,
-      defaultValue: props.defaultValue,
       disabled: props.disabled,
       dir: props.dir,
       orientation: props.orientation,
@@ -58,10 +73,12 @@ const calculatedUI = computed(() => {
       style: [attrs.style, rootUI.style],
     },
     items: props.items.map((item, index) => {
-      const open = Array.isArray(model.value)
-        ? model.value.includes(item.value)
-        : model.value === item.value
-      const context: AccordionUIContext = {
+      const currentValue = accordionContext.value.value
+      const open = Array.isArray(currentValue)
+        ? currentValue.includes(item.value)
+        : currentValue === item.value
+      const context: AccordionItemContext = {
+        ...accordionContext.value,
         item,
         index,
         open,
@@ -70,16 +87,12 @@ const calculatedUI = computed(() => {
       }
 
       // Normalize UI
-      const itemUI = normalizeHTMLAttributes(resolveAccordionUIValue(props.ui?.item, context))
-      const itemProps = normalizeAccordionItemProps(item)
-      const triggerUI = normalizeHTMLAttributes(resolveAccordionUIValue(props.ui?.trigger, context))
-      const iconUI = normalizeHTMLAttributes(resolveAccordionUIValue(props.ui?.icon, context))
-      const iconDropdownUI = normalizeHTMLAttributes(
-        resolveAccordionUIValue(props.ui?.iconDropdown, context),
-      )
-      const contentUI = normalizeHTMLAttributes(resolveAccordionUIValue(props.ui?.content, context))
+      const itemUI = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+      const triggerUI = normalizeHTMLAttributes(useResolve(props.ui?.trigger, context))
+      const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
 
       // Normalize components
+      const itemProps = normalizeAccordionItemProps(item)
       const trigger = normalizeAccordionTriggerProps(item.trigger)
       const content = normalizeAccordionContentProps(item.content)
       const icon = normalizeIconProps(item.icon)
@@ -87,10 +100,18 @@ const calculatedUI = computed(() => {
         open ? props.iconDropDownOpen : props.iconDropDownClose,
       )
 
+      const key = String(item.value)
       return {
         value: item.value,
         data: item,
         context,
+        slots: {
+          trigger: `trigger-${key}` as const,
+          icon: `icon-${key}` as const,
+          label: `label-${key}` as const,
+          iconDropdown: `iconDropdown-${key}` as const,
+          content: `content-${key}` as const,
+        },
         item: {
           ...itemUI,
           ...itemProps,
@@ -107,19 +128,11 @@ const calculatedUI = computed(() => {
           style: triggerUI.style,
         },
         icon: {
-          ...iconUI,
           ...icon,
-          class: cn('size-4 shrink-0', iconUI.class),
-          style: [iconUI.style],
         },
         iconDropdown: {
           ...iconDropdown,
-          ...iconDropdownUI,
-          class: cn(
-            'pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground',
-            iconDropdownUI.class,
-          ),
-          style: [iconDropdownUI.style],
+          class: 'pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground',
         },
         content: {
           ...content,
@@ -147,31 +160,43 @@ const calculatedUI = computed(() => {
       <AccordionHeader class="flex">
         <AccordionTrigger v-bind="item.trigger" data-slot="accordion-trigger">
           <span class="flex min-w-0 flex-1 items-start gap-2">
-            <slot :name="`trigger-${item.value}`" v-bind="item.context">
+            <slot :name="item.slots.trigger" v-bind="item.context">
               <slot name="trigger" v-bind="item.context">
-                <Icon
-                  v-if="item.icon?.name"
-                  v-bind="item.icon"
-                  :name="item?.icon?.name"
-                  data-slot="accordion-icon"
-                />
-                {{ item.data.label }}
+                <slot :name="item.slots.icon" v-bind="item.context">
+                  <slot name="icon" v-bind="item.context">
+                    <Icon
+                      v-if="item.icon?.name"
+                      v-bind="item.icon"
+                      :name="item?.icon?.name"
+                      data-slot="accordion-icon"
+                    />
+                  </slot>
+                </slot>
+                <slot :name="item.slots.label" v-bind="item.context">
+                  <slot name="label" v-bind="item.context">
+                    {{ item.data?.label }}
+                  </slot>
+                </slot>
               </slot>
             </slot>
           </span>
-          <Icon
-            v-if="item.iconDropdown?.name"
-            v-bind="item.iconDropdown"
-            :name="item.iconDropdown?.name"
-            data-slot="accordion-icon-dropdown"
-          />
+          <slot :name="item.slots.iconDropdown" v-bind="item.context">
+            <slot name="iconDropdown" v-bind="item.context">
+              <Icon
+                v-if="item.iconDropdown?.name"
+                v-bind="item.iconDropdown"
+                :name="item.iconDropdown?.name"
+                data-slot="accordion-icon-dropdown"
+              />
+            </slot>
+          </slot>
         </AccordionTrigger>
       </AccordionHeader>
 
       <AccordionContent v-bind="item.content" data-slot="accordion-content">
         <slot :name="`content-${item.value}`" v-bind="item.context">
-          <slot v-bind="item.context">
-            {{ item.data.description }}
+          <slot name="content" v-bind="item.context">
+            {{ item.data?.description }}
           </slot>
         </slot>
       </AccordionContent>

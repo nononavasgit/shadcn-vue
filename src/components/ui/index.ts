@@ -1,3 +1,4 @@
+export { Accordion } from './Accordion'
 export { Alert } from './Alert'
 export { AlertDialog } from './AlertDialog'
 export { Announcer } from './Announcer'

@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { Label as RekaLabel } from 'reka-ui'
+import { Label } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import type { LabelProps, LabelSlots } from '.'
+import type { LabelContext, LabelProps, LabelSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -16,9 +17,15 @@ const props = withDefaults(defineProps<LabelProps>(), {
   ui: undefined,
 })
 const attrs = useAttrs()
+const labelContext = computed<LabelContext>(() => {
+  const { ui, ...labelProps } = props
+  void ui
+
+  return { props: labelProps }
+})
 
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, labelContext.value))
 
   return {
     root: {
@@ -39,7 +46,7 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <RekaLabel v-bind="calculatedUI.root" data-slot="label">
-    <slot />
-  </RekaLabel>
+  <Label v-bind="calculatedUI.root" data-slot="label">
+    <slot v-bind="labelContext" />
+  </Label>
 </template>

@@ -5,14 +5,20 @@ export { default as Label } from './Label.vue'
 
 export type LabelRootProps = Pick<LabelPropsReka, 'as' | 'asChild' | 'for'>
 
+export type LabelFn<T> = T | ((context: LabelContext) => T)
+
 export interface LabelUI {
-  root?: HTMLAttributes
+  root?: LabelFn<HTMLAttributes>
 }
 
 export interface LabelProps extends LabelRootProps {
   ui?: LabelUI
 }
 
+export interface LabelContext {
+  props: Omit<LabelProps, 'ui'>
+}
+
 export interface LabelSlots {
-  default?(): unknown
+  default?(props: LabelContext): unknown
 }

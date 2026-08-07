@@ -8,8 +8,9 @@ import {
   ScrollAreaViewport,
 } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import type { ScrollAreaProps, ScrollAreaSlots } from '.'
+import type { ScrollAreaContext, ScrollAreaProps, ScrollAreaSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -26,15 +27,34 @@ const props = withDefaults(defineProps<ScrollAreaProps>(), {
   ui: undefined,
 })
 
+const scrollAreaContext = computed<ScrollAreaContext>(() => {
+  const { ui, ...scrollAreaProps } = props
+  void ui
+
+  return {
+    props: scrollAreaProps,
+  }
+})
+
 const attrs = useAttrs()
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
-  const viewportUI = normalizeHTMLAttributes(props.ui?.viewport)
-  const verticalScrollbarUI = normalizeHTMLAttributes(props.ui?.verticalScrollbar)
-  const horizontalScrollbarUI = normalizeHTMLAttributes(props.ui?.horizontalScrollbar)
-  const thumbVerticalUI = normalizeHTMLAttributes(props.ui?.thumbVertical)
-  const thumbHorizontalUI = normalizeHTMLAttributes(props.ui?.thumbHorizontal)
-  const cornerUI = normalizeHTMLAttributes(props.ui?.corner)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, scrollAreaContext.value))
+  const viewportUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.viewport, scrollAreaContext.value),
+  )
+  const verticalScrollbarUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.verticalScrollbar, scrollAreaContext.value),
+  )
+  const horizontalScrollbarUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.horizontalScrollbar, scrollAreaContext.value),
+  )
+  const thumbVerticalUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.thumbVertical, scrollAreaContext.value),
+  )
+  const thumbHorizontalUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.thumbHorizontal, scrollAreaContext.value),
+  )
+  const cornerUI = normalizeHTMLAttributes(useResolve(props.ui?.corner, scrollAreaContext.value))
 
   return {
     root: {
@@ -92,7 +112,7 @@ const calculatedUI = computed(() => {
 <template>
   <ScrollAreaRoot v-bind="calculatedUI.root" data-slot="scroll-area">
     <ScrollAreaViewport v-bind="calculatedUI.viewport" data-slot="scroll-area-viewport">
-      <slot />
+      <slot v-bind="scrollAreaContext" />
     </ScrollAreaViewport>
 
     <ScrollAreaScrollbar

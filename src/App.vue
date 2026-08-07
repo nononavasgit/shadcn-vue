@@ -1,6 +1,16 @@
 <script setup>
 import { ref } from 'vue'
-import { Breadcrumb, Checkbox, Input, Kbd, KbdGroup, Switch, Textarea, Time } from '@/components/ui'
+import {
+  Breadcrumb,
+  Checkbox,
+  Input,
+  Kbd,
+  KbdGroup,
+  ScrollArea,
+  Switch,
+  Textarea,
+  Time,
+} from '@/components/ui'
 import { ConfigProvider } from '@/components/provider'
 
 const breadcrumbItems = [
@@ -77,6 +87,26 @@ const kbdUI = {
 const kbdGroupUI = {
   root: () => ({
     class: 'rounded-md border border-dashed p-2',
+  }),
+}
+
+const scrollItems = Array.from({ length: 20 }, (_, index) => 'Elemento desplazable ' + (index + 1))
+
+const scrollAreaUI = {
+  root: ({ props }) => ({
+    class:
+      props.orientation === 'both'
+        ? 'h-48 w-full rounded-md border border-primary'
+        : 'h-48 w-full rounded-md border',
+  }),
+  viewport: () => ({
+    class: 'size-full',
+  }),
+  verticalScrollbar: () => ({
+    class: 'w-3',
+  }),
+  thumbVertical: () => ({
+    class: 'bg-primary',
   }),
 }
 </script>
@@ -177,6 +207,21 @@ const kbdGroupUI = {
             <Kbd label="K" />
           </KbdGroup>
         </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">ScrollArea examples</h2>
+
+        <ScrollArea :ui="scrollAreaUI">
+          <template #default="{ props }">
+            <div class="space-y-2 p-4">
+              <p class="text-sm font-medium">Orientación: {{ props.orientation }}</p>
+              <p v-for="item in scrollItems" :key="item" class="text-sm text-muted-foreground">
+                {{ item }}
+              </p>
+            </div>
+          </template>
+        </ScrollArea>
       </section>
     </main>
   </ConfigProvider>

@@ -1,80 +1,128 @@
-import type {
-  StepperItemProps as RekaStepperItemProps,
-  StepperRootEmits,
-  StepperRootProps as RekaStepperRootProps,
-} from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
-import type { IconName, IconProps } from '@/components/ui/Icon'
-import { useResolve } from '@/composables/useResolve'
+import type {
+  StepperDescriptionProps as RekaStepperDescriptionProps,
+  StepperIndicatorProps as RekaStepperIndicatorProps,
+  StepperItemProps as RekaStepperItemProps,
+  StepperRootEmits as RekaStepperRootEmits,
+  StepperRootProps as RekaStepperRootProps,
+  StepperSeparatorProps as RekaStepperSeparatorProps,
+  StepperTitleProps as RekaStepperTitleProps,
+  StepperTriggerProps as RekaStepperTriggerProps,
+} from 'reka-ui'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
 
 export { default as Stepper } from './Stepper.vue'
 
 export type StepperState = 'completed' | 'active' | 'inactive'
-
 export type StepperRootProps = Pick<
   RekaStepperRootProps,
-  'as' | 'asChild' | 'orientation' | 'dir' | 'linear'
+  'as' | 'asChild' | 'modelValue' | 'defaultValue' | 'orientation' | 'dir' | 'linear'
 >
 export type StepperItemProps = Pick<
   RekaStepperItemProps,
   'as' | 'asChild' | 'step' | 'disabled' | 'completed'
 >
+export type StepperTriggerProps = Pick<RekaStepperTriggerProps, 'as' | 'asChild'>
+export type StepperIndicatorProps = Pick<RekaStepperIndicatorProps, 'as' | 'asChild'>
+export type StepperLabelProps = Pick<RekaStepperTitleProps, 'as' | 'asChild'>
+export type StepperDescriptionProps = Pick<RekaStepperDescriptionProps, 'as' | 'asChild'>
+export type StepperSeparatorProps = Pick<
+  RekaStepperSeparatorProps,
+  'as' | 'asChild' | 'orientation' | 'decorative'
+>
 
-export function normalizeStepperItemProps(source: StepperItemProps): StepperItemProps {
-  const { step, disabled, completed, as, asChild } = source
-  return { step, disabled, completed, as, asChild }
+export function normalizeStepperRootProps(
+  source: StepperRootProps | null | undefined,
+): StepperRootProps | undefined {
+  if (!source) return undefined
+  const { as, asChild, modelValue, defaultValue, orientation, dir, linear } = source
+  return { as, asChild, modelValue, defaultValue, orientation, dir, linear }
 }
 
-export function resolveStepperUIValue<T>(
-  value: StepperUIValue<T> | undefined,
-  context: StepperUIContext,
-): T | undefined {
-  return useResolve(value, context)
+export function normalizeStepperItemProps(source: StepperItemProps): StepperItemProps {
+  const { as, asChild, step, disabled, completed } = source
+  return { as, asChild, step, disabled, completed }
+}
+
+export function normalizeStepperTriggerProps(
+  source: StepperTriggerProps | null | undefined,
+): StepperTriggerProps | undefined {
+  if (!source) return undefined
+  const { as, asChild } = source
+  return { as, asChild }
+}
+
+export function normalizeStepperIndicatorProps(
+  source: StepperIndicatorProps | null | undefined,
+): StepperIndicatorProps | undefined {
+  if (!source) return undefined
+  const { as, asChild } = source
+  return { as, asChild }
+}
+
+export function normalizeStepperLabelProps(
+  source: StepperLabelProps | null | undefined,
+): StepperLabelProps | undefined {
+  if (!source) return undefined
+  const { as, asChild } = source
+  return { as, asChild }
+}
+
+export function normalizeStepperDescriptionProps(
+  source: StepperDescriptionProps | null | undefined,
+): StepperDescriptionProps | undefined {
+  if (!source) return undefined
+  const { as, asChild } = source
+  return { as, asChild }
+}
+
+export function normalizeStepperSeparatorProps(
+  source: StepperSeparatorProps | null | undefined,
+): StepperSeparatorProps | undefined {
+  if (!source) return undefined
+  const { as, asChild, orientation, decorative } = source
+  return { as, asChild, orientation, decorative }
 }
 
 export interface StepperStep extends StepperItemProps {
   key?: string | number
   label?: string
   description?: string
-  icon?: IconName | IconProps
+  icon?: NormalizeIconProps
   content?: string
+  trigger?: StepperTriggerProps
+  indicator?: StepperIndicatorProps
+  labelProps?: StepperLabelProps
+  descriptionProps?: StepperDescriptionProps
+  separator?: StepperSeparatorProps
 }
 
-// Props
 export interface StepperProps extends StepperRootProps {
   steps?: StepperStep[]
   color?: string
   ui?: StepperUI
 }
 
-// Function StepperUIValue
-export type StepperUIValue<T> = T | ((context: StepperUIContext) => T)
+export type StepperFn<T> = T | ((context: StepperContext) => T)
+export type StepperItemFn<T> = T | ((context: StepperItemContext) => T)
 
-// UI
 export interface StepperUI {
-  root?: HTMLAttributes
-  list?: HTMLAttributes
-  item?: StepperUIValue<HTMLAttributes>
-  trigger?: StepperUIValue<HTMLAttributes>
-  indicator?: StepperUIValue<HTMLAttributes>
-  header?: StepperUIValue<HTMLAttributes>
-  icon?: StepperUIValue<HTMLAttributes>
-  title?: StepperUIValue<HTMLAttributes>
-  description?: StepperUIValue<HTMLAttributes>
-  separator?: StepperUIValue<HTMLAttributes>
-  content?: StepperUIValue<HTMLAttributes>
+  root?: StepperFn<HTMLAttributes>
+  list?: StepperFn<HTMLAttributes>
+  item?: StepperItemFn<HTMLAttributes>
+  trigger?: StepperItemFn<HTMLAttributes>
+  indicator?: StepperItemFn<HTMLAttributes>
+  header?: StepperItemFn<HTMLAttributes>
+  label?: StepperItemFn<HTMLAttributes>
+  description?: StepperItemFn<HTMLAttributes>
+  separator?: StepperItemFn<HTMLAttributes>
+  content?: StepperItemFn<HTMLAttributes>
 }
 
-// Context
-export interface StepperUIContext {
+export interface StepperContext {
+  props: Omit<StepperProps, 'ui'>
   value: number | undefined
   totalSteps: number
-  step: StepperStep
-  index: number
-  state: StepperState
-  active: boolean
-  first: boolean
-  last: boolean
   isNextDisabled: boolean
   isPrevDisabled: boolean
   isFirstStep: boolean
@@ -86,27 +134,34 @@ export interface StepperUIContext {
   hasPrev: () => boolean
 }
 
-// Emits
-export type StepperEmits = StepperRootEmits
+export interface StepperItemContext extends StepperContext {
+  item: StepperStep
+  index: number
+  state: StepperState
+  active: boolean
+  first: boolean
+  last: boolean
+}
 
-// Slots
+export type StepperEmits = RekaStepperRootEmits
+
 export type StepperSlots = {
-  default?(props: StepperUIContext): unknown
-  item?(props: StepperUIContext): unknown
-  header?(props: StepperUIContext): unknown
-  indicator?(props: StepperUIContext): unknown
-  icon?(props: StepperUIContext): unknown
-  title?(props: StepperUIContext): unknown
-  description?(props: StepperUIContext): unknown
-  separator?(props: StepperUIContext): unknown
-  content?(props: StepperUIContext): unknown
+  default?(props: StepperItemContext): unknown
+  item?(props: StepperItemContext): unknown
+  header?(props: StepperItemContext): unknown
+  indicator?(props: StepperItemContext): unknown
+  icon?(props: StepperItemContext): unknown
+  label?(props: StepperItemContext): unknown
+  description?(props: StepperItemContext): unknown
+  separator?(props: StepperItemContext): unknown
+  content?(props: StepperItemContext): unknown
 } & {
-  [name: `item-${string}`]: ((props: StepperUIContext) => unknown) | undefined
-  [name: `header-${string}`]: ((props: StepperUIContext) => unknown) | undefined
-  [name: `indicator-${string}`]: ((props: StepperUIContext) => unknown) | undefined
-  [name: `icon-${string}`]: ((props: StepperUIContext) => unknown) | undefined
-  [name: `title-${string}`]: ((props: StepperUIContext) => unknown) | undefined
-  [name: `description-${string}`]: ((props: StepperUIContext) => unknown) | undefined
-  [name: `separator-${string}`]: ((props: StepperUIContext) => unknown) | undefined
-  [name: `content-${string}`]: ((props: StepperUIContext) => unknown) | undefined
+  [name: `item-${string}`]: ((props: StepperItemContext) => unknown) | undefined
+  [name: `header-${string}`]: ((props: StepperItemContext) => unknown) | undefined
+  [name: `indicator-${string}`]: ((props: StepperItemContext) => unknown) | undefined
+  [name: `icon-${string}`]: ((props: StepperItemContext) => unknown) | undefined
+  [name: `label-${string}`]: ((props: StepperItemContext) => unknown) | undefined
+  [name: `description-${string}`]: ((props: StepperItemContext) => unknown) | undefined
+  [name: `separator-${string}`]: ((props: StepperItemContext) => unknown) | undefined
+  [name: `content-${string}`]: ((props: StepperItemContext) => unknown) | undefined
 }

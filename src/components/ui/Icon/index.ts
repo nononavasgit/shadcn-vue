@@ -18,12 +18,13 @@ export const iconVariants = cva('shrink-0', {
   },
 })
 
+// Variants
 export type IconVariants = VariantProps<typeof iconVariants>
 
-export interface IconUI {
-  root?: HTMLAttributes
-}
+// Fn
+export type IconFn<T> = T | ((context: IconContext) => T)
 
+// Props
 export interface IconProps {
   name: IconName
   size?: IconVariants['size']
@@ -31,8 +32,18 @@ export interface IconProps {
   ui?: IconUI
 }
 
+// UI
+export interface IconUI {
+  root?: IconFn<HTMLAttributes>
+}
+
+// Context
+export interface IconContext {
+  props: Omit<IconProps, 'ui'>
+}
+
 export function normalizeIconProps(
-  source: IconProps | string | null | undefined,
+  source: IconProps | string | null | undefined | IconName,
 ): IconProps | undefined {
   const res = toValue(source)
 

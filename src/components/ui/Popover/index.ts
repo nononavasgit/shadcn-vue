@@ -1,19 +1,24 @@
-import type { HTMLAttributes, EmitsToProps } from 'vue'
+import type { HTMLAttributes } from 'vue'
 import type {
-  PopoverContentEmits,
-  PopoverContentProps as RekaPopoverContentProps,
-  PopoverRootProps as RekaPopoverRootProps,
-  PopoverPortalProps as RekaPopoverPortalProps,
   PopoverArrowProps as RekaPopoverArrowProps,
-  PopoverRootEmits,
+  PopoverContentEmits as RekaPopoverContentEmits,
+  PopoverContentProps as RekaPopoverContentProps,
+  PopoverPortalProps as RekaPopoverPortalProps,
+  PopoverRootEmits as RekaPopoverRootEmits,
+  PopoverRootProps as RekaPopoverRootProps,
+  PopoverTriggerProps as RekaPopoverTriggerProps,
 } from 'reka-ui'
+import type { EmitsAsProps } from '@/types/emits'
 
 export { default as Popover } from './Popover.vue'
 
-// Types
+// Props Reka
 export type PopoverRootProps = Pick<RekaPopoverRootProps, 'open' | 'defaultOpen' | 'modal'>
+export type PopoverTriggerProps = Pick<RekaPopoverTriggerProps, 'as' | 'asChild'>
 export type PopoverContentProps = Pick<
   RekaPopoverContentProps,
+  | 'as'
+  | 'asChild'
   | 'align'
   | 'alignFlip'
   | 'alignOffset'
@@ -35,41 +40,40 @@ export type PopoverContentProps = Pick<
   | 'sticky'
   | 'updatePositionStrategy'
 > &
-  Partial<
-    EmitsToProps<
-      Pick<
-        PopoverContentEmits,
-        | 'openAutoFocus'
-        | 'closeAutoFocus'
-        | 'escapeKeyDown'
-        | 'pointerDownOutside'
-        | 'focusOutside'
-        | 'interactOutside'
-      >
-    >
-  >
+  EmitsAsProps<RekaPopoverContentEmits>
 
 export type PopoverPortalProps = Pick<
   RekaPopoverPortalProps,
   'defer' | 'disabled' | 'to' | 'forceMount'
 >
-export type PopoverArrowProps = Pick<RekaPopoverArrowProps, 'width' | 'height' | 'rounded'>
+export type PopoverArrowProps = Pick<
+  RekaPopoverArrowProps,
+  'as' | 'asChild' | 'width' | 'height' | 'rounded'
+>
 
-export function normalizeRootProps(
+export function normalizePopoverRootProps(
   source: PopoverRootProps | null | undefined,
 ): PopoverRootProps | undefined {
   if (!source) return undefined
-
   const { defaultOpen, modal, open } = source
   return { defaultOpen, modal, open }
 }
 
-export function normalizeContentProps(
+export function normalizePopoverTriggerProps(
+  source: PopoverTriggerProps | null | undefined,
+): PopoverTriggerProps | undefined {
+  if (!source) return undefined
+  const { as, asChild } = source
+  return { as, asChild }
+}
+
+export function normalizePopoverContentProps(
   source: PopoverContentProps | null | undefined,
 ): PopoverContentProps | undefined {
   if (!source) return undefined
-
   const {
+    as,
+    asChild,
     align,
     alignFlip,
     alignOffset,
@@ -97,8 +101,9 @@ export function normalizeContentProps(
     onOpenAutoFocus,
     onPointerDownOutside,
   } = source
-
   return {
+    as,
+    asChild,
     align,
     alignFlip,
     alignOffset,
@@ -128,53 +133,56 @@ export function normalizeContentProps(
   }
 }
 
-export function normalizePortalProps(
+export function normalizePopoverPortalProps(
   source: PopoverPortalProps | null | undefined,
 ): PopoverPortalProps | undefined {
   if (!source) return undefined
-
   const { defer, disabled, to, forceMount } = source
   return { defer, disabled, to, forceMount }
 }
 
-export function normalizeArrowProps(
+export function normalizePopoverArrowProps(
   source: PopoverArrowProps | null | undefined,
 ): PopoverArrowProps | undefined {
   if (!source) return undefined
-
-  const { width, height, rounded } = source
-  return { width, height, rounded }
+  const { as, asChild, width, height, rounded } = source
+  return { as, asChild, width, height, rounded }
 }
+
+// Fn
+export type PopoverFn<T> = T | ((context: PopoverContext) => T)
 
 // UI
 export interface PopoverUI {
-  root?: HTMLAttributes
-  trigger?: HTMLAttributes
-  portal?: HTMLAttributes
-  content?: HTMLAttributes
-  arrow?: HTMLAttributes
+  root?: PopoverFn<HTMLAttributes>
+  trigger?: PopoverFn<HTMLAttributes>
+  content?: PopoverFn<HTMLAttributes>
+  arrow?: PopoverFn<HTMLAttributes>
 }
 
 // Props
 export interface PopoverProps extends PopoverRootProps {
-  arrow?: PopoverArrowProps
+  trigger?: PopoverTriggerProps
   content?: PopoverContentProps
   portal?: PopoverPortalProps
+  arrow?: PopoverArrowProps
   showArrow?: boolean
   ui?: PopoverUI
 }
 
-// Emits
-export type PopoverEmits = PopoverRootEmits
-
-// SlotProps
-export interface PopoverSlotProps {
+// Context
+export interface PopoverContext {
+  props: Omit<PopoverProps, 'ui'>
   open: boolean
   close: () => void
 }
 
+// Emits
+export type PopoverEmits = RekaPopoverRootEmits
+
 // Slots
 export interface PopoverSlots {
-  default?(props: PopoverSlotProps): unknown
-  content?(props: PopoverSlotProps): unknown
+  default?(props: PopoverContext): unknown
+  content?(props: PopoverContext): unknown
+  arrow?(props: PopoverContext): unknown
 }

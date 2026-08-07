@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import type { EmptyProps, EmptySlots } from '.'
+import type { EmptyContext, EmptyProps, EmptySlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -15,13 +16,22 @@ const props = withDefaults(defineProps<EmptyProps>(), {
 defineSlots<EmptySlots>()
 
 const attrs = useAttrs()
+const emptyContext = computed<EmptyContext>(() => {
+  const { ui, ...emptyProps } = props
+  void ui
+
+  return { props: emptyProps }
+})
+
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
-  const headerUI = normalizeHTMLAttributes(props.ui?.header)
-  const mediaUI = normalizeHTMLAttributes(props.ui?.media)
-  const labelUI = normalizeHTMLAttributes(props.ui?.label)
-  const descriptionUI = normalizeHTMLAttributes(props.ui?.description)
-  const contentUI = normalizeHTMLAttributes(props.ui?.content)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, emptyContext.value))
+  const headerUI = normalizeHTMLAttributes(useResolve(props.ui?.header, emptyContext.value))
+  const mediaUI = normalizeHTMLAttributes(useResolve(props.ui?.media, emptyContext.value))
+  const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, emptyContext.value))
+  const descriptionUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.description, emptyContext.value),
+  )
+  const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, emptyContext.value))
 
   return {
     root: {
@@ -81,11 +91,11 @@ const calculatedUI = computed(() => {
         data-slot="empty-media"
         :data-variant="props.mediaVariant"
       >
-        <slot name="media" />
+        <slot name="media" v-bind="emptyContext" />
       </div>
 
       <div v-if="props.label || $slots.label" v-bind="calculatedUI.label" data-slot="empty-title">
-        <slot name="label">{{ props.label }}</slot>
+        <slot name="label" v-bind="emptyContext">{{ props.label }}</slot>
       </div>
 
       <div
@@ -93,12 +103,12 @@ const calculatedUI = computed(() => {
         v-bind="calculatedUI.description"
         data-slot="empty-description"
       >
-        <slot name="description">{{ props.description }}</slot>
+        <slot name="description" v-bind="emptyContext">{{ props.description }}</slot>
       </div>
     </div>
 
     <div v-if="$slots.default" v-bind="calculatedUI.content" data-slot="empty-content">
-      <slot />
+      <slot v-bind="emptyContext" />
     </div>
   </div>
 </template>

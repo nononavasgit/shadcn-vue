@@ -4,10 +4,10 @@ import type {
   TabsContentProps as RekaTabsContentProps,
   TabsListProps as RekaTabsListProps,
   TabsRootEmits,
-  TabsRootProps,
+  TabsRootProps as RekaTabsRootProps,
   TabsTriggerProps as RekaTabsTriggerProps,
 } from 'reka-ui'
-import type { IconName, IconProps } from '@/components/ui/Icon'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
 
 export { default as Tabs } from './Tabs.vue'
 
@@ -78,9 +78,29 @@ export const tabsVariants = {
 
 export type TabsVariants = VariantProps<typeof tabsVariants.list>
 export type TabsValue = string | number
+export type TabsRootProps = Pick<
+  RekaTabsRootProps<TabsValue>,
+  | 'modelValue'
+  | 'defaultValue'
+  | 'orientation'
+  | 'dir'
+  | 'activationMode'
+  | 'unmountOnHide'
+  | 'as'
+  | 'asChild'
+>
 export type TabsListProps = Pick<RekaTabsListProps, 'as' | 'asChild'>
 export type TabsTriggerProps = Pick<RekaTabsTriggerProps, 'as' | 'asChild'>
-export type TabsContentProps = Pick<RekaTabsContentProps, 'as' | 'asChild'>
+export type TabsContentProps = Pick<RekaTabsContentProps, 'as' | 'asChild' | 'forceMount'>
+
+export function normalizeTabsRootProps(
+  source: TabsRootProps | null | undefined,
+): TabsRootProps | undefined {
+  if (!source) return undefined
+  const { modelValue, defaultValue, orientation, dir, activationMode, unmountOnHide, as, asChild } =
+    source
+  return { modelValue, defaultValue, orientation, dir, activationMode, unmountOnHide, as, asChild }
+}
 
 export function normalizeTabsListProps(
   source: TabsListProps | null | undefined,
@@ -102,8 +122,8 @@ export function normalizeTabsContentProps(
   source: TabsContentProps | null | undefined,
 ): TabsContentProps | undefined {
   if (!source) return undefined
-  const { as, asChild } = source
-  return { as, asChild }
+  const { as, asChild, forceMount } = source
+  return { as, asChild, forceMount }
 }
 
 export interface TabItem {
@@ -111,39 +131,20 @@ export interface TabItem {
   value: TabsValue
   label?: string
   content?: string
-  icon?: IconName | IconProps
-  trailingIcon?: IconName | IconProps
+  icon?: NormalizeIconProps
+  trailingIcon?: NormalizeIconProps
   disabled?: boolean
   forceMount?: boolean
   trigger?: TabsTriggerProps
   contentProps?: TabsContentProps
 }
 
-// Context
-export interface TabsUIContext {
-  tab: TabItem
-  index: number
-  active: boolean
-  first: boolean
-  last: boolean
-}
-
-export type TabsUIValue<T> = T | ((context: TabsUIContext) => T)
-
-// UI
-export interface TabsUI {
-  root?: HTMLAttributes
-  list?: HTMLAttributes
-  contentWrapper?: HTMLAttributes
-  trigger?: TabsUIValue<HTMLAttributes>
-  icon?: TabsUIValue<HTMLAttributes>
-  label?: TabsUIValue<HTMLAttributes>
-  trailingIcon?: TabsUIValue<HTMLAttributes>
-  content?: TabsUIValue<HTMLAttributes>
-}
+// Fn
+export type TabsFn<T> = T | ((context: TabsContext) => T)
+export type TabsItemFn<T> = T | ((context: TabsItemContext) => T)
 
 // Props
-export interface TabsProps extends TabsRootProps<TabsValue> {
+export interface TabsProps extends TabsRootProps {
   loop?: boolean
   variant?: TabsVariants['variant']
   list?: TabsListProps
@@ -151,20 +152,44 @@ export interface TabsProps extends TabsRootProps<TabsValue> {
   ui?: TabsUI
 }
 
+// UI
+export interface TabsUI {
+  root?: TabsFn<HTMLAttributes>
+  list?: TabsFn<HTMLAttributes>
+  contentWrapper?: TabsFn<HTMLAttributes>
+  trigger?: TabsItemFn<HTMLAttributes>
+  label?: TabsItemFn<HTMLAttributes>
+  content?: TabsItemFn<HTMLAttributes>
+}
+
+// Context
+export interface TabsContext {
+  props: Omit<TabsProps, 'ui'>
+  value: TabsValue | undefined
+}
+
+export interface TabsItemContext extends TabsContext {
+  tab: TabItem
+  index: number
+  active: boolean
+  first: boolean
+  last: boolean
+}
+
 // Emits
 export type TabsEmits = TabsRootEmits<TabsValue>
 
 // Slots
 export type TabsSlots = {
-  trigger?(props: TabsUIContext): unknown
-  leading?(props: TabsUIContext): unknown
-  label?(props: TabsUIContext): unknown
-  trailing?(props: TabsUIContext): unknown
-  content?(props: TabsUIContext): unknown
+  trigger?(props: TabsItemContext): unknown
+  leading?(props: TabsItemContext): unknown
+  label?(props: TabsItemContext): unknown
+  trailing?(props: TabsItemContext): unknown
+  content?(props: TabsItemContext): unknown
 } & {
-  [name: `trigger-${string}`]: ((props: TabsUIContext) => unknown) | undefined
-  [name: `leading-${string}`]: ((props: TabsUIContext) => unknown) | undefined
-  [name: `label-${string}`]: ((props: TabsUIContext) => unknown) | undefined
-  [name: `trailing-${string}`]: ((props: TabsUIContext) => unknown) | undefined
-  [name: `content-${string}`]: ((props: TabsUIContext) => unknown) | undefined
+  [name: `trigger-${string}`]: ((props: TabsItemContext) => unknown) | undefined
+  [name: `leading-${string}`]: ((props: TabsItemContext) => unknown) | undefined
+  [name: `label-${string}`]: ((props: TabsItemContext) => unknown) | undefined
+  [name: `trailing-${string}`]: ((props: TabsItemContext) => unknown) | undefined
+  [name: `content-${string}`]: ((props: TabsItemContext) => unknown) | undefined
 }

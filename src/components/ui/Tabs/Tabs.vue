@@ -8,10 +8,11 @@ import { cn } from '@/lib/utils'
 import {
   normalizeTabsContentProps,
   normalizeTabsListProps,
+  normalizeTabsRootProps,
   normalizeTabsTriggerProps,
   tabsVariants,
 } from '.'
-import type { TabsProps, TabsSlots, TabsUIContext, TabsValue } from '.'
+import type { TabsContext, TabsEmits, TabsItemContext, TabsProps, TabsSlots, TabsValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -27,27 +28,39 @@ const props = withDefaults(defineProps<TabsProps>(), {
   ui: undefined,
 })
 defineSlots<TabsSlots>()
+defineEmits<TabsEmits>()
 
 const attrs = useAttrs()
 const model = defineModel<TabsValue>()
+const value = computed(() => model.value ?? props.defaultValue)
+
+const tabsContext = computed<TabsContext>(() => {
+  const { ui, ...tabsProps } = props
+  void ui
+
+  return {
+    props: tabsProps,
+    value: value.value,
+  }
+})
 
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
-  const listUI = normalizeHTMLAttributes(props.ui?.list)
-  const contentWrapperUI = normalizeHTMLAttributes(props.ui?.contentWrapper)
+  const normalizedRootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, tabsContext.value))
+  const { dir: rootDirection, ...rootUI } = normalizedRootUI
+  const listUI = normalizeHTMLAttributes(useResolve(props.ui?.list, tabsContext.value))
+  const contentWrapperUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.contentWrapper, tabsContext.value),
+  )
+  const root = normalizeTabsRootProps(props)
   const list = normalizeTabsListProps(props.list)
+
+  void rootDirection
 
   return {
     root: {
       ...attrs,
       ...rootUI,
-      as: props.as,
-      asChild: props.asChild,
-      defaultValue: props.defaultValue,
-      orientation: props.orientation,
-      dir: props.dir,
-      activationMode: props.activationMode,
-      unmountOnHide: props.unmountOnHide,
+      ...root,
       'data-variant': props.variant,
       class: cn(
         'flex flex-col gap-2',
@@ -78,17 +91,16 @@ const calculatedUI = computed(() => {
       style: contentWrapperUI.style,
     },
     tabs: props.tabs.map((tab, index) => {
-      const context: TabsUIContext = {
+      const context: TabsItemContext = {
+        ...tabsContext.value,
         tab,
         index,
-        active: Object.is(model.value, tab.value),
+        active: Object.is(value.value, tab.value),
         first: index === 0,
         last: index === props.tabs.length - 1,
       }
       const triggerUI = normalizeHTMLAttributes(useResolve(props.ui?.trigger, context))
-      const iconUI = normalizeHTMLAttributes(useResolve(props.ui?.icon, context))
       const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
-      const trailingIconUI = normalizeHTMLAttributes(useResolve(props.ui?.trailingIcon, context))
       const normalizedContentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
       const { dir: contentDirection, ...contentUI } = normalizedContentUI
 
@@ -128,10 +140,7 @@ const calculatedUI = computed(() => {
           style: triggerUI.style,
         },
         icon: {
-          ...iconUI,
           ...icon,
-          class: cn(iconUI.class),
-          style: [iconUI.style],
         },
         label: {
           ...labelUI,
@@ -139,14 +148,12 @@ const calculatedUI = computed(() => {
           style: labelUI.style,
         },
         trailingIcon: {
-          ...trailingIconUI,
           ...trailingIcon,
-          class: cn(trailingIconUI.class),
-          style: [trailingIconUI.style],
         },
         content: {
           ...contentUI,
           ...content,
+          tabindex: contentUI?.tabindex ?? 0,
           value: tab.value,
           forceMount: tab.forceMount,
           class: cn(
@@ -182,7 +189,7 @@ const calculatedUI = computed(() => {
             <slot :name="tab.slots.label" v-bind="tab.context">
               <slot name="label" v-bind="tab.context">
                 <span v-if="tab.data.label" v-bind="tab.label">
-                  {{ tab.data.label }}
+                  {{ tab.data?.label }}
                 </span>
               </slot>
             </slot>
@@ -210,7 +217,7 @@ const calculatedUI = computed(() => {
       >
         <slot :name="tab.slots.content" v-bind="tab.context">
           <slot name="content" v-bind="tab.context">
-            {{ tab.data.content }}
+            {{ tab.data?.content }}
           </slot>
         </slot>
       </TabsContent>

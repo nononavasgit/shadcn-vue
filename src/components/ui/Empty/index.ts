@@ -2,13 +2,15 @@ import type { HTMLAttributes } from 'vue'
 
 export { default as Empty } from './Empty.vue'
 
+export type EmptyFn<T> = T | ((context: EmptyContext) => T)
+
 export interface EmptyUI {
-  root?: HTMLAttributes
-  header?: HTMLAttributes
-  media?: HTMLAttributes
-  label?: HTMLAttributes
-  description?: HTMLAttributes
-  content?: HTMLAttributes
+  root?: EmptyFn<HTMLAttributes>
+  header?: EmptyFn<HTMLAttributes>
+  media?: EmptyFn<HTMLAttributes>
+  label?: EmptyFn<HTMLAttributes>
+  description?: EmptyFn<HTMLAttributes>
+  content?: EmptyFn<HTMLAttributes>
 }
 
 export interface EmptyProps {
@@ -18,9 +20,13 @@ export interface EmptyProps {
   ui?: EmptyUI
 }
 
+export interface EmptyContext {
+  props: Omit<EmptyProps, 'ui'>
+}
+
 export interface EmptySlots {
-  default?(): unknown
-  media?(): unknown
-  label?(): unknown
-  description?(): unknown
+  default?(props: EmptyContext): unknown
+  media?(props: EmptyContext): unknown
+  label?(props: EmptyContext): unknown
+  description?(props: EmptyContext): unknown
 }

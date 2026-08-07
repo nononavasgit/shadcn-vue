@@ -17,6 +17,7 @@ import {
   X,
   Minus,
   MoreHorizontal,
+  User,
 } from '@lucide/vue'
 
 export const ICONS = {
@@ -38,6 +39,7 @@ export const ICONS = {
   x: X,
   minus: Minus,
   moreHorizontal: MoreHorizontal,
+  user: User,
 } as const
 
 export type IconName = keyof typeof ICONS

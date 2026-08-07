@@ -4,8 +4,9 @@ import type { AvatarImageEmits } from 'reka-ui'
 import { AvatarFallback, AvatarImage, AvatarRoot } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import type { AvatarEmits, AvatarLoadingState, AvatarProps, AvatarSlots } from '.'
+import type { AvatarContext, AvatarEmits, AvatarLoadingState, AvatarProps, AvatarSlots } from '.'
 import { normalizeImageProps, normalizeFallbackProps } from '.'
 defineOptions({ inheritAttrs: false })
 
@@ -19,12 +20,20 @@ const props = withDefaults(defineProps<AvatarProps>(), {
 const emit = defineEmits<AvatarEmits>()
 defineSlots<AvatarSlots>()
 
+const avatarContext = computed<AvatarContext>(() => {
+  const { ui, ...avatarProps } = props
+  void ui
+
+  return {
+    props: avatarProps,
+  }
+})
+
 const attrs = useAttrs()
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
-  const imageUI = normalizeHTMLAttributes(props.ui?.image)
-  const fallbackUI = normalizeHTMLAttributes(props.ui?.fallback)
-  const iconUI = normalizeHTMLAttributes(props.ui?.icon)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, avatarContext.value))
+  const imageUI = normalizeHTMLAttributes(useResolve(props.ui?.image, avatarContext.value))
+  const fallbackUI = normalizeHTMLAttributes(useResolve(props.ui?.fallback, avatarContext.value))
 
   return {
     root: {
@@ -58,9 +67,7 @@ const calculatedUI = computed(() => {
       ),
     },
     icon: {
-      ...iconUI,
       ...normalizeIconProps(props.icon),
-      class: cn(iconUI.class),
     },
   }
 })
@@ -89,7 +96,7 @@ function handleLoadingStateChange(state: OriginalLoadingState) {
     />
 
     <AvatarFallback v-bind="calculatedUI.fallback" data-slot="avatar-fallback">
-      <slot name="fallback">
+      <slot name="fallback" v-bind="avatarContext">
         <Icon
           v-if="calculatedUI.icon.name"
           v-bind="calculatedUI.icon"

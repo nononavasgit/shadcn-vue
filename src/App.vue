@@ -1,5 +1,5 @@
 <script setup>
-import { AlertDialog, AspectRatio, Button } from '@/components/ui'
+import { AlertDialog, AspectRatio, Avatar, Button } from '@/components/ui'
 import { ConfigProvider } from '@/components/provider'
 
 const alertDialogUI = {
@@ -18,6 +18,15 @@ const aspectRatioUI = {
   root: ({ aspect }) => ({
     class: aspect >= 1 ? 'rounded-xl ring-2 ring-primary/20' : 'rounded-xl ring-2 ring-success/20',
     'data-ratio': aspect,
+  }),
+}
+
+const avatarUI = {
+  root: ({ props }) => ({
+    class: props.label ? 'ring-2 ring-primary/30 ring-offset-2' : undefined,
+  }),
+  fallback: ({ props }) => ({
+    class: props.icon ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground',
   }),
 }
 </script>
@@ -105,6 +114,25 @@ const aspectRatioUI = {
             </template>
           </AspectRatio>
         </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Avatar examples</h2>
+
+        <div class="flex flex-wrap items-center gap-4">
+          <Avatar src="https://github.com/shadcn.png" alt="shadcn avatar" />
+          <Avatar label="CN" />
+          <Avatar icon="user" />
+          <Avatar label="OK" :ui="avatarUI" />
+        </div>
+
+        <Avatar label="JD">
+          <template #fallback="{ props }">
+            <div class="flex size-full items-center justify-center bg-warning/10 text-warning">
+              {{ props.label }}
+            </div>
+          </template>
+        </Avatar>
       </section>
     </main>
   </ConfigProvider>

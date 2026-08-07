@@ -3,9 +3,16 @@ import { computed, useAttrs } from 'vue'
 import { Primitive } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
-import { buttonVariants, type ButtonEmits, type ButtonProps, type ButtonSlots } from '.'
+import {
+  buttonVariants,
+  type ButtonEmits,
+  type ButtonProps,
+  type ButtonSlots,
+  type ButtonContext,
+} from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -26,6 +33,18 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 })
 const emit = defineEmits<ButtonEmits>()
 defineSlots<ButtonSlots>()
+
+const buttonContext = computed(() => {
+  const { ui, icon, trailingIcon, ...buttonProps } = props
+  void ui
+  void icon
+  void trailingIcon
+  const buttonContext: ButtonContext = {
+    props: buttonProps,
+  }
+
+  return buttonContext
+})
 
 const attrs = useAttrs()
 const { colorStyle } = useColor(
@@ -51,11 +70,12 @@ const calculatedVariants = computed(() => {
     .filter((className) => !className.startsWith('hover:') && !className.startsWith('active:'))
     .join(' ')
 })
+
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
-  const iconUI = normalizeHTMLAttributes(props.ui?.icon)
-  const trailingIconUI = normalizeHTMLAttributes(props.ui?.trailingIcon)
-  const loadingIconUI = normalizeHTMLAttributes(props.ui?.loadingIcon)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, buttonContext.value))
+  const iconUI = normalizeHTMLAttributes(useResolve(props.ui?.root, buttonContext.value))
+  const trailingIconUI = normalizeHTMLAttributes(useResolve(props.ui?.root, buttonContext.value))
+  const loadingIconUI = normalizeHTMLAttributes(useResolve(props.ui?.root, buttonContext.value))
 
   return {
     root: {
@@ -104,14 +124,14 @@ function handleClick(event: PointerEvent) {
 
 <template>
   <Primitive v-bind="calculatedUI.root" @click="handleClick">
-    <slot v-if="props.asChild" />
+    <slot v-if="props.asChild" v-bind="buttonContext" />
     <template v-else>
       <template v-if="props.loading">
-        <slot name="loading">
+        <slot name="loading" v-bind="buttonContext">
           <Icon v-bind="calculatedUI.loadingIcon" />
         </slot>
       </template>
-      <slot v-else name="leading">
+      <slot v-else name="leading" v-bind="buttonContext">
         <Icon
           v-if="calculatedUI.icon.name"
           v-bind="calculatedUI.icon"
@@ -119,9 +139,9 @@ function handleClick(event: PointerEvent) {
         />
       </slot>
 
-      <slot>{{ props.label }}</slot>
+      <slot v-bind="buttonContext">{{ props.label }}</slot>
 
-      <slot name="trailing">
+      <slot name="trailing" v-bind="buttonContext">
         <Icon
           v-if="calculatedUI.trailingIcon.name"
           v-bind="calculatedUI.trailingIcon"

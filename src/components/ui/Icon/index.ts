@@ -42,8 +42,12 @@ export interface IconContext {
   props: Omit<IconProps, 'ui'>
 }
 
+// Normalize
+
+export type NormalizeIconProps = IconName | IconProps
+
 export function normalizeIconProps(
-  source: IconProps | string | null | undefined | IconName,
+  source: NormalizeIconProps | undefined | string,
 ): IconProps | undefined {
   const res = toValue(source)
 

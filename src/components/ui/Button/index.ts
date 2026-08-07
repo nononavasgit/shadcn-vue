@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { ButtonHTMLAttributes, HTMLAttributes } from 'vue'
-import type { IconProps, IconName } from '@/components/ui/Icon'
+import type { HTMLAttributes } from 'vue'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
 import type { PrimitiveProps } from 'reka-ui'
 
 export { default as Button } from './Button.vue'
@@ -251,15 +251,13 @@ export const buttonVariants = cva('', {
   },
 })
 
+// Variants
 export type ButtonVariants = VariantProps<typeof buttonVariants>
 
-export interface ButtonUI {
-  root?: HTMLAttributes & ButtonHTMLAttributes
-  icon?: HTMLAttributes
-  trailingIcon?: HTMLAttributes
-  loadingIcon?: HTMLAttributes
-}
+// Fn
+export type ButtonFn<T> = T | ((context: ButtonContext) => T)
 
+// Props
 export interface ButtonProps extends Pick<PrimitiveProps, 'as' | 'asChild'> {
   label?: string
   variant?: ButtonVariants['variant']
@@ -269,9 +267,35 @@ export interface ButtonProps extends Pick<PrimitiveProps, 'as' | 'asChild'> {
   square?: ButtonVariants['square'] | boolean
   loading?: boolean
   color?: string
-  icon?: IconName | IconProps
-  trailingIcon?: IconName | IconProps
+  icon?: NormalizeIconProps
+  trailingIcon?: NormalizeIconProps
   ui?: ButtonUI
+}
+
+// UI
+export interface ButtonUI {
+  root?: ButtonFn<HTMLAttributes>
+  icon?: ButtonFn<HTMLAttributes>
+  trailingIcon?: ButtonFn<HTMLAttributes>
+  loadingIcon?: ButtonFn<HTMLAttributes>
+}
+
+// Context
+export interface ButtonContext {
+  props: Omit<ButtonProps, 'ui' | 'icon' | 'trailingIcon'>
+}
+
+// Emits
+export interface ButtonEmits {
+  click: [event: PointerEvent]
+}
+
+// Slots
+export interface ButtonSlots {
+  default?(props: ButtonContext): unknown
+  leading?(props: ButtonContext): unknown
+  loading?(props: ButtonContext): unknown
+  trailing?(props: ButtonContext): unknown
 }
 
 export function normalizeButtonProps(
@@ -294,14 +318,4 @@ export function normalizeButtonProps(
     trailingIcon: source.trailingIcon,
     ui: source.ui,
   }
-}
-export interface ButtonEmits {
-  click: [event: PointerEvent]
-}
-
-export interface ButtonSlots {
-  default?(): unknown
-  leading?(): unknown
-  loading?(): unknown
-  trailing?(): unknown
 }

@@ -2,9 +2,10 @@
 import { computed, useAttrs } from 'vue'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
-import { badgeVariants, type BadgeProps, type BadgeSlots } from '.'
+import { badgeVariants, type BadgeContext, type BadgeProps, type BadgeSlots } from '.'
 import { Primitive } from 'reka-ui'
 
 defineOptions({ inheritAttrs: false })
@@ -22,6 +23,15 @@ const props = withDefaults(defineProps<BadgeProps>(), {
 })
 defineSlots<BadgeSlots>()
 
+const badgeContext = computed<BadgeContext>(() => {
+  const { ui, ...badgeProps } = props
+  void ui
+
+  return {
+    props: badgeProps,
+  }
+})
+
 const attrs = useAttrs()
 const { colorStyle } = useColor(
   computed(() => props.color),
@@ -35,10 +45,7 @@ const calculatedUI = computed(() => {
     color: Boolean(props.color),
   })
 
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
-  const iconUI = normalizeHTMLAttributes(props.ui?.icon)
-  const trailingIconUI = normalizeHTMLAttributes(props.ui?.trailingIcon)
-
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, badgeContext.value))
   return {
     root: {
       ...attrs,
@@ -49,14 +56,10 @@ const calculatedUI = computed(() => {
       style: [colorStyle.value, attrs.style, rootUI.style],
     },
     icon: {
-      ...iconUI,
       ...normalizeIconProps(props.icon),
-      class: cn(iconUI.class),
     },
     trailingIcon: {
-      ...trailingIconUI,
       ...normalizeIconProps(props.trailingIcon),
-      class: cn(trailingIconUI.class),
     },
   }
 })
@@ -64,7 +67,7 @@ const calculatedUI = computed(() => {
 
 <template>
   <Primitive v-bind="calculatedUI.root">
-    <slot name="leading">
+    <slot name="leading" v-bind="badgeContext">
       <Icon
         v-if="calculatedUI.icon.name"
         v-bind="calculatedUI.icon"
@@ -72,9 +75,9 @@ const calculatedUI = computed(() => {
       />
     </slot>
 
-    <slot>{{ props.label }}</slot>
+    <slot v-bind="badgeContext">{{ props.label }}</slot>
 
-    <slot name="trailing">
+    <slot name="trailing" v-bind="badgeContext">
       <Icon
         v-if="calculatedUI.trailingIcon.name"
         v-bind="calculatedUI.trailingIcon"

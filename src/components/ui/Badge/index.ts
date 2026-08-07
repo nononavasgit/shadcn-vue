@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
-import { IconProps, IconName } from '@/components/ui/Icon'
+import { NormalizeIconProps } from '@/components/ui/Icon'
 import { PrimitiveProps } from 'reka-ui'
 
 export { default as Badge } from './Badge.vue'
@@ -197,10 +197,10 @@ export const badgeVariants = cva(
 
 export type BadgeVariants = VariantProps<typeof badgeVariants>
 
+export type BadgeFn<T> = T | ((context: BadgeContext) => T)
+
 export interface BadgeUI {
-  root?: HTMLAttributes
-  icon?: HTMLAttributes
-  trailingIcon?: HTMLAttributes
+  root?: BadgeFn<HTMLAttributes>
 }
 
 export interface BadgeProps extends PrimitiveProps {
@@ -209,13 +209,17 @@ export interface BadgeProps extends PrimitiveProps {
   variant?: BadgeVariants['variant']
   severity?: BadgeVariants['severity']
   color?: string
-  icon?: IconName | IconProps
-  trailingIcon?: IconName | IconProps
+  icon?: NormalizeIconProps
+  trailingIcon?: NormalizeIconProps
   ui?: BadgeUI
 }
 
+export interface BadgeContext {
+  props: Omit<BadgeProps, 'ui'>
+}
+
 export interface BadgeSlots {
-  default?(): unknown
-  leading?(): unknown
-  trailing?(): unknown
+  default?(props: BadgeContext): unknown
+  leading?(props: BadgeContext): unknown
+  trailing?(props: BadgeContext): unknown
 }

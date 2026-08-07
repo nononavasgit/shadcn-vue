@@ -1,5 +1,5 @@
 <script setup>
-import { Alert, Button } from '@/components/ui'
+import { Alert, Button, Badge } from '@/components/ui'
 import { ConfigProvider } from '@/components/provider'
 
 const alertUI = {
@@ -16,6 +16,7 @@ const alertUI = {
 
 <template>
   <ConfigProvider>
+    <Badge label="Hola" variant="soft" icon="check"></Badge>
     <main class="mx-auto min-h-screen max-w-2xl space-y-8 p-6 md:p-10">
       <section class="space-y-4">
         <h1 class="text-2xl font-semibold">Alert examples</h1>

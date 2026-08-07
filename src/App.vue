@@ -1,155 +1,135 @@
 <script setup>
 import { ref } from 'vue'
 import { ConfigProvider } from '@/components/provider'
-import { Dialog, Empty, HoverCard, Tabs } from '@/components/ui'
+import { Progress } from '@/components/ui'
 
-const activeTab = ref('overview')
-const dialogOpen = ref(false)
+const uploadProgress = ref(68)
+const taskProgress = ref(3)
+const customProgress = ref(42)
+const indeterminateProgress = ref(null)
 
-const tabs = [
-  {
-    id: 'overview',
-    value: 'overview',
-    label: 'Resumen',
-    icon: 'minus',
-    content: 'Resumen general del proyecto.',
-  },
-  {
-    id: 'activity',
-    value: 'activity',
-    label: 'Actividad',
-    icon: 'user',
-    content: 'Aquí puedes consultar la actividad reciente.',
-  },
-  {
-    id: 'settings',
-    value: 'settings',
-    label: 'Configuración',
-    icon: 'search',
-    content: 'Gestiona las preferencias del proyecto.',
-  },
-]
-
-const tabsUI = {
-  trigger: ({ active }) => ({
-    class: active ? 'font-semibold' : undefined,
-    xd: 'xd',
+const progressUI = {
+  root: ({ percentage }) => ({
+    class: percentage === 100 ? 'ring-2 ring-green-500/30' : undefined,
   }),
-  content: ({ active }) => ({
-    class: active ? 'border-primary' : undefined,
+  indicator: ({ percentage }) => ({
+    class: percentage >= 75 ? 'bg-green-500' : undefined,
+  }),
+  label: ({ percentage }) => ({
+    class: percentage < 25 ? 'text-foreground' : undefined,
   }),
 }
 
-const emptyUI = {
-  root: ({ props }) => ({
-    class: props.mediaVariant === 'icon' ? 'min-h-64' : 'min-h-48',
-  }),
-}
-
-const hoverCardUI = {
-  content: ({ open }) => ({
-    class: open ? 'border-primary' : undefined,
-  }),
+function incrementTask() {
+  taskProgress.value = taskProgress.value >= 5 ? 0 : taskProgress.value + 1
 }
 </script>
 
 <template>
   <ConfigProvider>
     <main class="mx-auto min-h-screen max-w-3xl space-y-10 p-6 md:p-10">
-      <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Tabs examples</h2>
+      <header class="space-y-2">
+        <h1 class="text-3xl font-semibold">Progress examples</h1>
+        <p class="text-muted-foreground">
+          Ejemplos de valores, labels, colores, estados y slots personalizados.
+        </p>
+      </header>
 
-        <Tabs
-          v-model="activeTab"
-          :tabs="tabs"
-          variant="default"
-          :ui="tabsUI"
-          :orientation="'vertical'"
-        >
-          <template #content="{ tab }">
-            <div class="rounded-md border p-4">
-              {{ tab.content }}
-            </div>
-          </template>
-        </Tabs>
+      <section class="space-y-6">
+        <h2 class="text-xl font-semibold">Valores básicos</h2>
 
-        <p class="text-sm text-muted-foreground">Pestaña activa: {{ activeTab }}</p>
-      </section>
-
-      <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Dialog examples</h2>
-
-        <Dialog v-model:open="dialogOpen" label="Editar proyecto" icon="edit">
-          <template #default="{ open }">
-            <button class="rounded-md border px-3 py-2 text-sm hover:bg-muted">
-              {{ open ? 'Diálogo abierto' : 'Abrir diálogo' }}
-            </button>
-          </template>
-
-          <template #content="{ close }">
-            <p class="text-sm text-muted-foreground">
-              El contenido recibe el contexto del diálogo y puede cerrarlo directamente.
-            </p>
-            <button class="mt-4 rounded-md border px-3 py-2 text-sm hover:bg-muted" @click="close">
-              Cerrar desde el contexto
-            </button>
-          </template>
-        </Dialog>
-      </section>
-
-      <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Empty examples</h2>
-
-        <Empty
-          label="No hay proyectos"
-          description="Crea tu primer proyecto para empezar a trabajar."
-          media-variant="icon"
-          :ui="emptyUI"
-        >
-          <template #media>
-            <span class="text-2xl">📁</span>
-          </template>
-
-          <button class="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground">
-            Crear proyecto
-          </button>
-        </Empty>
-      </section>
-
-      <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">HoverCard examples</h2>
-
-        <div class="flex flex-wrap items-center gap-4">
-          <HoverCard label="Información adicional sobre este elemento.">
-            <template #default>
-              <button class="rounded-md border px-3 py-2 text-sm hover:bg-muted">
-                HoverCard con label
-              </button>
-            </template>
-          </HoverCard>
-
-          <HoverCard :ui="hoverCardUI" show-arrow>
-            <template #default="{ open }">
-              <button class="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground">
-                {{ open ? 'Tarjeta abierta' : 'Pasar el ratón' }}
-              </button>
-            </template>
-
-            <template #content="{ close }">
-              <div class="space-y-3">
-                <div>
-                  <h3 class="font-medium">Perfil de usuario</h3>
-                  <p class="text-sm text-muted-foreground">
-                    Este contenido recibe el contexto del HoverCard.
-                  </p>
-                </div>
-                <button class="rounded-md border px-3 py-2 text-sm hover:bg-muted" @click="close">
-                  Cerrar
-                </button>
-              </div>
-            </template>
-          </HoverCard>
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-sm">
+            <span>Sin progreso</span>
+            <span>0%</span>
+          </div>
+          <Progress :model-value="0" />
         </div>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-sm">
+            <span>Progreso parcial</span>
+            <span>{{ uploadProgress }}%</span>
+          </div>
+          <Progress v-model="uploadProgress" />
+          <input v-model.number="uploadProgress" type="range" min="0" max="100" class="w-full" />
+        </div>
+
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-sm">
+            <span>Completado</span>
+            <span>100%</span>
+          </div>
+          <Progress :model-value="100" />
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <h2 class="text-xl font-semibold">Labels y contexto</h2>
+
+        <Progress v-model="uploadProgress" label="Subiendo archivos" />
+
+        <Progress :model-value="taskProgress" :max="5" label="Tareas completadas">
+          <template #label="{ value, max, percentage }">
+            {{ value }} de {{ max }} tareas ({{ Math.round(percentage) }}%)
+          </template>
+        </Progress>
+
+        <div class="flex items-center gap-3">
+          <button class="rounded-md border px-3 py-2 text-sm hover:bg-muted" @click="incrementTask">
+            Avanzar tarea
+          </button>
+          <span class="text-sm text-muted-foreground">{{ taskProgress }} / 5</span>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <h2 class="text-xl font-semibold">Colores</h2>
+
+        <div class="space-y-4">
+          <Progress :model-value="72" color="#2563eb" label="Azul personalizado" />
+          <Progress
+            :model-value="48"
+            color="#f97316"
+            track-color="#ffedd5"
+            label="Naranja con track personalizado"
+          />
+          <Progress :model-value="86" color="#16a34a" label="Verde completado" />
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <h2 class="text-xl font-semibold">Indeterminado</h2>
+
+        <Progress v-model="indeterminateProgress" label="Procesando" />
+        <p class="text-sm text-muted-foreground">
+          Un valor <code>null</code> representa progreso indeterminado.
+        </p>
+
+        <button
+          class="rounded-md border px-3 py-2 text-sm hover:bg-muted"
+          @click="indeterminateProgress = indeterminateProgress === null ? 35 : null"
+        >
+          {{ indeterminateProgress === null ? 'Mostrar 35%' : 'Volver a indeterminado' }}
+        </button>
+      </section>
+
+      <section class="space-y-6">
+        <h2 class="text-xl font-semibold">UI dinámica y slot indicator</h2>
+
+        <Progress v-model="customProgress" :ui="progressUI" label="Progreso dinámico">
+          <template #indicator="{ percentage }">
+            <div
+              class="h-full rounded-full bg-violet-600 transition-all"
+              :style="{ width: `${percentage}%` }"
+            />
+          </template>
+        </Progress>
+
+        <input v-model.number="customProgress" type="range" min="0" max="100" class="w-full" />
+        <p class="text-sm text-muted-foreground">
+          El `ui` y los slots reciben el contexto de `Progress`.
+        </p>
       </section>
     </main>
   </ConfigProvider>

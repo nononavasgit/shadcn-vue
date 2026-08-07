@@ -2,9 +2,11 @@
 import { computed, useAttrs, useSlots } from 'vue'
 import { ProgressIndicator, ProgressRoot } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
-import type { ProgressLabelSlotProps, ProgressProps, ProgressSlots } from '.'
+import { normalizeProgressIndicatorProps, normalizeProgressRootProps } from '.'
+import type { ProgressContext, ProgressProps, ProgressSlots, ProgressValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -19,9 +21,10 @@ const props = withDefaults(defineProps<ProgressProps>(), {
   label: undefined,
   color: undefined,
   trackColor: undefined,
+  indicator: undefined,
   ui: undefined,
 })
-const modelValue = defineModel<number | null>({ default: 0 })
+const modelValue = defineModel<ProgressValue>({ default: 0 })
 
 const { colorStyle } = useColor(
   computed(() => props.color),
@@ -38,25 +41,30 @@ const percentage = computed(() => {
   return Math.min(100, Math.max(0, (modelValue.value / props.max) * 100))
 })
 
-const slotProps = computed<ProgressLabelSlotProps>(() => ({
-  value: modelValue.value,
-  max: props.max,
-  percentage: percentage.value,
-}))
+const progressContext = computed<ProgressContext>(() => {
+  const { ui, ...progressProps } = props
+  void ui
+
+  return {
+    props: progressProps,
+    value: modelValue.value,
+    max: props.max,
+    percentage: percentage.value,
+  }
+})
 
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
-  const indicatorUI = normalizeHTMLAttributes(props.ui?.indicator)
-  const labelUI = normalizeHTMLAttributes(props.ui?.label)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, progressContext.value))
+  const indicatorUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.indicator, progressContext.value),
+  )
+  const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, progressContext.value))
 
   return {
     root: {
       ...attrs,
       ...rootUI,
-      modelValue: modelValue.value,
-      max: props.max,
-      getValueLabel: props.getValueLabel,
-      getValueText: props.getValueText,
+      ...normalizeProgressRootProps(props),
       'aria-label': rootUI['aria-label'] ?? attrs['aria-label'],
       'aria-valuetext': rootUI['aria-valuetext'] ?? attrs['aria-valuetext'] ?? props.label,
       class: cn(
@@ -72,6 +80,7 @@ const calculatedUI = computed(() => {
     },
     indicator: {
       ...indicatorUI,
+      ...normalizeProgressIndicatorProps(props.indicator),
       class: cn(
         'h-full w-full flex-1 bg-primary transition-all',
         props.color && 'bg-(--progress-color)',
@@ -91,8 +100,8 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <ProgressRoot v-bind="calculatedUI.root" data-slot="progress">
-    <slot name="indicator" v-bind="slotProps">
+  <ProgressRoot v-bind="calculatedUI.root" v-model="modelValue" data-slot="progress">
+    <slot name="indicator" v-bind="progressContext">
       <ProgressIndicator
         v-bind="calculatedUI.indicator"
         data-slot="progress-indicator"
@@ -101,7 +110,7 @@ const calculatedUI = computed(() => {
     </slot>
 
     <span v-if="props.label || $slots.label" v-bind="calculatedUI.label">
-      <slot name="label" v-bind="slotProps">{{ props.label }}</slot>
+      <slot name="label" v-bind="progressContext">{{ props.label }}</slot>
     </span>
   </ProgressRoot>
 </template>

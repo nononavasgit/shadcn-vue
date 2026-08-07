@@ -1,73 +1,69 @@
 import type { HTMLAttributes } from 'vue'
-import type { IconName, IconProps } from '@/components/ui/Icon'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
 import type { LinkProps } from '@/components/ui/Link'
-import { useResolve } from '@/composables/useResolve'
 
 export { default as Breadcrumb } from './Breadcrumb.vue'
-
-export type BreadcrumbIcon = IconName | IconProps
 
 // Item
 export interface BreadcrumbItem {
   id: string | number
   label?: string
   to?: LinkProps['to']
-  icon?: BreadcrumbIcon
+  icon?: NormalizeIconProps
   disabled?: boolean
-  ellipsis?: boolean
-}
-
-// Context
-export interface BreadcrumbUIContext {
-  items: BreadcrumbItem[]
-}
-
-export interface BreadcrumbItemUIContext {
-  item: BreadcrumbItem
-  index: number
-  first: boolean
-  last: boolean
-  linked: boolean
-}
-
-export type BreadcrumbItemUIValue<T> = T | ((context: BreadcrumbItemUIContext) => T)
-
-export function resolveBreadcrumbItemUIValue<T>(
-  value: BreadcrumbItemUIValue<T> | undefined,
-  context: BreadcrumbItemUIContext,
-): T | undefined {
-  return useResolve(value, context)
-}
-
-// UI
-export interface BreadcrumbUI {
-  root?: HTMLAttributes
-  list?: HTMLAttributes
-  item?: BreadcrumbItemUIValue<HTMLAttributes>
-  link?: BreadcrumbItemUIValue<HTMLAttributes>
-  page?: BreadcrumbItemUIValue<HTMLAttributes>
-  icon?: BreadcrumbItemUIValue<HTMLAttributes>
-  ellipsis?: BreadcrumbItemUIValue<HTMLAttributes>
-  label?: BreadcrumbItemUIValue<HTMLAttributes>
-  separator?: BreadcrumbItemUIValue<HTMLAttributes>
 }
 
 // Props
 export interface BreadcrumbProps {
   items?: BreadcrumbItem[]
-  ellipsisIcon?: BreadcrumbIcon
-  separatorIcon?: BreadcrumbIcon
+  ellipsisIndex?: [start: number, end: number]
+  ellipsisIcon?: NormalizeIconProps
+  separatorIcon?: NormalizeIconProps
   ui?: BreadcrumbUI
+}
+
+// Fn
+export type BreadcrumbFn<T> = T | ((context: BreadcrumbContext) => T)
+export type BreadcrumbItemFn<T> = T | ((context: BreadcrumbItemContext) => T)
+
+// UI
+export interface BreadcrumbUI {
+  root?: BreadcrumbFn<HTMLAttributes>
+  list?: BreadcrumbFn<HTMLAttributes>
+  ellipsisContainer?: BreadcrumbFn<HTMLAttributes>
+  separatorContainer?: BreadcrumbFn<HTMLAttributes>
+  item?: BreadcrumbItemFn<HTMLAttributes>
+  link?: BreadcrumbItemFn<HTMLAttributes>
+  page?: BreadcrumbItemFn<HTMLAttributes>
+  label?: BreadcrumbItemFn<HTMLAttributes>
+}
+
+// Context
+export interface BreadcrumbContext {
+  props: Omit<BreadcrumbProps, 'ui'>
+}
+
+export interface BreadcrumbItemContext extends BreadcrumbContext {
+  item: BreadcrumbItem
+  index: number
+  first: boolean
+  last: boolean
+  linked: boolean
+  ellipsis: boolean
+}
+
+export interface BreadcrumbEllipsisContext extends BreadcrumbContext {
+  items: BreadcrumbItem[]
 }
 
 // Slots
 export type BreadcrumbSlots = {
-  item?(): ((props: BreadcrumbItemUIContext) => unknown) | undefined
-  icon?(): ((props: BreadcrumbItemUIContext) => unknown) | undefined
-  ellipsis?(): ((props: BreadcrumbItemUIContext) => unknown) | undefined
-  separator?(): ((props: BreadcrumbItemUIContext) => unknown) | undefined
+  default?(props: BreadcrumbContext): unknown
+  ellipsis?(props: BreadcrumbEllipsisContext): unknown
+  separator?(props: BreadcrumbContext): unknown
+  item?(props: BreadcrumbItemContext): unknown
+  icon?(props: BreadcrumbItemContext): unknown
 } & {
-  [name: `item-${string}`]: ((props: BreadcrumbItemUIContext) => unknown) | undefined
-  [name: `icon-${string}`]: ((props: BreadcrumbItemUIContext) => unknown) | undefined
-  [name: `ellipsis-${string}`]: ((props: BreadcrumbItemUIContext) => unknown) | undefined
+  [name: `item-${string}`]: ((props: BreadcrumbItemContext) => unknown) | undefined
+  [name: `icon-${string}`]: ((props: BreadcrumbItemContext) => unknown) | undefined
 }

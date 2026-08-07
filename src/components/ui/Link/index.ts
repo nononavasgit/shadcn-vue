@@ -1,16 +1,46 @@
-import type { ButtonEmits, ButtonProps, ButtonSlots, ButtonUI } from '@/components/ui/Button'
+import type { HTMLAttributes } from 'vue'
+import type { ButtonEmits, ButtonProps } from '@/components/ui/Button'
 import type { RouterLinkProps } from 'vue-router'
+import type { EmitsAsProps } from '@/types/emits'
 
 export { default as Link } from './Link.vue'
 
-export type LinkUI = ButtonUI
-
+// Props
 export type LinkProps = Omit<ButtonProps, 'as' | 'asChild' | 'ui'> &
   Pick<RouterLinkProps, 'to' | 'replace'> & {
     ui?: LinkUI
   }
 
-export function normalizeLinkProps(source: LinkProps | null | undefined): LinkProps | undefined {
+// Fn
+export type LinkFn<T> = T | ((context: LinkContext) => T)
+
+// UI
+export interface LinkUI {
+  root?: LinkFn<HTMLAttributes>
+}
+
+// Context
+export interface LinkContext {
+  props: Omit<LinkProps, 'ui'>
+}
+
+// Emits
+export type LinkEmits = ButtonEmits
+
+// Slots
+export interface LinkSlots {
+  default?(props: LinkContext): unknown
+  leading?(props: LinkContext): unknown
+  loading?(props: LinkContext): unknown
+  trailing?(props: LinkContext): unknown
+}
+
+// Normalize
+export type NormalizeLinkProps = LinkProps & EmitsAsProps<LinkEmits>
+
+export function normalizeLinkProps(
+  source: NormalizeLinkProps | null | undefined,
+): NormalizeLinkProps | undefined {
   if (!source) return undefined
 
   const {
@@ -27,6 +57,7 @@ export function normalizeLinkProps(source: LinkProps | null | undefined): LinkPr
     to,
     replace,
     ui,
+    onClick,
   } = source
 
   return {
@@ -43,7 +74,6 @@ export function normalizeLinkProps(source: LinkProps | null | undefined): LinkPr
     to,
     replace,
     ui,
+    onClick,
   }
 }
-export type LinkEmits = ButtonEmits
-export type LinkSlots = ButtonSlots

@@ -9,9 +9,15 @@ import {
   TooltipTrigger,
 } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import { normalizeArrowProps, normalizeContentProps, normalizeRootProps } from '.'
-import type { TooltipEmits, TooltipProps, TooltipSlots } from '.'
+import {
+  normalizeTooltipArrowProps,
+  normalizeTooltipContentProps,
+  normalizeTooltipRootProps,
+  normalizeTooltipTriggerProps,
+} from '.'
+import type { TooltipContext, TooltipEmits, TooltipProps, TooltipSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -19,6 +25,7 @@ defineSlots<TooltipSlots>()
 
 const props = withDefaults(defineProps<TooltipProps>(), {
   delayDuration: 0,
+  trigger: undefined,
   content: undefined,
   arrow: undefined,
   ui: undefined,
@@ -26,19 +33,39 @@ const props = withDefaults(defineProps<TooltipProps>(), {
 defineEmits<TooltipEmits>()
 
 const attrs = useAttrs()
-const open = defineModel<boolean>('open')
+const modelOpen = defineModel<boolean>('open')
+const open = computed<boolean>({
+  get: () => modelOpen.value ?? props.defaultOpen ?? false,
+  set: (value) => {
+    modelOpen.value = value
+  },
+})
+
+function close() {
+  open.value = false
+}
+
+const tooltipContext = computed<TooltipContext>(() => {
+  const { ui, ...tooltipProps } = props
+  void ui
+
+  return {
+    props: tooltipProps,
+    open: open.value,
+    close,
+  }
+})
 
 const calculatedUI = computed(() => {
-  // Normalize UI attributes
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
-  const triggerUI = normalizeHTMLAttributes(props.ui?.trigger)
-  const contentUI = normalizeHTMLAttributes(props.ui?.content)
-  const arrowUI = normalizeHTMLAttributes(props.ui?.arrow)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, tooltipContext.value))
+  const triggerUI = normalizeHTMLAttributes(useResolve(props.ui?.trigger, tooltipContext.value))
+  const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, tooltipContext.value))
+  const arrowUI = normalizeHTMLAttributes(useResolve(props.ui?.arrow, tooltipContext.value))
 
-  // Normalize props
-  const rootProps = normalizeRootProps(props)
-  const contentProps = normalizeContentProps(props.content)
-  const arrowProps = normalizeArrowProps(props.arrow)
+  const rootProps = normalizeTooltipRootProps(props)
+  const triggerProps = normalizeTooltipTriggerProps(props.trigger)
+  const contentProps = normalizeTooltipContentProps(props.content)
+  const arrowProps = normalizeTooltipArrowProps(props.arrow)
 
   return {
     root: {
@@ -49,8 +76,9 @@ const calculatedUI = computed(() => {
       style: [attrs.style, rootUI.style],
     },
     trigger: {
-      ...triggerUI,
       asChild: true,
+      ...triggerProps,
+      ...triggerUI,
       class: cn(triggerUI.class),
       style: triggerUI.style,
     },
@@ -76,20 +104,17 @@ const calculatedUI = computed(() => {
 
 <template>
   <TooltipProvider>
-    <TooltipRoot
-      v-slot="slotProps"
-      v-bind="calculatedUI.root"
-      v-model:open="open"
-      data-slot="tooltip"
-    >
+    <TooltipRoot v-bind="calculatedUI.root" v-model:open="open" data-slot="tooltip">
       <TooltipTrigger v-bind="calculatedUI.trigger" data-slot="tooltip-trigger">
-        <slot :open="slotProps.open" />
+        <slot v-bind="tooltipContext" />
       </TooltipTrigger>
 
       <TooltipPortal>
         <TooltipContent v-bind="calculatedUI.content" data-slot="tooltip-content">
-          <slot name="content" :open="slotProps.open">{{ props.label }}</slot>
-          <TooltipArrow v-bind="calculatedUI.arrow" data-slot="tooltip-arrow" />
+          <slot name="content" v-bind="tooltipContext">{{ props.label }}</slot>
+          <slot name="arrow" v-bind="tooltipContext">
+            <TooltipArrow v-bind="calculatedUI.arrow" data-slot="tooltip-arrow" />
+          </slot>
         </TooltipContent>
       </TooltipPortal>
     </TooltipRoot>

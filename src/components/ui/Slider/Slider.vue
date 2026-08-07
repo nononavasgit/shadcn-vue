@@ -5,7 +5,20 @@ import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
-import type { SliderEmits, SliderProps, SliderSlots, SliderThumbUIContext } from '.'
+import {
+  normalizeSliderRangeProps,
+  normalizeSliderRootProps,
+  normalizeSliderThumbProps,
+  normalizeSliderTrackProps,
+} from '.'
+import type {
+  SliderContext,
+  SliderEmits,
+  SliderProps,
+  SliderSlots,
+  SliderThumbContext,
+  SliderValue,
+} from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -21,39 +34,49 @@ const props = withDefaults(defineProps<SliderProps>(), {
   thumbAlignment: 'contain',
   as: 'span',
   asChild: false,
+  track: undefined,
+  range: undefined,
+  thumb: undefined,
   ui: undefined,
 })
 const emit = defineEmits<SliderEmits>()
 defineSlots<SliderSlots>()
 
 const attrs = useAttrs()
-const modelValue = defineModel<number[] | null | undefined>()
+const modelValue = defineModel<SliderValue>()
+const sliderValue = computed<SliderValue>({
+  get: () => (modelValue.value !== undefined ? modelValue.value : props.defaultValue),
+  set: (nextValue) => {
+    modelValue.value = nextValue
+  },
+})
+const sliderValues = computed(() => sliderValue.value ?? [])
 const { t } = useI18n()
 
+const sliderContext = computed<SliderContext>(() => {
+  const { ui, ...sliderProps } = props
+  void ui
+
+  return {
+    props: sliderProps,
+    values: sliderValues.value,
+  }
+})
+
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
-  const trackUI = normalizeHTMLAttributes(props.ui?.track)
-  const rangeUI = normalizeHTMLAttributes(props.ui?.range)
+  const normalizedRootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, sliderContext.value))
+  const { dir: rootDirection, ...rootUI } = normalizedRootUI
+  const trackUI = normalizeHTMLAttributes(useResolve(props.ui?.track, sliderContext.value))
+  const rangeUI = normalizeHTMLAttributes(useResolve(props.ui?.range, sliderContext.value))
   const vertical = props.orientation === 'vertical'
+
+  void rootDirection
 
   return {
     root: {
       ...attrs,
       ...rootUI,
-      as: props.as,
-      asChild: props.asChild,
-      defaultValue: props.defaultValue,
-      disabled: props.disabled,
-      orientation: props.orientation,
-      dir: props.dir,
-      inverted: props.inverted,
-      min: props.min,
-      max: props.max,
-      step: props.step,
-      minStepsBetweenThumbs: props.minStepsBetweenThumbs,
-      thumbAlignment: props.thumbAlignment,
-      name: props.name,
-      required: props.required,
+      ...normalizeSliderRootProps(props),
       class: cn(
         'relative flex w-full touch-none select-none items-center',
         vertical && 'h-full w-auto flex-col',
@@ -64,6 +87,7 @@ const calculatedUI = computed(() => {
     },
     track: {
       ...trackUI,
+      ...normalizeSliderTrackProps(props.track),
       class: cn(
         'relative h-2 w-full grow overflow-hidden rounded-full bg-secondary',
         vertical && 'h-full w-2',
@@ -73,10 +97,11 @@ const calculatedUI = computed(() => {
     },
     range: {
       ...rangeUI,
+      ...normalizeSliderRangeProps(props.range),
       class: cn('absolute h-full bg-primary', vertical && 'h-auto w-full', rangeUI.class),
       style: rangeUI.style,
     },
-    thumb: (context: SliderThumbUIContext) => {
+    thumb: (context: SliderThumbContext) => {
       const thumbUI = normalizeHTMLAttributes(useResolve(props.ui?.thumb, context))
       const rangeAriaLabel =
         context.values.length === 2
@@ -87,6 +112,7 @@ const calculatedUI = computed(() => {
 
       return {
         ...thumbUI,
+        ...normalizeSliderThumbProps(props.thumb),
         'aria-label': thumbUI['aria-label'] ?? rangeAriaLabel,
         class: cn(
           'block size-5 shrink-0 rounded-full border-2 border-primary bg-background shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
@@ -101,31 +127,43 @@ const calculatedUI = computed(() => {
 
 <template>
   <SliderRoot
-    v-slot="{ modelValue: values }"
-    v-model="modelValue"
+    v-slot="{ modelValue: currentValues }"
+    v-model="sliderValue"
     v-bind="calculatedUI.root"
     data-slot="slider"
     @value-commit="emit('valueCommit', $event)"
   >
     <SliderTrack v-bind="calculatedUI.track" data-slot="slider-track">
-      <SliderRange v-bind="calculatedUI.range" data-slot="slider-range" />
+      <slot name="track" v-bind="sliderContext">
+        <slot name="range" v-bind="sliderContext">
+          <SliderRange v-bind="calculatedUI.range" data-slot="slider-range" />
+        </slot>
+      </slot>
     </SliderTrack>
 
     <SliderThumb
-      v-for="(value, index) in values ?? []"
+      v-for="(thumbValue, index) in currentValues ?? []"
       :key="index"
       data-slot="slider-thumb"
       v-bind="
         calculatedUI.thumb({
+          ...sliderContext,
           index,
-          value,
-          values: values ?? [],
+          value: thumbValue,
+          values: currentValues ?? [],
           first: index === 0,
-          last: index === (values?.length ?? 0) - 1,
+          last: index === (currentValues?.length ?? 0) - 1,
         })
       "
     >
-      <slot name="thumb" :index="index" :value="value" :values="values ?? []" />
+      <slot
+        name="thumb"
+        v-bind="sliderContext"
+        :index="index"
+        :value="thumbValue"
+        :first="index === 0"
+        :last="index === (currentValues?.length ?? 0) - 1"
+      />
     </SliderThumb>
   </SliderRoot>
 </template>

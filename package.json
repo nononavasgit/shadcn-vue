@@ -46,6 +46,10 @@
     "./assets/icons": {
       "types": "./dist/assets/icons/index.d.ts",
       "import": "./dist/assets/icons/index.js"
+    },
+    "./components/provider": {
+      "types": "./dist/components/provider/index.d.ts",
+      "import": "./dist/components/provider/index.js"
     }
   },
   "main": "./dist/index.js",
@@ -72,10 +76,12 @@
   },
   "dependencies": {
     "@lucide/vue": "^1.25.0",
+    "@vueuse/core": "^14.4.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "reka-ui": "^2.10.1",
     "tailwind-merge": "^3.5.0",
+    "vue-i18n": "^11.4.8",
     "vue-router": "^5.2.0"
   },
   "devDependencies": {

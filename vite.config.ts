@@ -10,6 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const sourceRoot = path.resolve(__dirname, 'src')
 const entries = {
   index: path.join(sourceRoot, 'index.js'),
+  'components/provider/index': path.join(sourceRoot, 'components/provider/index.ts'),
   ...Object.fromEntries(
     readdirSync(path.join(sourceRoot, 'components/primitives'), { withFileTypes: true })
       .filter((entry) => entry.isDirectory())
@@ -46,8 +47,10 @@ export default defineConfig({
       tsconfigPath: './tsconfig.app.json',
       include: [
         'src/components/primitives/**/*',
+        'src/components/provider/**/*',
         'src/components/ui/**/*',
         'src/composables/**/*.ts',
+        'src/i18n/**/*',
         'src/lib/**/*.ts',
         'src/assets/icons/**/*.ts',
         'src/index.js',
@@ -75,6 +78,8 @@ export default defineConfig({
         'tailwind-merge',
         'vue-input-otp',
         'vue-router',
+        'vue-i18n',
+        '@vueuse/core',
       ],
       output: {
         preserveModules: true,

@@ -1,18 +1,18 @@
-import { readonly, ref } from 'vue'
+import { createI18n, useI18n as useVueI18n } from 'vue-i18n'
 import type { Messages } from './schema'
 import en from './locales/en'
 import es from './locales/es'
 import ptBR from './locales/pt-BR'
 import ptPT from './locales/pt-PT'
 
-const translations = {
+export const messages = {
   en,
   es,
   'pt-BR': ptBR,
   'pt-PT': ptPT,
 } satisfies Record<string, Messages>
 
-export type SupportedLocale = keyof typeof translations
+export type SupportedLocale = keyof typeof messages
 export type TranslationKey = keyof Messages
 
 function normalizeLocale(locale: string): SupportedLocale | undefined {
@@ -51,26 +51,22 @@ export function resolveLocale(locale?: string): SupportedLocale {
   return 'en'
 }
 
-const locale = ref<SupportedLocale>(resolveLocale())
+export const i18n = createI18n<[Messages], SupportedLocale>({
+  legacy: false,
+  locale: resolveLocale(),
+  fallbackLocale: 'en',
+  messages,
+})
 
 export function setLocale(value?: string) {
-  locale.value = resolveLocale(value)
+  const locale = resolveLocale(value)
+  i18n.global.locale.value = locale
+
+  return locale
 }
 
 export function useI18n() {
-  function t(key: TranslationKey, params?: Record<string, string | number>) {
-    const message = translations[locale.value][key]
-
-    if (!params) return message
-
-    return Object.entries(params).reduce(
-      (result, [name, value]) => result.replaceAll('{' + name + '}', String(value)),
-      message,
-    )
-  }
-
-  return {
-    locale: readonly(locale),
-    t,
-  }
+  return useVueI18n<{ message: Messages }, SupportedLocale>({ useScope: 'global' })
 }
+
+export { getTextDirection, type TextDirection } from './direction'

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
+import { computed, shallowRef, useAttrs } from 'vue'
 import type { CSSProperties } from 'vue'
 import { ToggleGroupItem, ToggleGroupRoot } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
@@ -8,7 +8,15 @@ import { useColor } from '@/composables'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import type { ToggleGroupProps, ToggleGroupSlots, ToggleGroupUIContext, ToggleGroupValue } from '.'
+import { normalizeToggleGroupItemProps } from '.'
+import type {
+  ToggleGroupContext,
+  ToggleGroupItemContext,
+  ToggleGroupModelValue,
+  ToggleGroupProps,
+  ToggleGroupSlots,
+  ToggleGroupValue,
+} from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -31,7 +39,20 @@ const props = withDefaults(defineProps<ToggleGroupProps>(), {
 defineSlots<ToggleGroupSlots>()
 
 const attrs = useAttrs()
-const model = defineModel<ToggleGroupValue | ToggleGroupValue[]>()
+const model = defineModel<ToggleGroupModelValue>()
+const internalValue = shallowRef<ToggleGroupModelValue>(props.defaultValue)
+const value = computed<ToggleGroupModelValue>({
+  get: () => (model.value !== undefined ? model.value : internalValue.value),
+  set: (nextValue) => {
+    if (props.mandatory) {
+      if (nextValue === undefined) return
+      if (Array.isArray(nextValue) && nextValue.length === 0) return
+    }
+
+    internalValue.value = nextValue
+    model.value = nextValue
+  },
+})
 const { colorStyle } = useColor(
   computed(() => props.color),
   'toggle',
@@ -44,27 +65,23 @@ const spacingStyle = computed(
 )
 
 function isSelected(value: ToggleGroupValue) {
-  return Array.isArray(model.value)
-    ? model.value.some((selectedValue) => Object.is(selectedValue, value))
-    : Object.is(model.value, value)
+  return Array.isArray(toggleGroupContext.value.value)
+    ? toggleGroupContext.value.value.some((selectedValue) => Object.is(selectedValue, value))
+    : Object.is(toggleGroupContext.value.value, value)
 }
 
-function updateModel(value: ToggleGroupValue | ToggleGroupValue[] | undefined) {
-  if (props.mandatory) {
-    if (value === undefined) {
-      return
-    }
+const toggleGroupContext = computed<ToggleGroupContext>(() => {
+  const { ui, ...toggleGroupProps } = props
+  void ui
 
-    if (Array.isArray(value) && value.length === 0) {
-      return
-    }
+  return {
+    props: toggleGroupProps,
+    value: value.value,
   }
-
-  model.value = value
-}
+})
 
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, toggleGroupContext.value))
 
   return {
     root: {
@@ -98,7 +115,8 @@ const calculatedUI = computed(() => {
       style: [colorStyle.value, spacingStyle.value, attrs.style, rootUI.style],
     },
     items: props.items.map((item, index) => {
-      const context: ToggleGroupUIContext = {
+      const context: ToggleGroupItemContext = {
+        ...toggleGroupContext.value,
         item,
         index,
         selected: isSelected(item.value),
@@ -106,9 +124,8 @@ const calculatedUI = computed(() => {
         last: index === props.items.length - 1,
       }
       const itemUI = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
-      const iconUI = normalizeHTMLAttributes(useResolve(props.ui?.icon, context))
       const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
-      const trailingIconUI = normalizeHTMLAttributes(useResolve(props.ui?.trailingIcon, context))
+      const itemProps = normalizeToggleGroupItemProps(item)
       const icon = normalizeIconProps(item.icon)
       const trailingIcon = normalizeIconProps(item.trailingIcon)
       const key = String(item.id)
@@ -120,14 +137,12 @@ const calculatedUI = computed(() => {
         slots: {
           item: `item-${key}` as `item-${string}`,
           leading: `leading-${key}` as `leading-${string}`,
+          label: `label-${key}` as `label-${string}`,
           trailing: `trailing-${key}` as `trailing-${string}`,
         },
         item: {
           ...itemUI,
-          value: item.value,
-          disabled: item.disabled,
-          as: item.as,
-          asChild: item.asChild,
+          ...itemProps,
           'data-variant': props.variant,
           'data-severity': props.severity,
           'data-size': props.size,
@@ -147,10 +162,7 @@ const calculatedUI = computed(() => {
           style: itemUI.style,
         },
         icon: {
-          ...iconUI,
           ...icon,
-          class: cn(iconUI.class),
-          style: [iconUI.style],
         },
         label: {
           ...labelUI,
@@ -158,10 +170,7 @@ const calculatedUI = computed(() => {
           style: labelUI.style,
         },
         trailingIcon: {
-          ...trailingIconUI,
           ...trailingIcon,
-          class: cn(trailingIconUI.class),
-          style: [trailingIconUI.style],
         },
       }
     }),
@@ -170,33 +179,41 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <ToggleGroupRoot
-    v-bind="calculatedUI.root"
-    :model-value="model"
-    @update:model-value="updateModel"
-  >
-    <ToggleGroupItem v-for="item in calculatedUI.items" :key="item.key" v-bind="item.item">
-      <slot :name="item.slots.item" v-bind="item.context">
-        <slot name="item" v-bind="item.context">
-          <slot :name="item.slots.leading" v-bind="item.context">
-            <slot name="leading" v-bind="item.context">
-              <Icon v-if="item.icon.name" v-bind="item.icon" :name="item.icon.name" />
+  <ToggleGroupRoot v-bind="calculatedUI.root" v-model="value">
+    <slot v-bind="toggleGroupContext">
+      <ToggleGroupItem v-for="item in calculatedUI.items" :key="item.key" v-bind="item.item">
+        <slot :name="item.slots.item" v-bind="item.context">
+          <slot name="item" v-bind="item.context">
+            <slot :name="item.slots.leading" v-bind="item.context">
+              <slot name="leading" v-bind="item.context">
+                <Icon
+                  v-if="item.icon?.name"
+                  v-bind="item.icon"
+                  :name="item.icon.name"
+                  data-slot="toggle-group-icon"
+                />
+              </slot>
             </slot>
-          </slot>
 
-          <span v-if="item.data.label" v-bind="item.label">{{ item.data.label }}</span>
+            <slot :name="item.slots.label" v-bind="item.context">
+              <slot name="label" v-bind="item.context">
+                <span v-bind="item.label">{{ item.data.label }}</span>
+              </slot>
+            </slot>
 
-          <slot :name="item.slots.trailing" v-bind="item.context">
-            <slot name="trailing" v-bind="item.context">
-              <Icon
-                v-if="item.trailingIcon.name"
-                v-bind="item.trailingIcon"
-                :name="item.trailingIcon.name"
-              />
+            <slot :name="item.slots.trailing" v-bind="item.context">
+              <slot name="trailing" v-bind="item.context">
+                <Icon
+                  v-if="item.trailingIcon?.name"
+                  v-bind="item.trailingIcon"
+                  :name="item.trailingIcon.name"
+                  data-slot="toggle-group-trailing-icon"
+                />
+              </slot>
             </slot>
           </slot>
         </slot>
-      </slot>
-    </ToggleGroupItem>
+      </ToggleGroupItem>
+    </slot>
   </ToggleGroupRoot>
 </template>

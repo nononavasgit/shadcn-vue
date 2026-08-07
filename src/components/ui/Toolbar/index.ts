@@ -5,7 +5,7 @@ import { ButtonProps } from '../Button/index.ts'
 import { LinkProps } from '../Link/index.ts'
 import { SeparatorProps } from '../Separator/index.ts'
 import { ToggleProps } from '../Toggle/index.ts'
-import { ToggleGroupProps } from '../ToggleGroup/index.ts'
+import { NormalizeToggleGroupProps } from '../ToggleGroup/index.ts'
 
 // Types
 export type ToolbarRootProps = Pick<
@@ -38,7 +38,7 @@ export type ToolbarItem = {
   link?: LinkProps
   separator?: SeparatorProps
   toggle?: ToggleProps
-  toggleGroup?: ToggleGroupProps
+  toggleGroup?: NormalizeToggleGroupProps
 }
 
 // UI

@@ -1,22 +1,31 @@
 <script setup>
 import { ref } from 'vue'
-import { Tooltip } from '@/components/ui'
+import { Icon, ToggleGroup } from '@/components/ui'
 import { ConfigProvider } from '@/components/provider'
 
-const tooltipOpen = ref(false)
+const selectedFormat = ref('save')
 
-const tooltipUI = {
-  root: ({ open }) => ({
-    class: open ? 'text-primary' : undefined,
+const formatItems = [
+  { id: 'save', value: 'save', label: 'Guardar', icon: 'save' },
+  { id: 'check', value: 'check', label: 'Validar', icon: 'check' },
+  { id: 'warning', value: 'warning', label: 'Avisar', icon: 'warning' },
+]
+
+const actionItems = [
+  { id: 'save', value: 'save', label: 'Guardar', icon: 'save' },
+  { id: 'check', value: 'check', label: 'Validar', icon: 'check' },
+  { id: 'error', value: 'error', label: 'Eliminar', icon: 'x' },
+]
+
+const toggleGroupUI = {
+  root: ({ value }) => ({
+    class: value ? 'rounded-md ring-1 ring-primary/20' : undefined,
   }),
-  trigger: ({ open }) => ({
-    class: open ? 'ring-2 ring-primary/30' : undefined,
+  item: ({ selected }) => ({
+    class: selected ? 'font-semibold' : undefined,
   }),
-  content: ({ open }) => ({
-    class: open ? 'border-primary/50' : undefined,
-  }),
-  arrow: ({ open }) => ({
-    class: open ? 'fill-primary' : undefined,
+  label: ({ selected }) => ({
+    class: selected ? 'underline underline-offset-2' : undefined,
   }),
 }
 </script>
@@ -25,61 +34,62 @@ const tooltipUI = {
   <ConfigProvider>
     <main class="mx-auto min-h-screen max-w-2xl space-y-8 p-6 md:p-10">
       <section class="space-y-4">
-        <h2 class="text-2xl font-semibold">Tooltip examples</h2>
+        <h2 class="text-2xl font-semibold">ToggleGroup examples</h2>
 
         <div class="space-y-2">
-          <h3 class="font-medium">Básico</h3>
+          <h3 class="font-medium">Selección simple y controlada</h3>
 
-          <Tooltip label="Este es un tooltip básico">
-            <button class="rounded-md border px-3 py-2 text-sm hover:bg-muted">
-              Pasa el ratón por encima
-            </button>
-          </Tooltip>
-        </div>
-
-        <div class="space-y-2">
-          <h3 class="font-medium">Controlado</h3>
-
-          <Tooltip v-model:open="tooltipOpen" label="Tooltip controlado">
-            <button class="rounded-md border px-3 py-2 text-sm hover:bg-muted">
-              Alternar tooltip
-            </button>
-          </Tooltip>
+          <ToggleGroup
+            v-model="selectedFormat"
+            :items="formatItems"
+            variant="outline"
+            severity="primary"
+            mandatory
+          />
 
           <p class="text-sm text-muted-foreground">
-            Estado: {{ tooltipOpen ? 'abierto' : 'cerrado' }}
+            Formato seleccionado: {{ selectedFormat || 'ninguno' }}
           </p>
         </div>
 
-        <div class="flex flex-wrap gap-2">
-          <Tooltip default-open label="Se muestra inicialmente abierto">
-            <button class="rounded-md border px-3 py-2 text-sm hover:bg-muted">Default open</button>
-          </Tooltip>
+        <div class="space-y-2">
+          <h3 class="font-medium">Selección múltiple con defaultValue</h3>
 
-          <Tooltip :disabled="true" label="Este tooltip está deshabilitado">
-            <button class="rounded-md border px-3 py-2 text-sm opacity-50">Deshabilitado</button>
-          </Tooltip>
+          <ToggleGroup
+            type="multiple"
+            :default-value="['save']"
+            :items="actionItems"
+            variant="outline"
+            severity="secondary"
+            :spacing="1"
+            mandatory
+          />
         </div>
 
         <div class="space-y-2">
-          <h3 class="font-medium">UI y slots con contexto</h3>
+          <h3 class="font-medium">Mandatory, UI y slots con contexto</h3>
 
-          <Tooltip label="Contenido personalizado" :ui="tooltipUI">
-            <template #default="{ open }">
-              <button class="rounded-md border px-3 py-2 text-sm hover:bg-muted">
-                {{ open ? 'Tooltip abierto' : 'Tooltip personalizado' }}
-              </button>
+          <ToggleGroup :items="formatItems" variant="plain" severity="success" mandatory>
+            <template #leading="{ item, selected }">
+              <Icon
+                :name="selected ? 'check' : item.icon"
+                :class="selected ? 'text-success' : 'text-muted-foreground'"
+              />
             </template>
 
-            <template #content="{ open, close }">
-              <span>{{ open ? 'Contenido activo' : 'Contenido cerrado' }}</span>
-              <button class="ml-2 underline" @click="close">Cerrar</button>
+            <template #label="{ item, selected }">
+              {{ selected ? `${item.label} ✓` : item.label }}
             </template>
 
-            <template #arrow="{ open }">
-              <span v-if="open" class="text-primary">◆</span>
+            <template #trailing="{ first, last }">
+              <span v-if="first" class="text-xs text-muted-foreground">inicio</span>
+              <span v-else-if="last" class="text-xs text-muted-foreground">fin</span>
             </template>
-          </Tooltip>
+
+            <template #label-warning="{ selected }">
+              {{ selected ? 'Aviso activo' : 'Aviso' }}
+            </template>
+          </ToggleGroup>
         </div>
       </section>
     </main>

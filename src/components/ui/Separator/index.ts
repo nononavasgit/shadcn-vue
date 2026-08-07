@@ -1,14 +1,35 @@
 import type { HTMLAttributes } from 'vue'
-import { SeparatorProps as SeparatorPropsReka } from 'reka-ui'
+import type { SeparatorProps as RekaSeparatorProps } from 'reka-ui'
 
 export { default as Separator } from './Separator.vue'
 
+// Props Reka
+export type SeparatorRootProps = Pick<
+  RekaSeparatorProps,
+  'as' | 'asChild' | 'orientation' | 'decorative'
+>
+
+// Fn
+export type SeparatorFn<T> = T | ((context: SeparatorContext) => T)
+
+// UI
 export interface SeparatorUI {
-  root?: HTMLAttributes
+  root?: SeparatorFn<HTMLAttributes>
 }
 
-export interface SeparatorProps extends SeparatorPropsReka {
+// Props
+export interface SeparatorProps extends SeparatorRootProps {
   ui?: SeparatorUI
+}
+
+// Context
+export interface SeparatorContext {
+  props: Omit<SeparatorProps, 'ui'>
+}
+
+// Slots
+export interface SeparatorSlots {
+  default?(props: SeparatorContext): unknown
 }
 
 export function normalizeSeparatorProps(

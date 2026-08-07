@@ -2,8 +2,9 @@
 import { computed, useAttrs } from 'vue'
 import { Separator as RekaSeparator } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import type { SeparatorProps } from '.'
+import type { SeparatorContext, SeparatorProps, SeparatorSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -12,10 +13,20 @@ const props = withDefaults(defineProps<SeparatorProps>(), {
   decorative: true,
   ui: undefined,
 })
+defineSlots<SeparatorSlots>()
 
 const attrs = useAttrs()
+const separatorContext = computed<SeparatorContext>(() => {
+  const { ui, ...separatorProps } = props
+  void ui
+
+  return {
+    props: separatorProps,
+  }
+})
+
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, separatorContext.value))
 
   return {
     root: {
@@ -37,5 +48,7 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <RekaSeparator v-bind="calculatedUI.root" />
+  <RekaSeparator v-bind="calculatedUI.root" data-slot="separator">
+    <slot v-bind="separatorContext" />
+  </RekaSeparator>
 </template>

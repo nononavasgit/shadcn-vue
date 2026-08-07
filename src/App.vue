@@ -1,78 +1,74 @@
 <script setup>
-import { Alert, Button, Badge } from '@/components/ui'
+import { AlertDialog, Button } from '@/components/ui'
 import { ConfigProvider } from '@/components/provider'
 
-const alertUI = {
-  root: (e) => {
-    console.log(e)
-    const { props } = e
-    return {
-      class: props.severity === 'success' ? 'ring-2 ring-success/30' : 'ring-2 ring-error/30',
-    }
-  },
-  label: ({ props }) => ({ title: props.label }),
+const alertDialogUI = {
+  content: ({ props }) => ({
+    class: props.label === 'Eliminar elemento' ? 'border-error/50' : 'border-primary/30',
+  }),
+  label: ({ open }) => ({
+    class: open ? 'text-primary' : undefined,
+  }),
+  footer: ({ props }) => ({
+    'data-dialog-label': props.label,
+  }),
 }
 </script>
 
 <template>
   <ConfigProvider>
-    <Badge label="Hola" variant="soft" icon="check"></Badge>
     <main class="mx-auto min-h-screen max-w-2xl space-y-8 p-6 md:p-10">
       <section class="space-y-4">
-        <h1 class="text-2xl font-semibold">Alert examples</h1>
+        <h2 class="text-2xl font-semibold">AlertDialog examples</h2>
 
-        <Alert
-          label="Informacion"
-          description="Este es un alert informativo con su icono normalizado."
+        <AlertDialog
+          label="Confirmar acción"
+          description="Este diálogo muestra un ejemplo básico con botones normalizados."
           icon="info"
-        />
+          :action-button="{ label: 'Continuar', icon: 'check' }"
+          :cancel-button="{ label: 'Cancelar', icon: 'error' }"
+        >
+          <template #default>
+            <Button label="Abrir diálogo básico" />
+          </template>
+        </AlertDialog>
 
-        <div class="grid gap-4 sm:grid-cols-2">
-          <Alert
-            closable
-            severity="success"
-            label="Guardado correctamente"
-            description="Los cambios se han guardado."
-            icon="success"
-          />
-          <Alert
-            severity="warning"
-            label="Revisa los datos"
-            description="Hay campos que necesitan tu atencion."
-            icon="warning"
-          />
-          <Alert
-            severity="error"
-            label="No se pudo completar"
-            description="Intentalo de nuevo dentro de unos segundos."
-            icon="error"
-          />
-        </div>
-
-        <Alert
-          closable
-          severity="warning"
-          label="Alerta cerrable"
-          description="Este ejemplo usa el contexto del slot close."
+        <AlertDialog
+          label="Eliminar elemento"
+          description="Esta acción no se puede deshacer."
           icon="warning"
+          :action-button="{ label: 'Eliminar', severity: 'error', icon: 'trash' }"
+          :cancel-button="{ label: 'Mantener' }"
+          :ui="alertDialogUI"
         >
-          <template #close="{ close }">
-            <Button size="xs" variant="outline" label="Cerrar" @click="close" />
+          <template #default="{ props }">
+            <Button variant="outline" :label="'Eliminar ' + (props.label ? 'elemento' : '')" />
           </template>
-        </Alert>
 
-        <Alert
-          closable
-          severity="error"
-          label="Slots y contexto"
-          description="Este contenido se personaliza usando props y close del contexto."
-          :icon="{ name: 'success', color: 'green', ui: { root: { 'aria-label': 'Más info' } } }"
-          :ui="alertUI"
-        >
           <template #label="{ props }">
-            <span class="font-semibold">{{ props.label }} OK</span>
+            <span>{{ props.label }} definitivamente</span>
           </template>
-        </Alert>
+
+          <template #description>
+            <p class="text-sm text-muted-foreground">
+              Se borrarán todos los datos asociados a este elemento.
+            </p>
+          </template>
+
+          <template #content>
+            <div class="rounded-md bg-muted/50 p-3 text-sm">
+              Este contenido procede del slot <code>#content</code>.
+            </div>
+          </template>
+
+          <template #cancel>
+            <Button variant="outline" label="No eliminar" />
+          </template>
+
+          <template #action>
+            <Button severity="error" label="Sí, eliminar" icon="trash" />
+          </template>
+        </AlertDialog>
       </section>
     </main>
   </ConfigProvider>

@@ -1,4 +1,5 @@
 export { Icon } from './Icon'
+export { AlertDialog } from './AlertDialog'
 export { Alert } from './Alert'
 export { Badge } from './Badge'
 export { Button } from './Button'

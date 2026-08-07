@@ -6,25 +6,23 @@ import type {
   AlertDialogTriggerProps as RekaAlertDialogTriggerProps,
 } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
-import type { ButtonProps } from '@/components/ui/Button'
-import type { IconName, IconProps } from '@/components/ui/Icon'
+import type { NormalizeButtonProps } from '@/components/ui/Button'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { EmitsAsProps } from '@/types/emits'
 
 export { default as AlertDialog } from './AlertDialog.vue'
 
 export type AlertDialogRootProps = Pick<RekaAlertDialogProps, 'defaultOpen' | 'unmountOnHide'>
 export type AlertDialogTriggerProps = Pick<RekaAlertDialogTriggerProps, 'as' | 'asChild'>
 
-export type AlertDialogContentEventProps = {
-  [K in keyof RekaAlertDialogContentEmits as `on${Capitalize<string & K>}`]?: (
-    ...args: RekaAlertDialogContentEmits[K]
-  ) => void
-}
-
 export type AlertDialogContentProps = Pick<
   RekaAlertDialogContentProps,
   'as' | 'asChild' | 'forceMount' | 'disableOutsidePointerEvents'
 > &
-  AlertDialogContentEventProps
+  EmitsAsProps<RekaAlertDialogContentEmits>
+
+// Fn
+export type AlertDialogFn<T> = T | ((context: AlertDialogContext) => T)
 
 export function normalizeAlertDialogTriggerProps(
   source: AlertDialogTriggerProps | null | undefined,
@@ -69,9 +67,9 @@ export interface AlertDialogProps extends AlertDialogRootProps {
   open?: boolean
   label?: string
   description?: string
-  icon?: IconName | IconProps
-  actionButton?: ButtonProps
-  cancelButton?: ButtonProps
+  icon?: NormalizeIconProps
+  actionButton?: NormalizeButtonProps
+  cancelButton?: NormalizeButtonProps
   trigger?: AlertDialogTriggerProps
   content?: AlertDialogContentProps
   ui?: AlertDialogUI
@@ -79,22 +77,20 @@ export interface AlertDialogProps extends AlertDialogRootProps {
 
 // UI
 export interface AlertDialogUI {
-  root?: HTMLAttributes
-  trigger?: HTMLAttributes
-  overlay?: HTMLAttributes
-  content?: HTMLAttributes
-  header?: HTMLAttributes
-  label?: HTMLAttributes
-  icon?: HTMLAttributes
-  description?: HTMLAttributes
-  body?: HTMLAttributes
-  footer?: HTMLAttributes
-  action?: HTMLAttributes
-  cancel?: HTMLAttributes
+  root?: AlertDialogFn<HTMLAttributes>
+  trigger?: AlertDialogFn<HTMLAttributes>
+  overlay?: AlertDialogFn<HTMLAttributes>
+  content?: AlertDialogFn<HTMLAttributes>
+  header?: AlertDialogFn<HTMLAttributes>
+  label?: AlertDialogFn<HTMLAttributes>
+  description?: AlertDialogFn<HTMLAttributes>
+  body?: AlertDialogFn<HTMLAttributes>
+  footer?: AlertDialogFn<HTMLAttributes>
 }
 
 // Context
 export interface AlertDialogContext {
+  props: Omit<AlertDialogProps, 'ui'>
   open: boolean
   close: () => void
 }

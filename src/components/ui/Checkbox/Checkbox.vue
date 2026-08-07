@@ -3,8 +3,9 @@ import { computed, useAttrs } from 'vue'
 import { Icon } from '@/components/ui/Icon'
 import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import type { CheckboxProps, CheckboxSlots, CheckboxValue } from '.'
+import type { CheckboxContext, CheckboxProps, CheckboxSlots, CheckboxValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -15,10 +16,35 @@ const props = withDefaults(defineProps<CheckboxProps>(), {
 })
 defineSlots<CheckboxSlots>()
 
-const attrs = useAttrs()
 const modelValue = defineModel<CheckboxValue | 'indeterminate' | null>()
+const value = computed<CheckboxValue | 'indeterminate' | null>({
+  get: () =>
+    modelValue.value !== undefined
+      ? modelValue.value
+      : (props.defaultValue ?? props.falseValue ?? false),
+  set: (nextValue) => {
+    modelValue.value = nextValue
+  },
+})
+
+const checkboxContext = computed<CheckboxContext>(() => {
+  const { ui, ...checkboxProps } = props
+  void ui
+
+  const currentValue = value.value
+  const state =
+    currentValue === 'indeterminate' ? 'indeterminate' : currentValue === props.trueValue
+
+  return {
+    props: checkboxProps,
+    value: currentValue as CheckboxValue | 'indeterminate',
+    state,
+  }
+})
+
+const attrs = useAttrs()
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, checkboxContext.value))
 
   return {
     root: {
@@ -47,22 +73,12 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <CheckboxRoot
-    v-slot="slotProps"
-    v-bind="calculatedUI.root"
-    v-model="modelValue"
-    data-slot="checkbox"
-  >
+  <CheckboxRoot v-bind="calculatedUI.root" v-model="value" data-slot="checkbox">
     <CheckboxIndicator
       data-slot="checkbox-indicator"
       class="grid place-content-center text-current"
     >
-      <slot
-        v-if="$slots.indicator"
-        name="indicator"
-        :state="slotProps.state"
-        :value="slotProps.modelValue"
-      />
+      <slot v-if="$slots.indicator" name="indicator" v-bind="checkboxContext" />
       <Icon v-else name="check" class="size-3.5" />
     </CheckboxIndicator>
   </CheckboxRoot>

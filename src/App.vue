@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { Breadcrumb, Input, Textarea } from '@/components/ui'
+import { Breadcrumb, Checkbox, Input, Switch, Textarea } from '@/components/ui'
 import { ConfigProvider } from '@/components/provider'
 
 const breadcrumbItems = [
@@ -43,6 +43,21 @@ const textareaUI = {
     class: props.modelValue ? 'border-success ring-1 ring-success/20' : undefined,
   }),
 }
+
+const switchValue = ref(false)
+const checkboxValue = ref(false)
+
+const switchUI = {
+  root: ({ checked }) => ({
+    class: checked ? 'data-[state=checked]:bg-success' : undefined,
+  }),
+}
+
+const checkboxUI = {
+  root: ({ state }) => ({
+    class: state === true ? 'ring-2 ring-primary/30' : undefined,
+  }),
+}
 </script>
 
 <template>
@@ -59,16 +74,7 @@ const textareaUI = {
           :ui="breadcrumbUI"
         >
           <template #ellipsis>
-            <span class=""> ... </span>
-          </template>
-
-          <template #separator="{ props }">
-            <li
-              class="px-1 text-muted-foreground/60"
-              :aria-label="'Separador en ' + props.items.length + ' items'"
-            >
-              /
-            </li>
+            <span class=""> ...... </span>
           </template>
         </Breadcrumb>
       </section>
@@ -87,6 +93,39 @@ const textareaUI = {
         <div class="space-y-1 text-sm text-muted-foreground">
           <p>Input: {{ inputValue }}</p>
           <p>Textarea: {{ textareaValue }}</p>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Switch y Checkbox examples</h2>
+
+        <div class="flex flex-wrap items-center gap-6">
+          <label>
+            <Switch :model-value="true"></Switch>
+            Si
+          </label>
+          <label class="flex items-center gap-2 text-sm">
+            <Switch v-model="switchValue" :ui="switchUI">
+              <template #thumb="{ checked }">
+                <span v-if="checked" class="text-[10px] text-primary">✓</span>
+              </template>
+            </Switch>
+            Activar notificaciones
+          </label>
+
+          <label class="flex items-center gap-2 text-sm">
+            <Checkbox v-model="checkboxValue" :ui="checkboxUI">
+              <template #indicator="{ state }">
+                <span class="text-xs">{{ state === 'indeterminate' ? '−' : '✓' }}</span>
+              </template>
+            </Checkbox>
+            Aceptar condiciones
+          </label>
+        </div>
+
+        <div class="space-y-1 text-sm text-muted-foreground">
+          <p>Switch: {{ switchValue ? 'activado' : 'desactivado' }}</p>
+          <p>Checkbox: {{ checkboxValue ? 'marcado' : 'sin marcar' }}</p>
         </div>
       </section>
     </main>

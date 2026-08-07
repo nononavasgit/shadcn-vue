@@ -6,21 +6,43 @@ export { default as Checkbox } from './Checkbox.vue'
 export type CheckboxValue = boolean | string | number | bigint | Record<string, unknown>
 export type CheckboxState = boolean | 'indeterminate'
 
+// Fn
+export type CheckboxFn<T> = T | ((context: CheckboxContext) => T)
+
+// UI
 export interface CheckboxUI {
-  root?: HTMLAttributes
+  root?: CheckboxFn<HTMLAttributes>
 }
 
-export interface CheckboxProps extends CheckboxRootProps<CheckboxValue> {
+// Props
+export interface CheckboxProps extends Pick<
+  CheckboxRootProps<CheckboxValue>,
+  | 'as'
+  | 'asChild'
+  | 'defaultValue'
+  | 'modelValue'
+  | 'disabled'
+  | 'id'
+  | 'name'
+  | 'value'
+  | 'trueValue'
+  | 'falseValue'
+  | 'required'
+> {
   ui?: CheckboxUI
 }
 
-export type CheckboxEmits = CheckboxRootEmits<CheckboxValue>
-
-export interface CheckboxSlotProps {
+// Context
+export interface CheckboxContext {
+  props: Omit<CheckboxProps, 'ui'>
   value: CheckboxValue | 'indeterminate'
   state: CheckboxState
 }
 
+// Emits
+export type CheckboxEmits = CheckboxRootEmits<CheckboxValue>
+
+// Slots
 export interface CheckboxSlots {
-  indicator?(props: CheckboxSlotProps): unknown
+  indicator?(props: CheckboxContext): unknown
 }

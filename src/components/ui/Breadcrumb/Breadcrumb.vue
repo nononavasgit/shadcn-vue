@@ -86,6 +86,8 @@ const calculatedUI = computed(() => {
     },
     ellipsisContext: breadcrumbEllipsisContext,
     separatorContainer: {
+      role: 'presentation',
+      'aria-hidden': true,
       ...separatorContainerUI,
     },
     separatorIcon: {
@@ -210,20 +212,15 @@ const calculatedUI = computed(() => {
           </li>
 
           <template v-if="!item.context.last">
-            <slot name="separator" v-bind="breadcrumbContext">
-              <li
-                v-bind="calculatedUI.separatorContainer"
-                data-slot="breadcrumb-separator"
-                role="presentation"
-                aria-hidden="true"
-              >
+            <li v-bind="calculatedUI.separatorContainer" data-slot="breadcrumb-separator">
+              <slot name="separator" v-bind="breadcrumbContext">
                 <Icon
                   v-if="calculatedUI.separatorIcon?.name"
                   v-bind="calculatedUI.separatorIcon"
                   :name="calculatedUI.separatorIcon.name"
                 />
-              </li>
-            </slot>
+              </slot>
+            </li>
           </template>
         </template>
       </slot>

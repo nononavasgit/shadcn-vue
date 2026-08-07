@@ -2,8 +2,9 @@
 import { computed, useAttrs } from 'vue'
 import { SwitchRoot, SwitchThumb } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import type { SwitchProps, SwitchSlots, SwitchValue } from '.'
+import type { SwitchContext, SwitchProps, SwitchSlots, SwitchValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -14,10 +15,31 @@ const props = withDefaults(defineProps<SwitchProps>(), {
 })
 defineSlots<SwitchSlots>()
 
-const attrs = useAttrs()
 const modelValue = defineModel<SwitchValue>()
+const value = computed<SwitchValue>({
+  get: () =>
+    modelValue.value !== undefined
+      ? modelValue.value
+      : (props.defaultValue ?? props.falseValue ?? null),
+  set: (nextValue) => {
+    modelValue.value = nextValue
+  },
+})
+
+const switchContext = computed<SwitchContext>(() => {
+  const { ui, ...switchProps } = props
+  void ui
+
+  return {
+    props: switchProps,
+    value: value.value,
+    checked: value.value === props.trueValue,
+  }
+})
+
+const attrs = useAttrs()
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, switchContext.value))
 
   return {
     root: {
@@ -46,7 +68,7 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <SwitchRoot v-slot="slotProps" v-bind="calculatedUI.root" v-model="modelValue" data-slot="switch">
+  <SwitchRoot v-bind="calculatedUI.root" v-model="value" data-slot="switch">
     <SwitchThumb
       data-slot="switch-thumb"
       :class="
@@ -55,7 +77,7 @@ const calculatedUI = computed(() => {
         )
       "
     >
-      <slot name="thumb" :checked="slotProps.checked" :value="slotProps.modelValue" />
+      <slot name="thumb" v-bind="switchContext" />
     </SwitchThumb>
   </SwitchRoot>
 </template>

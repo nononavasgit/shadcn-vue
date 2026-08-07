@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, useAttrs, watch } from 'vue'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { useAnnouncer } from '@/composables/useAnnouncer'
 import { cn } from '@/lib/utils'
-import type { AnnouncerProps, AnnouncerSlots } from '.'
+import type { AnnouncerContext, AnnouncerProps, AnnouncerSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -26,6 +27,16 @@ watch(
   },
 )
 
+const announcerContext = computed<AnnouncerContext>(() => {
+  const { ui, ...announcerProps } = props
+  void ui
+
+  return {
+    props: announcerProps,
+    message: message.value,
+  }
+})
+
 const ariaLive = computed(() => politeness.value)
 const role = computed(() => {
   if (politeness.value === 'assertive') return 'alert'
@@ -33,7 +44,7 @@ const role = computed(() => {
   return undefined
 })
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, announcerContext.value))
 
   return {
     root: {
@@ -53,6 +64,6 @@ defineExpose({ message, politeness, set, polite, assertive })
 
 <template>
   <span v-bind="calculatedUI.root" data-slot="announcer">
-    <slot :message="message">{{ message }}</slot>
+    <slot v-bind="announcerContext">{{ message }}</slot>
   </span>
 </template>

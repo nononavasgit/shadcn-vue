@@ -3,8 +3,12 @@ import type { AnnouncerPoliteness } from '@/composables/useAnnouncer'
 
 export { default as Announcer } from './Announcer.vue'
 
+// Fn
+export type AnnouncerFn<T> = T | ((context: AnnouncerContext) => T)
+
+// Props
 export interface AnnouncerUI {
-  root?: HTMLAttributes
+  root?: AnnouncerFn<HTMLAttributes>
 }
 
 export interface AnnouncerProps {
@@ -13,10 +17,13 @@ export interface AnnouncerProps {
   ui?: AnnouncerUI
 }
 
-export interface AnnouncerSlotProps {
+// Context
+export interface AnnouncerContext {
+  props: Omit<AnnouncerProps, 'ui'>
   message: string
 }
 
+// Slots
 export interface AnnouncerSlots {
-  default?(props: AnnouncerSlotProps): unknown
+  default?(props: AnnouncerContext): unknown
 }

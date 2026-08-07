@@ -1,7 +1,8 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
 import type { ToggleEmits as ToggleEmitsReka, ToggleProps as TogglePropsReka } from 'reka-ui'
-import type { IconName, IconProps } from '@/components/ui/Icon'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { EmitsAsProps } from '@/types/emits'
 
 export { default as Toggle } from './Toggle.vue'
 
@@ -122,15 +123,28 @@ export const toggleVariants = cva('', {
 
 export type ToggleVariants = VariantProps<typeof toggleVariants>
 
+export type ToggleValue = boolean | null
+export type ToggleState = 'on' | 'off'
+
+// Props Reka
+export type ToggleRootProps = Pick<
+  TogglePropsReka,
+  'as' | 'asChild' | 'name' | 'required' | 'defaultValue' | 'modelValue' | 'disabled'
+>
+
+// Fn
+export type ToggleFn<T> = T | ((context: ToggleContext) => T)
+
+// UI
 export interface ToggleUI {
-  root?: HTMLAttributes
-  icon?: HTMLAttributes
-  trailingIcon?: HTMLAttributes
+  root?: ToggleFn<HTMLAttributes>
 }
-export interface ToggleProps extends TogglePropsReka {
+
+// Props
+export interface ToggleProps extends ToggleRootProps {
   label?: string
-  icon?: IconName | IconProps
-  trailingIcon?: IconName | IconProps
+  icon?: NormalizeIconProps
+  trailingIcon?: NormalizeIconProps
   variant?: ToggleVariants['variant']
   severity?: ToggleVariants['severity']
   size?: ToggleVariants['size']
@@ -138,9 +152,30 @@ export interface ToggleProps extends TogglePropsReka {
   ui?: ToggleUI
 }
 
+// Emits
+export type ToggleEmits = ToggleEmitsReka
+
+// Context
+export interface ToggleContext {
+  props: Omit<ToggleProps, 'ui'>
+  value: ToggleValue
+  state: ToggleState
+  pressed: boolean
+}
+
+// Slots
+export interface ToggleSlots {
+  default?(props: ToggleContext): unknown
+  leading?(props: ToggleContext): unknown
+  trailing?(props: ToggleContext): unknown
+}
+
+// Normalize
+export type NormalizeToggleProps = ToggleProps & EmitsAsProps<ToggleEmits>
+
 export function normalizeToggleProps(
-  source: ToggleProps | null | undefined,
-): ToggleProps | undefined {
+  source: NormalizeToggleProps | null | undefined,
+): NormalizeToggleProps | undefined {
   if (!source) return undefined
 
   const {
@@ -159,6 +194,7 @@ export function normalizeToggleProps(
     size,
     color,
     ui,
+    'onUpdate:modelValue': onUpdateModelValue,
   } = source
 
   return {
@@ -177,19 +213,6 @@ export function normalizeToggleProps(
     size,
     color,
     ui,
+    'onUpdate:modelValue': onUpdateModelValue,
   }
-}
-export type ToggleEmits = ToggleEmitsReka
-
-export interface ToggleSlotProps {
-  modelValue: boolean
-  state: 'on' | 'off'
-  pressed: boolean
-  disabled: boolean
-}
-
-export interface ToggleSlots {
-  default?(props: ToggleSlotProps): unknown
-  leading?(props: ToggleSlotProps): unknown
-  trailing?(props: ToggleSlotProps): unknown
 }

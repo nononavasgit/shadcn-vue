@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
-import { Accordion, Icon } from '@/components/ui'
+import { Accordion, Icon, Toggle } from '@/components/ui'
 import { ConfigProvider } from '@/components/provider'
 
 const accordionValue = ref(['account'])
@@ -55,6 +55,14 @@ const accordionUI = reactive({
     class: last ? 'pb-6' : undefined,
   }),
 })
+
+const toggleValue = ref(false)
+
+const toggleUI = {
+  root: ({ pressed }) => ({
+    class: pressed ? 'ring-2 ring-primary/30' : undefined,
+  }),
+}
 </script>
 
 <template>
@@ -105,6 +113,52 @@ const accordionUI = reactive({
           <p class="text-sm text-muted-foreground">
             Item activo: {{ accordionValue || 'ninguno' }}
           </p>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Toggle examples</h2>
+
+        <div class="space-y-2">
+          <h3 class="font-medium">Básico y controlado</h3>
+
+          <Toggle v-model="toggleValue" label="Guardar" icon="save" />
+
+          <p class="text-sm text-muted-foreground">
+            Estado: {{ toggleValue ? 'activado' : 'desactivado' }}
+          </p>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <Toggle label="Primario" variant="outline" severity="primary" />
+          <Toggle label="Éxito" variant="outline" severity="success" icon="check" />
+          <Toggle label="Aviso" variant="outline" severity="warning" icon="warning" />
+          <Toggle label="Deshabilitado" disabled />
+        </div>
+
+        <div class="space-y-2">
+          <h3 class="font-medium">Iconos y slots con contexto</h3>
+
+          <Toggle
+            default-value
+            label="Confirmar"
+            icon="check"
+            trailing-icon="chevronDown"
+            color="green"
+            :ui="toggleUI"
+          >
+            <template #leading="{ pressed }">
+              <Icon :name="pressed ? 'check' : 'x'" />
+            </template>
+
+            <template #default="{ state }">
+              {{ state === 'on' ? 'Marcado' : 'Sin marcar' }}
+            </template>
+
+            <template #trailing="{ pressed }">
+              <span class="text-xs">{{ pressed ? 'ON' : 'OFF' }}</span>
+            </template>
+          </Toggle>
         </div>
       </section>
     </main>

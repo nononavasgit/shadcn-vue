@@ -3,18 +3,26 @@ import type { AspectRatioProps as AspectRatioPropsReka } from 'reka-ui'
 
 export { default as AspectRatio } from './AspectRatio.vue'
 
-export interface AspectRatioUI {
-  root?: HTMLAttributes
-}
+// Fn
+export type AspectRatioFn<T> = T | ((context: AspectRatioContext) => T)
 
-export interface AspectRatioProps extends AspectRatioPropsReka {
+// Props
+export interface AspectRatioProps extends Pick<AspectRatioPropsReka, 'as' | 'asChild' | 'ratio'> {
   ui?: AspectRatioUI
 }
 
-export interface AspectRatioSlotProps {
+// UI
+export interface AspectRatioUI {
+  root?: AspectRatioFn<HTMLAttributes>
+}
+
+// Context
+export interface AspectRatioContext {
+  props: Omit<AspectRatioProps, 'ui'>
   aspect: number
 }
 
+// Slots
 export interface AspectRatioSlots {
-  default?(props: AspectRatioSlotProps): unknown
+  default?(props: AspectRatioContext): unknown
 }

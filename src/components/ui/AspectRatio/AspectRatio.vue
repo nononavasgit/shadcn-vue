@@ -2,8 +2,9 @@
 import { computed, useAttrs } from 'vue'
 import { AspectRatio as RekaAspectRatio } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import type { AspectRatioProps, AspectRatioSlots } from '.'
+import type { AspectRatioContext, AspectRatioProps, AspectRatioSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -16,8 +17,19 @@ const props = withDefaults(defineProps<AspectRatioProps>(), {
   ui: undefined,
 })
 const attrs = useAttrs()
+
+const aspectRatioContext = computed<AspectRatioContext>(() => {
+  const { ui, ...aspectRatioProps } = props
+  void ui
+
+  return {
+    props: aspectRatioProps,
+    aspect: props.ratio,
+  }
+})
+
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, aspectRatioContext.value))
 
   return {
     root: {
@@ -34,7 +46,7 @@ const calculatedUI = computed(() => {
 </script>
 
 <template>
-  <RekaAspectRatio v-slot="slotProps" v-bind="calculatedUI.root">
-    <slot v-bind="slotProps" />
+  <RekaAspectRatio v-bind="calculatedUI.root">
+    <slot v-bind="aspectRatioContext" />
   </RekaAspectRatio>
 </template>

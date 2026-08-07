@@ -1,5 +1,5 @@
 <script setup>
-import { AlertDialog, Button } from '@/components/ui'
+import { AlertDialog, AspectRatio, Button } from '@/components/ui'
 import { ConfigProvider } from '@/components/provider'
 
 const alertDialogUI = {
@@ -11,6 +11,13 @@ const alertDialogUI = {
   }),
   footer: ({ props }) => ({
     'data-dialog-label': props.label,
+  }),
+}
+
+const aspectRatioUI = {
+  root: ({ aspect }) => ({
+    class: aspect >= 1 ? 'rounded-xl ring-2 ring-primary/20' : 'rounded-xl ring-2 ring-success/20',
+    'data-ratio': aspect,
   }),
 }
 </script>
@@ -69,6 +76,35 @@ const alertDialogUI = {
             <Button severity="error" label="Sí, eliminar" icon="trash" />
           </template>
         </AlertDialog>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">AspectRatio examples</h2>
+
+        <AspectRatio :ratio="16 / 9" class="overflow-hidden rounded-lg bg-muted">
+          <div class="flex size-full items-center justify-center bg-primary/10 text-primary">
+            Ratio 16:9
+          </div>
+        </AspectRatio>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <AspectRatio :ratio="1" class="overflow-hidden rounded-lg bg-muted">
+            <div class="flex size-full items-center justify-center bg-secondary/20 text-secondary">
+              Ratio 1:1
+            </div>
+          </AspectRatio>
+
+          <AspectRatio :ratio="4 / 3" :ui="aspectRatioUI">
+            <template #default="{ aspect, props }">
+              <div
+                class="flex size-full flex-col items-center justify-center bg-success/10 text-success"
+              >
+                <span>Ratio: {{ aspect }}</span>
+                <span class="text-xs">Prop ratio: {{ props.ratio }}</span>
+              </div>
+            </template>
+          </AspectRatio>
+        </div>
       </section>
     </main>
   </ConfigProvider>

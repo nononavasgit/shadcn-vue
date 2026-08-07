@@ -1,5 +1,7 @@
 export { Icon } from './Icon'
 export { AlertDialog } from './AlertDialog'
+export { Announcer } from './Announcer'
+export { AspectRatio } from './AspectRatio'
 export { Alert } from './Alert'
 export { Badge } from './Badge'
 export { Button } from './Button'

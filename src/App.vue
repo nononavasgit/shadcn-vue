@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import {
   Breadcrumb,
+  Card,
   Checkbox,
   Input,
   Kbd,
@@ -107,6 +108,24 @@ const scrollAreaUI = {
   }),
   thumbVertical: () => ({
     class: 'bg-primary',
+  }),
+}
+
+const cardUI = {
+  root: ({ props }) => ({
+    class: props.label === 'Perfil' ? 'border-primary' : undefined,
+  }),
+  header: ({ props }) => ({
+    class: props.description ? 'bg-muted/20' : undefined,
+  }),
+  label: ({ props }) => ({
+    class: props.label === 'Perfil' ? 'text-primary' : undefined,
+  }),
+  content: () => ({
+    class: 'text-sm text-muted-foreground',
+  }),
+  footer: () => ({
+    class: 'border-t',
   }),
 }
 </script>
@@ -222,6 +241,39 @@ const scrollAreaUI = {
             </div>
           </template>
         </ScrollArea>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Card examples</h2>
+
+        <Card label="Perfil" description="Información de la cuenta" :ui="cardUI">
+          <template #label="{ props }">
+            {{ props.label }}
+          </template>
+
+          <template #description="{ props }">
+            {{ props.description }}
+          </template>
+
+          <template #action="{ props }">
+            <button type="button" class="text-sm text-primary hover:underline">
+              Editar {{ props.label }}
+            </button>
+          </template>
+
+          <template #default="{ props }">
+            <p>
+              Este contenido pertenece al slot principal de la tarjeta de
+              {{ props.label?.toLowerCase() }}.
+            </p>
+          </template>
+
+          <template #footer="{ props }">
+            <span class="text-xs text-muted-foreground">
+              Última actualización para {{ props.label }}
+            </span>
+          </template>
+        </Card>
       </section>
     </main>
   </ConfigProvider>

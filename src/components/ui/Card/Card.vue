@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import type { CardProps, CardSlots } from '.'
+import type { CardContext, CardProps, CardSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -13,15 +14,26 @@ const props = withDefaults(defineProps<CardProps>(), {
 })
 defineSlots<CardSlots>()
 
+const cardContext = computed<CardContext>(() => {
+  const { ui, ...cardProps } = props
+  void ui
+
+  return {
+    props: cardProps,
+  }
+})
+
 const attrs = useAttrs()
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
-  const headerUI = normalizeHTMLAttributes(props.ui?.header)
-  const labelUI = normalizeHTMLAttributes(props.ui?.label)
-  const descriptionUI = normalizeHTMLAttributes(props.ui?.description)
-  const actionUI = normalizeHTMLAttributes(props.ui?.action)
-  const contentUI = normalizeHTMLAttributes(props.ui?.content)
-  const footerUI = normalizeHTMLAttributes(props.ui?.footer)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, cardContext.value))
+  const headerUI = normalizeHTMLAttributes(useResolve(props.ui?.header, cardContext.value))
+  const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, cardContext.value))
+  const descriptionUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.description, cardContext.value),
+  )
+  const actionUI = normalizeHTMLAttributes(useResolve(props.ui?.action, cardContext.value))
+  const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, cardContext.value))
+  const footerUI = normalizeHTMLAttributes(useResolve(props.ui?.footer, cardContext.value))
 
   return {
     root: {
@@ -79,9 +91,9 @@ const calculatedUI = computed(() => {
       v-bind="calculatedUI.header"
       data-slot="card-header"
     >
-      <slot name="header">
+      <slot name="header" v-bind="cardContext">
         <h3 v-if="props.label || $slots.label" v-bind="calculatedUI.label" data-slot="card-title">
-          <slot name="label">{{ props.label }}</slot>
+          <slot name="label" v-bind="cardContext">{{ props.label }}</slot>
         </h3>
 
         <p
@@ -89,21 +101,21 @@ const calculatedUI = computed(() => {
           v-bind="calculatedUI.description"
           data-slot="card-description"
         >
-          <slot name="description">{{ props.description }}</slot>
+          <slot name="description" v-bind="cardContext">{{ props.description }}</slot>
         </p>
       </slot>
 
       <div v-if="$slots.action" v-bind="calculatedUI.action" data-slot="card-action">
-        <slot name="action" />
+        <slot name="action" v-bind="cardContext" />
       </div>
     </div>
 
     <div v-if="$slots.default" v-bind="calculatedUI.content" data-slot="card-content">
-      <slot />
+      <slot v-bind="cardContext" />
     </div>
 
     <div v-if="$slots.footer" v-bind="calculatedUI.footer" data-slot="card-footer">
-      <slot name="footer" />
+      <slot name="footer" v-bind="cardContext" />
     </div>
   </div>
 </template>

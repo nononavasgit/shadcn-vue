@@ -2,14 +2,16 @@ import type { HTMLAttributes } from 'vue'
 
 export { default as Card } from './Card.vue'
 
+export type CardFn<T> = T | ((context: CardContext) => T)
+
 export interface CardUI {
-  root?: HTMLAttributes
-  header?: HTMLAttributes
-  label?: HTMLAttributes
-  description?: HTMLAttributes
-  action?: HTMLAttributes
-  content?: HTMLAttributes
-  footer?: HTMLAttributes
+  root?: CardFn<HTMLAttributes>
+  header?: CardFn<HTMLAttributes>
+  label?: CardFn<HTMLAttributes>
+  description?: CardFn<HTMLAttributes>
+  action?: CardFn<HTMLAttributes>
+  content?: CardFn<HTMLAttributes>
+  footer?: CardFn<HTMLAttributes>
 }
 
 export interface CardProps {
@@ -18,11 +20,15 @@ export interface CardProps {
   ui?: CardUI
 }
 
+export interface CardContext {
+  props: Omit<CardProps, 'ui'>
+}
+
 export interface CardSlots {
-  default?(): unknown
-  header?(): unknown
-  label?(): unknown
-  description?(): unknown
-  action?(): unknown
-  footer?(): unknown
+  default?(props: CardContext): unknown
+  header?(props: CardContext): unknown
+  label?(props: CardContext): unknown
+  description?(props: CardContext): unknown
+  action?(props: CardContext): unknown
+  footer?(props: CardContext): unknown
 }

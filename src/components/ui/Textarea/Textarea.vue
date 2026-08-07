@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import type { TextareaEmits, TextareaProps, TextareaValue } from '.'
+import type { TextareaContext, TextareaEmits, TextareaProps, TextareaValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -11,6 +12,15 @@ const props = withDefaults(defineProps<TextareaProps>(), {
   ui: undefined,
 })
 defineEmits<TextareaEmits>()
+
+const textareaContext = computed<TextareaContext>(() => {
+  const { ui, ...textareaProps } = props
+  void ui
+
+  return {
+    props: textareaProps,
+  }
+})
 
 const attrs = useAttrs()
 const modelValue = defineModel<TextareaValue>()
@@ -21,7 +31,7 @@ const value = computed({
   },
 })
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, textareaContext.value))
 
   return {
     root: {

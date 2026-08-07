@@ -1,5 +1,6 @@
 <script setup>
-import { Breadcrumb } from '@/components/ui'
+import { ref } from 'vue'
+import { Breadcrumb, Input, Textarea } from '@/components/ui'
 import { ConfigProvider } from '@/components/provider'
 
 const breadcrumbItems = [
@@ -25,6 +26,21 @@ const breadcrumbUI = {
   }),
   label: ({ last }) => ({
     class: last ? 'font-semibold' : undefined,
+  }),
+}
+
+const inputValue = ref('Texto editable')
+const textareaValue = ref('Contenido inicial del textarea')
+
+const inputUI = {
+  root: ({ props }) => ({
+    class: props.modelValue ? 'border-primary ring-1 ring-primary/20' : undefined,
+  }),
+}
+
+const textareaUI = {
+  root: ({ props }) => ({
+    class: props.modelValue ? 'border-success ring-1 ring-success/20' : undefined,
   }),
 }
 </script>
@@ -55,6 +71,23 @@ const breadcrumbUI = {
             </li>
           </template>
         </Breadcrumb>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">Input y Textarea examples</h2>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <Input default-value="Valor inicial" placeholder="Input con valor por defecto" />
+
+          <Input v-model="inputValue" placeholder="Input con v-model" :ui="inputUI" />
+        </div>
+
+        <Textarea v-model="textareaValue" placeholder="Escribe una descripción" :ui="textareaUI" />
+
+        <div class="space-y-1 text-sm text-muted-foreground">
+          <p>Input: {{ inputValue }}</p>
+          <p>Textarea: {{ textareaValue }}</p>
+        </div>
       </section>
     </main>
   </ConfigProvider>

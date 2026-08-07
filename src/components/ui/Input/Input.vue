@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import type { InputEmits, InputProps, InputValue } from '.'
+import type { InputContext, InputEmits, InputProps, InputValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -11,6 +12,15 @@ const props = withDefaults(defineProps<InputProps>(), {
   ui: undefined,
 })
 defineEmits<InputEmits>()
+
+const inputContext = computed<InputContext>(() => {
+  const { ui, ...inputProps } = props
+  void ui
+
+  return {
+    props: inputProps,
+  }
+})
 
 const attrs = useAttrs()
 const modelValue = defineModel<InputValue>()
@@ -21,7 +31,7 @@ const value = computed({
   },
 })
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, inputContext.value))
 
   return {
     root: {

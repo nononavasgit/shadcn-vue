@@ -1,24 +1,75 @@
 <script setup>
-import { Icon, Button } from '@/components/ui'
+import { Alert, Button } from '@/components/ui'
+
+const alertUI = {
+  root: (e) => {
+    console.log(e)
+    const { props } = e
+    return {
+      class: props.severity === 'success' ? 'ring-2 ring-success/30' : 'ring-2 ring-error/30',
+    }
+  },
+  label: ({ props }) => ({ title: props.label }),
+}
 </script>
 
 <template>
   <main class="mx-auto min-h-screen max-w-2xl space-y-8 p-6 md:p-10">
-    <Icon
-      name="warning"
-      :ui="{
-        root: (p) => {
-          console.log(p)
+    <section class="space-y-4">
+      <h1 class="text-2xl font-semibold">Alert examples</h1>
 
-          return {
-            'aria-atomic': true,
-          }
-        },
-      }"
-    ></Icon>
+      <Alert
+        label="Informacion"
+        description="Este es un alert informativo con su icono normalizado."
+        icon="info"
+      />
 
-    <Button label="adios" icon="info" color="#fff000" :trailing-icon="'chevronDown'">
-      <template #trailing="slotProps"> {{ slotProps }} je</template>
-    </Button>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <Alert
+          closable
+          severity="success"
+          label="Guardado correctamente"
+          description="Los cambios se han guardado."
+          icon="success"
+        />
+        <Alert
+          severity="warning"
+          label="Revisa los datos"
+          description="Hay campos que necesitan tu atencion."
+          icon="warning"
+        />
+        <Alert
+          severity="error"
+          label="No se pudo completar"
+          description="Intentalo de nuevo dentro de unos segundos."
+          icon="error"
+        />
+      </div>
+
+      <Alert
+        closable
+        severity="warning"
+        label="Alerta cerrable"
+        description="Este ejemplo usa el contexto del slot close."
+        icon="warning"
+      >
+        <template #close="{ close }">
+          <Button size="xs" variant="outline" label="Cerrar" @click="close" />
+        </template>
+      </Alert>
+
+      <Alert
+        closable
+        severity="error"
+        label="Slots y contexto"
+        description="Este contenido se personaliza usando props y close del contexto."
+        :icon="{ name: 'success', color: 'green', ui: { root: { 'aria-label': 'Más info' } } }"
+        :ui="alertUI"
+      >
+        <template #label="{ props }">
+          <span class="font-semibold">{{ props.label }} OK</span>
+        </template>
+      </Alert>
+    </section>
   </main>
 </template>

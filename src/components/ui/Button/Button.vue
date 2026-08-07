@@ -35,10 +35,8 @@ const emit = defineEmits<ButtonEmits>()
 defineSlots<ButtonSlots>()
 
 const buttonContext = computed(() => {
-  const { ui, icon, trailingIcon, ...buttonProps } = props
+  const { ui, ...buttonProps } = props
   void ui
-  void icon
-  void trailingIcon
   const buttonContext: ButtonContext = {
     props: buttonProps,
   }

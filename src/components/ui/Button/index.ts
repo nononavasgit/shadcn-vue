@@ -2,6 +2,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
 import type { NormalizeIconProps } from '@/components/ui/Icon'
 import type { PrimitiveProps } from 'reka-ui'
+import type { EmitsAsProps } from '@/types/emits'
 
 export { default as Button } from './Button.vue'
 
@@ -298,24 +299,46 @@ export interface ButtonSlots {
   trailing?(props: ButtonContext): unknown
 }
 
+// Normalize
+
+export type NormalizeButtonProps = ButtonProps & EmitsAsProps<ButtonEmits>
+
 export function normalizeButtonProps(
-  source: ButtonProps | null | undefined,
-): ButtonProps | undefined {
+  source: NormalizeButtonProps | null | undefined,
+): NormalizeButtonProps | undefined {
   if (!source) return undefined
 
+  const {
+    as,
+    asChild,
+    label,
+    loading,
+    variant,
+    color,
+    icon,
+    severity,
+    rounded,
+    trailingIcon,
+    size,
+    square,
+    ui,
+    onClick,
+  } = source
+
   return {
-    as: source.as,
-    asChild: source.asChild,
-    label: source.label,
-    variant: source.variant,
-    severity: source.severity,
-    size: source.size,
-    rounded: source.rounded,
-    square: source.square,
-    loading: source.loading,
-    color: source.color,
-    icon: source.icon,
-    trailingIcon: source.trailingIcon,
-    ui: source.ui,
+    as,
+    asChild,
+    label,
+    loading,
+    variant,
+    color,
+    icon,
+    trailingIcon,
+    severity,
+    rounded,
+    size,
+    square,
+    ui,
+    onClick,
   }
 }

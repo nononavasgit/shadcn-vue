@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
-import type { ButtonProps } from '@/components/ui/Button'
-import type { IconName, IconProps } from '@/components/ui/Icon'
+import type { NormalizeButtonProps } from '@/components/ui/Button'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
 
 export { default as Alert } from './Alert.vue'
 
@@ -40,19 +40,15 @@ export const alertVariants = cva('', {
 
 export type AlertVariants = VariantProps<typeof alertVariants>
 
-export interface AlertUI {
-  root?: HTMLAttributes
-  icon?: HTMLAttributes
-  label?: HTMLAttributes
-  description?: HTMLAttributes
-  closeButton?: HTMLAttributes
-}
+// Fn
+export type AlertFn<T> = T | ((context: AlertContext) => T)
 
+// Props
 export interface AlertProps {
   label?: string
   description?: string
-  icon?: IconName | IconProps
-  closeButton?: ButtonProps
+  icon?: NormalizeIconProps
+  closeButton?: NormalizeButtonProps
   variant?: AlertVariants['variant']
   severity?: AlertVariants['severity']
   color?: string
@@ -61,17 +57,29 @@ export interface AlertProps {
   ui?: AlertUI
 }
 
+// UI
+export interface AlertUI {
+  root?: AlertFn<HTMLAttributes>
+  label?: AlertFn<HTMLAttributes>
+  description?: AlertFn<HTMLAttributes>
+  closeButtonContainer?: AlertFn<HTMLAttributes>
+}
+
+// Context
+export interface AlertContext {
+  props: Omit<AlertProps, 'ui'>
+  close: () => void
+}
+
+// Emits
 export interface AlertEmits {
   close: []
 }
 
-export interface AlertSlotProps {
-  close: () => void
-}
-
+// Slots
 export interface AlertSlots {
-  icon?(props: AlertSlotProps): unknown
-  label?(props: AlertSlotProps): unknown
-  description?(props: AlertSlotProps): unknown
-  close?(props: AlertSlotProps): unknown
+  icon?(props: AlertContext): unknown
+  label?(props: AlertContext): unknown
+  description?(props: AlertContext): unknown
+  close?(props: AlertContext): unknown
 }

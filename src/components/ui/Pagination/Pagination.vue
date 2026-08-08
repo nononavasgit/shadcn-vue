@@ -71,131 +71,160 @@ const paginationContext = computed<PaginationContext>(() => {
   }
 })
 
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, paginationContext.value))
+
+  return {
+    ...attrs,
+    ...rootUI,
+    as: props.as,
+    asChild: props.asChild,
+    total: props.total,
+    itemsPerPage: props.itemsPerPage,
+    siblingCount: props.siblingCount,
+    showEdges: props.showEdges,
+    disabled: props.disabled,
+    'data-slot': 'pagination',
+    class: cn(
+      'mx-auto flex w-full flex-wrap items-center justify-center gap-3',
+      attrs.class,
+      rootUI.class,
+    ),
+    style: [attrs.style, rootUI.style],
+  }
+})
+
+const listProps = computed(() => {
   const listUI = normalizeHTMLAttributes(useResolve(props.ui?.list, paginationContext.value))
+
+  return {
+    ...listUI,
+    'data-slot': 'pagination-list',
+    class: cn('flex flex-row flex-wrap items-center gap-1', listUI.class),
+    style: listUI.style,
+  }
+})
+
+const firstProps = computed(() => {
   const firstUI = normalizeHTMLAttributes(useResolve(props.ui?.first, paginationContext.value))
+
+  return {
+    ...firstUI,
+    asChild: true,
+    'aria-label': firstUI['aria-label'] ?? t('first'),
+    'data-slot': 'pagination-first',
+    class: cn(firstUI.class),
+    style: firstUI.style,
+  }
+})
+
+const previousProps = computed(() => {
   const previousUI = normalizeHTMLAttributes(
     useResolve(props.ui?.previous, paginationContext.value),
   )
+
+  return {
+    ...previousUI,
+    asChild: true,
+    'aria-label': previousUI['aria-label'] ?? t('previus'),
+    'data-slot': 'pagination-previous',
+    class: cn(previousUI.class),
+    style: previousUI.style,
+  }
+})
+
+const nextProps = computed(() => {
   const nextUI = normalizeHTMLAttributes(useResolve(props.ui?.next, paginationContext.value))
+
+  return {
+    ...nextUI,
+    asChild: true,
+    'aria-label': nextUI['aria-label'] ?? t('next'),
+    'data-slot': 'pagination-next',
+    class: cn(nextUI.class),
+    style: nextUI.style,
+  }
+})
+
+const lastProps = computed(() => {
   const lastUI = normalizeHTMLAttributes(useResolve(props.ui?.last, paginationContext.value))
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      as: props.as,
-      asChild: props.asChild,
-      total: props.total,
-      itemsPerPage: props.itemsPerPage,
-      siblingCount: props.siblingCount,
-      showEdges: props.showEdges,
-      disabled: props.disabled,
-      'data-slot': 'pagination',
-      class: cn(
-        'mx-auto flex w-full flex-wrap items-center justify-center gap-3',
-        attrs.class,
-        rootUI.class,
-      ),
-      style: [attrs.style, rootUI.style],
-    },
-    list: {
-      ...listUI,
-      'data-slot': 'pagination-list',
-      class: cn('flex flex-row flex-wrap items-center gap-1', listUI.class),
-      style: listUI.style,
-    },
-    first: {
-      ...firstUI,
-      asChild: true,
-      'aria-label': firstUI['aria-label'] ?? t('first'),
-      'data-slot': 'pagination-first',
-      class: cn(firstUI.class),
-      style: firstUI.style,
-    },
-    previous: {
-      ...previousUI,
-      asChild: true,
-      'aria-label': previousUI['aria-label'] ?? t('previus'),
-      'data-slot': 'pagination-previous',
-      class: cn(previousUI.class),
-      style: previousUI.style,
-    },
-    next: {
-      ...nextUI,
-      asChild: true,
-      'aria-label': nextUI['aria-label'] ?? t('next'),
-      'data-slot': 'pagination-next',
-      class: cn(nextUI.class),
-      style: nextUI.style,
-    },
-    last: {
-      ...lastUI,
-      asChild: true,
-      'aria-label': lastUI['aria-label'] ?? t('last'),
-      'data-slot': 'pagination-last',
-      class: cn(lastUI.class),
-      style: lastUI.style,
-    },
-    firstIcon: normalizeIconProps(props.firstIcon),
-    previousIcon: normalizeIconProps(props.previousIcon),
-    nextIcon: normalizeIconProps(props.nextIcon),
-    lastIcon: normalizeIconProps(props.lastIcon),
-    ellipsisIcon: normalizeIconProps(props.ellipsisIcon),
-    items: (items: PaginationGeneratedItem[]) =>
-      items.map((item, index) => {
-        const context: PaginationItemContext = {
-          ...paginationContext.value,
-          item,
-          index,
-          active: item.type === 'page' && item.value === paginationContext.value.page,
-          first: index === 0,
-          last: index === items.length - 1,
-        }
-        const itemUI = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
-        const ellipsisUI = normalizeHTMLAttributes(useResolve(props.ui?.ellipsis, context))
-        const key = item.type === 'page' ? `item-${item.value}` : `ellipsis-${index}`
-
-        return {
-          key,
-          data: item,
-          context,
-          slots: {
-            item: `item-${item.type === 'page' ? item.value : index}` as `item-${string}`,
-            ellipsis: `ellipsis-${index}` as `ellipsis-${string}`,
-          },
-          item: {
-            ...itemUI,
-            asChild: true,
-            'aria-label': item.type === 'page' ? t('page_{n}', { n: item.value }) : undefined,
-            'data-slot': 'pagination-item',
-            class: cn(itemUI.class),
-            style: itemUI.style,
-          },
-          ellipsis: {
-            ...ellipsisUI,
-            asChild: true,
-            'aria-label': ellipsisUI['aria-label'] ?? t('morePages'),
-            'data-slot': 'pagination-ellipsis',
-            class: cn('flex items-center justify-center', ellipsisUI.class),
-            style: ellipsisUI.style,
-          },
-        }
-      }),
+    ...lastUI,
+    asChild: true,
+    'aria-label': lastUI['aria-label'] ?? t('last'),
+    'data-slot': 'pagination-last',
+    class: cn(lastUI.class),
+    style: lastUI.style,
   }
 })
+
+const firstIconProps = computed(() => normalizeIconProps(props.firstIcon))
+const previousIconProps = computed(() => normalizeIconProps(props.previousIcon))
+const nextIconProps = computed(() => normalizeIconProps(props.nextIcon))
+const lastIconProps = computed(() => normalizeIconProps(props.lastIcon))
+const ellipsisIconProps = computed(() => normalizeIconProps(props.ellipsisIcon))
+
+function getItemContexts(items: PaginationGeneratedItem[]): PaginationItemContext[] {
+  return items.map((item, index) => ({
+    ...paginationContext.value,
+    item,
+    index,
+    active: item.type === 'page' && item.value === paginationContext.value.page,
+    first: index === 0,
+    last: index === items.length - 1,
+  }))
+}
+
+function getItemProps(context: PaginationItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+
+  return {
+    ...ui,
+    asChild: true,
+    'aria-label':
+      context.item.type === 'page' ? t('page_{n}', { n: context.item.value }) : undefined,
+    'data-slot': 'pagination-item',
+    class: cn(ui.class),
+    style: ui.style,
+  }
+}
+
+function getEllipsisProps(context: PaginationItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.ellipsis, context))
+
+  return {
+    ...ui,
+    asChild: true,
+    'aria-label': ui['aria-label'] ?? t('morePages'),
+    'data-slot': 'pagination-ellipsis',
+    class: cn('flex items-center justify-center', ui.class),
+    style: ui.style,
+  }
+}
+
+function getItemKey(context: PaginationItemContext) {
+  return context.item.type === 'page' ? `item-${context.item.value}` : `ellipsis-${context.index}`
+}
+
+function getItemSlotName(context: PaginationItemContext): `item-${string}` {
+  return `item-${context.item.type === 'page' ? context.item.value : context.index}`
+}
+
+function getEllipsisSlotName(context: PaginationItemContext): `ellipsis-${string}` {
+  return `ellipsis-${context.index}`
+}
 </script>
 
 <template>
-  <PaginationRoot v-model:page="page" v-bind="calculatedUI.root">
-    <PaginationList v-slot="{ items }" v-bind="calculatedUI.list">
+  <PaginationRoot v-model:page="page" v-bind="rootProps">
+    <PaginationList v-slot="{ items }" v-bind="listProps">
       <slot name="preContent" v-bind="paginationContext" />
 
-      <PaginationFirst v-if="props.showControls" v-bind="calculatedUI.first">
+      <PaginationFirst v-if="props.showControls" v-bind="firstProps">
         <slot name="first" v-bind="paginationContext">
           <Button
-            :icon="calculatedUI.firstIcon"
+            :icon="firstIconProps"
             :color="props.color"
             :variant="props.variant"
             :severity="props.severity"
@@ -205,10 +234,10 @@ const calculatedUI = computed(() => {
         </slot>
       </PaginationFirst>
 
-      <PaginationPrev v-if="props.showControls" v-bind="calculatedUI.previous">
+      <PaginationPrev v-if="props.showControls" v-bind="previousProps">
         <slot name="previous" v-bind="paginationContext">
           <Button
-            :icon="calculatedUI.previousIcon"
+            :icon="previousIconProps"
             :color="props.color"
             :variant="props.variant"
             :severity="props.severity"
@@ -218,19 +247,19 @@ const calculatedUI = computed(() => {
         </slot>
       </PaginationPrev>
 
-      <template v-for="item in calculatedUI.items(items)" :key="item.key">
+      <template v-for="itemContext in getItemContexts(items)" :key="getItemKey(itemContext)">
         <PaginationListItem
-          v-if="item.data.type === 'page'"
-          v-bind="item.item"
-          :value="item.data.value"
+          v-if="itemContext.item.type === 'page'"
+          v-bind="getItemProps(itemContext)"
+          :value="itemContext.item.value"
         >
-          <slot :name="item.slots.item" v-bind="item.context">
-            <slot name="item" v-bind="item.context">
+          <slot :name="getItemSlotName(itemContext)" v-bind="itemContext">
+            <slot name="item" v-bind="itemContext">
               <Button
-                :label="String(item.data.value)"
-                :color="item.context.active ? (props.activeColor ?? props.color) : props.color"
+                :label="String(itemContext.item.value)"
+                :color="itemContext.active ? (props.activeColor ?? props.color) : props.color"
                 :variant="
-                  item.context.active ? (props.activeVariant ?? props.variant) : props.variant
+                  itemContext.active ? (props.activeVariant ?? props.variant) : props.variant
                 "
                 :severity="props.severity"
                 :size="props.size"
@@ -240,11 +269,11 @@ const calculatedUI = computed(() => {
           </slot>
         </PaginationListItem>
 
-        <PaginationEllipsis v-else v-bind="item.ellipsis">
-          <slot :name="item.slots.ellipsis" v-bind="item.context">
-            <slot name="ellipsis" v-bind="item.context">
+        <PaginationEllipsis v-else v-bind="getEllipsisProps(itemContext)">
+          <slot :name="getEllipsisSlotName(itemContext)" v-bind="itemContext">
+            <slot name="ellipsis" v-bind="itemContext">
               <Button
-                :icon="calculatedUI.ellipsisIcon"
+                :icon="ellipsisIconProps"
                 :color="props.color"
                 :variant="props.variant"
                 :severity="props.severity"
@@ -257,10 +286,10 @@ const calculatedUI = computed(() => {
         </PaginationEllipsis>
       </template>
 
-      <PaginationNext v-if="props.showControls" v-bind="calculatedUI.next">
+      <PaginationNext v-if="props.showControls" v-bind="nextProps">
         <slot name="next" v-bind="paginationContext">
           <Button
-            :icon="calculatedUI.nextIcon"
+            :icon="nextIconProps"
             :color="props.color"
             :variant="props.variant"
             :severity="props.severity"
@@ -270,10 +299,10 @@ const calculatedUI = computed(() => {
         </slot>
       </PaginationNext>
 
-      <PaginationLast v-if="props.showControls" v-bind="calculatedUI.last">
+      <PaginationLast v-if="props.showControls" v-bind="lastProps">
         <slot name="last" v-bind="paginationContext">
           <Button
-            :icon="calculatedUI.lastIcon"
+            :icon="lastIconProps"
             :color="props.color"
             :variant="props.variant"
             :severity="props.severity"

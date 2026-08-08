@@ -1,16 +1,23 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
+import { computed, useAttrs, watch } from 'vue'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { useColor } from '@/composables'
 import { cn } from '@/lib/utils'
 import type {
   TimelineContext,
+  TimelineEmits,
   TimelineItemContext,
   TimelineProps,
   TimelineSlots,
   TimelineValue,
 } from '.'
-import { timelineIndicatorVariants, timelineSeparatorVariants, timelineVariants } from '.'
+import {
+  timelineContentVariants,
+  timelineIndicatorVariants,
+  timelineItemVariants,
+  timelineSeparatorVariants,
+  timelineVariants,
+} from '.'
 import { Primitive } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useResolve } from '@/composables/useResolve'
@@ -20,6 +27,7 @@ defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<TimelineProps>(), {
   value: undefined,
   orientation: 'vertical',
+  align: 'right',
   sizeIndicator: 'md',
   color: undefined,
   severity: 'primary',
@@ -28,6 +36,7 @@ const props = withDefaults(defineProps<TimelineProps>(), {
 })
 
 defineSlots<TimelineSlots>()
+const emit = defineEmits<TimelineEmits>()
 const attrs = useAttrs()
 const model = defineModel<TimelineValue>('value')
 const { colorStyle } = useColor(
@@ -36,6 +45,10 @@ const { colorStyle } = useColor(
 )
 
 const timelineItems = computed(() => (props.reverse ? [...props.items].reverse() : props.items))
+
+watch(model, (value, previousValue) => {
+  if (value !== undefined && value !== previousValue) emit('valueChange', value)
+})
 
 const timelineContext = computed<TimelineContext>(() => {
   const { ui, ...timelineProps } = props
@@ -72,16 +85,19 @@ const calculatedUI = computed(() => {
         active: Object.is(model.value, item.value),
         first: index === 0,
         last: index === timelineItems.value.length - 1,
+        itemAlign: props.align === 'alternate' ? (index % 2 === 0 ? 'left' : 'right') : props.align,
       }
 
       const key = String(item.value)
 
       const itemUI = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+      const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
       const headerUI = normalizeHTMLAttributes(useResolve(props.ui?.header, context))
       const separatorUI = normalizeHTMLAttributes(useResolve(props.ui?.separator, context))
       const indicatorUI = normalizeHTMLAttributes(useResolve(props.ui?.indicator, context))
       const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
       const descriptionUI = normalizeHTMLAttributes(useResolve(props.ui?.description, context))
+      const itemAlignment = context.itemAlign
 
       return {
         key,
@@ -97,12 +113,29 @@ const calculatedUI = computed(() => {
         item: {
           ...itemUI,
           class: cn(
-            'group/timeline-item relative flex min-w-0 flex-1 flex-col gap-0.5 group-data-[orientation=vertical]/timeline:ms-8 group-data-[orientation=horizontal]/timeline:mt-8 group-data-[orientation=horizontal]/timeline:min-w-48 group-data-[orientation=horizontal]/timeline:shrink-0 group-data-[orientation=horizontal]/timeline:not-last:pe-8 group-data-[orientation=vertical]/timeline:not-last:pb-6',
+            timelineItemVariants({
+              orientation: props.orientation,
+              align: props.align,
+            }),
             itemUI.class,
           ),
           style: itemUI.style,
+          'data-align': itemAlignment,
           'data-completed': completed || undefined,
           'data-slot': 'timeline-item',
+        },
+        content: {
+          ...contentUI,
+          class: cn(
+            timelineContentVariants({
+              orientation: props.orientation,
+              align: props.align,
+              side: itemAlignment,
+            }),
+            contentUI.class,
+          ),
+          style: contentUI.style,
+          'data-slot': 'timeline-content',
         },
         header: {
           ...headerUI,
@@ -114,6 +147,8 @@ const calculatedUI = computed(() => {
           class: cn(
             timelineSeparatorVariants({
               orientation: props.orientation,
+              align: props.align,
+              side: itemAlignment,
               completed: separatorCompleted,
               severity: props.severity,
               color: Boolean(props.color),
@@ -145,6 +180,8 @@ const calculatedUI = computed(() => {
           class: cn(
             timelineIndicatorVariants({
               orientation: props.orientation,
+              align: props.align,
+              side: itemAlignment,
               sizeIndicator: props.sizeIndicator,
               severity: props.severity,
               color: Boolean(props.color),
@@ -166,16 +203,26 @@ const calculatedUI = computed(() => {
 <template>
   <Primitive role="list" v-bind="calculatedUI.root">
     <div v-for="item in calculatedUI.items" :key="item.key" role="listitem" v-bind="item.item">
-      <div v-bind="item.header">
-        <slot :name="item.slots.header" v-bind="item.context">
-          <slot name="header" v-bind="item.context">
-            <slot :name="item.slots.label" v-bind="item.context">
-              <slot name="label" v-bind="item.context">
-                <div v-bind="item.label">{{ item.data.label }}</div>
+      <div v-bind="item.content">
+        <div v-bind="item.header">
+          <slot :name="item.slots.header" v-bind="item.context">
+            <slot name="header" v-bind="item.context">
+              <slot :name="item.slots.label" v-bind="item.context">
+                <slot name="label" v-bind="item.context">
+                  <div v-bind="item.label">{{ item.data.label }}</div>
+                </slot>
               </slot>
             </slot>
           </slot>
-        </slot>
+        </div>
+
+        <div v-bind="item.description">
+          <slot :name="item.slots.description" v-bind="item.context">
+            <slot name="description" v-bind="item.context">
+              {{ item.data.description }}
+            </slot>
+          </slot>
+        </div>
       </div>
 
       <div v-bind="item.indicator">
@@ -194,14 +241,6 @@ const calculatedUI = computed(() => {
       <div v-bind="item.separator">
         <slot :name="item.slots.separator" v-bind="item.context">
           <slot name="separator" v-bind="item.context" />
-        </slot>
-      </div>
-
-      <div v-bind="item.description">
-        <slot :name="item.slots.description" v-bind="item.context">
-          <slot name="description" v-bind="item.context">
-            {{ item.data.description }}
-          </slot>
         </slot>
       </div>
     </div>

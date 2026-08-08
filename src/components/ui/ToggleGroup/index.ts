@@ -1,7 +1,6 @@
 import type { HTMLAttributes } from 'vue'
 import type {
   ToggleGroupItemProps as RekaToggleGroupItemProps,
-  ToggleGroupRootEmits as RekaToggleGroupRootEmits,
   ToggleGroupRootProps as RekaToggleGroupRootProps,
 } from 'reka-ui'
 import type { NormalizeIconProps } from '@/components/ui/Icon'
@@ -21,8 +20,6 @@ export type ToggleGroupRootProps = Pick<
   | 'name'
   | 'required'
   | 'type'
-  | 'modelValue'
-  | 'defaultValue'
   | 'dir'
   | 'loop'
   | 'rovingFocus'
@@ -50,6 +47,7 @@ export interface ToggleGroupItem extends ToggleGroupItemProps {
 
 // Props
 export interface ToggleGroupProps extends ToggleGroupRootProps {
+  value?: ToggleGroupModelValue
   variant?: ToggleVariants['variant']
   severity?: ToggleVariants['severity']
   size?: ToggleVariants['size']
@@ -86,7 +84,10 @@ export interface ToggleGroupItemContext extends ToggleGroupContext {
 }
 
 // Emits
-export type ToggleGroupEmits = RekaToggleGroupRootEmits
+export interface ToggleGroupEmits {
+  'update:value': [value: ToggleGroupModelValue]
+  valueChange: [value: ToggleGroupModelValue]
+}
 
 // Slots
 export type ToggleGroupSlots = {
@@ -116,8 +117,7 @@ export function normalizeToggleGroupProps(
     name,
     required,
     type,
-    modelValue,
-    defaultValue,
+    value,
     dir,
     loop,
     rovingFocus,
@@ -131,7 +131,8 @@ export function normalizeToggleGroupProps(
     mandatory,
     items,
     ui,
-    'onUpdate:modelValue': onUpdateModelValue,
+    'onUpdate:value': onUpdateValue,
+    onValueChange,
   } = source
 
   return {
@@ -140,8 +141,7 @@ export function normalizeToggleGroupProps(
     name,
     required,
     type,
-    modelValue,
-    defaultValue,
+    value,
     dir,
     loop,
     rovingFocus,
@@ -155,6 +155,7 @@ export function normalizeToggleGroupProps(
     mandatory,
     items,
     ui,
-    'onUpdate:modelValue': onUpdateModelValue,
+    'onUpdate:value': onUpdateValue,
+    onValueChange,
   }
 }

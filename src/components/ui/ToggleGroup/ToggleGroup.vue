@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, shallowRef, useAttrs } from 'vue'
+import { computed, useAttrs, watch } from 'vue'
 import type { CSSProperties } from 'vue'
 import { ToggleGroupItem, ToggleGroupRoot } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
@@ -37,19 +37,18 @@ const props = withDefaults(defineProps<ToggleGroupProps>(), {
   ui: undefined,
 })
 defineSlots<ToggleGroupSlots>()
+const emit = defineEmits<{ valueChange: [value: ToggleGroupModelValue] }>()
 
 const attrs = useAttrs()
-const model = defineModel<ToggleGroupModelValue>()
-const internalValue = shallowRef<ToggleGroupModelValue>(props.defaultValue)
+const model = defineModel<ToggleGroupModelValue>('value')
 const value = computed<ToggleGroupModelValue>({
-  get: () => (model.value !== undefined ? model.value : internalValue.value),
+  get: () => model.value,
   set: (nextValue) => {
     if (props.mandatory) {
       if (nextValue === undefined) return
       if (Array.isArray(nextValue) && nextValue.length === 0) return
     }
 
-    internalValue.value = nextValue
     model.value = nextValue
   },
 })
@@ -57,6 +56,10 @@ const { colorStyle } = useColor(
   computed(() => props.color),
   'toggle',
 )
+
+watch(model, (nextValue, previousValue) => {
+  if (nextValue !== previousValue) emit('valueChange', nextValue)
+})
 const spacingStyle = computed(
   () =>
     ({
@@ -90,7 +93,6 @@ const calculatedUI = computed(() => {
       as: props.as,
       asChild: props.asChild,
       type: props.type,
-      defaultValue: props.defaultValue,
       rovingFocus: props.rovingFocus,
       orientation: props.orientation,
       dir: props.dir,

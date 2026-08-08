@@ -1,99 +1,109 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { ToolbarRoot } from 'reka-ui'
+import { Primitive, ToolbarRoot } from 'reka-ui'
 import { Button, normalizeButtonProps } from '@/components/ui/Button'
 import { Link, normalizeLinkProps } from '@/components/ui/Link'
 import { Separator, normalizeSeparatorProps } from '@/components/ui/Separator'
 import { Toggle, normalizeToggleProps } from '@/components/ui/Toggle'
 import { ToggleGroup, normalizeToggleGroupProps } from '@/components/ui/ToggleGroup'
-import { useResolve } from '@/composables/useResolve'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import { normalizeToolbarRootProps } from '.'
-import type { ToolbarContext, ToolbarItem, ToolbarItemContext, ToolbarProps } from '.'
+import type { ToolbarContext, ToolbarItem, ToolbarItemContext, ToolbarProps, ToolbarSlots } from '.'
 
-defineOptions({
-  inheritAttrs: true,
-})
+defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<ToolbarProps>(), {
+  as: 'div',
+  asChild: false,
+  orientation: 'horizontal',
+  loop: true,
   items: () => [],
   ui: undefined,
 })
+defineSlots<ToolbarSlots>()
+
 const attrs = useAttrs()
 
-const toolbarContext = computed(() => {
-  const context: ToolbarContext = {
-    items: props.items,
-  }
+const toolbarContext = computed<ToolbarContext>(() => {
+  const { ui, ...toolbarProps } = props
+  void ui
 
-  return context
+  return {
+    props: toolbarProps,
+  }
 })
 
-function normalizeToolbarItem(item: ToolbarItem) {
-  if (item.button) {
-    const button = normalizeButtonProps(item.button)
-    if (button) return { button }
+function normalizeItemProps(item: ToolbarItem) {
+  switch (item.type) {
+    case 'button':
+      return { button: normalizeButtonProps(item.props) ?? {} }
+    case 'link':
+      return { link: normalizeLinkProps(item.props) }
+    case 'toggle':
+      return { toggle: normalizeToggleProps(item.props) ?? {} }
+    case 'toggleGroup':
+      return { toggleGroup: normalizeToggleGroupProps(item.props) ?? {} }
+    case 'separator':
+      return { separator: normalizeSeparatorProps(item.props) ?? {} }
+    case 'custom':
+      return { custom: item.props ?? {} }
   }
-
-  if (item.link) {
-    const link = normalizeLinkProps(item.link)
-    if (link) return { link }
-  }
-  if (item.separator) {
-    const separator = normalizeSeparatorProps(item.separator)
-    if (separator) return { separator }
-  }
-  if (item.toggle) {
-    const toggle = normalizeToggleProps(item.toggle)
-    if (toggle) return { toggle }
-  }
-  if (item.toggleGroup) {
-    const toggleGroup = normalizeToggleGroupProps(item.toggleGroup)
-    if (toggleGroup) return { toggleGroup }
-  }
-
-  return {}
 }
 
 const calculatedUI = computed(() => {
-  const { dir, ...rootUI } = normalizeHTMLAttributes(
-    useResolve(props.ui?.root, toolbarContext.value),
-  )
-  void dir
-
-  const root = normalizeToolbarRootProps(props)
+  const normalizedRootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, toolbarContext.value))
+  const { dir: rootDirection, ...rootUI } = normalizedRootUI
+  void rootDirection
 
   return {
     root: {
       ...attrs,
-      ...root,
       ...rootUI,
+      as: props.as,
+      asChild: props.asChild,
+      dir: props.dir,
+      orientation: props.orientation,
+      loop: props.loop,
+      'data-orientation': props.orientation,
+      'data-slot': 'toolbar',
       class: cn(
-        'flex p-[10px] w-full max-w-[610px] !min-w-max rounded-lg bg-white shadow-sm border',
+        'inline-flex w-fit items-center gap-1 rounded-lg border bg-background p-1 shadow-sm data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch',
         attrs.class,
         rootUI.class,
       ),
       style: [attrs.style, rootUI.style],
     },
     items: props.items.map((item, index) => {
-      const key = String(item.key ?? index)
       const context: ToolbarItemContext = {
+        ...toolbarContext.value,
         item,
         index,
         first: index === 0,
         last: index === props.items.length - 1,
       }
+      const itemUI = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+      const key = String(item.value)
 
       return {
         key,
         data: item,
-        index,
-        slotNames: {
-          item: `item-${key}`,
-        } as const,
         context,
-        ...normalizeToolbarItem(item),
+        slots: {
+          item: `item-${key}` as `item-${string}`,
+        },
+        item: {
+          ...itemUI,
+          class: cn(
+            'flex shrink-0 items-center self-stretch data-[orientation=vertical]:w-full',
+            itemUI.class,
+          ),
+          style: itemUI.style,
+          'data-type': item.type,
+          'data-orientation': props.orientation,
+          'data-slot': 'toolbar-item',
+        },
+        ...normalizeItemProps(item),
       }
     }),
   }
@@ -103,17 +113,18 @@ const calculatedUI = computed(() => {
 <template>
   <ToolbarRoot v-bind="calculatedUI.root">
     <slot v-bind="toolbarContext">
-      <template v-for="item in calculatedUI.items" :key="item.key">
-        <slot :name="item.slotNames.item" v-bind="item.context">
+      <Primitive v-for="item in calculatedUI.items" :key="item.key" as="div" v-bind="item.item">
+        <slot :name="item.slots.item" v-bind="item.context">
           <slot name="item" v-bind="item.context">
             <Button v-if="item.button" v-bind="item.button" />
             <Link v-else-if="item.link" v-bind="item.link" />
-            <Separator v-else-if="item.separator" v-bind="item.separator" />
             <Toggle v-else-if="item.toggle" v-bind="item.toggle" />
             <ToggleGroup v-else-if="item.toggleGroup" v-bind="item.toggleGroup" />
+            <Separator v-else-if="item.separator" v-bind="item.separator" />
+            <slot v-else-if="item.custom" name="custom" v-bind="item.context" />
           </slot>
         </slot>
-      </template>
+      </Primitive>
     </slot>
   </ToolbarRoot>
 </template>

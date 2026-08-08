@@ -1,29 +1,65 @@
-export { default as Toolbar } from './Toolbar.vue'
-import { ToolbarRootProps as RekaToolbarRootProps } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
-import { ButtonProps } from '../Button/index.ts'
-import { LinkProps } from '../Link/index.ts'
-import { SeparatorProps } from '../Separator/index.ts'
-import { ToggleProps } from '../Toggle/index.ts'
-import { NormalizeToggleGroupProps } from '../ToggleGroup/index.ts'
+import type { ToolbarRootProps as RekaToolbarRootProps } from 'reka-ui'
+import type { NormalizeButtonProps } from '@/components/ui/Button'
+import type { NormalizeLinkProps } from '@/components/ui/Link'
+import type { SeparatorProps } from '@/components/ui/Separator'
+import type { NormalizeToggleProps } from '@/components/ui/Toggle'
+import type { NormalizeToggleGroupProps } from '@/components/ui/ToggleGroup'
 
-// Types
+export { default as Toolbar } from './Toolbar.vue'
+
+export type ToolbarValue = string | number
+export type ToolbarItemType = 'button' | 'link' | 'toggle' | 'toggleGroup' | 'separator' | 'custom'
+
+// Props Reka
 export type ToolbarRootProps = Pick<
   RekaToolbarRootProps,
   'dir' | 'orientation' | 'loop' | 'as' | 'asChild'
 >
 
-export function normalizeToolbarRootProps(
-  source: ToolbarRootProps | null | undefined,
-): ToolbarRootProps | undefined {
-  if (!source) return undefined
-  const { as, asChild, loop, dir, orientation } = source
-  return { as, asChild, loop, dir, orientation }
+// Item
+export interface ToolbarItemBase {
+  value: ToolbarValue
+  type: ToolbarItemType
 }
 
-// Function
-export type ToolbarFn<T> = T | ((context: ToolbarContext) => T)
-export type ToolbarItemFn<T> = T | ((context: ToolbarItemContext) => T)
+export interface ToolbarButtonItem extends ToolbarItemBase {
+  type: 'button'
+  props?: NormalizeButtonProps
+}
+
+export interface ToolbarLinkItem extends ToolbarItemBase {
+  type: 'link'
+  props: NormalizeLinkProps
+}
+
+export interface ToolbarToggleItem extends ToolbarItemBase {
+  type: 'toggle'
+  props?: NormalizeToggleProps
+}
+
+export interface ToolbarToggleGroupItem extends ToolbarItemBase {
+  type: 'toggleGroup'
+  props?: NormalizeToggleGroupProps
+}
+
+export interface ToolbarSeparatorItem extends ToolbarItemBase {
+  type: 'separator'
+  props?: SeparatorProps
+}
+
+export interface ToolbarCustomItem extends ToolbarItemBase {
+  type: 'custom'
+  props?: Record<string, unknown>
+}
+
+export type ToolbarItem =
+  | ToolbarButtonItem
+  | ToolbarLinkItem
+  | ToolbarToggleItem
+  | ToolbarToggleGroupItem
+  | ToolbarSeparatorItem
+  | ToolbarCustomItem
 
 // Props
 export interface ToolbarProps extends ToolbarRootProps {
@@ -31,27 +67,22 @@ export interface ToolbarProps extends ToolbarRootProps {
   ui?: ToolbarUI
 }
 
-// Prop Item
-export type ToolbarItem = {
-  key: string | number
-  button?: ButtonProps
-  link?: LinkProps
-  separator?: SeparatorProps
-  toggle?: ToggleProps
-  toggleGroup?: NormalizeToggleGroupProps
-}
+// Fn
+export type ToolbarFn<T> = T | ((context: ToolbarContext) => T)
+export type ToolbarItemFn<T> = T | ((context: ToolbarItemContext) => T)
 
 // UI
 export interface ToolbarUI {
-  root: ToolbarFn<HTMLAttributes>
+  root?: ToolbarFn<HTMLAttributes>
+  item?: ToolbarItemFn<HTMLAttributes>
 }
 
 // Context
 export interface ToolbarContext {
-  items: ToolbarItem[]
+  props: Omit<ToolbarProps, 'ui'>
 }
 
-export interface ToolbarItemContext {
+export interface ToolbarItemContext extends ToolbarContext {
   item: ToolbarItem
   index: number
   first: boolean
@@ -59,8 +90,10 @@ export interface ToolbarItemContext {
 }
 
 // Slots
-export type AccordionSlots = {
+export type ToolbarSlots = {
   default?(props: ToolbarContext): unknown
+  item?(props: ToolbarItemContext): unknown
+  custom?(props: ToolbarItemContext): unknown
 } & {
   [name: `item-${string}`]: ((props: ToolbarItemContext) => unknown) | undefined
 }

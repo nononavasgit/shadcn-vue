@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
+import { computed, useAttrs, watch } from 'vue'
 import { Toggle as RekaToggle } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
@@ -29,19 +29,17 @@ const props = withDefaults(defineProps<ToggleProps>(), {
   ui: undefined,
 })
 defineSlots<ToggleSlots>()
+const emit = defineEmits<{ valueChange: [value: ToggleValue] }>()
 
 const attrs = useAttrs()
-const model = defineModel<ToggleValue>()
+const value = defineModel<ToggleValue>('value', { default: false })
 const { colorStyle } = useColor(
   computed(() => props.color),
   'toggle',
 )
 
-const value = computed<ToggleValue>({
-  get: () => (model.value !== undefined ? model.value : (props.defaultValue ?? false)),
-  set: (nextValue) => {
-    model.value = nextValue
-  },
+watch(value, (nextValue, previousValue) => {
+  if (nextValue !== previousValue) emit('valueChange', nextValue)
 })
 
 const toggleContext = computed<ToggleContext>(() => {
@@ -74,7 +72,6 @@ const calculatedUI = computed(() => {
       ...rootUI,
       as: props.as,
       asChild: props.asChild,
-      defaultValue: props.defaultValue,
       disabled: props.disabled,
       name: props.name,
       required: props.required,

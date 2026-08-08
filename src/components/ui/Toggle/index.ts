@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
-import type { ToggleEmits as ToggleEmitsReka, ToggleProps as TogglePropsReka } from 'reka-ui'
+import type { ToggleProps as TogglePropsReka } from 'reka-ui'
 import type { NormalizeIconProps } from '@/components/ui/Icon'
 import type { EmitsAsProps } from '@/types/emits'
 
@@ -123,13 +123,13 @@ export const toggleVariants = cva('', {
 
 export type ToggleVariants = VariantProps<typeof toggleVariants>
 
-export type ToggleValue = boolean | null
+export type ToggleValue = boolean
 export type ToggleState = 'on' | 'off'
 
 // Props Reka
 export type ToggleRootProps = Pick<
   TogglePropsReka,
-  'as' | 'asChild' | 'name' | 'required' | 'defaultValue' | 'modelValue' | 'disabled'
+  'as' | 'asChild' | 'name' | 'required' | 'disabled'
 >
 
 // Fn
@@ -142,6 +142,7 @@ export interface ToggleUI {
 
 // Props
 export interface ToggleProps extends ToggleRootProps {
+  value?: ToggleValue
   label?: string
   icon?: NormalizeIconProps
   trailingIcon?: NormalizeIconProps
@@ -153,7 +154,10 @@ export interface ToggleProps extends ToggleRootProps {
 }
 
 // Emits
-export type ToggleEmits = ToggleEmitsReka
+export interface ToggleEmits {
+  'update:value': [value: ToggleValue]
+  valueChange: [value: ToggleValue]
+}
 
 // Context
 export interface ToggleContext {
@@ -183,8 +187,7 @@ export function normalizeToggleProps(
     asChild,
     name,
     required,
-    defaultValue,
-    modelValue,
+    value,
     disabled,
     label,
     icon,
@@ -194,7 +197,8 @@ export function normalizeToggleProps(
     size,
     color,
     ui,
-    'onUpdate:modelValue': onUpdateModelValue,
+    'onUpdate:value': onUpdateValue,
+    onValueChange,
   } = source
 
   return {
@@ -202,8 +206,7 @@ export function normalizeToggleProps(
     asChild,
     name,
     required,
-    defaultValue,
-    modelValue,
+    value,
     disabled,
     label,
     icon,
@@ -213,6 +216,7 @@ export function normalizeToggleProps(
     size,
     color,
     ui,
-    'onUpdate:modelValue': onUpdateModelValue,
+    'onUpdate:value': onUpdateValue,
+    onValueChange,
   }
 }

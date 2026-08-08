@@ -1,125 +1,185 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
-import { Minus, Plus } from '@lucide/vue'
+import { computed, useAttrs, watch } from 'vue'
 import {
   NumberFieldDecrement,
   NumberFieldIncrement,
   NumberFieldInput,
   NumberFieldRoot,
 } from 'reka-ui'
+import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { cn } from '@/lib/utils'
+import { useResolve } from '@/composables/useResolve'
 import { useI18n } from '@/i18n'
-import {
-  normalizeNumberFieldDecrementProps,
-  normalizeNumberFieldIncrementProps,
-  normalizeNumberFieldRootProps,
-  type NumberFieldEmits,
-  type NumberFieldProps,
-  type NumberFieldSlots,
-} from '.'
+import { cn } from '@/lib/utils'
+import type { NumberFieldContext, NumberFieldProps, NumberFieldSlots, NumberFieldValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<NumberFieldProps>(), {
+  as: 'div',
+  asChild: false,
+  disabled: false,
+  disableWheelChange: false,
+  focusOnChange: true,
+  formatOptions: undefined,
+  id: undefined,
+  invertWheelChange: false,
+  locale: undefined,
+  min: undefined,
+  max: undefined,
+  name: undefined,
+  readonly: false,
+  required: false,
+  step: 1,
+  stepSnapping: true,
   placeholder: undefined,
   showDecrement: true,
   showIncrement: true,
   decrement: undefined,
   increment: undefined,
+  decrementIcon: 'minus',
+  incrementIcon: 'plus',
   ui: undefined,
 })
-defineEmits<NumberFieldEmits>()
+const emit = defineEmits<{ valueChange: [value: NumberFieldValue] }>()
 const slots = defineSlots<NumberFieldSlots>()
+
 const attrs = useAttrs()
-const model = defineModel<number | null>()
+const value = defineModel<NumberFieldValue>('value', { default: null })
 const { t } = useI18n()
 
-const calculatedUI = computed(() => {
-  // Normalize the UI props for each part of the NumberField component
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
-  const contentUI = normalizeHTMLAttributes(props.ui?.content)
-  const decrementUI = normalizeHTMLAttributes(props.ui?.decrement)
-  const inputUI = normalizeHTMLAttributes(props.ui?.input)
-  const incrementUI = normalizeHTMLAttributes(props.ui?.increment)
-  // Normalize the decrement and increment props
-  const root = normalizeNumberFieldRootProps(props)
-  const decrement = normalizeNumberFieldDecrementProps(props.decrement)
-  const increment = normalizeNumberFieldIncrementProps(props.increment)
+const numberFieldContext = computed<NumberFieldContext>(() => {
+  const { ui, decrementIcon, incrementIcon, ...numberFieldProps } = props
+  void ui
+  void decrementIcon
+  void incrementIcon
 
   return {
+    props: numberFieldProps,
+    value: value.value,
+  }
+})
+
+watch(value, (nextValue, previousValue) => {
+  if (nextValue !== previousValue) emit('valueChange', nextValue)
+})
+
+const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, numberFieldContext.value))
+  const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, numberFieldContext.value))
+  const decrementUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.decrement, numberFieldContext.value),
+  )
+  const inputUI = normalizeHTMLAttributes(useResolve(props.ui?.input, numberFieldContext.value))
+  const incrementUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.increment, numberFieldContext.value),
+  )
+
+  return {
+    context: numberFieldContext.value,
     root: {
       ...attrs,
       ...rootUI,
-      ...root,
+      as: props.as,
+      asChild: props.asChild,
+      disabled: props.disabled,
+      disableWheelChange: props.disableWheelChange,
+      focusOnChange: props.focusOnChange,
+      formatOptions: props.formatOptions,
+      id: props.id,
+      invertWheelChange: props.invertWheelChange,
+      locale: props.locale,
+      min: props.min,
+      max: props.max,
+      name: props.name,
+      readonly: props.readonly,
+      required: props.required,
+      step: props.step,
+      stepSnapping: props.stepSnapping,
+      'data-slot': 'number-field',
       class: cn('grid gap-1.5', attrs.class, rootUI.class),
       style: [attrs.style, rootUI.style],
     },
     content: {
       ...contentUI,
+      'data-slot': 'number-field-content',
+      'data-show-decrement': props.showDecrement,
+      'data-show-increment': props.showIncrement,
       class: cn(
-        'relative [&>[data-slot=input]]:has-[[data-slot=decrement]]:pl-5 [&>[data-slot=input]]:has-[[data-slot=increment]]:pr-5',
+        'relative data-[show-decrement=true]:[&>[data-slot=number-field-input]]:pl-10 data-[show-increment=true]:[&>[data-slot=number-field-input]]:pr-10',
         contentUI.class,
       ),
+      style: contentUI.style,
     },
     decrement: {
       ...decrementUI,
-      ...decrement,
+      as: props.decrement?.as,
+      asChild: props.decrement?.asChild,
+      disabled: props.decrement?.disabled,
       'aria-label': decrementUI['aria-label'] ?? t('decrement'),
+      'data-slot': 'number-field-decrement',
       class: cn(
-        'absolute top-1/2 left-0 -translate-y-1/2 p-3 disabled:cursor-not-allowed disabled:opacity-20',
+        'absolute top-1/2 left-0 z-10 -translate-y-1/2 p-3 disabled:cursor-not-allowed disabled:opacity-20',
         decrementUI.class,
       ),
+      style: decrementUI.style,
     },
     input: {
       ...inputUI,
       placeholder: props.placeholder ?? inputUI.placeholder,
+      'data-slot': 'number-field-input',
       class: cn(
-        'flex h-9 w-full rounded-md border border-input bg-transparent py-1 text-center text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary/50 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+        'flex h-9 w-full rounded-md border border-input bg-transparent py-1 text-center text-sm shadow-sm transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50',
         inputUI.class,
       ),
+      style: inputUI.style,
     },
     increment: {
       ...incrementUI,
-      ...increment,
+      as: props.increment?.as,
+      asChild: props.increment?.asChild,
+      disabled: props.increment?.disabled,
       'aria-label': incrementUI['aria-label'] ?? t('increment'),
+      'data-slot': 'number-field-increment',
       class: cn(
-        'absolute top-1/2 right-0 -translate-y-1/2 p-3 disabled:cursor-not-allowed disabled:opacity-20',
+        'absolute top-1/2 right-0 z-10 -translate-y-1/2 p-3 disabled:cursor-not-allowed disabled:opacity-20',
         incrementUI.class,
       ),
+      style: incrementUI.style,
     },
+    decrementIcon: normalizeIconProps(props.decrementIcon),
+    incrementIcon: normalizeIconProps(props.incrementIcon),
   }
 })
 </script>
 
 <template>
-  <NumberFieldRoot
-    v-slot="rootSlotProps"
-    v-model="model"
-    v-bind="calculatedUI.root"
-    data-slot="number-field"
-  >
-    <div v-bind="calculatedUI.content" data-slot="number-field-content">
-      <NumberFieldDecrement
-        v-if="props.showDecrement"
-        v-bind="calculatedUI.decrement"
-        data-slot="decrement"
-      >
-        <slot name="decrement" v-bind="rootSlotProps"><Minus class="size-4" /></slot>
+  <NumberFieldRoot v-model="value" v-bind="calculatedUI.root">
+    <div v-bind="calculatedUI.content">
+      <NumberFieldDecrement v-if="props.showDecrement" v-bind="calculatedUI.decrement">
+        <slot name="decrement" v-bind="calculatedUI.context">
+          <Icon
+            v-if="calculatedUI.decrementIcon?.name"
+            v-bind="calculatedUI.decrementIcon"
+            :name="calculatedUI.decrementIcon.name"
+          />
+        </slot>
       </NumberFieldDecrement>
 
-      <slot v-if="slots.input" name="input" v-bind="rootSlotProps" />
-      <NumberFieldInput v-else v-bind="calculatedUI.input" data-slot="input" />
+      <slot v-if="slots.input" name="input" v-bind="calculatedUI.context" />
+      <NumberFieldInput v-else v-bind="calculatedUI.input" />
 
-      <NumberFieldIncrement
-        v-if="props.showIncrement"
-        v-bind="calculatedUI.increment"
-        data-slot="increment"
-      >
-        <slot name="increment" v-bind="rootSlotProps"><Plus class="size-4" /></slot>
+      <NumberFieldIncrement v-if="props.showIncrement" v-bind="calculatedUI.increment">
+        <slot name="increment" v-bind="calculatedUI.context">
+          <Icon
+            v-if="calculatedUI.incrementIcon?.name"
+            v-bind="calculatedUI.incrementIcon"
+            :name="calculatedUI.incrementIcon.name"
+          />
+        </slot>
       </NumberFieldIncrement>
     </div>
 
-    <slot v-bind="rootSlotProps" />
+    <slot v-bind="calculatedUI.context" />
   </NumberFieldRoot>
 </template>

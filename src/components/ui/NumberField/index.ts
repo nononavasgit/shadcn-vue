@@ -2,12 +2,15 @@ import type { HTMLAttributes } from 'vue'
 import type {
   NumberFieldDecrementProps as RekaNumberFieldDecrementProps,
   NumberFieldIncrementProps as RekaNumberFieldIncrementProps,
-  NumberFieldRootEmits,
   NumberFieldRootProps as RekaNumberFieldRootProps,
 } from 'reka-ui'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
 
 export { default as NumberField } from './NumberField.vue'
 
+export type NumberFieldValue = number | null
+
+// Props Reka
 export type NumberFieldIncrementProps = Pick<
   RekaNumberFieldIncrementProps,
   'as' | 'asChild' | 'disabled'
@@ -20,15 +23,15 @@ export type NumberFieldRootProps = Pick<
   RekaNumberFieldRootProps,
   | 'as'
   | 'asChild'
-  | 'defaultValue'
   | 'disabled'
   | 'disableWheelChange'
   | 'focusOnChange'
   | 'formatOptions'
+  | 'id'
   | 'invertWheelChange'
+  | 'locale'
   | 'min'
   | 'max'
-  | 'modelValue'
   | 'name'
   | 'readonly'
   | 'required'
@@ -36,101 +39,47 @@ export type NumberFieldRootProps = Pick<
   | 'stepSnapping'
 >
 
-export function normalizeNumberFieldIncrementProps(
-  source: NumberFieldIncrementProps | null | undefined,
-): NumberFieldIncrementProps | undefined {
-  if (!source) return undefined
-
-  const { as, asChild, disabled } = source
-  return { as, asChild, disabled }
-}
-
-export function normalizeNumberFieldDecrementProps(
-  source: NumberFieldDecrementProps | null | undefined,
-): NumberFieldDecrementProps | undefined {
-  if (!source) return undefined
-
-  const { as, asChild, disabled } = source
-  return { as, asChild, disabled }
-}
-
-export function normalizeNumberFieldRootProps(
-  source: NumberFieldRootProps | null | undefined,
-): NumberFieldRootProps | undefined {
-  if (!source) return undefined
-
-  const {
-    as,
-    asChild,
-    defaultValue,
-    disabled,
-    disableWheelChange,
-    focusOnChange,
-    formatOptions,
-    invertWheelChange,
-    min,
-    max,
-    modelValue,
-    name,
-    readonly,
-    required,
-    step,
-    stepSnapping,
-  } = source
-
-  return {
-    as,
-    asChild,
-    defaultValue,
-    disabled,
-    disableWheelChange,
-    focusOnChange,
-    formatOptions,
-    invertWheelChange,
-    min,
-    max,
-    modelValue,
-    name,
-    readonly,
-    required,
-    step,
-    stepSnapping,
-  }
-}
-
-// UI
-export interface NumberFieldUI {
-  root?: HTMLAttributes
-  content?: HTMLAttributes
-  decrement?: HTMLAttributes
-  input?: HTMLAttributes
-  increment?: HTMLAttributes
-}
-
 // Props
 export interface NumberFieldProps extends NumberFieldRootProps {
+  value?: NumberFieldValue
   placeholder?: string
   showDecrement?: boolean
   showIncrement?: boolean
   decrement?: NumberFieldDecrementProps
   increment?: NumberFieldIncrementProps
+  decrementIcon?: NormalizeIconProps
+  incrementIcon?: NormalizeIconProps
   ui?: NumberFieldUI
 }
 
-// Emits
-export type NumberFieldEmits = NumberFieldRootEmits
+// Fn
+export type NumberFieldFn<T> = T | ((context: NumberFieldContext) => T)
 
-// SlotProps
-export interface NumberFieldSlotProps {
-  modelValue: number | undefined
-  textValue: string
-  readonly: boolean
+// UI
+export interface NumberFieldUI {
+  root?: NumberFieldFn<HTMLAttributes>
+  content?: NumberFieldFn<HTMLAttributes>
+  decrement?: NumberFieldFn<HTMLAttributes>
+  input?: NumberFieldFn<HTMLAttributes>
+  increment?: NumberFieldFn<HTMLAttributes>
+}
+
+// Context
+export interface NumberFieldContext {
+  props: Omit<NumberFieldProps, 'ui' | 'decrementIcon' | 'incrementIcon'>
+  value: NumberFieldValue
+}
+
+// Emits
+export interface NumberFieldEmits {
+  'update:value': [value: NumberFieldValue]
+  valueChange: [value: NumberFieldValue]
 }
 
 // Slots
 export interface NumberFieldSlots {
-  default?(props: NumberFieldSlotProps): unknown
-  decrement?(props: NumberFieldSlotProps): unknown
-  input?(props: NumberFieldSlotProps): unknown
-  increment?(props: NumberFieldSlotProps): unknown
+  default?(props: NumberFieldContext): unknown
+  decrement?(props: NumberFieldContext): unknown
+  input?(props: NumberFieldContext): unknown
+  increment?(props: NumberFieldContext): unknown
 }

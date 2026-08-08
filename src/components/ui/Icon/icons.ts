@@ -16,6 +16,7 @@ import {
   Trash2,
   X,
   Minus,
+  Plus,
   MoreHorizontal,
   User,
 } from '@lucide/vue'
@@ -38,6 +39,7 @@ export const ICONS = {
   trash2: Trash2,
   x: X,
   minus: Minus,
+  plus: Plus,
   moreHorizontal: MoreHorizontal,
   user: User,
 } as const

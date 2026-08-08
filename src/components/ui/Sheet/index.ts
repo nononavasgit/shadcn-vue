@@ -1,74 +1,76 @@
-import type { Component, HTMLAttributes } from 'vue'
-import type { IconName, IconProps } from '@/components/ui/Icon'
+import { cva, type VariantProps } from 'class-variance-authority'
+import type { HTMLAttributes } from 'vue'
+import type {
+  DialogCloseProps as RekaDialogCloseProps,
+  DialogContentEmits as RekaDialogContentEmits,
+  DialogContentProps as RekaDialogContentProps,
+  DialogRootEmits as RekaDialogRootEmits,
+  DialogRootProps as RekaDialogRootProps,
+  DialogTriggerProps as RekaDialogTriggerProps,
+} from 'reka-ui'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { EmitsAsProps } from '@/types/emits'
 
 export { default as Sheet } from './Sheet.vue'
 
-export type SheetSide = 'top' | 'right' | 'bottom' | 'left'
+export const sheetVariants = cva(
+  'data-[state=open]:animate-in data-[state=closed]:animate-out pointer-events-auto fixed z-50 grid grid-rows-[auto_minmax(0,1fr)_auto] gap-4 overflow-hidden bg-background shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500',
+  {
+    variants: {
+      side: {
+        right:
+          'data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm',
+        left: 'data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm',
+        top: 'data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top inset-x-0 top-0 max-h-[90dvh] w-full border-b',
+        bottom:
+          'data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 max-h-[90dvh] w-full border-t',
+      },
+    },
+    defaultVariants: {
+      side: 'right',
+    },
+  },
+)
 
-export interface SheetTriggerProps {
-  as?: string | Component
-  asChild?: boolean
-}
+export type SheetVariants = VariantProps<typeof sheetVariants>
+export type SheetSide = NonNullable<SheetVariants['side']>
 
-export interface SheetContentProps {
-  as?: string | Component
-  asChild?: boolean
-  forceMount?: boolean
-  disableOutsidePointerEvents?: boolean
-  side?: SheetSide
-}
+// Props Reka
+export type SheetRootProps = Pick<RekaDialogRootProps, 'open' | 'modal' | 'unmountOnHide'>
+export type SheetTriggerProps = Pick<RekaDialogTriggerProps, 'as' | 'asChild'>
+export type SheetContentProps = Pick<
+  RekaDialogContentProps,
+  'as' | 'asChild' | 'forceMount' | 'disableOutsidePointerEvents'
+> &
+  EmitsAsProps<RekaDialogContentEmits> & {
+    side?: SheetSide
+  }
+export type SheetCloseProps = Pick<RekaDialogCloseProps, 'as' | 'asChild'>
 
-export interface SheetCloseProps {
-  as?: string | Component
-  asChild?: boolean
-}
+// Fn
+export type SheetFn<T> = T | ((context: SheetContext) => T)
 
-export function normalizeSheetTriggerProps(
-  source: SheetTriggerProps | null | undefined,
-): SheetTriggerProps | undefined {
-  if (!source) return undefined
-  const { as, asChild } = source
-  return { as, asChild }
-}
-
-export function normalizeSheetContentProps(
-  source: SheetContentProps | null | undefined,
-): SheetContentProps | undefined {
-  if (!source) return undefined
-  const { as, asChild, forceMount, disableOutsidePointerEvents, side } = source
-  return { as, asChild, forceMount, disableOutsidePointerEvents, side }
-}
-
-export function normalizeSheetCloseProps(
-  source: SheetCloseProps | null | undefined,
-): SheetCloseProps | undefined {
-  if (!source) return undefined
-  const { as, asChild } = source
-  return { as, asChild }
-}
-
+// UI
 export interface SheetUI {
-  root?: HTMLAttributes
-  trigger?: HTMLAttributes
-  content?: HTMLAttributes
-  header?: HTMLAttributes
-  label?: HTMLAttributes
-  icon?: HTMLAttributes
-  description?: HTMLAttributes
-  body?: HTMLAttributes
-  footer?: HTMLAttributes
-  close?: HTMLAttributes
+  root?: SheetFn<HTMLAttributes>
+  trigger?: SheetFn<HTMLAttributes>
+  overlay?: SheetFn<HTMLAttributes>
+  content?: SheetFn<HTMLAttributes>
+  header?: SheetFn<HTMLAttributes>
+  label?: SheetFn<HTMLAttributes>
+  description?: SheetFn<HTMLAttributes>
+  body?: SheetFn<HTMLAttributes>
+  footer?: SheetFn<HTMLAttributes>
+  close?: SheetFn<HTMLAttributes>
 }
 
-export interface SheetProps {
-  open?: boolean
-  defaultOpen?: boolean
-  modal?: boolean
+// Props
+export interface SheetProps extends SheetRootProps {
   block?: boolean
-  unmountOnHide?: boolean
   label?: string
   description?: string
-  icon?: IconName | IconProps
+  icon?: NormalizeIconProps
+  closeIcon?: NormalizeIconProps
   showCloseButton?: boolean
   trigger?: SheetTriggerProps
   content?: SheetContentProps
@@ -76,28 +78,27 @@ export interface SheetProps {
   ui?: SheetUI
 }
 
-export interface SheetEmits {
-  'update:open': [value: boolean]
-  openAutoFocus: [event: Event]
-  closeAutoFocus: [event: Event]
-  escapeKeyDown: [event: Event]
-  pointerDownOutside: [event: Event]
-  focusOutside: [event: Event]
-  interactOutside: [event: Event]
-}
-
-export interface SheetSlotProps {
+// Context
+export interface SheetContext {
+  props: Omit<SheetProps, 'ui'>
   open: boolean
   close: () => void
 }
 
+// Emits
+export type SheetEmits = RekaDialogRootEmits & {
+  show: []
+  close: []
+}
+
+// Slots
 export interface SheetSlots {
-  default?(props: SheetSlotProps): unknown
-  content?(props: SheetSlotProps): unknown
-  header?(props: SheetSlotProps): unknown
-  label?(props: SheetSlotProps): unknown
-  description?(props: SheetSlotProps): unknown
-  footer?(props: SheetSlotProps): unknown
-  close?(props: SheetSlotProps): unknown
-  closeIcon?(props: SheetSlotProps): unknown
+  default?(props: SheetContext): unknown
+  content?(props: SheetContext): unknown
+  header?(props: SheetContext): unknown
+  label?(props: SheetContext): unknown
+  description?(props: SheetContext): unknown
+  footer?(props: SheetContext): unknown
+  close?(props: SheetContext): unknown
+  closeIcon?(props: SheetContext): unknown
 }

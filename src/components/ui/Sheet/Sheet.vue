@@ -1,28 +1,22 @@
 <script setup lang="ts">
-import { computed, useAttrs, useSlots } from 'vue'
+import { computed, useAttrs, useSlots, watch } from 'vue'
 import {
-  Sheet as SheetBase,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/primitives/Sheet'
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogOverlay,
+  DialogPortal,
+  DialogRoot,
+  DialogTitle,
+  DialogTrigger,
+} from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { cn } from '@/lib/utils'
+import { useResolve } from '@/composables/useResolve'
 import { useI18n } from '@/i18n'
-import {
-  normalizeSheetCloseProps,
-  normalizeSheetContentProps,
-  normalizeSheetTriggerProps,
-  type SheetEmits,
-  type SheetProps,
-  type SheetSlotProps,
-  type SheetSlots,
-} from '.'
+import { cn } from '@/lib/utils'
+import { sheetVariants } from '.'
+import type { SheetContext, SheetEmits, SheetProps, SheetSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -36,6 +30,7 @@ const props = withDefaults(defineProps<SheetProps>(), {
   label: undefined,
   description: undefined,
   icon: undefined,
+  closeIcon: 'x',
   showCloseButton: true,
   trigger: undefined,
   content: undefined,
@@ -45,38 +40,54 @@ const props = withDefaults(defineProps<SheetProps>(), {
 
 const slots = useSlots()
 const attrs = useAttrs()
-const open = defineModel<boolean>('open')
-const calculatedOpen = computed({
-  get: () => open.value,
-  set: (value: boolean | undefined) => {
-    if (props.block && value === false) return
-    open.value = value
-  },
-})
+const modelOpen = defineModel<boolean>('open', { default: false })
 const { t } = useI18n()
 
-function getSlotProps(slotProps: { open: boolean; close: () => void }): SheetSlotProps {
-  return {
-    open: slotProps.open,
-    close: props.block ? () => {} : slotProps.close,
-  }
+const open = computed<boolean>({
+  get: () => modelOpen.value,
+  set: (value) => {
+    if (props.block && !value) return
+    modelOpen.value = value
+  },
+})
+
+watch(open, (value, previousValue) => {
+  if (value === previousValue) return
+  emit(value ? 'show' : 'close')
+})
+
+function close() {
+  if (!props.block) open.value = false
 }
 
+const sheetContext = computed<SheetContext>(() => {
+  const { ui, ...sheetProps } = props
+  void ui
+
+  return {
+    props: sheetProps,
+    open: open.value,
+    close,
+  }
+})
+
 const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
-  const triggerUI = normalizeHTMLAttributes(props.ui?.trigger)
-  const normalizedContentUI = normalizeHTMLAttributes(props.ui?.content)
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, sheetContext.value))
+  const triggerUI = normalizeHTMLAttributes(useResolve(props.ui?.trigger, sheetContext.value))
+  const overlayUI = normalizeHTMLAttributes(useResolve(props.ui?.overlay, sheetContext.value))
+  const normalizedContentUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.content, sheetContext.value),
+  )
   const { dir: contentDirection, ...contentUI } = normalizedContentUI
-  const headerUI = normalizeHTMLAttributes(props.ui?.header)
-  const labelUI = normalizeHTMLAttributes(props.ui?.label)
-  const iconUI = normalizeHTMLAttributes(props.ui?.icon)
-  const descriptionUI = normalizeHTMLAttributes(props.ui?.description)
-  const bodyUI = normalizeHTMLAttributes(props.ui?.body)
-  const footerUI = normalizeHTMLAttributes(props.ui?.footer)
-  const closeUI = normalizeHTMLAttributes(props.ui?.close)
-  const trigger = normalizeSheetTriggerProps(props.trigger)
-  const content = normalizeSheetContentProps(props.content)
-  const close = normalizeSheetCloseProps(props.close)
+  const headerUI = normalizeHTMLAttributes(useResolve(props.ui?.header, sheetContext.value))
+  const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, sheetContext.value))
+  const descriptionUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.description, sheetContext.value),
+  )
+  const bodyUI = normalizeHTMLAttributes(useResolve(props.ui?.body, sheetContext.value))
+  const footerUI = normalizeHTMLAttributes(useResolve(props.ui?.footer, sheetContext.value))
+  const closeUI = normalizeHTMLAttributes(useResolve(props.ui?.close, sheetContext.value))
+  const side = props.content?.side ?? 'right'
 
   void contentDirection
 
@@ -84,133 +95,151 @@ const calculatedUI = computed(() => {
     root: {
       ...attrs,
       ...rootUI,
-      defaultOpen: props.defaultOpen,
       modal: props.modal,
       unmountOnHide: props.unmountOnHide,
+      'data-slot': 'sheet',
       class: cn(attrs.class, rootUI.class),
       style: [attrs.style, rootUI.style],
     },
     trigger: {
+      as: props.trigger?.as,
+      asChild: props.trigger?.asChild ?? true,
       ...triggerUI,
-      ...trigger,
-      asChild: trigger?.asChild ?? true,
+      'data-slot': 'sheet-trigger',
       class: cn(triggerUI.class),
+      style: triggerUI.style,
+    },
+    overlay: {
+      ...overlayUI,
+      'data-slot': 'sheet-overlay',
+      class: cn(
+        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50',
+        overlayUI.class,
+      ),
+      style: overlayUI.style,
     },
     content: {
+      as: props.content?.as,
+      asChild: props.content?.asChild,
+      forceMount: props.content?.forceMount,
+      disableOutsidePointerEvents: props.content?.disableOutsidePointerEvents ?? props.modal,
+      onOpenAutoFocus: props.content?.onOpenAutoFocus,
+      onCloseAutoFocus: props.content?.onCloseAutoFocus,
+      onEscapeKeyDown: props.content?.onEscapeKeyDown,
+      onPointerDownOutside: props.content?.onPointerDownOutside,
+      onFocusOutside: props.content?.onFocusOutside,
+      onInteractOutside: props.content?.onInteractOutside,
       ...contentUI,
-      ...content,
-      side: content?.side ?? 'right',
-      disableOutsidePointerEvents: content?.disableOutsidePointerEvents ?? props.modal,
-      onOpenAutoFocus: (event: Event) => emit('openAutoFocus', event),
-      onCloseAutoFocus: (event: Event) => emit('closeAutoFocus', event),
-      onEscapeKeyDown: (event: Event) => {
-        if (props.block) event.preventDefault()
-        emit('escapeKeyDown', event)
-      },
-      onPointerDownOutside: (event: Event) => {
-        if (props.block) event.preventDefault()
-        emit('pointerDownOutside', event)
-      },
-      onFocusOutside: (event: Event) => {
-        if (props.block) event.preventDefault()
-        emit('focusOutside', event)
-      },
-      onInteractOutside: (event: Event) => {
-        if (props.block) event.preventDefault()
-        emit('interactOutside', event)
-      },
-      class: cn(contentUI.class),
+      'data-slot': 'sheet-content',
+      class: cn(sheetVariants({ side }), contentUI.class),
+      style: contentUI.style,
     },
     header: {
       ...headerUI,
-      class: cn(headerUI.class),
+      'data-slot': 'sheet-header',
+      class: cn('flex flex-col gap-1.5 p-4', headerUI.class),
+      style: headerUI.style,
     },
     label: {
       ...labelUI,
-      class: cn('flex items-center gap-2', labelUI.class),
+      'data-slot': 'sheet-label',
+      class: cn('flex items-center gap-2 font-semibold text-foreground', labelUI.class),
+      style: labelUI.style,
     },
     icon: {
-      'aria-hidden': true,
-      ...iconUI,
       ...normalizeIconProps(props.icon),
-      class: cn(iconUI.class),
     },
     description: {
       ...descriptionUI,
-      class: cn(descriptionUI.class),
+      'data-slot': 'sheet-description',
+      class: cn('text-sm text-muted-foreground', descriptionUI.class),
+      style: descriptionUI.style,
     },
     body: {
       ...bodyUI,
+      'data-slot': 'sheet-body',
       class: cn('min-h-0 overflow-y-auto px-4', bodyUI.class),
+      style: bodyUI.style,
     },
     footer: {
       ...footerUI,
-      class: cn(footerUI.class),
+      'data-slot': 'sheet-footer',
+      class: cn('mt-auto flex flex-col gap-2 p-4', footerUI.class),
+      style: footerUI.style,
     },
     close: {
+      as: props.close?.as,
+      asChild: props.close?.asChild,
       ...closeUI,
-      ...close,
       'aria-label': closeUI['aria-label'] ?? t('close'),
+      'data-slot': 'sheet-close',
       class: cn(
-        'absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-[state=open]:bg-secondary [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
+        'absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
         closeUI.class,
       ),
+      style: closeUI.style,
     },
+    closeIcon: { ...normalizeIconProps(props.closeIcon) },
   }
 })
 </script>
 
 <template>
-  <SheetBase v-slot="rootSlotProps" v-bind="calculatedUI.root" v-model:open="calculatedOpen">
-    <SheetTrigger v-bind="calculatedUI.trigger">
-      <slot v-bind="getSlotProps(rootSlotProps)" />
-    </SheetTrigger>
+  <DialogRoot v-bind="calculatedUI.root" v-model:open="open">
+    <DialogTrigger v-bind="calculatedUI.trigger">
+      <slot v-bind="sheetContext" />
+    </DialogTrigger>
 
-    <SheetContent v-bind="calculatedUI.content">
-      <template v-if="props.showCloseButton && !props.block" #close>
-        <slot name="close" v-bind="getSlotProps(rootSlotProps)">
-          <SheetClose v-bind="calculatedUI.close">
-            <slot name="closeIcon" v-bind="getSlotProps(rootSlotProps)">
-              <Icon name="x" />
-            </slot>
-          </SheetClose>
-        </slot>
-      </template>
+    <DialogPortal>
+      <DialogOverlay v-bind="calculatedUI.overlay" />
+      <DialogContent v-bind="calculatedUI.content">
+        <template v-if="props.showCloseButton && !props.block">
+          <slot name="close" v-bind="sheetContext">
+            <DialogClose v-bind="calculatedUI.close">
+              <slot name="closeIcon" v-bind="sheetContext">
+                <Icon
+                  v-if="calculatedUI.closeIcon.name"
+                  v-bind="calculatedUI.closeIcon"
+                  :name="calculatedUI.closeIcon.name"
+                />
+              </slot>
+            </DialogClose>
+          </slot>
+        </template>
 
-      <SheetHeader
-        v-if="props.label || props.description || slots.header || slots.label || slots.description"
-        v-bind="calculatedUI.header"
-      >
-        <slot name="header" v-bind="getSlotProps(rootSlotProps)">
-          <SheetTitle v-if="props.label || slots.label" v-bind="calculatedUI.label">
-            <Icon
-              v-if="calculatedUI.icon.name"
-              v-bind="calculatedUI.icon"
-              :name="calculatedUI.icon.name"
-            />
-            <slot name="label" v-bind="getSlotProps(rootSlotProps)">
-              {{ props.label }}
-            </slot>
-          </SheetTitle>
+        <div
+          v-if="
+            props.label || props.description || slots.header || slots.label || slots.description
+          "
+          v-bind="calculatedUI.header"
+        >
+          <slot name="header" v-bind="sheetContext">
+            <DialogTitle v-if="props.label || slots.label" v-bind="calculatedUI.label">
+              <Icon
+                v-if="calculatedUI.icon.name"
+                v-bind="calculatedUI.icon"
+                :name="calculatedUI.icon.name"
+              />
+              <slot name="label" v-bind="sheetContext">{{ props.label }}</slot>
+            </DialogTitle>
 
-          <SheetDescription
-            v-if="props.description || slots.description"
-            v-bind="calculatedUI.description"
-          >
-            <slot name="description" v-bind="getSlotProps(rootSlotProps)">
-              {{ props.description }}
-            </slot>
-          </SheetDescription>
-        </slot>
-      </SheetHeader>
+            <DialogDescription
+              v-if="props.description || slots.description"
+              v-bind="calculatedUI.description"
+            >
+              <slot name="description" v-bind="sheetContext">{{ props.description }}</slot>
+            </DialogDescription>
+          </slot>
+        </div>
 
-      <div v-if="slots.content" v-bind="calculatedUI.body">
-        <slot name="content" v-bind="getSlotProps(rootSlotProps)" />
-      </div>
+        <div v-if="slots.content" v-bind="calculatedUI.body">
+          <slot name="content" v-bind="sheetContext" />
+        </div>
 
-      <SheetFooter v-if="slots.footer" v-bind="calculatedUI.footer">
-        <slot name="footer" v-bind="getSlotProps(rootSlotProps)" />
-      </SheetFooter>
-    </SheetContent>
-  </SheetBase>
+        <div v-if="slots.footer" v-bind="calculatedUI.footer">
+          <slot name="footer" v-bind="sheetContext" />
+        </div>
+      </DialogContent>
+    </DialogPortal>
+  </DialogRoot>
 </template>

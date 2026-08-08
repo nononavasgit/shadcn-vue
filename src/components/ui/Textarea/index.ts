@@ -15,17 +15,18 @@ export interface TextareaUI {
 
 // Props
 export interface TextareaProps extends PrimitiveProps {
-  modelValue?: TextareaValue
-  defaultValue?: TextareaValue
+  value?: TextareaValue
   ui?: TextareaUI
 }
 
 // Context
 export interface TextareaContext {
   props: Omit<TextareaProps, 'ui'>
+  value: TextareaValue
 }
 
 // Emits
 export interface TextareaEmits {
-  'update:modelValue': [value: TextareaValue]
+  'update:value': [value: TextareaValue]
+  valueChange: [value: TextareaValue]
 }

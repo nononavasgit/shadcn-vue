@@ -25,30 +25,28 @@ const separatorContext = computed<SeparatorContext>(() => {
   }
 })
 
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, separatorContext.value))
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      orientation: props.orientation,
-      decorative: props.decorative,
-      as: props.as,
-      asChild: props.asChild,
-      class: cn(
-        'shrink-0 bg-border data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px data-[orientation=vertical]:self-stretch',
-        attrs.class,
-        rootUI.class,
-      ),
-      style: [attrs.style, rootUI.style],
-    },
+    ...attrs,
+    ...rootUI,
+    orientation: props.orientation,
+    decorative: props.decorative,
+    as: props.as,
+    asChild: props.asChild,
+    class: cn(
+      'shrink-0 bg-border data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px data-[orientation=vertical]:self-stretch',
+      attrs.class,
+      rootUI.class,
+    ),
+    style: [attrs.style, rootUI.style],
   }
 })
 </script>
 
 <template>
-  <RekaSeparator v-bind="calculatedUI.root" data-slot="separator">
+  <RekaSeparator v-bind="rootProps" data-slot="separator">
     <slot v-bind="separatorContext" />
   </RekaSeparator>
 </template>

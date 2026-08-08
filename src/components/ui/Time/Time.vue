@@ -33,24 +33,22 @@ const timeContext = computed<TimeContext>(() => {
   }
 })
 
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, timeContext.value))
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      datetime: toDatetime(props.datetime),
-      'data-allow-mismatch': true,
-      class: cn(attrs.class, rootUI.class),
-      style: [attrs.style, rootUI.style],
-    },
+    ...attrs,
+    ...rootUI,
+    datetime: toDatetime(props.datetime),
+    'data-allow-mismatch': true,
+    class: cn(attrs.class, rootUI.class),
+    style: [attrs.style, rootUI.style],
   }
 })
 </script>
 
 <template>
-  <time v-bind="calculatedUI.root" data-slot="time">
+  <time v-bind="rootProps" data-slot="time">
     <slot v-bind="timeContext">{{ formattedDate }}</slot>
   </time>
 </template>

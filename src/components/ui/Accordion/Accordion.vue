@@ -54,138 +54,140 @@ const accordionContext = computed<AccordionContext>(() => {
   }
 })
 
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, accordionContext.value))
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      type: props.type,
-      collapsible: props.collapsible,
-      disabled: props.disabled,
-      dir: props.dir,
-      orientation: props.orientation,
-      unmountOnHide: props.unmountOnHide,
-      as: props.as,
-      asChild: props.asChild,
-      class: cn(attrs.class, rootUI.class),
-      style: [attrs.style, rootUI.style],
-    },
-    items: props.items.map((item, index) => {
-      const currentValue = accordionContext.value.value
-      const open = Array.isArray(currentValue)
-        ? currentValue.includes(item.value)
-        : currentValue === item.value
-      const context: AccordionItemContext = {
-        ...accordionContext.value,
-        item,
-        index,
-        open,
-        first: index === 0,
-        last: index === props.items.length - 1,
-      }
-
-      // Normalize UI
-      const itemUI = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
-      const triggerUI = normalizeHTMLAttributes(useResolve(props.ui?.trigger, context))
-      const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
-
-      // Normalize components
-      const itemProps = normalizeAccordionItemProps(item)
-      const trigger = normalizeAccordionTriggerProps(item.trigger)
-      const content = normalizeAccordionContentProps(item.content)
-      const icon = normalizeIconProps(item.icon)
-      const iconDropdown = normalizeIconProps(
-        open ? props.iconDropDownOpen : props.iconDropDownClose,
-      )
-
-      const key = String(item.value)
-      return {
-        value: item.value,
-        data: item,
-        context,
-        slots: {
-          trigger: `trigger-${key}` as const,
-          icon: `icon-${key}` as const,
-          label: `label-${key}` as const,
-          iconDropdown: `iconDropdown-${key}` as const,
-          content: `content-${key}` as const,
-        },
-        item: {
-          ...itemUI,
-          ...itemProps,
-          class: cn('border-b last:border-b-0', itemUI.class),
-          style: itemUI.style,
-        },
-        trigger: {
-          ...triggerUI,
-          ...trigger,
-          class: cn(
-            'flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50',
-            triggerUI.class,
-          ),
-          style: triggerUI.style,
-        },
-        icon: {
-          ...icon,
-        },
-        iconDropdown: {
-          ...iconDropdown,
-          class: 'pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground',
-        },
-        content: {
-          ...content,
-          ...contentUI,
-          class: cn(
-            'pt-0 pb-4 overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down',
-            contentUI.class,
-          ),
-          style: contentUI.style,
-        },
-      }
-    }),
+    ...attrs,
+    ...rootUI,
+    type: props.type,
+    collapsible: props.collapsible,
+    disabled: props.disabled,
+    dir: props.dir,
+    orientation: props.orientation,
+    unmountOnHide: props.unmountOnHide,
+    as: props.as,
+    asChild: props.asChild,
+    class: cn(attrs.class, rootUI.class),
+    style: [attrs.style, rootUI.style],
   }
 })
+
+function getItemContext(
+  item: NonNullable<AccordionProps['items']>[number],
+  index: number,
+): AccordionItemContext {
+  const currentValue = accordionContext.value.value
+  const open = Array.isArray(currentValue)
+    ? currentValue.includes(item.value)
+    : currentValue === item.value
+  return {
+    ...accordionContext.value,
+    item,
+    index,
+    open,
+    first: index === 0,
+    last: index === props.items.length - 1,
+  }
+}
+
+function getItemProps(context: AccordionItemContext) {
+  const itemUI = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+  return {
+    ...itemUI,
+    ...normalizeAccordionItemProps(context.item),
+    class: cn('border-b last:border-b-0', itemUI.class),
+    style: itemUI.style,
+  }
+}
+
+function getTriggerProps(context: AccordionItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.trigger, context))
+  return {
+    ...ui,
+    ...normalizeAccordionTriggerProps(context.item.trigger),
+    class: cn(
+      'flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50',
+      ui.class,
+    ),
+    style: ui.style,
+  }
+}
+
+function getContentProps(context: AccordionItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
+  return {
+    ...normalizeAccordionContentProps(context.item.content),
+    ...ui,
+    class: cn(
+      'pt-0 pb-4 overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down',
+      ui.class,
+    ),
+    style: ui.style,
+  }
+}
+
+function getSlots(context: AccordionItemContext) {
+  const key = String(context.item.value)
+  return {
+    trigger: `trigger-${key}` as const,
+    icon: `icon-${key}` as const,
+    label: `label-${key}` as const,
+    iconDropdown: `iconDropdown-${key}` as const,
+    content: `content-${key}` as const,
+  }
+}
+
+const itemContexts = computed(() => props.items.map(getItemContext))
+
+function getIconProps(context: AccordionItemContext) {
+  const icon = normalizeIconProps(context.item.icon)
+  if (!icon.name) return undefined
+  return { ...icon, name: icon.name }
+}
+
+function getIconDropdownProps(context: AccordionItemContext) {
+  const icon = normalizeIconProps(context.open ? props.iconDropDownOpen : props.iconDropDownClose)
+  if (!icon.name) return undefined
+  return { ...icon, name: icon.name }
+}
 </script>
 
 <template>
-  <AccordionRoot v-model="model" v-bind="calculatedUI.root" data-slot="accordion">
+  <AccordionRoot v-model="model" v-bind="rootProps" data-slot="accordion">
     <AccordionItem
-      v-for="item in calculatedUI.items"
-      :key="item.value"
-      v-bind="item.item"
+      v-for="context in itemContexts"
+      :key="context.item.value"
+      v-bind="getItemProps(context)"
       data-slot="accordion-item"
     >
       <AccordionHeader class="flex">
-        <AccordionTrigger v-bind="item.trigger" data-slot="accordion-trigger">
+        <AccordionTrigger v-bind="getTriggerProps(context)" data-slot="accordion-trigger">
           <span class="flex min-w-0 flex-1 items-start gap-2">
-            <slot :name="item.slots.trigger" v-bind="item.context">
-              <slot name="trigger" v-bind="item.context">
-                <slot :name="item.slots.icon" v-bind="item.context">
-                  <slot name="icon" v-bind="item.context">
+            <slot :name="getSlots(context).trigger" v-bind="context">
+              <slot name="trigger" v-bind="context">
+                <slot :name="getSlots(context).icon" v-bind="context">
+                  <slot name="icon" v-bind="context">
                     <Icon
-                      v-if="item.icon?.name"
-                      v-bind="item.icon"
-                      :name="item?.icon?.name"
+                      v-if="getIconProps(context)"
+                      v-bind="getIconProps(context)!"
                       data-slot="accordion-icon"
                     />
                   </slot>
                 </slot>
-                <slot :name="item.slots.label" v-bind="item.context">
-                  <slot name="label" v-bind="item.context">
-                    {{ item.data?.label }}
+                <slot :name="getSlots(context).label" v-bind="context">
+                  <slot name="label" v-bind="context">
+                    {{ context.item.label }}
                   </slot>
                 </slot>
               </slot>
             </slot>
           </span>
-          <slot :name="item.slots.iconDropdown" v-bind="item.context">
-            <slot name="iconDropdown" v-bind="item.context">
+          <slot :name="getSlots(context).iconDropdown" v-bind="context">
+            <slot name="iconDropdown" v-bind="context">
               <Icon
-                v-if="item.iconDropdown?.name"
-                v-bind="item.iconDropdown"
-                :name="item.iconDropdown?.name"
+                v-if="getIconDropdownProps(context)"
+                v-bind="getIconDropdownProps(context)!"
                 data-slot="accordion-icon-dropdown"
               />
             </slot>
@@ -193,10 +195,10 @@ const calculatedUI = computed(() => {
         </AccordionTrigger>
       </AccordionHeader>
 
-      <AccordionContent v-bind="item.content" data-slot="accordion-content">
-        <slot :name="`content-${item.value}`" v-bind="item.context">
-          <slot name="content" v-bind="item.context">
-            {{ item.data?.description }}
+      <AccordionContent v-bind="getContentProps(context)" data-slot="accordion-content">
+        <slot :name="getSlots(context).content" v-bind="context">
+          <slot name="content" v-bind="context">
+            {{ context.item.description }}
           </slot>
         </slot>
       </AccordionContent>

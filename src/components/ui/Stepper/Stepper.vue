@@ -113,236 +113,290 @@ const stepperContext = computed<StepperContext>(() => {
   }
 })
 
-const calculatedUI = computed(() => {
+const isVertical = computed(() => props.orientation === 'vertical')
+
+const rootProps = computed(() => {
   const normalizedRootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, stepperContext.value))
   const { dir: rootDirection, ...rootUI } = normalizedRootUI
-  const listUI = normalizeHTMLAttributes(useResolve(props.ui?.list, stepperContext.value))
-  const currentStep = value.value
-  const isVertical = props.orientation === 'vertical'
-  const triggerClass = cn(
-    'z-10 border border-transparent outline-none focus-visible:ring-3',
-    props.color
-      ? 'focus-visible:border-(--stepper-color) focus-visible:ring-(--stepper-color)/50'
-      : 'focus-visible:border-primary focus-visible:ring-primary/50',
-    isVertical && 'flex-row items-start gap-3 p-0 text-left',
-  )
-  const indicatorClass =
-    props.color &&
-    'group-data-[state=active]:bg-(--stepper-color) group-data-[state=active]:text-(--stepper-color-foreground) group-data-[state=completed]:bg-(--stepper-color) group-data-[state=completed]:text-(--stepper-color-foreground)'
-  const separatorClass = cn(
-    isVertical
-      ? 'absolute top-10 left-5 h-[calc(100%+1.5rem)] w-0.5 -translate-x-1/2 rounded-full'
-      : 'absolute top-5 right-[calc(-50%+10px)] left-[calc(50%+20px)] h-0.5 shrink-0 rounded-full',
-    props.color && 'group-data-[state=completed]:bg-(--stepper-color)',
-  )
 
   void rootDirection
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      ...normalizeStepperRootProps(props),
-      class: cn('block w-full', attrs.class, rootUI.class),
-      style: [colorStyle.value, attrs.style, rootUI.style],
-    },
-    list: {
-      ...listUI,
-      class: cn('flex w-full', isVertical ? 'flex-col gap-6' : 'items-start gap-2', listUI.class),
-      style: listUI.style,
-    },
-    steps: props.steps.map((step, index) => {
-      const state: StepperState = step.completed
-        ? 'completed'
-        : step.step === currentStep
-          ? 'active'
-          : currentStep !== undefined && step.step < currentStep
-            ? 'completed'
-            : 'inactive'
-      const context: StepperItemContext = {
-        ...stepperContext.value,
-        item: step,
-        index,
-        state,
-        active: state === 'active',
-        first: index === 0,
-        last: index === props.steps.length - 1,
-      }
-      const itemUI = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
-      const triggerUI = normalizeHTMLAttributes(useResolve(props.ui?.trigger, context))
-      const indicatorUI = normalizeHTMLAttributes(useResolve(props.ui?.indicator, context))
-      const headerUI = normalizeHTMLAttributes(useResolve(props.ui?.header, context))
-      const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
-      const descriptionUI = normalizeHTMLAttributes(useResolve(props.ui?.description, context))
-      const separatorUI = normalizeHTMLAttributes(useResolve(props.ui?.separator, context))
-      const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
-      const itemProps = normalizeStepperItemProps(step)
-      const key = String(step.key ?? step.step)
-      const slotNames = {
-        item: `item-${key}`,
-        header: `header-${key}`,
-        indicator: `indicator-${key}`,
-        icon: `icon-${key}`,
-        label: `label-${key}`,
-        description: `description-${key}`,
-        separator: `separator-${key}`,
-        content: `content-${key}`,
-      } as const
-      const icon = normalizeIconProps(step.icon)
-
-      return {
-        key,
-        data: step,
-        context,
-        slotNames,
-        item: {
-          ...itemUI,
-          ...itemProps,
-          class: cn(
-            'group flex items-center gap-2 data-[disabled]:pointer-events-none',
-            isVertical
-              ? 'relative flex w-full items-start gap-4'
-              : 'relative flex w-full flex-col items-center justify-center',
-            itemUI.class,
-          ),
-          style: itemUI?.style,
-        },
-        trigger: {
-          ...triggerUI,
-          ...normalizeStepperTriggerProps(step.trigger),
-          class: cn(
-            'flex flex-col items-center gap-1 rounded-md p-1 text-center',
-            triggerClass,
-            triggerUI.class,
-          ),
-          style: triggerUI?.style,
-        },
-        indicator: {
-          ...indicatorUI,
-          ...normalizeStepperIndicatorProps(step.indicator),
-          class: cn(
-            'inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors group-data-[state=active]:bg-primary group-data-[state=active]:text-primary-foreground group-data-[state=completed]:bg-primary group-data-[state=completed]:text-primary-foreground group-data-[disabled]:opacity-50',
-            indicatorClass,
-            indicatorUI.class,
-          ),
-          style: indicatorUI?.style,
-        },
-        header: {
-          ...headerUI,
-          class: cn('flex min-w-0 flex-col', headerUI.class),
-          style: headerUI?.style,
-        },
-        icon: {
-          ...icon,
-          name: icon?.name ?? 'check',
-        },
-        label: {
-          ...labelUI,
-          ...normalizeStepperLabelProps(step.labelProps),
-          class: cn('text-base font-semibold whitespace-nowrap', labelUI.class),
-          style: labelUI.style,
-        },
-        description: {
-          ...descriptionUI,
-          ...normalizeStepperDescriptionProps(step.descriptionProps),
-          class: cn('text-sm text-muted-foreground', descriptionUI.class),
-          style: descriptionUI?.style,
-        },
-        separator: {
-          ...separatorUI,
-          ...normalizeStepperSeparatorProps(step.separator),
-          class: cn(
-            'bg-muted transition-colors group-data-[disabled]:bg-muted group-data-[disabled]:opacity-50 group-data-[state=completed]:bg-primary',
-            separatorClass,
-            separatorUI.class,
-          ),
-          style: separatorUI?.style,
-        },
-        content: {
-          ...contentUI,
-          class: cn('mt-6', contentUI.class),
-          style: contentUI?.style,
-        },
-        showHeader: Boolean(
-          step.label ||
-          step.description ||
-          slots.header ||
-          slots.label ||
-          slots.description ||
-          slots[slotNames.header] ||
-          slots[slotNames.label] ||
-          slots[slotNames.description],
-        ),
-        showLabel: Boolean(step.label || slots.label || slots[slotNames.label]),
-        showDescription: Boolean(
-          step.description || slots.description || slots[slotNames.description],
-        ),
-        showContent: Boolean(
-          step.content || slots.default || slots.content || slots[slotNames.content],
-        ),
-      }
-    }),
+    ...attrs,
+    ...rootUI,
+    ...normalizeStepperRootProps(props),
+    class: cn('block w-full', attrs.class, rootUI.class),
+    style: [colorStyle.value, attrs.style, rootUI.style],
   }
 })
+
+const listProps = computed(() => {
+  const listUI = normalizeHTMLAttributes(useResolve(props.ui?.list, stepperContext.value))
+
+  return {
+    ...listUI,
+    class: cn(
+      'flex w-full',
+      isVertical.value ? 'flex-col gap-6' : 'items-start gap-2',
+      listUI.class,
+    ),
+    style: listUI.style,
+  }
+})
+
+const triggerClass = computed(() =>
+  cn(
+    'z-10 border border-transparent outline-none focus-visible:ring-3',
+    props.color
+      ? 'focus-visible:border-(--stepper-color) focus-visible:ring-(--stepper-color)/50'
+      : 'focus-visible:border-primary focus-visible:ring-primary/50',
+    isVertical.value && 'flex-row items-start gap-3 p-0 text-left',
+  ),
+)
+
+const indicatorClass = computed(
+  () =>
+    props.color &&
+    'group-data-[state=active]:bg-(--stepper-color) group-data-[state=active]:text-(--stepper-color-foreground) group-data-[state=completed]:bg-(--stepper-color) group-data-[state=completed]:text-(--stepper-color-foreground)',
+)
+
+const separatorClass = computed(() =>
+  cn(
+    isVertical.value
+      ? 'absolute top-10 left-5 h-[calc(100%+1.5rem)] w-0.5 -translate-x-1/2 rounded-full'
+      : 'absolute top-5 right-[calc(-50%+10px)] left-[calc(50%+20px)] h-0.5 shrink-0 rounded-full',
+    props.color && 'group-data-[state=completed]:bg-(--stepper-color)',
+  ),
+)
+
+function getStepContext(
+  step: NonNullable<StepperProps['steps']>[number],
+  index: number,
+): StepperItemContext {
+  const currentStep = value.value
+  const state: StepperState = step.completed
+    ? 'completed'
+    : step.step === currentStep
+      ? 'active'
+      : currentStep !== undefined && step.step < currentStep
+        ? 'completed'
+        : 'inactive'
+  return {
+    ...stepperContext.value,
+    item: step,
+    index,
+    state,
+    active: state === 'active',
+    first: index === 0,
+    last: index === props.steps.length - 1,
+  }
+}
+
+function getSlotNames(context: StepperItemContext) {
+  const key = String(context.item.key ?? context.item.step)
+  return {
+    item: `item-${key}`,
+    header: `header-${key}`,
+    indicator: `indicator-${key}`,
+    icon: `icon-${key}`,
+    label: `label-${key}`,
+    description: `description-${key}`,
+    separator: `separator-${key}`,
+    content: `content-${key}`,
+  } as const
+}
+
+function getItemProps(context: StepperItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+  return {
+    ...ui,
+    ...normalizeStepperItemProps(context.item),
+    class: cn(
+      'group flex items-center gap-2 data-[disabled]:pointer-events-none',
+      isVertical.value
+        ? 'relative flex w-full items-start gap-4'
+        : 'relative flex w-full flex-col items-center justify-center',
+      ui.class,
+    ),
+    style: ui.style,
+  }
+}
+
+function getTriggerProps(context: StepperItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.trigger, context))
+  return {
+    ...ui,
+    ...normalizeStepperTriggerProps(context.item.trigger),
+    class: cn(
+      'flex flex-col items-center gap-1 rounded-md p-1 text-center',
+      triggerClass.value,
+      ui.class,
+    ),
+    style: ui.style,
+  }
+}
+
+function getIndicatorProps(context: StepperItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.indicator, context))
+  return {
+    ...ui,
+    ...normalizeStepperIndicatorProps(context.item.indicator),
+    class: cn(
+      'inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors group-data-[state=active]:bg-primary group-data-[state=active]:text-primary-foreground group-data-[state=completed]:bg-primary group-data-[state=completed]:text-primary-foreground group-data-[disabled]:opacity-50',
+      indicatorClass.value,
+      ui.class,
+    ),
+    style: ui.style,
+  }
+}
+
+function getHeaderProps(context: StepperItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.header, context))
+  return { ...ui, class: cn('flex min-w-0 flex-col', ui.class), style: ui.style }
+}
+
+function getLabelProps(context: StepperItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
+  return {
+    ...ui,
+    ...normalizeStepperLabelProps(context.item.labelProps),
+    class: cn('text-base font-semibold whitespace-nowrap', ui.class),
+    style: ui.style,
+  }
+}
+
+function getDescriptionProps(context: StepperItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.description, context))
+  return {
+    ...ui,
+    ...normalizeStepperDescriptionProps(context.item.descriptionProps),
+    class: cn('text-sm text-muted-foreground', ui.class),
+    style: ui.style,
+  }
+}
+
+function getSeparatorProps(context: StepperItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.separator, context))
+  return {
+    ...ui,
+    ...normalizeStepperSeparatorProps(context.item.separator),
+    class: cn(
+      'bg-muted transition-colors group-data-[disabled]:bg-muted group-data-[disabled]:opacity-50 group-data-[state=completed]:bg-primary',
+      separatorClass.value,
+      ui.class,
+    ),
+    style: ui.style,
+  }
+}
+
+function getContentProps(context: StepperItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
+  return { ...ui, class: cn('mt-6', ui.class), style: ui.style }
+}
+
+function showHeader(context: StepperItemContext) {
+  const slotNames = getSlotNames(context)
+  const step = context.item
+  return Boolean(
+    step.label ||
+    step.description ||
+    slots.header ||
+    slots.label ||
+    slots.description ||
+    slots[slotNames.header] ||
+    slots[slotNames.label] ||
+    slots[slotNames.description],
+  )
+}
+
+function showLabel(context: StepperItemContext) {
+  return Boolean(context.item.label || slots.label || slots[getSlotNames(context).label])
+}
+
+function showDescription(context: StepperItemContext) {
+  return Boolean(
+    context.item.description || slots.description || slots[getSlotNames(context).description],
+  )
+}
+
+function showContent(context: StepperItemContext) {
+  return Boolean(
+    context.item.content || slots.default || slots.content || slots[getSlotNames(context).content],
+  )
+}
+
+function getKey(context: StepperItemContext) {
+  return String(context.item.key ?? context.item.step)
+}
+
+function getIconProps(context: StepperItemContext) {
+  return normalizeIconProps(context.item.icon)
+}
+
+const stepContexts = computed(() => props.steps.map(getStepContext))
 </script>
 
 <template>
   <StepperRoot
     ref="stepper"
     v-slot="rootState"
-    v-bind="calculatedUI.root"
+    v-bind="rootProps"
     v-model="value"
     data-slot="stepper"
   >
-    <div v-bind="calculatedUI.list" data-slot="stepper-list">
+    <div v-bind="listProps" data-slot="stepper-list">
       <StepperItem
-        v-for="item in calculatedUI.steps"
-        :key="item.key"
-        v-bind="item.item"
+        v-for="context in stepContexts"
+        :key="getKey(context)"
+        v-bind="getItemProps(context)"
         data-slot="stepper-item"
       >
-        <slot :name="item.slotNames.item" v-bind="item.context">
-          <slot name="item" v-bind="item.context">
-            <StepperTrigger v-bind="item.trigger" data-slot="stepper-trigger">
-              <slot :name="item.slotNames.header" v-bind="item.context">
-                <slot name="header" v-bind="item.context">
-                  <StepperIndicator v-bind="item.indicator" data-slot="stepper-indicator">
-                    <slot :name="item.slotNames.indicator" v-bind="item.context">
-                      <slot name="indicator" v-bind="item.context">
-                        <slot :name="item.slotNames.icon" v-bind="item.context">
-                          <slot name="icon" v-bind="item.context">
+        <slot :name="getSlotNames(context).item" v-bind="context">
+          <slot name="item" v-bind="context">
+            <StepperTrigger v-bind="getTriggerProps(context)" data-slot="stepper-trigger">
+              <slot :name="getSlotNames(context).header" v-bind="context">
+                <slot name="header" v-bind="context">
+                  <StepperIndicator
+                    v-bind="getIndicatorProps(context)"
+                    data-slot="stepper-indicator"
+                  >
+                    <slot :name="getSlotNames(context).indicator" v-bind="context">
+                      <slot name="indicator" v-bind="context">
+                        <slot :name="getSlotNames(context).icon" v-bind="context">
+                          <slot name="icon" v-bind="context">
                             <Icon
-                              v-if="item.data.icon || item.context.state === 'completed'"
-                              v-bind="item.icon"
+                              v-if="context.item.icon || context.state === 'completed'"
+                              :name="'check'"
+                              v-bind="getIconProps(context)"
                             />
-                            <span v-else>{{ item.data.step }}</span>
+                            <span v-else>{{ context.item.step }}</span>
                           </slot>
                         </slot>
                       </slot>
                     </slot>
                   </StepperIndicator>
 
-                  <div v-if="item.showHeader" v-bind="item.header">
+                  <div v-if="showHeader(context)" v-bind="getHeaderProps(context)">
                     <StepperTitle
-                      v-if="item.showLabel"
-                      v-bind="item.label"
+                      v-if="showLabel(context)"
+                      v-bind="getLabelProps(context)"
                       data-slot="stepper-title"
                     >
-                      <slot :name="item.slotNames.label" v-bind="item.context">
-                        <slot name="label" v-bind="item.context">
-                          {{ item.data.label }}
+                      <slot :name="getSlotNames(context).label" v-bind="context">
+                        <slot name="label" v-bind="context">
+                          {{ context.item.label }}
                         </slot>
                       </slot>
                     </StepperTitle>
 
                     <StepperDescription
-                      v-if="item.showDescription"
-                      v-bind="item.description"
+                      v-if="showDescription(context)"
+                      v-bind="getDescriptionProps(context)"
                       data-slot="stepper-description"
                     >
-                      <slot :name="item.slotNames.description" v-bind="item.context">
-                        <slot name="description" v-bind="item.context">
-                          {{ item.data.description }}
+                      <slot :name="getSlotNames(context).description" v-bind="context">
+                        <slot name="description" v-bind="context">
+                          {{ context.item.description }}
                         </slot>
                       </slot>
                     </StepperDescription>
@@ -351,10 +405,13 @@ const calculatedUI = computed(() => {
               </slot>
             </StepperTrigger>
 
-            <template v-if="!item.context.last">
-              <slot :name="item.slotNames.separator" v-bind="item.context">
-                <slot name="separator" v-bind="item.context">
-                  <StepperSeparator v-bind="item.separator" data-slot="stepper-separator" />
+            <template v-if="!context.last">
+              <slot :name="getSlotNames(context).separator" v-bind="context">
+                <slot name="separator" v-bind="context">
+                  <StepperSeparator
+                    v-bind="getSeparatorProps(context)"
+                    data-slot="stepper-separator"
+                  />
                 </slot>
               </slot>
             </template>
@@ -363,16 +420,16 @@ const calculatedUI = computed(() => {
       </StepperItem>
     </div>
 
-    <template v-for="item in calculatedUI.steps" :key="`content-${item.key}`">
+    <template v-for="context in stepContexts" :key="`content-${getKey(context)}`">
       <div
-        v-if="item.data.step === rootState.modelValue && item.showContent"
-        v-bind="item.content"
+        v-if="context.item.step === rootState.modelValue && showContent(context)"
+        v-bind="getContentProps(context)"
         data-slot="stepper-content"
       >
-        <slot :name="item.slotNames.content" v-bind="item.context">
-          <slot name="content" v-bind="item.context">
-            <slot v-bind="item.context">
-              {{ item.data.content }}
+        <slot :name="getSlotNames(context).content" v-bind="context">
+          <slot name="content" v-bind="context">
+            <slot v-bind="context">
+              {{ context.item.content }}
             </slot>
           </slot>
         </slot>

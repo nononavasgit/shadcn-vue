@@ -1,18 +1,13 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
+import { computed, useAttrs, watch } from 'vue'
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import {
-  normalizeTabsContentProps,
-  normalizeTabsListProps,
-  normalizeTabsRootProps,
-  normalizeTabsTriggerProps,
-  tabsVariants,
-} from '.'
-import type { TabsContext, TabsEmits, TabsItemContext, TabsProps, TabsSlots, TabsValue } from '.'
+import { tabsVariants } from '.'
+import type { IconProps } from '@/components/ui/Icon'
+import type { TabsContext, TabsItemContext, TabsProps, TabsSlots, TabsValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -28,11 +23,14 @@ const props = withDefaults(defineProps<TabsProps>(), {
   ui: undefined,
 })
 defineSlots<TabsSlots>()
-defineEmits<TabsEmits>()
+const emit = defineEmits<{ valueChange: [value: TabsValue | undefined] }>()
 
 const attrs = useAttrs()
-const model = defineModel<TabsValue>()
-const value = computed(() => model.value ?? props.defaultValue)
+const value = defineModel<TabsValue>('value')
+
+watch(value, (nextValue, previousValue) => {
+  if (nextValue !== previousValue) emit('valueChange', nextValue)
+})
 
 const tabsContext = computed<TabsContext>(() => {
   const { ui, ...tabsProps } = props
@@ -44,162 +42,164 @@ const tabsContext = computed<TabsContext>(() => {
   }
 })
 
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const normalizedRootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, tabsContext.value))
   const { dir: rootDirection, ...rootUI } = normalizedRootUI
-  const listUI = normalizeHTMLAttributes(useResolve(props.ui?.list, tabsContext.value))
-  const contentWrapperUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.contentWrapper, tabsContext.value),
-  )
-  const root = normalizeTabsRootProps(props)
-  const list = normalizeTabsListProps(props.list)
 
   void rootDirection
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      ...root,
-      'data-variant': props.variant,
-      class: cn(
-        'flex flex-col gap-2',
-        tabsVariants.root({ orientation: props.orientation }),
-        attrs.class,
-        rootUI.class,
-      ),
-      style: [attrs.style, rootUI.style],
-    },
-    list: {
-      ...listUI,
-      ...list,
-      loop: props.loop,
-      'data-variant': props.variant,
-      class: cn(
-        'inline-flex h-9 w-fit items-center justify-center rounded-lg bg-muted p-[3px] text-muted-foreground aria-[orientation=vertical]:h-fit aria-[orientation=vertical]:flex-col',
-        tabsVariants.list({
-          variant: props.variant,
-          orientation: props.orientation,
-        }),
-        listUI.class,
-      ),
-      style: listUI.style,
-    },
-    contentWrapper: {
-      ...contentWrapperUI,
-      class: cn('min-w-0 flex-1', contentWrapperUI.class),
-      style: contentWrapperUI.style,
-    },
-    tabs: props.tabs.map((tab, index) => {
-      const context: TabsItemContext = {
-        ...tabsContext.value,
-        tab,
-        index,
-        active: Object.is(value.value, tab.value),
-        first: index === 0,
-        last: index === props.tabs.length - 1,
-      }
-      const triggerUI = normalizeHTMLAttributes(useResolve(props.ui?.trigger, context))
-      const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
-      const normalizedContentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
-      const { dir: contentDirection, ...contentUI } = normalizedContentUI
-
-      const trigger = normalizeTabsTriggerProps(tab.trigger)
-      const content = normalizeTabsContentProps(tab.contentProps)
-      const icon = normalizeIconProps(tab.icon)
-      const trailingIcon = normalizeIconProps(tab.trailingIcon)
-      const key = String(tab.id)
-
-      void contentDirection
-
-      return {
-        key,
-        data: tab,
-        context,
-        slots: {
-          trigger: `trigger-${key}` as `trigger-${string}`,
-          leading: `leading-${key}` as `leading-${string}`,
-          label: `label-${key}` as `label-${string}`,
-          trailing: `trailing-${key}` as `trailing-${string}`,
-          content: `content-${key}` as `content-${string}`,
-        },
-        trigger: {
-          ...triggerUI,
-          ...trigger,
-          value: tab.value,
-          disabled: tab.disabled,
-          class: cn(
-            'inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap text-foreground transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:shadow-sm dark:text-muted-foreground dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 dark:data-[state=active]:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
-            tabsVariants.trigger({
-              variant: props.variant,
-              orientation: props.orientation,
-            }),
-            triggerUI.class,
-          ),
-          'data-variant': props.variant,
-          style: triggerUI.style,
-        },
-        icon: {
-          ...icon,
-        },
-        label: {
-          ...labelUI,
-          class: cn(labelUI.class),
-          style: labelUI.style,
-        },
-        trailingIcon: {
-          ...trailingIcon,
-        },
-        content: {
-          ...contentUI,
-          ...content,
-          tabindex: contentUI?.tabindex ?? 0,
-          value: tab.value,
-          forceMount: tab.forceMount,
-          class: cn(
-            'flex-1 outline-none rounded-md focus-visible:ring-3 focus-visible:ring-ring/50',
-            contentUI.class,
-          ),
-          style: contentUI.style,
-        },
-        'data-variant': props.variant,
-      }
-    }),
+    ...attrs,
+    ...rootUI,
+    orientation: props.orientation,
+    dir: props.dir,
+    activationMode: props.activationMode,
+    unmountOnHide: props.unmountOnHide,
+    as: props.as,
+    asChild: props.asChild,
+    'data-variant': props.variant,
+    class: cn(
+      'flex flex-col gap-2',
+      tabsVariants.root({ orientation: props.orientation }),
+      attrs.class,
+      rootUI.class,
+    ),
+    style: [attrs.style, rootUI.style],
   }
 })
+
+const listProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.list, tabsContext.value))
+
+  return {
+    ...ui,
+    as: props.list?.as,
+    asChild: props.list?.asChild,
+    loop: props.loop,
+    'data-variant': props.variant,
+    class: cn(
+      'inline-flex h-9 w-fit items-center justify-center rounded-lg bg-muted p-[3px] text-muted-foreground aria-[orientation=vertical]:h-fit aria-[orientation=vertical]:flex-col',
+      tabsVariants.list({ variant: props.variant, orientation: props.orientation }),
+      ui.class,
+    ),
+    style: ui.style,
+  }
+})
+
+const contentWrapperProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.contentWrapper, tabsContext.value))
+  return { ...ui, class: cn('min-w-0 flex-1', ui.class), style: ui.style }
+})
+
+const itemContexts = computed<TabsItemContext[]>(() =>
+  props.tabs.map((tab, index) => ({
+    ...tabsContext.value,
+    tab,
+    index,
+    active: Object.is(value.value, tab.value),
+    first: index === 0,
+    last: index === props.tabs.length - 1,
+  })),
+)
+
+function getTriggerProps(context: TabsItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.trigger, context))
+
+  return {
+    ...ui,
+    as: context.tab.trigger?.as,
+    asChild: context.tab.trigger?.asChild,
+    value: context.tab.value,
+    disabled: context.tab.disabled,
+    class: cn(
+      'inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap text-foreground transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:shadow-sm dark:text-muted-foreground dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 dark:data-[state=active]:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
+      tabsVariants.trigger({ variant: props.variant, orientation: props.orientation }),
+      ui.class,
+    ),
+    'data-variant': props.variant,
+    style: ui.style,
+  }
+}
+
+function getLabelProps(context: TabsItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
+  return { ...ui, class: cn(ui.class), style: ui.style }
+}
+
+function getContentProps(context: TabsItemContext) {
+  const normalizedUI = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
+  const { dir: contentDirection, ...ui } = normalizedUI
+  void contentDirection
+
+  return {
+    ...ui,
+    as: context.tab.contentProps?.as,
+    asChild: context.tab.contentProps?.asChild,
+    tabindex: ui.tabindex ?? 0,
+    value: context.tab.value,
+    forceMount: context.tab.forceMount ?? context.tab.contentProps?.forceMount,
+    class: cn(
+      'flex-1 outline-none rounded-md focus-visible:ring-3 focus-visible:ring-ring/50',
+      ui.class,
+    ),
+    style: ui.style,
+  }
+}
+
+function getIconProps(context: TabsItemContext): IconProps {
+  return normalizeIconProps(context.tab.icon)!
+}
+
+function getTrailingIconProps(context: TabsItemContext): IconProps {
+  return normalizeIconProps(context.tab.trailingIcon)!
+}
+
+function getSlotNames(context: TabsItemContext) {
+  const key = getKey(context)
+  return {
+    trigger: `trigger-${key}` as `trigger-${string}`,
+    leading: `leading-${key}` as `leading-${string}`,
+    label: `label-${key}` as `label-${string}`,
+    trailing: `trailing-${key}` as `trailing-${string}`,
+    content: `content-${key}` as `content-${string}`,
+  }
+}
+
+function getKey(context: TabsItemContext) {
+  return String(context.tab.id)
+}
 </script>
 
 <template>
-  <TabsRoot v-model="model" v-bind="calculatedUI.root" data-slot="tabs">
-    <TabsList v-bind="calculatedUI.list" data-slot="tabs-list">
+  <TabsRoot v-model="value" v-bind="rootProps" data-slot="tabs">
+    <TabsList v-bind="listProps" data-slot="tabs-list">
       <TabsTrigger
-        v-for="tab in calculatedUI.tabs"
-        :key="tab.key"
-        v-bind="tab.trigger"
+        v-for="itemContext in itemContexts"
+        :key="getKey(itemContext)"
+        v-bind="getTriggerProps(itemContext)"
         data-slot="tabs-trigger"
       >
-        <slot :name="tab.slots.trigger" v-bind="tab.context">
-          <slot name="trigger" v-bind="tab.context">
-            <slot :name="tab.slots.leading" v-bind="tab.context">
-              <slot name="leading" v-bind="tab.context">
-                <Icon v-if="tab.icon.name" v-bind="tab.icon" :name="tab.icon.name" />
+        <slot :name="getSlotNames(itemContext).trigger" v-bind="itemContext">
+          <slot name="trigger" v-bind="itemContext">
+            <slot :name="getSlotNames(itemContext).leading" v-bind="itemContext">
+              <slot name="leading" v-bind="itemContext">
+                <Icon v-if="itemContext.tab.icon" v-bind="getIconProps(itemContext)" />
               </slot>
             </slot>
 
-            <slot :name="tab.slots.label" v-bind="tab.context">
-              <slot name="label" v-bind="tab.context">
-                <span v-if="tab.data.label" v-bind="tab.label">
-                  {{ tab.data?.label }}
+            <slot :name="getSlotNames(itemContext).label" v-bind="itemContext">
+              <slot name="label" v-bind="itemContext">
+                <span v-if="itemContext.tab.label" v-bind="getLabelProps(itemContext)">
+                  {{ itemContext.tab.label }}
                 </span>
               </slot>
             </slot>
 
-            <slot :name="tab.slots.trailing" v-bind="tab.context">
-              <slot name="trailing" v-bind="tab.context">
+            <slot :name="getSlotNames(itemContext).trailing" v-bind="itemContext">
+              <slot name="trailing" v-bind="itemContext">
                 <Icon
-                  v-if="tab.trailingIcon.name"
-                  v-bind="tab.trailingIcon"
-                  :name="tab.trailingIcon.name"
+                  v-if="itemContext.tab.trailingIcon"
+                  v-bind="getTrailingIconProps(itemContext)"
                 />
               </slot>
             </slot>
@@ -208,16 +208,16 @@ const calculatedUI = computed(() => {
       </TabsTrigger>
     </TabsList>
 
-    <div v-bind="calculatedUI.contentWrapper" data-slot="tabs-content-wrapper">
+    <div v-bind="contentWrapperProps" data-slot="tabs-content-wrapper">
       <TabsContent
-        v-for="tab in calculatedUI.tabs"
-        :key="tab.key"
-        v-bind="tab.content"
+        v-for="itemContext in itemContexts"
+        :key="getKey(itemContext)"
+        v-bind="getContentProps(itemContext)"
         data-slot="tabs-content"
       >
-        <slot :name="tab.slots.content" v-bind="tab.context">
-          <slot name="content" v-bind="tab.context">
-            {{ tab.data?.content }}
+        <slot :name="getSlotNames(itemContext).content" v-bind="itemContext">
+          <slot name="content" v-bind="itemContext">
+            {{ itemContext.tab.content }}
           </slot>
         </slot>
       </TabsContent>

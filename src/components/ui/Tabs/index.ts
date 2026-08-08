@@ -3,7 +3,6 @@ import type { HTMLAttributes } from 'vue'
 import type {
   TabsContentProps as RekaTabsContentProps,
   TabsListProps as RekaTabsListProps,
-  TabsRootEmits,
   TabsRootProps as RekaTabsRootProps,
   TabsTriggerProps as RekaTabsTriggerProps,
 } from 'reka-ui'
@@ -80,51 +79,11 @@ export type TabsVariants = VariantProps<typeof tabsVariants.list>
 export type TabsValue = string | number
 export type TabsRootProps = Pick<
   RekaTabsRootProps<TabsValue>,
-  | 'modelValue'
-  | 'defaultValue'
-  | 'orientation'
-  | 'dir'
-  | 'activationMode'
-  | 'unmountOnHide'
-  | 'as'
-  | 'asChild'
+  'orientation' | 'dir' | 'activationMode' | 'unmountOnHide' | 'as' | 'asChild'
 >
 export type TabsListProps = Pick<RekaTabsListProps, 'as' | 'asChild'>
 export type TabsTriggerProps = Pick<RekaTabsTriggerProps, 'as' | 'asChild'>
 export type TabsContentProps = Pick<RekaTabsContentProps, 'as' | 'asChild' | 'forceMount'>
-
-export function normalizeTabsRootProps(
-  source: TabsRootProps | null | undefined,
-): TabsRootProps | undefined {
-  if (!source) return undefined
-  const { modelValue, defaultValue, orientation, dir, activationMode, unmountOnHide, as, asChild } =
-    source
-  return { modelValue, defaultValue, orientation, dir, activationMode, unmountOnHide, as, asChild }
-}
-
-export function normalizeTabsListProps(
-  source: TabsListProps | null | undefined,
-): TabsListProps | undefined {
-  if (!source) return undefined
-  const { as, asChild } = source
-  return { as, asChild }
-}
-
-export function normalizeTabsTriggerProps(
-  source: TabsTriggerProps | null | undefined,
-): TabsTriggerProps | undefined {
-  if (!source) return undefined
-  const { as, asChild } = source
-  return { as, asChild }
-}
-
-export function normalizeTabsContentProps(
-  source: TabsContentProps | null | undefined,
-): TabsContentProps | undefined {
-  if (!source) return undefined
-  const { as, asChild, forceMount } = source
-  return { as, asChild, forceMount }
-}
 
 export interface TabItem {
   id: string | number
@@ -145,6 +104,7 @@ export type TabsItemFn<T> = T | ((context: TabsItemContext) => T)
 
 // Props
 export interface TabsProps extends TabsRootProps {
+  value?: TabsValue
   loop?: boolean
   variant?: TabsVariants['variant']
   list?: TabsListProps
@@ -177,7 +137,10 @@ export interface TabsItemContext extends TabsContext {
 }
 
 // Emits
-export type TabsEmits = TabsRootEmits<TabsValue>
+export interface TabsEmits {
+  'update:value': [value: TabsValue | undefined]
+  valueChange: [value: TabsValue | undefined]
+}
 
 // Slots
 export type TabsSlots = {

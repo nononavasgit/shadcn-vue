@@ -6,7 +6,6 @@ export type SearchFn<T> = T | ((context: SearchContext) => T)
 
 export interface SearchUI {
   root?: SearchFn<HTMLAttributes>
-  form?: SearchFn<HTMLAttributes>
 }
 
 export interface SearchProps {

@@ -28,50 +28,53 @@ const spinnerContext = computed<SpinnerContext>(() => {
   }
 })
 
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, spinnerContext.value))
+
+  return {
+    ...attrs,
+    ...rootUI,
+    role: 'status',
+    'aria-busy': props.loading,
+    'aria-label': rootUI['aria-label'] ?? attrs['aria-label'] ?? t('loading'),
+    class: cn('w-full', attrs.class, rootUI.class),
+    style: [attrs.style, rootUI.style],
+  }
+})
+
+const loadingProps = computed(() => {
   const loadingUI = normalizeHTMLAttributes(useResolve(props.ui?.loading, spinnerContext.value))
+
+  return {
+    ...loadingUI,
+    class: cn('flex w-full items-center justify-center', loadingUI.class),
+  }
+})
+
+const iconProps = computed(() => ({
+  ...normalizeIconProps(props.icon),
+  class: 'animate-spin',
+}))
+
+const contentProps = computed(() => {
   const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, spinnerContext.value))
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      role: 'status',
-      'aria-busy': props.loading,
-      'aria-label': rootUI['aria-label'] ?? attrs['aria-label'] ?? t('loading'),
-      class: cn('w-full', attrs.class, rootUI.class),
-      style: [attrs.style, rootUI.style],
-    },
-    loading: {
-      ...loadingUI,
-      class: cn('flex w-full items-center justify-center', loadingUI.class),
-    },
-    icon: {
-      ...normalizeIconProps(props.icon),
-      class: 'animate-spin',
-    },
-    content: {
-      ...contentUI,
-      class: cn('w-full', contentUI.class),
-    },
+    ...contentUI,
+    class: cn('w-full', contentUI.class),
   }
 })
 </script>
 
 <template>
-  <div v-bind="calculatedUI.root" data-slot="spinner">
-    <div v-show="props.loading" v-bind="calculatedUI.loading" data-slot="spinner-loading">
+  <div v-bind="rootProps" data-slot="spinner">
+    <div v-show="props.loading" v-bind="loadingProps" data-slot="spinner-loading">
       <slot name="loading" v-bind="spinnerContext">
-        <Icon
-          v-if="calculatedUI.icon?.name"
-          v-bind="calculatedUI.icon"
-          :name="calculatedUI.icon.name"
-        />
+        <Icon v-if="iconProps.name" v-bind="iconProps" :name="iconProps.name" />
       </slot>
     </div>
 
-    <div v-show="!props.loading" v-bind="calculatedUI.content" data-slot="spinner-content">
+    <div v-show="!props.loading" v-bind="contentProps" data-slot="spinner-content">
       <slot v-bind="spinnerContext" />
     </div>
   </div>

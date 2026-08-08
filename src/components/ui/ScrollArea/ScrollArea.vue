@@ -37,103 +37,125 @@ const scrollAreaContext = computed<ScrollAreaContext>(() => {
 })
 
 const attrs = useAttrs()
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, scrollAreaContext.value))
+
+  return {
+    ...attrs,
+    ...rootUI,
+    type: props.type,
+    dir: props.dir,
+    scrollHideDelay: props.scrollHideDelay,
+    as: props.as,
+    asChild: props.asChild,
+    class: cn('relative', attrs.class, rootUI.class),
+    style: [attrs.style, rootUI.style],
+  }
+})
+
+const viewportProps = computed(() => {
   const viewportUI = normalizeHTMLAttributes(
     useResolve(props.ui?.viewport, scrollAreaContext.value),
   )
+
+  return {
+    ...viewportUI,
+    class: cn(
+      'size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1',
+      viewportUI.class,
+    ),
+  }
+})
+
+const verticalScrollbarProps = computed(() => {
   const verticalScrollbarUI = normalizeHTMLAttributes(
     useResolve(props.ui?.verticalScrollbar, scrollAreaContext.value),
   )
-  const horizontalScrollbarUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.horizontalScrollbar, scrollAreaContext.value),
-  )
+
+  return {
+    ...verticalScrollbarUI,
+    orientation: 'vertical' as const,
+    forceMount: props.forceMount,
+    class: cn(
+      'flex touch-none p-px transition-colors select-none h-full w-2.5 border-l border-l-transparent',
+      verticalScrollbarUI.class,
+    ),
+  }
+})
+
+const thumbVerticalProps = computed(() => {
   const thumbVerticalUI = normalizeHTMLAttributes(
     useResolve(props.ui?.thumbVertical, scrollAreaContext.value),
   )
+
+  return {
+    ...thumbVerticalUI,
+    class: cn('relative flex-1 rounded-full bg-border', thumbVerticalUI.class),
+  }
+})
+
+const horizontalScrollbarProps = computed(() => {
+  const horizontalScrollbarUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.horizontalScrollbar, scrollAreaContext.value),
+  )
+
+  return {
+    ...horizontalScrollbarUI,
+    orientation: 'horizontal' as const,
+    forceMount: props.forceMount,
+    class: cn(
+      'flex touch-none p-px transition-colors select-none h-2.5 flex-col border-t border-t-transparent',
+      horizontalScrollbarUI.class,
+    ),
+  }
+})
+
+const thumbHorizontalProps = computed(() => {
   const thumbHorizontalUI = normalizeHTMLAttributes(
     useResolve(props.ui?.thumbHorizontal, scrollAreaContext.value),
   )
+
+  return {
+    ...thumbHorizontalUI,
+    class: cn('relative flex-1 rounded-full bg-border', thumbHorizontalUI.class),
+  }
+})
+
+const cornerProps = computed(() => {
   const cornerUI = normalizeHTMLAttributes(useResolve(props.ui?.corner, scrollAreaContext.value))
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      type: props.type,
-      dir: props.dir,
-      scrollHideDelay: props.scrollHideDelay,
-      as: props.as,
-      asChild: props.asChild,
-      class: cn('relative', attrs.class, rootUI.class),
-      style: [attrs.style, rootUI.style],
-    },
-    viewport: {
-      ...viewportUI,
-      class: cn(
-        'size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-1',
-        viewportUI.class,
-      ),
-    },
-    verticalScrollbar: {
-      ...verticalScrollbarUI,
-      orientation: 'vertical' as const,
-      forceMount: props.forceMount,
-      class: cn(
-        'flex touch-none p-px transition-colors select-none h-full w-2.5 border-l border-l-transparent',
-        verticalScrollbarUI.class,
-      ),
-    },
-    thumbVertical: {
-      ...thumbVerticalUI,
-      class: cn('relative flex-1 rounded-full bg-border', thumbVerticalUI.class),
-    },
-    horizontalScrollbar: {
-      ...horizontalScrollbarUI,
-      orientation: 'horizontal' as const,
-      forceMount: props.forceMount,
-      class: cn(
-        'flex touch-none p-px transition-colors select-none h-2.5 flex-col border-t border-t-transparent',
-        horizontalScrollbarUI.class,
-      ),
-    },
-    thumbHorizontal: {
-      ...thumbHorizontalUI,
-      class: cn('relative flex-1 rounded-full bg-border', thumbHorizontalUI.class),
-    },
-    corner: {
-      ...cornerUI,
-      class: cn('bg-border', cornerUI.class),
-    },
+    ...cornerUI,
+    class: cn('bg-border', cornerUI.class),
   }
 })
 </script>
 
 <template>
-  <ScrollAreaRoot v-bind="calculatedUI.root" data-slot="scroll-area">
-    <ScrollAreaViewport v-bind="calculatedUI.viewport" data-slot="scroll-area-viewport">
+  <ScrollAreaRoot v-bind="rootProps" data-slot="scroll-area">
+    <ScrollAreaViewport v-bind="viewportProps" data-slot="scroll-area-viewport">
       <slot v-bind="scrollAreaContext" />
     </ScrollAreaViewport>
 
     <ScrollAreaScrollbar
       v-if="props.orientation === 'vertical' || props.orientation === 'both'"
-      v-bind="calculatedUI.verticalScrollbar"
+      v-bind="verticalScrollbarProps"
       data-slot="scroll-area-scrollbar"
     >
-      <ScrollAreaThumb v-bind="calculatedUI.thumbVertical" data-slot="scroll-area-thumb" />
+      <ScrollAreaThumb v-bind="thumbVerticalProps" data-slot="scroll-area-thumb" />
     </ScrollAreaScrollbar>
 
     <ScrollAreaScrollbar
       v-if="props.orientation === 'horizontal' || props.orientation === 'both'"
-      v-bind="calculatedUI.horizontalScrollbar"
+      v-bind="horizontalScrollbarProps"
       data-slot="scroll-area-scrollbar"
     >
-      <ScrollAreaThumb v-bind="calculatedUI.thumbHorizontal" data-slot="scroll-area-thumb" />
+      <ScrollAreaThumb v-bind="thumbHorizontalProps" data-slot="scroll-area-thumb" />
     </ScrollAreaScrollbar>
 
     <ScrollAreaCorner
       v-if="props.orientation === 'both'"
-      v-bind="calculatedUI.corner"
+      v-bind="cornerProps"
       data-slot="scroll-area-corner"
     />
   </ScrollAreaRoot>

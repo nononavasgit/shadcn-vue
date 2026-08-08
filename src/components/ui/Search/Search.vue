@@ -2,6 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useResolve } from '@/composables/useResolve'
+import { cn } from '@/lib/utils'
 import type { SearchContext, SearchProps, SearchSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
@@ -19,30 +20,20 @@ const searchContext = computed<SearchContext>(() => {
   return { props: searchProps }
 })
 
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, searchContext.value))
-  const formUI = normalizeHTMLAttributes(useResolve(props.ui?.form, searchContext.value))
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      class: rootUI.class,
-      style: [attrs.style, rootUI.style],
-    },
-    form: {
-      ...formUI,
-      class: formUI.class,
-      style: formUI.style,
-    },
+    ...attrs,
+    ...rootUI,
+    class: cn(attrs.class, rootUI.class),
+    style: [attrs.style, rootUI.style],
   }
 })
 </script>
 
 <template>
-  <search v-bind="calculatedUI.root" data-slot="search" role="search">
-    <form v-bind="calculatedUI.form" data-slot="search-form">
-      <slot v-bind="searchContext" />
-    </form>
-  </search>
+  <form v-bind="rootProps" data-slot="search" role="search">
+    <slot v-bind="searchContext" />
+  </form>
 </template>

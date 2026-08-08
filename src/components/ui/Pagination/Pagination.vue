@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/Button'
-import { computed, useAttrs } from 'vue'
+import { computed, useAttrs, watch } from 'vue'
 import {
   PaginationEllipsis,
   PaginationFirst,
@@ -11,90 +10,89 @@ import {
   PaginationPrev,
   PaginationRoot,
 } from 'reka-ui'
+import { Button } from '@/components/ui/Button'
+import { normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
+import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
-import { normalizeRootProps, resolvePaginationItemUIValue, resolvePaginationUIValue } from '.'
 import type {
+  PaginationContext,
   PaginationEmits,
   PaginationGeneratedItem,
+  PaginationItemContext,
   PaginationProps,
   PaginationSlots,
-  PaginationUIContext,
-  PaginationItemUIContext,
 } from '.'
-import { useI18n } from '@/i18n'
 
-const { t } = useI18n()
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<PaginationProps>(), {
-  defaultPage: 1,
+  as: 'nav',
+  asChild: false,
   total: 0,
   itemsPerPage: 10,
   siblingCount: 2,
   showEdges: true,
+  disabled: false,
   showControls: true,
+  color: undefined,
   variant: 'outline',
   size: 'md',
-  color: undefined,
+  severity: 'primary',
   activeColor: undefined,
   activeVariant: 'solid',
-  disabled: false,
   firstIcon: 'chevronsLeft',
-  prevIcon: 'chevronLeft',
+  previousIcon: 'chevronLeft',
   nextIcon: 'chevronRight',
   lastIcon: 'chevronsRight',
   ellipsisIcon: 'moreHorizontal',
-  as: 'nav',
-  asChild: false,
   ui: undefined,
 })
-defineEmits<PaginationEmits>()
-const slots = defineSlots<PaginationSlots>()
+const emit = defineEmits<PaginationEmits>()
+defineSlots<PaginationSlots>()
 
 const attrs = useAttrs()
-const model = defineModel<number>('page')
+const page = defineModel<number>('page', { default: 1 })
+const { t } = useI18n()
 
-const contextPagination = computed(() => {
-  const c: PaginationUIContext = {
-    itemsPerPage: props.itemsPerPage,
-    page: model.value ?? props.defaultPage,
-    total: props.total,
-    pageCount: Math.min(props.total / props.itemsPerPage),
-  }
-
-  return c
+watch(page, (nextPage, previousPage) => {
+  if (nextPage !== previousPage) emit('pageChange', nextPage)
 })
-const calculatedUI = computed(() => {
-  // Normalize UI attributes
-  const rootUI = normalizeHTMLAttributes(
-    resolvePaginationUIValue(props.ui?.root, contextPagination.value),
-  )
-  const listUI = normalizeHTMLAttributes(
-    resolvePaginationUIValue(props.ui?.list, contextPagination.value),
-  )
-  const firstUI = normalizeHTMLAttributes(
-    resolvePaginationUIValue(props.ui?.first, contextPagination.value),
-  )
-  const previousUI = normalizeHTMLAttributes(
-    resolvePaginationUIValue(props.ui?.previous, contextPagination.value),
-  )
-  const nextUI = normalizeHTMLAttributes(
-    resolvePaginationUIValue(props.ui?.next, contextPagination.value),
-  )
-  const lastUI = normalizeHTMLAttributes(
-    resolvePaginationUIValue(props.ui?.last, contextPagination.value),
-  )
 
-  const root = normalizeRootProps(props)
+const paginationContext = computed<PaginationContext>(() => {
+  const { ui, ...paginationProps } = props
+  void ui
+
+  return {
+    props: paginationProps,
+    page: page.value,
+    pageCount: props.itemsPerPage > 0 ? Math.ceil(props.total / props.itemsPerPage) : 0,
+  }
+})
+
+const calculatedUI = computed(() => {
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, paginationContext.value))
+  const listUI = normalizeHTMLAttributes(useResolve(props.ui?.list, paginationContext.value))
+  const firstUI = normalizeHTMLAttributes(useResolve(props.ui?.first, paginationContext.value))
+  const previousUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.previous, paginationContext.value),
+  )
+  const nextUI = normalizeHTMLAttributes(useResolve(props.ui?.next, paginationContext.value))
+  const lastUI = normalizeHTMLAttributes(useResolve(props.ui?.last, paginationContext.value))
 
   return {
     root: {
-      as: 'nav',
       ...attrs,
-      ...root,
-      itemsPerPage: props.itemsPerPage,
       ...rootUI,
+      as: props.as,
+      asChild: props.asChild,
+      total: props.total,
+      itemsPerPage: props.itemsPerPage,
+      siblingCount: props.siblingCount,
+      showEdges: props.showEdges,
+      disabled: props.disabled,
+      'data-slot': 'pagination',
       class: cn(
         'mx-auto flex w-full flex-wrap items-center justify-center gap-3',
         attrs.class,
@@ -104,172 +102,190 @@ const calculatedUI = computed(() => {
     },
     list: {
       ...listUI,
-      class: cn('flex flex-wrap flex-row items-center gap-1', listUI.class),
+      'data-slot': 'pagination-list',
+      class: cn('flex flex-row flex-wrap items-center gap-1', listUI.class),
       style: listUI.style,
     },
     first: {
-      'aria-label': t('first'),
       ...firstUI,
       asChild: true,
+      'aria-label': firstUI['aria-label'] ?? t('first'),
+      'data-slot': 'pagination-first',
+      class: cn(firstUI.class),
+      style: firstUI.style,
     },
     previous: {
-      'aria-label': t('previus'),
       ...previousUI,
       asChild: true,
+      'aria-label': previousUI['aria-label'] ?? t('previus'),
+      'data-slot': 'pagination-previous',
+      class: cn(previousUI.class),
+      style: previousUI.style,
     },
     next: {
-      'aria-label': t('next'),
       ...nextUI,
       asChild: true,
+      'aria-label': nextUI['aria-label'] ?? t('next'),
+      'data-slot': 'pagination-next',
+      class: cn(nextUI.class),
+      style: nextUI.style,
     },
     last: {
-      'aria-label': t('last'),
       ...lastUI,
       asChild: true,
+      'aria-label': lastUI['aria-label'] ?? t('last'),
+      'data-slot': 'pagination-last',
+      class: cn(lastUI.class),
+      style: lastUI.style,
     },
+    firstIcon: normalizeIconProps(props.firstIcon),
+    previousIcon: normalizeIconProps(props.previousIcon),
+    nextIcon: normalizeIconProps(props.nextIcon),
+    lastIcon: normalizeIconProps(props.lastIcon),
+    ellipsisIcon: normalizeIconProps(props.ellipsisIcon),
+    items: (items: PaginationGeneratedItem[]) =>
+      items.map((item, index) => {
+        const context: PaginationItemContext = {
+          ...paginationContext.value,
+          item,
+          index,
+          active: item.type === 'page' && item.value === paginationContext.value.page,
+          first: index === 0,
+          last: index === items.length - 1,
+        }
+        const itemUI = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+        const ellipsisUI = normalizeHTMLAttributes(useResolve(props.ui?.ellipsis, context))
+        const key = item.type === 'page' ? `item-${item.value}` : `ellipsis-${index}`
+
+        return {
+          key,
+          data: item,
+          context,
+          slots: {
+            item: `item-${item.type === 'page' ? item.value : index}` as `item-${string}`,
+            ellipsis: `ellipsis-${index}` as `ellipsis-${string}`,
+          },
+          item: {
+            ...itemUI,
+            asChild: true,
+            'aria-label': item.type === 'page' ? t('page_{n}', { n: item.value }) : undefined,
+            'data-slot': 'pagination-item',
+            class: cn(itemUI.class),
+            style: itemUI.style,
+          },
+          ellipsis: {
+            ...ellipsisUI,
+            asChild: true,
+            'aria-label': ellipsisUI['aria-label'] ?? t('morePages'),
+            'data-slot': 'pagination-ellipsis',
+            class: cn('flex items-center justify-center', ellipsisUI.class),
+            style: ellipsisUI.style,
+          },
+        }
+      }),
   }
 })
-
-function buildItems(items: PaginationGeneratedItem[]) {
-  return items?.map((item, index) => {
-    const context: PaginationItemUIContext = {
-      ...contextPagination.value,
-      item,
-      index,
-      active: item.type === 'page' && item.value === contextPagination.value.page,
-      first: index === 0,
-      last: index === items.length - 1,
-    }
-
-    const key = (
-      item.type === 'page' ? 'item-' + item.value : 'ellipsis-' + index
-    ) as keyof PaginationSlots
-
-    const itemUI = normalizeHTMLAttributes(resolvePaginationItemUIValue(props.ui?.item, context))
-    const ellipsisUI = normalizeHTMLAttributes(
-      resolvePaginationItemUIValue(props.ui?.ellipsis, context),
-    )
-
-    return {
-      key,
-      contextItem: context,
-      data: item,
-      item: {
-        asChild: true,
-        'aria-label': item?.type === 'page' ? t('page_{n}', { n: item?.value }) : undefined,
-        ...itemUI,
-        class: cn(itemUI.class),
-        style: itemUI.style,
-      },
-      ellipsis: {
-        asChild: true,
-        'aria-label': t('morePages'),
-        ...ellipsisUI,
-        class: cn('flex items-center justify-center', ellipsisUI.class),
-        style: ellipsisUI.style,
-      },
-    }
-  })
-}
 </script>
 
 <template>
-  <PaginationRoot v-bind="calculatedUI.root" v-model:page="model" data-slot="pagination">
-    <PaginationList v-slot="{ items }" v-bind="calculatedUI.list" data-slot="pagination-list">
-      <slot v-if="slots.preContent" name="preContent" v-bind="contextPagination" />
+  <PaginationRoot v-model:page="page" v-bind="calculatedUI.root">
+    <PaginationList v-slot="{ items }" v-bind="calculatedUI.list">
+      <slot name="preContent" v-bind="paginationContext" />
 
-      <PaginationFirst
-        v-if="props.showControls"
-        v-bind="calculatedUI.first"
-        data-slot="pagination-first"
-      >
-        <slot name="first" v-bind="contextPagination"
-          ><Button
-            :icon="firstIcon"
+      <PaginationFirst v-if="props.showControls" v-bind="calculatedUI.first">
+        <slot name="first" v-bind="paginationContext">
+          <Button
+            :icon="calculatedUI.firstIcon"
             :color="props.color"
             :variant="props.variant"
+            :severity="props.severity"
             :size="props.size"
             square
-        /></slot>
+          />
+        </slot>
       </PaginationFirst>
 
-      <PaginationPrev
-        v-if="props.showControls"
-        v-bind="calculatedUI.previous"
-        data-slot="pagination-previous"
-      >
-        <slot name="previous" v-bind="contextPagination"
-          ><Button
-            :icon="prevIcon"
+      <PaginationPrev v-if="props.showControls" v-bind="calculatedUI.previous">
+        <slot name="previous" v-bind="paginationContext">
+          <Button
+            :icon="calculatedUI.previousIcon"
             :color="props.color"
             :variant="props.variant"
+            :severity="props.severity"
             :size="props.size"
             square
-        /></slot>
+          />
+        </slot>
       </PaginationPrev>
 
-      <template v-for="item in buildItems(items)" :key="item?.key">
+      <template v-for="item in calculatedUI.items(items)" :key="item.key">
         <PaginationListItem
-          v-if="item.data?.type === 'page'"
-          v-bind="item?.item"
-          :value="item?.data?.value"
+          v-if="item.data.type === 'page'"
+          v-bind="item.item"
+          :value="item.data.value"
         >
-          <slot name="item" v-bind="item.contextItem">
-            <Button
-              :label="String(item?.data?.value)"
-              :color="item.contextItem.active ? (props.activeColor ?? props.color) : props.color"
-              :variant="
-                item.contextItem.active ? (props.activeVariant ?? props.variant) : props.variant
-              "
-              :size="props.size"
-              square
-            />
+          <slot :name="item.slots.item" v-bind="item.context">
+            <slot name="item" v-bind="item.context">
+              <Button
+                :label="String(item.data.value)"
+                :color="item.context.active ? (props.activeColor ?? props.color) : props.color"
+                :variant="
+                  item.context.active ? (props.activeVariant ?? props.variant) : props.variant
+                "
+                :severity="props.severity"
+                :size="props.size"
+                square
+              />
+            </slot>
           </slot>
         </PaginationListItem>
-        <PaginationEllipsis v-else v-bind="item?.ellipsis">
-          <slot name="ellipsis" v-bind="item.contextItem"
-            ><Button
-              :icon="ellipsisIcon"
-              :color="props.color"
-              :variant="props.variant"
-              :size="props.size"
-              as="span"
-              square
-          /></slot>
+
+        <PaginationEllipsis v-else v-bind="item.ellipsis">
+          <slot :name="item.slots.ellipsis" v-bind="item.context">
+            <slot name="ellipsis" v-bind="item.context">
+              <Button
+                :icon="calculatedUI.ellipsisIcon"
+                :color="props.color"
+                :variant="props.variant"
+                :severity="props.severity"
+                :size="props.size"
+                as="span"
+                square
+              />
+            </slot>
+          </slot>
         </PaginationEllipsis>
       </template>
 
-      <PaginationNext
-        v-if="props.showControls"
-        v-bind="calculatedUI.next"
-        data-slot="pagination-next"
-      >
-        <slot name="next" v-bind="contextPagination"
-          ><Button
-            :icon="nextIcon"
+      <PaginationNext v-if="props.showControls" v-bind="calculatedUI.next">
+        <slot name="next" v-bind="paginationContext">
+          <Button
+            :icon="calculatedUI.nextIcon"
             :color="props.color"
             :variant="props.variant"
+            :severity="props.severity"
             :size="props.size"
             square
-        /></slot>
+          />
+        </slot>
       </PaginationNext>
 
-      <PaginationLast
-        v-if="props.showControls"
-        v-bind="calculatedUI.last"
-        data-slot="pagination-last"
-      >
-        <slot name="last" v-bind="contextPagination"
-          ><Button
-            :icon="lastIcon"
+      <PaginationLast v-if="props.showControls" v-bind="calculatedUI.last">
+        <slot name="last" v-bind="paginationContext">
+          <Button
+            :icon="calculatedUI.lastIcon"
             :color="props.color"
             :variant="props.variant"
+            :severity="props.severity"
             :size="props.size"
             square
-        /></slot>
+          />
+        </slot>
       </PaginationLast>
 
-      <slot v-if="slots.postContent" name="postContent" v-bind="contextPagination" />
+      <slot name="postContent" v-bind="paginationContext" />
     </PaginationList>
+
+    <slot v-bind="paginationContext" />
   </PaginationRoot>
 </template>

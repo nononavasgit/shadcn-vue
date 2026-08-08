@@ -1,81 +1,20 @@
 import type { HTMLAttributes } from 'vue'
-import type { IconName, IconProps } from '@/components/ui/Icon'
+import type {
+  PaginationRootEmits as RekaPaginationRootEmits,
+  PaginationRootProps as RekaPaginationRootProps,
+} from 'reka-ui'
 import type { ButtonProps } from '@/components/ui/Button'
-import type { PaginationRootEmits, PaginationRootProps as RekaPaginationRootProps } from 'reka-ui'
-import { useResolve } from '@/composables/useResolve'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
 
 export { default as Pagination } from './Pagination.vue'
 
-export type PaginationIcon = IconName | IconProps
-
-// Types
+// Props Reka
 export type PaginationRootProps = Pick<
   RekaPaginationRootProps,
-  'page' | 'defaultPage' | 'total' | 'itemsPerPage' | 'siblingCount' | 'showEdges' | 'disabled'
+  'as' | 'asChild' | 'page' | 'total' | 'itemsPerPage' | 'siblingCount' | 'showEdges' | 'disabled'
 >
 
-export function normalizeRootProps(
-  source: PaginationRootProps | null | undefined,
-): PaginationRootProps | undefined {
-  if (!source) return undefined
-
-  const { page, defaultPage, total, itemsPerPage, siblingCount, showEdges, disabled } = source
-  return {
-    page,
-    defaultPage,
-    total,
-    itemsPerPage,
-    siblingCount,
-    showEdges,
-    disabled,
-  }
-}
-
 export type PaginationGeneratedItem = { type: 'page'; value: number } | { type: 'ellipsis' }
-
-// Context
-export interface PaginationUIContext {
-  page?: number
-  pageCount: number
-  total: number
-  itemsPerPage: number
-}
-
-export interface PaginationItemUIContext extends PaginationUIContext {
-  item: PaginationGeneratedItem
-  index: number
-  active: boolean
-  first: boolean
-  last: boolean
-}
-
-export type PaginationUIValue<T> = T | ((context: PaginationUIContext) => T)
-export type PaginationItemUIValue<T> = T | ((context: PaginationItemUIContext) => T)
-
-export function resolvePaginationUIValue<T>(
-  value: PaginationUIValue<T> | undefined,
-  context: PaginationUIContext,
-): T | undefined {
-  return useResolve(value, context)
-}
-export function resolvePaginationItemUIValue<T>(
-  value: PaginationItemUIValue<T> | undefined,
-  context: PaginationItemUIContext,
-): T | undefined {
-  return useResolve(value, context)
-}
-
-// UI
-export interface PaginationUI {
-  item?: PaginationItemUIValue<HTMLAttributes>
-  ellipsis?: PaginationItemUIValue<HTMLAttributes>
-  root?: PaginationUIValue<HTMLAttributes>
-  list?: PaginationUIValue<HTMLAttributes>
-  first?: PaginationUIValue<HTMLAttributes>
-  previous?: PaginationUIValue<HTMLAttributes>
-  next?: PaginationUIValue<HTMLAttributes>
-  last?: PaginationUIValue<HTMLAttributes>
-}
 
 // Props
 export interface PaginationProps extends PaginationRootProps {
@@ -86,25 +25,62 @@ export interface PaginationProps extends PaginationRootProps {
   severity?: ButtonProps['severity']
   activeColor?: ButtonProps['color']
   activeVariant?: ButtonProps['variant']
-  firstIcon?: PaginationIcon
-  prevIcon?: PaginationIcon
-  nextIcon?: PaginationIcon
-  lastIcon?: PaginationIcon
-  ellipsisIcon?: PaginationIcon
+  firstIcon?: NormalizeIconProps
+  previousIcon?: NormalizeIconProps
+  nextIcon?: NormalizeIconProps
+  lastIcon?: NormalizeIconProps
+  ellipsisIcon?: NormalizeIconProps
   ui?: PaginationUI
 }
 
+// Fn
+export type PaginationFn<T> = T | ((context: PaginationContext) => T)
+export type PaginationItemFn<T> = T | ((context: PaginationItemContext) => T)
+
+// UI
+export interface PaginationUI {
+  root?: PaginationFn<HTMLAttributes>
+  list?: PaginationFn<HTMLAttributes>
+  first?: PaginationFn<HTMLAttributes>
+  previous?: PaginationFn<HTMLAttributes>
+  next?: PaginationFn<HTMLAttributes>
+  last?: PaginationFn<HTMLAttributes>
+  item?: PaginationItemFn<HTMLAttributes>
+  ellipsis?: PaginationItemFn<HTMLAttributes>
+}
+
+// Context
+export interface PaginationContext {
+  props: Omit<PaginationProps, 'ui'>
+  page: number
+  pageCount: number
+}
+
+export interface PaginationItemContext extends PaginationContext {
+  item: PaginationGeneratedItem
+  index: number
+  active: boolean
+  first: boolean
+  last: boolean
+}
+
 // Emits
-export type PaginationEmits = PaginationRootEmits
+export type PaginationEmits = RekaPaginationRootEmits & {
+  pageChange: [page: number]
+}
 
 // Slots
 export type PaginationSlots = {
-  preContent?(props: PaginationUIContext): unknown
-  postContent?(props: PaginationUIContext): unknown
-  item?(props: PaginationItemUIContext): unknown
-  ellipsis?(props: PaginationItemUIContext): unknown
-  first?(props: PaginationUIContext): unknown
-  previous?(props: PaginationUIContext): unknown
-  next?(props: PaginationUIContext): unknown
-  last?(props: PaginationUIContext): unknown
+  default?(props: PaginationContext): unknown
+  preContent?(props: PaginationContext): unknown
+  postContent?(props: PaginationContext): unknown
+  first?(props: PaginationContext): unknown
+  previous?(props: PaginationContext): unknown
+  next?(props: PaginationContext): unknown
+  last?(props: PaginationContext): unknown
+  item?(props: PaginationItemContext): unknown
+  ellipsis?(props: PaginationItemContext): unknown
+} & {
+  [name: `item-${string}`]: ((props: PaginationItemContext) => unknown) | undefined
+  [name: `ellipsis-${string}`]: ((props: PaginationItemContext) => unknown) | undefined
 }

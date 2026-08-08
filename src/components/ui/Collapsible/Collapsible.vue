@@ -2,36 +2,45 @@
 import { computed, useAttrs } from 'vue'
 import { CollapsibleContent, CollapsibleRoot, CollapsibleTrigger } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import {
-  normalizeCollapsibleContentProps,
-  normalizeCollapsibleTriggerProps,
-  resolveCollapsibleUIValue,
-} from '.'
-import type { CollapsibleEmits, CollapsibleProps, CollapsibleSlots } from '.'
+import type { CollapsibleContext, CollapsibleEmits, CollapsibleProps, CollapsibleSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
-defineSlots<CollapsibleSlots>()
+
 const props = withDefaults(defineProps<CollapsibleProps>(), {
+  as: 'div',
+  asChild: false,
+  defaultOpen: false,
+  disabled: false,
   unmountOnHide: false,
   trigger: undefined,
   content: undefined,
   ui: undefined,
 })
 defineEmits<CollapsibleEmits>()
+defineSlots<CollapsibleSlots>()
+
 const attrs = useAttrs()
 const open = defineModel<boolean>('open')
 
+const collapsibleContext = computed<CollapsibleContext>(() => {
+  const { ui, ...collapsibleProps } = props
+  void ui
+
+  return {
+    props: collapsibleProps,
+    open: open.value ?? props.defaultOpen,
+  }
+})
+
 const calculatedUI = computed(() => {
-  const context = { open: open.value ?? false }
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
-  const triggerUI = normalizeHTMLAttributes(resolveCollapsibleUIValue(props.ui?.trigger, context))
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, collapsibleContext.value))
+  const triggerUI = normalizeHTMLAttributes(useResolve(props.ui?.trigger, collapsibleContext.value))
   const normalizedContentUI = normalizeHTMLAttributes(
-    resolveCollapsibleUIValue(props.ui?.content, context),
+    useResolve(props.ui?.content, collapsibleContext.value),
   )
   const { dir: contentDirection, ...contentUI } = normalizedContentUI
-  const trigger = normalizeCollapsibleTriggerProps(props.trigger)
-  const content = normalizeCollapsibleContentProps(props.content)
   void contentDirection
 
   return {
@@ -43,37 +52,41 @@ const calculatedUI = computed(() => {
       defaultOpen: props.defaultOpen,
       disabled: props.disabled,
       unmountOnHide: props.unmountOnHide,
+      'data-slot': 'collapsible',
       class: cn(attrs.class, rootUI.class),
       style: [attrs.style, rootUI.style],
     },
     trigger: {
       ...triggerUI,
-      ...trigger,
-      asChild: trigger?.asChild ?? true,
+      as: props.trigger?.as,
+      asChild: props.trigger?.asChild ?? true,
+      'data-slot': 'collapsible-trigger',
       class: cn(triggerUI.class),
       style: triggerUI.style,
     },
-    content: { ...contentUI, ...content, class: cn(contentUI.class), style: contentUI.style },
+    content: {
+      ...contentUI,
+      as: props.content?.as,
+      asChild: props.content?.asChild,
+      forceMount: props.content?.forceMount,
+      'data-slot': 'collapsible-content',
+      class: cn(contentUI.class),
+      style: contentUI.style,
+    },
   }
 })
 </script>
 
 <template>
-  <CollapsibleRoot
-    v-slot="context"
-    v-model:open="open"
-    v-bind="calculatedUI.root"
-    data-slot="collapsible"
-  >
-    <CollapsibleTrigger v-bind="calculatedUI.trigger" data-slot="collapsible-trigger">
-      <slot v-bind="context" />
+  <CollapsibleRoot v-model:open="open" v-bind="calculatedUI.root">
+    <CollapsibleTrigger v-bind="calculatedUI.trigger">
+      <slot name="trigger" v-bind="collapsibleContext">
+        <slot v-bind="collapsibleContext" />
+      </slot>
     </CollapsibleTrigger>
-    <CollapsibleContent
-      v-if="$slots.content"
-      v-bind="calculatedUI.content"
-      data-slot="collapsible-content"
-    >
-      <slot name="content" v-bind="context" />
+
+    <CollapsibleContent v-if="$slots.content" v-bind="calculatedUI.content">
+      <slot name="content" v-bind="collapsibleContext" />
     </CollapsibleContent>
   </CollapsibleRoot>
 </template>

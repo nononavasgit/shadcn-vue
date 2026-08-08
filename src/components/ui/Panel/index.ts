@@ -1,8 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { CollapsibleRootEmits } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
-import type { IconName, IconProps } from '@/components/ui/Icon'
-import { useResolve } from '@/composables/useResolve'
+import type { CollapsibleEmits } from '@/components/ui/Collapsible'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
 
 export { default as Panel } from './Panel.vue'
 
@@ -46,36 +45,31 @@ export interface PanelProps {
   severity?: PanelVariants['severity']
   color?: string
   label?: string
-  icon?: IconName | IconProps
+  icon?: NormalizeIconProps
   collapsible?: boolean
   ui?: PanelUI
 }
 
-// UI
-export type PanelUIValue<T> = T | ((context: PanelContext) => T)
-export interface PanelUI {
-  root?: PanelUIValue<HTMLAttributes>
-  header?: PanelUIValue<HTMLAttributes>
-  icon?: PanelUIValue<HTMLAttributes>
-  label?: PanelUIValue<HTMLAttributes>
-  arrows?: PanelUIValue<HTMLAttributes>
-  content?: PanelUIValue<HTMLAttributes>
-}
+// Fn
+export type PanelFn<T> = T | ((context: PanelContext) => T)
 
-export function resolvePanelUIValue<T>(
-  value: PanelUIValue<T> | undefined,
-  context: PanelContext,
-): T | undefined {
-  return useResolve(value, context)
+// UI
+export interface PanelUI {
+  root?: PanelFn<HTMLAttributes>
+  header?: PanelFn<HTMLAttributes>
+  label?: PanelFn<HTMLAttributes>
+  arrows?: PanelFn<HTMLAttributes>
+  content?: PanelFn<HTMLAttributes>
 }
 
 // Context
 export interface PanelContext {
-  open?: boolean
+  props: Omit<PanelProps, 'ui' | 'icon'>
+  open: boolean
 }
 
 // Emits
-export type PanelEmits = CollapsibleRootEmits
+export type PanelEmits = CollapsibleEmits
 
 // Slots
 export interface PanelSlots {

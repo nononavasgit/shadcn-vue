@@ -23,91 +23,88 @@ const emptyContext = computed<EmptyContext>(() => {
   return { props: emptyProps }
 })
 
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, emptyContext.value))
-  const headerUI = normalizeHTMLAttributes(useResolve(props.ui?.header, emptyContext.value))
-  const mediaUI = normalizeHTMLAttributes(useResolve(props.ui?.media, emptyContext.value))
-  const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, emptyContext.value))
-  const descriptionUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.description, emptyContext.value),
-  )
-  const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, emptyContext.value))
-
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      class: cn(
-        'flex min-w-0 flex-1 flex-col items-center justify-center gap-6 rounded-lg border-dashed p-6 text-center md:p-12',
-        attrs.class,
-        rootUI.class,
-      ),
-      style: [attrs.style, rootUI.style],
-    },
-    header: {
-      ...headerUI,
-      class: cn('flex max-w-sm flex-col items-center gap-2 text-center', headerUI.class),
-    },
-    media: {
-      ...mediaUI,
-      class: cn(
-        props.mediaVariant === 'icon' &&
-          'flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground [&_svg:not([class*=size-])]:size-6',
-        mediaUI.class,
-      ),
-    },
-    label: {
-      ...labelUI,
-      class: cn('text-lg font-medium tracking-tight', labelUI.class),
-    },
-    description: {
-      ...descriptionUI,
-      class: cn(
-        'text-sm/relaxed text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-primary',
-        descriptionUI.class,
-      ),
-    },
-    content: {
-      ...contentUI,
-      class: cn(
-        'flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm',
-        contentUI.class,
-      ),
-    },
+    ...attrs,
+    ...rootUI,
+    class: cn(
+      'flex min-w-0 flex-1 flex-col items-center justify-center gap-6 rounded-lg border-dashed p-6 text-center md:p-12',
+      attrs.class,
+      rootUI.class,
+    ),
+    style: [attrs.style, rootUI.style],
+  }
+})
+
+const headerProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.header, emptyContext.value))
+  return { ...ui, class: cn('flex max-w-sm flex-col items-center gap-2 text-center', ui.class) }
+})
+const mediaProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.media, emptyContext.value))
+  return {
+    ...ui,
+    class: cn(
+      props.mediaVariant === 'icon' &&
+        'flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-foreground [&_svg:not([class*=size-])]:size-6',
+      ui.class,
+    ),
+  }
+})
+const labelProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, emptyContext.value))
+  return { ...ui, class: cn('text-lg font-medium tracking-tight', ui.class) }
+})
+const descriptionProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.description, emptyContext.value))
+  return {
+    ...ui,
+    class: cn(
+      'text-sm/relaxed text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-primary',
+      ui.class,
+    ),
+  }
+})
+const contentProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.content, emptyContext.value))
+  return {
+    ...ui,
+    class: cn('flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm', ui.class),
   }
 })
 </script>
 
 <template>
-  <div v-bind="calculatedUI.root" data-slot="empty">
+  <div v-bind="rootProps" data-slot="empty">
     <div
       v-if="$slots.media || props.label || $slots.label || props.description || $slots.description"
-      v-bind="calculatedUI.header"
+      v-bind="headerProps"
       data-slot="empty-header"
     >
       <div
         v-if="$slots.media"
-        v-bind="calculatedUI.media"
+        v-bind="mediaProps"
         data-slot="empty-media"
         :data-variant="props.mediaVariant"
       >
         <slot name="media" v-bind="emptyContext" />
       </div>
 
-      <div v-if="props.label || $slots.label" v-bind="calculatedUI.label" data-slot="empty-title">
+      <div v-if="props.label || $slots.label" v-bind="labelProps" data-slot="empty-title">
         <slot name="label" v-bind="emptyContext">{{ props.label }}</slot>
       </div>
 
       <div
         v-if="props.description || $slots.description"
-        v-bind="calculatedUI.description"
+        v-bind="descriptionProps"
         data-slot="empty-description"
       >
         <slot name="description" v-bind="emptyContext">{{ props.description }}</slot>
       </div>
     </div>
 
-    <div v-if="$slots.default" v-bind="calculatedUI.content" data-slot="empty-content">
+    <div v-if="$slots.default" v-bind="contentProps" data-slot="empty-content">
       <slot v-bind="emptyContext" />
     </div>
   </div>

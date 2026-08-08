@@ -24,61 +24,57 @@ const cardContext = computed<CardContext>(() => {
 })
 
 const attrs = useAttrs()
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, cardContext.value))
-  const headerUI = normalizeHTMLAttributes(useResolve(props.ui?.header, cardContext.value))
-  const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, cardContext.value))
-  const descriptionUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.description, cardContext.value),
-  )
-  const actionUI = normalizeHTMLAttributes(useResolve(props.ui?.action, cardContext.value))
-  const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, cardContext.value))
-  const footerUI = normalizeHTMLAttributes(useResolve(props.ui?.footer, cardContext.value))
-
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      class: cn(
-        'flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm',
-        attrs.class,
-        rootUI.class,
-      ),
-      style: [attrs.style, rootUI.style],
-    },
-    header: {
-      ...headerUI,
-      class: cn(
-        '@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6',
-        headerUI.class,
-      ),
-    },
-    label: {
-      ...labelUI,
-      class: cn('leading-none font-semibold', labelUI.class),
-    },
-    description: {
-      ...descriptionUI,
-      class: cn('text-sm text-muted-foreground', descriptionUI.class),
-    },
-    action: {
-      ...actionUI,
-      class: cn('col-start-2 row-span-2 row-start-1 self-start justify-self-end', actionUI.class),
-    },
-    content: {
-      ...contentUI,
-      class: cn('px-6', contentUI.class),
-    },
-    footer: {
-      ...footerUI,
-      class: cn('flex items-center px-6 [.border-t]:pt-6', footerUI.class),
-    },
+    ...attrs,
+    ...rootUI,
+    class: cn(
+      'flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm',
+      attrs.class,
+      rootUI.class,
+    ),
+    style: [attrs.style, rootUI.style],
   }
+})
+
+const headerProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.header, cardContext.value))
+  return {
+    ...ui,
+    class: cn(
+      '@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6',
+      ui.class,
+    ),
+  }
+})
+const labelProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, cardContext.value))
+  return { ...ui, class: cn('leading-none font-semibold', ui.class) }
+})
+const descriptionProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.description, cardContext.value))
+  return { ...ui, class: cn('text-sm text-muted-foreground', ui.class) }
+})
+const actionProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.action, cardContext.value))
+  return {
+    ...ui,
+    class: cn('col-start-2 row-span-2 row-start-1 self-start justify-self-end', ui.class),
+  }
+})
+const contentProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.content, cardContext.value))
+  return { ...ui, class: cn('px-6', ui.class) }
+})
+const footerProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.footer, cardContext.value))
+  return { ...ui, class: cn('flex items-center px-6 [.border-t]:pt-6', ui.class) }
 })
 </script>
 
 <template>
-  <div v-bind="calculatedUI.root" data-slot="card">
+  <div v-bind="rootProps" data-slot="card">
     <div
       v-if="
         props.label ||
@@ -88,33 +84,33 @@ const calculatedUI = computed(() => {
         $slots.description ||
         $slots.action
       "
-      v-bind="calculatedUI.header"
+      v-bind="headerProps"
       data-slot="card-header"
     >
       <slot name="header" v-bind="cardContext">
-        <h3 v-if="props.label || $slots.label" v-bind="calculatedUI.label" data-slot="card-title">
+        <h3 v-if="props.label || $slots.label" v-bind="labelProps" data-slot="card-title">
           <slot name="label" v-bind="cardContext">{{ props.label }}</slot>
         </h3>
 
         <p
           v-if="props.description || $slots.description"
-          v-bind="calculatedUI.description"
+          v-bind="descriptionProps"
           data-slot="card-description"
         >
           <slot name="description" v-bind="cardContext">{{ props.description }}</slot>
         </p>
       </slot>
 
-      <div v-if="$slots.action" v-bind="calculatedUI.action" data-slot="card-action">
+      <div v-if="$slots.action" v-bind="actionProps" data-slot="card-action">
         <slot name="action" v-bind="cardContext" />
       </div>
     </div>
 
-    <div v-if="$slots.default" v-bind="calculatedUI.content" data-slot="card-content">
+    <div v-if="$slots.default" v-bind="contentProps" data-slot="card-content">
       <slot v-bind="cardContext" />
     </div>
 
-    <div v-if="$slots.footer" v-bind="calculatedUI.footer" data-slot="card-footer">
+    <div v-if="$slots.footer" v-bind="footerProps" data-slot="card-footer">
       <slot name="footer" v-bind="cardContext" />
     </div>
   </div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
+import { computed, useAttrs, watch } from 'vue'
 import { Button } from '@/components/ui/Button'
 import { Collapsible } from '@/components/ui/Collapsible'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
@@ -13,7 +13,6 @@ import type { PanelContext, PanelProps, PanelSlots } from '.'
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<PanelProps>(), {
-  open: undefined,
   variant: 'solid',
   severity: 'primary',
   color: undefined,
@@ -23,18 +22,23 @@ const props = withDefaults(defineProps<PanelProps>(), {
   ui: undefined,
 })
 defineSlots<PanelSlots>()
+const emit = defineEmits<{ valueChange: [value: boolean] }>()
 
 const attrs = useAttrs()
-const open = defineModel<boolean>('open')
+const open = defineModel<boolean>('open', { default: false })
 const { colorStyle } = useColor(
   computed(() => props.color),
   'panel',
 )
 const calculatedOpen = computed<boolean>({
-  get: () => (props.collapsible ? (open.value ?? false) : true),
+  get: () => (props.collapsible ? open.value : true),
   set: (value) => {
     if (props.collapsible) open.value = value
   },
+})
+
+watch(open, (nextValue, previousValue) => {
+  if (nextValue !== previousValue) emit('valueChange', nextValue)
 })
 
 const panelContext = computed<PanelContext>(() => {
@@ -48,89 +52,101 @@ const panelContext = computed<PanelContext>(() => {
   }
 })
 
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, panelContext.value))
+
+  return {
+    ...attrs,
+    ...rootUI,
+    'data-slot': 'panel',
+    class: cn(attrs.class, rootUI.class),
+    style: [colorStyle.value, attrs.style, rootUI.style],
+  }
+})
+
+const headerProps = computed(() => {
   const headerUI = normalizeHTMLAttributes(useResolve(props.ui?.header, panelContext.value))
+
+  return {
+    ...headerUI,
+    'data-slot': 'panel-header',
+    class: cn(headerUI.class),
+    style: headerUI.style,
+  }
+})
+
+const triggerProps = computed(() => ({
+  as: props.collapsible ? undefined : 'span',
+  color: props.color,
+  severity: props.severity,
+  variant: props.variant,
+  class: cn(
+    'w-full',
+    calculatedOpen.value && 'rounded-br-none rounded-bl-none',
+    !props.collapsible && 'justify-start',
+  ),
+}))
+
+const iconProps = computed(() => ({ ...normalizeIconProps(props.icon) }))
+
+const labelProps = computed(() => {
   const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, panelContext.value))
+
+  return {
+    ...labelUI,
+    'data-slot': 'panel-label',
+    class: cn(labelUI.class),
+    style: labelUI.style,
+  }
+})
+
+const arrowsProps = computed(() => {
   const arrowsUI = normalizeHTMLAttributes(useResolve(props.ui?.arrows, panelContext.value))
+
+  return {
+    ...arrowsUI,
+    'data-slot': 'panel-arrows',
+    class: cn('ml-auto shrink-0', arrowsUI.class),
+    style: arrowsUI.style,
+  }
+})
+
+const contentProps = computed(() => {
   const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, panelContext.value))
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      'data-slot': 'panel',
-      class: cn(attrs.class, rootUI.class),
-      style: [colorStyle.value, attrs.style, rootUI.style],
-    },
-    header: {
-      ...headerUI,
-      'data-slot': 'panel-header',
-      class: cn(headerUI.class),
-      style: headerUI.style,
-    },
-    trigger: {
-      as: props.collapsible ? undefined : 'span',
-      color: props.color,
-      severity: props.severity,
-      variant: props.variant,
-      class: cn(
-        'w-full',
-        calculatedOpen.value && 'rounded-br-none rounded-bl-none',
-        !props.collapsible && 'justify-start',
-      ),
-    },
-    icon: normalizeIconProps(props.icon),
-    label: {
-      ...labelUI,
-      'data-slot': 'panel-label',
-      class: cn(labelUI.class),
-      style: labelUI.style,
-    },
-    arrows: {
-      ...arrowsUI,
-      'data-slot': 'panel-arrows',
-      class: cn('ml-auto shrink-0', arrowsUI.class),
-      style: arrowsUI.style,
-    },
-    content: {
-      ...contentUI,
-      'data-slot': 'panel-content',
-      class: cn(
-        panelVariants({
-          severity: props.severity,
-          variant: props.variant,
-          color: Boolean(props.color),
-        }),
-        'rounded-t-none border-t-0 p-[15px] text-card-foreground shadow-none',
-        contentUI.class,
-      ),
-      style: contentUI.style,
-    },
+    ...contentUI,
+    'data-slot': 'panel-content',
+    class: cn(
+      panelVariants({
+        severity: props.severity,
+        variant: props.variant,
+        color: Boolean(props.color),
+      }),
+      'rounded-t-none border-t-0 p-[15px] text-card-foreground shadow-none',
+      contentUI.class,
+    ),
+    style: contentUI.style,
   }
 })
 </script>
 
 <template>
-  <Collapsible v-model:open="calculatedOpen" v-bind="calculatedUI.root">
+  <Collapsible v-model:open="calculatedOpen" v-bind="rootProps">
     <template #trigger>
-      <div v-bind="calculatedUI.header">
-        <Button v-bind="calculatedUI.trigger">
+      <div v-bind="headerProps">
+        <Button v-bind="triggerProps">
           <span class="flex min-w-0 items-center gap-2">
             <slot name="icon" v-bind="panelContext">
-              <Icon
-                v-if="calculatedUI.icon?.name"
-                v-bind="calculatedUI.icon"
-                :name="calculatedUI.icon.name"
-              />
+              <Icon v-if="iconProps.name" v-bind="iconProps" :name="iconProps.name" />
             </slot>
 
-            <span v-if="props.label || $slots.label" v-bind="calculatedUI.label">
+            <span v-if="props.label || $slots.label" v-bind="labelProps">
               <slot name="label" v-bind="panelContext">{{ props.label }}</slot>
             </span>
           </span>
 
-          <span v-if="props.collapsible" v-bind="calculatedUI.arrows">
+          <span v-if="props.collapsible" v-bind="arrowsProps">
             <slot name="arrows" v-bind="panelContext">
               <Icon :name="calculatedOpen ? 'chevronUp' : 'chevronDown'" size="sm" />
             </slot>
@@ -140,7 +156,7 @@ const calculatedUI = computed(() => {
     </template>
 
     <template v-if="$slots.default" #content>
-      <div v-bind="calculatedUI.content">
+      <div v-bind="contentProps">
         <slot v-bind="panelContext" />
       </div>
     </template>

@@ -3,7 +3,7 @@ import type { PrimitiveProps } from 'reka-ui'
 
 export { default as Input } from './Input.vue'
 
-export type InputValue = string | number
+export type InputValue = string
 
 // Fn
 export type InputFn<T> = T | ((context: InputContext) => T)
@@ -15,17 +15,18 @@ export interface InputUI {
 
 // Props
 export interface InputProps extends PrimitiveProps {
-  modelValue?: InputValue
-  defaultValue?: InputValue
+  value?: InputValue
   ui?: InputUI
 }
 
 // Context
 export interface InputContext {
   props: Omit<InputProps, 'ui'>
+  value: InputValue
 }
 
 // Emits
 export interface InputEmits {
-  'update:modelValue': [value: InputValue]
+  'update:value': [value: InputValue]
+  valueChange: [value: InputValue]
 }

@@ -27,21 +27,19 @@ const iconContext = computed(() => {
   return context
 })
 
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, iconContext.value))
 
   return {
-    root: {
-      'aria-hidden': true,
-      ...attrs,
-      ...rootUI,
-      class: cn(iconVariants({ size: props.size }), rootUI.class, attrs.class),
-      style: [{ color: props.color }, rootUI.style, attrs.style],
-    },
+    'aria-hidden': true,
+    ...attrs,
+    ...rootUI,
+    class: cn(iconVariants({ size: props.size }), rootUI.class, attrs.class),
+    style: [{ color: props.color }, rootUI.style, attrs.style],
   }
 })
 </script>
 
 <template>
-  <component v-bind="calculatedUI.root" :is="icon" />
+  <component v-bind="rootProps" :is="icon" />
 </template>

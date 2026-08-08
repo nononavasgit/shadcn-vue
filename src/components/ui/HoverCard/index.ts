@@ -12,7 +12,7 @@ export { default as HoverCard } from './HoverCard.vue'
 
 export type HoverCardRootProps = Pick<
   RekaHoverCardRootProps,
-  'open' | 'defaultOpen' | 'openDelay' | 'closeDelay' | 'enableTouch'
+  'openDelay' | 'closeDelay' | 'enableTouch'
 >
 export type HoverCardTriggerProps = Pick<RekaHoverCardTriggerProps, 'as' | 'asChild' | 'reference'>
 export type HoverCardContentProps = Pick<
@@ -46,86 +46,6 @@ export type HoverCardArrowProps = Pick<
   'as' | 'asChild' | 'width' | 'height' | 'rounded'
 >
 
-export function normalizeHoverCardRootProps(
-  source: HoverCardRootProps | null | undefined,
-): HoverCardRootProps | undefined {
-  if (!source) return undefined
-  const { defaultOpen, open, openDelay, closeDelay, enableTouch } = source
-  return { defaultOpen, open, openDelay, closeDelay, enableTouch }
-}
-
-export function normalizeHoverCardTriggerProps(
-  source: HoverCardTriggerProps | null | undefined,
-): HoverCardTriggerProps | undefined {
-  if (!source) return undefined
-  const { as, asChild, reference } = source
-  return { as, asChild, reference }
-}
-
-export function normalizeHoverCardContentProps(
-  source: HoverCardContentProps | null | undefined,
-): HoverCardContentProps | undefined {
-  if (!source) return undefined
-  const {
-    as,
-    asChild,
-    align,
-    alignFlip,
-    alignOffset,
-    arrowPadding,
-    avoidCollisions,
-    collisionBoundary,
-    collisionPadding,
-    forceMount,
-    hideShiftedArrow,
-    hideWhenDetached,
-    positionStrategy,
-    prioritizePosition,
-    side,
-    sideFlip,
-    sideOffset,
-    sticky,
-    updatePositionStrategy,
-  } = source
-  return {
-    as,
-    asChild,
-    align,
-    alignFlip,
-    alignOffset,
-    arrowPadding,
-    avoidCollisions,
-    collisionBoundary,
-    collisionPadding,
-    forceMount,
-    hideShiftedArrow,
-    hideWhenDetached,
-    positionStrategy,
-    prioritizePosition,
-    side,
-    sideFlip,
-    sideOffset,
-    sticky,
-    updatePositionStrategy,
-  }
-}
-
-export function normalizeHoverCardPortalProps(
-  source: HoverCardPortalProps | null | undefined,
-): HoverCardPortalProps | undefined {
-  if (!source) return undefined
-  const { defer, disabled, to, forceMount } = source
-  return { defer, disabled, to, forceMount }
-}
-
-export function normalizeHoverCardArrowProps(
-  source: HoverCardArrowProps | null | undefined,
-): HoverCardArrowProps | undefined {
-  if (!source) return undefined
-  const { as, asChild, width, height, rounded } = source
-  return { as, asChild, width, height, rounded }
-}
-
 export type HoverCardFn<T> = T | ((context: HoverCardContext) => T)
 
 export interface HoverCardUI {
@@ -136,6 +56,7 @@ export interface HoverCardUI {
 }
 
 export interface HoverCardProps extends HoverCardRootProps {
+  open?: boolean
   label?: string
   trigger?: HoverCardTriggerProps
   content?: HoverCardContentProps

@@ -53,7 +53,8 @@ const open = computed<boolean>({
 
 watch(open, (value, previousValue) => {
   if (value === previousValue) return
-  emit(value ? 'show' : 'close')
+  if (value) emit('show')
+  else emit('close')
 })
 
 function close() {

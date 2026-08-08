@@ -1,25 +1,33 @@
 import type { HTMLAttributes } from 'vue'
-import type { FieldVariants } from '@/components/primitives/Field'
 
 export { default as FieldSet } from './FieldSet.vue'
 
+export type FieldSetOrientation = 'vertical' | 'horizontal' | 'responsive'
+export type FieldSetLegendVariant = 'legend' | 'label'
+
+export type FieldSetFn<T> = T | ((context: FieldSetContext) => T)
+
 export interface FieldSetUI {
-  root?: HTMLAttributes
-  legend?: HTMLAttributes
-  description?: HTMLAttributes
-  group?: HTMLAttributes
+  root?: FieldSetFn<HTMLAttributes>
+  legend?: FieldSetFn<HTMLAttributes>
+  description?: FieldSetFn<HTMLAttributes>
+  group?: FieldSetFn<HTMLAttributes>
 }
 
 export interface FieldSetProps {
   legend?: string
   description?: string
-  legendVariant?: 'legend' | 'label'
-  orientation?: FieldVariants['orientation']
+  legendVariant?: FieldSetLegendVariant
+  orientation?: FieldSetOrientation
   ui?: FieldSetUI
 }
 
+export interface FieldSetContext {
+  props: Omit<FieldSetProps, 'ui'>
+}
+
 export interface FieldSetSlots {
-  default?(): unknown
-  legend?(): unknown
-  description?(): unknown
+  default?(props: FieldSetContext): unknown
+  legend?(props: FieldSetContext): unknown
+  description?(props: FieldSetContext): unknown
 }

@@ -32,11 +32,6 @@ export type ToggleGroupItemProps = Pick<
   'as' | 'asChild' | 'value' | 'disabled'
 >
 
-export function normalizeToggleGroupItemProps(source: ToggleGroupItemProps): ToggleGroupItemProps {
-  const { as, asChild, value, disabled } = source
-  return { as, asChild, value, disabled }
-}
-
 // Item
 export interface ToggleGroupItem extends ToggleGroupItemProps {
   id: string | number

@@ -8,7 +8,7 @@ import { useColor } from '@/composables'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
-import { normalizeToggleGroupItemProps } from '.'
+import type { IconProps } from '@/components/ui/Icon'
 import type {
   ToggleGroupContext,
   ToggleGroupItemContext,
@@ -83,132 +83,138 @@ const toggleGroupContext = computed<ToggleGroupContext>(() => {
   }
 })
 
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, toggleGroupContext.value))
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      as: props.as,
-      asChild: props.asChild,
-      type: props.type,
-      rovingFocus: props.rovingFocus,
-      orientation: props.orientation,
-      dir: props.dir,
-      loop: props.loop,
-      disabled: props.disabled,
-      name: props.name,
-      required: props.required,
-      'data-slot': 'toggle-group',
-      'data-orientation': props.orientation ?? 'horizontal',
-      'data-spacing': props.spacing,
-      class: cn(
-        'group/toggle-group flex w-fit items-center gap-(--toggle-group-gap) data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch',
-        props.spacing === 0 &&
-          (props.orientation ?? 'horizontal') === 'horizontal' &&
-          '[&>*]:rounded-none [&>*+*]:border-l-0 [&>*:first-child]:rounded-l-md [&>*:last-child]:rounded-r-md',
-        props.spacing === 0 &&
-          props.orientation === 'vertical' &&
-          '[&>*]:rounded-none [&>*+*]:border-t-0 [&>*:first-child]:rounded-t-md [&>*:last-child]:rounded-b-md',
-        attrs.class,
-        rootUI.class,
-      ),
-      style: [colorStyle.value, spacingStyle.value, attrs.style, rootUI.style],
-    },
-    items: props.items.map((item, index) => {
-      const context: ToggleGroupItemContext = {
-        ...toggleGroupContext.value,
-        item,
-        index,
-        selected: isSelected(item.value),
-        first: index === 0,
-        last: index === props.items.length - 1,
-      }
-      const itemUI = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
-      const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
-      const itemProps = normalizeToggleGroupItemProps(item)
-      const icon = normalizeIconProps(item.icon)
-      const trailingIcon = normalizeIconProps(item.trailingIcon)
-      const key = String(item.id)
-
-      return {
-        key,
-        data: item,
-        context,
-        slots: {
-          item: `item-${key}` as `item-${string}`,
-          leading: `leading-${key}` as `leading-${string}`,
-          label: `label-${key}` as `label-${string}`,
-          trailing: `trailing-${key}` as `trailing-${string}`,
-        },
-        item: {
-          ...itemUI,
-          ...itemProps,
-          'data-variant': props.variant,
-          'data-severity': props.severity,
-          'data-size': props.size,
-          'data-slot': 'toggle-group-item',
-          'data-orientation': props.orientation ?? 'horizontal',
-          'data-spacing': props.spacing,
-          class: cn(
-            'inline-flex shrink-0 items-center justify-center gap-2 rounded-md border border-transparent text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
-            toggleVariants({
-              variant: props.variant,
-              severity: props.severity,
-              size: props.size,
-              color: Boolean(props.color),
-            }),
-            itemUI.class,
-          ),
-          style: itemUI.style,
-        },
-        icon: {
-          ...icon,
-        },
-        label: {
-          ...labelUI,
-          class: cn(labelUI.class),
-          style: labelUI.style,
-        },
-        trailingIcon: {
-          ...trailingIcon,
-        },
-      }
-    }),
+    ...attrs,
+    ...rootUI,
+    as: props.as,
+    asChild: props.asChild,
+    type: props.type,
+    rovingFocus: props.rovingFocus,
+    orientation: props.orientation,
+    dir: props.dir,
+    loop: props.loop,
+    disabled: props.disabled,
+    name: props.name,
+    required: props.required,
+    'data-slot': 'toggle-group',
+    'data-orientation': props.orientation ?? 'horizontal',
+    'data-spacing': props.spacing,
+    class: cn(
+      'group/toggle-group flex w-fit items-center gap-(--toggle-group-gap) data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch',
+      props.spacing === 0 &&
+        (props.orientation ?? 'horizontal') === 'horizontal' &&
+        '[&>*]:rounded-none [&>*+*]:border-l-0 [&>*:first-child]:rounded-l-md [&>*:last-child]:rounded-r-md',
+      props.spacing === 0 &&
+        props.orientation === 'vertical' &&
+        '[&>*]:rounded-none [&>*+*]:border-t-0 [&>*:first-child]:rounded-t-md [&>*:last-child]:rounded-b-md',
+      attrs.class,
+      rootUI.class,
+    ),
+    style: [colorStyle.value, spacingStyle.value, attrs.style, rootUI.style],
   }
 })
+
+const itemContexts = computed<ToggleGroupItemContext[]>(() =>
+  props.items.map((item, index) => ({
+    ...toggleGroupContext.value,
+    item,
+    index,
+    selected: isSelected(item.value),
+    first: index === 0,
+    last: index === props.items.length - 1,
+  })),
+)
+
+function getItemProps(context: ToggleGroupItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+  return {
+    ...ui,
+    as: context.item.as,
+    asChild: context.item.asChild,
+    value: context.item.value,
+    disabled: context.item.disabled,
+    'data-variant': props.variant,
+    'data-severity': props.severity,
+    'data-size': props.size,
+    'data-slot': 'toggle-group-item',
+    'data-orientation': props.orientation ?? 'horizontal',
+    'data-spacing': props.spacing,
+    class: cn(
+      'inline-flex shrink-0 items-center justify-center gap-2 rounded-md border border-transparent text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
+      toggleVariants({
+        variant: props.variant,
+        severity: props.severity,
+        size: props.size,
+        color: Boolean(props.color),
+      }),
+      ui.class,
+    ),
+    style: ui.style,
+  }
+}
+
+function getLabelProps(context: ToggleGroupItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
+  return { ...ui, class: cn(ui.class), style: ui.style }
+}
+
+function getIconProps(context: ToggleGroupItemContext): IconProps {
+  return normalizeIconProps(context.item.icon)!
+}
+
+function getTrailingIconProps(context: ToggleGroupItemContext): IconProps {
+  return normalizeIconProps(context.item.trailingIcon)!
+}
+
+function getSlotNames(context: ToggleGroupItemContext) {
+  const key = getKey(context)
+  return {
+    item: `item-${key}` as `item-${string}`,
+    leading: `leading-${key}` as `leading-${string}`,
+    label: `label-${key}` as `label-${string}`,
+    trailing: `trailing-${key}` as `trailing-${string}`,
+  }
+}
+
+function getKey(context: ToggleGroupItemContext) {
+  return String(context.item.id)
+}
 </script>
 
 <template>
-  <ToggleGroupRoot v-bind="calculatedUI.root" v-model="value">
+  <ToggleGroupRoot v-bind="rootProps" v-model="value">
     <slot v-bind="toggleGroupContext">
-      <ToggleGroupItem v-for="item in calculatedUI.items" :key="item.key" v-bind="item.item">
-        <slot :name="item.slots.item" v-bind="item.context">
-          <slot name="item" v-bind="item.context">
-            <slot :name="item.slots.leading" v-bind="item.context">
-              <slot name="leading" v-bind="item.context">
+      <ToggleGroupItem
+        v-for="itemContext in itemContexts"
+        :key="getKey(itemContext)"
+        v-bind="getItemProps(itemContext)"
+      >
+        <slot :name="getSlotNames(itemContext).item" v-bind="itemContext">
+          <slot name="item" v-bind="itemContext">
+            <slot :name="getSlotNames(itemContext).leading" v-bind="itemContext">
+              <slot name="leading" v-bind="itemContext">
                 <Icon
-                  v-if="item.icon?.name"
-                  v-bind="item.icon"
-                  :name="item.icon.name"
+                  v-if="itemContext.item.icon"
+                  v-bind="getIconProps(itemContext)"
                   data-slot="toggle-group-icon"
                 />
               </slot>
             </slot>
 
-            <slot :name="item.slots.label" v-bind="item.context">
-              <slot name="label" v-bind="item.context">
-                <span v-bind="item.label">{{ item.data.label }}</span>
+            <slot :name="getSlotNames(itemContext).label" v-bind="itemContext">
+              <slot name="label" v-bind="itemContext">
+                <span v-bind="getLabelProps(itemContext)">{{ itemContext.item.label }}</span>
               </slot>
             </slot>
 
-            <slot :name="item.slots.trailing" v-bind="item.context">
-              <slot name="trailing" v-bind="item.context">
+            <slot :name="getSlotNames(itemContext).trailing" v-bind="itemContext">
+              <slot name="trailing" v-bind="itemContext">
                 <Icon
-                  v-if="item.trailingIcon?.name"
-                  v-bind="item.trailingIcon"
-                  :name="item.trailingIcon.name"
+                  v-if="itemContext.item.trailingIcon"
+                  v-bind="getTrailingIconProps(itemContext)"
                   data-slot="toggle-group-trailing-icon"
                 />
               </slot>

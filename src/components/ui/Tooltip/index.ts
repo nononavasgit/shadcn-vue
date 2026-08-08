@@ -14,8 +14,6 @@ export { default as Tooltip } from './Tooltip.vue'
 // Props Reka
 export type TooltipRootProps = Pick<
   RekaTooltipRootProps,
-  | 'open'
-  | 'defaultOpen'
   | 'delayDuration'
   | 'disableHoverableContent'
   | 'disableClosingTrigger'
@@ -45,92 +43,6 @@ export type TooltipContentProps = Pick<
   EmitsAsProps<RekaTooltipContentEmits>
 export type TooltipArrowProps = Pick<RekaTooltipArrowProps, 'as' | 'asChild' | 'width' | 'height'>
 
-export function normalizeTooltipRootProps(
-  source: TooltipRootProps | null | undefined,
-): TooltipRootProps | undefined {
-  if (!source) return undefined
-  const {
-    defaultOpen,
-    delayDuration,
-    disableClosingTrigger,
-    disableHoverableContent,
-    disabled,
-    ignoreNonKeyboardFocus,
-    open,
-  } = source
-  return {
-    defaultOpen,
-    delayDuration,
-    disableClosingTrigger,
-    disableHoverableContent,
-    disabled,
-    ignoreNonKeyboardFocus,
-    open,
-  }
-}
-
-export function normalizeTooltipTriggerProps(
-  source: TooltipTriggerProps | null | undefined,
-): TooltipTriggerProps | undefined {
-  if (!source) return undefined
-  const { as, asChild, reference } = source
-  return { as, asChild, reference }
-}
-
-export function normalizeTooltipContentProps(
-  source: TooltipContentProps | null | undefined,
-): TooltipContentProps | undefined {
-  if (!source) return undefined
-  const {
-    as,
-    asChild,
-    align,
-    alignOffset,
-    ariaLabel,
-    arrowPadding,
-    avoidCollisions,
-    collisionBoundary,
-    collisionPadding,
-    forceMount,
-    hideWhenDetached,
-    positionStrategy,
-    side,
-    sideOffset,
-    sticky,
-    updatePositionStrategy,
-    onEscapeKeyDown,
-    onPointerDownOutside,
-  } = source
-  return {
-    as,
-    asChild,
-    align,
-    alignOffset,
-    ariaLabel,
-    arrowPadding,
-    avoidCollisions,
-    collisionBoundary,
-    collisionPadding,
-    forceMount,
-    hideWhenDetached,
-    positionStrategy,
-    side,
-    sideOffset,
-    sticky,
-    updatePositionStrategy,
-    onEscapeKeyDown,
-    onPointerDownOutside,
-  }
-}
-
-export function normalizeTooltipArrowProps(
-  source: TooltipArrowProps | null | undefined,
-): TooltipArrowProps | undefined {
-  if (!source) return undefined
-  const { as, asChild, width, height } = source
-  return { as, asChild, width, height }
-}
-
 // Fn
 export type TooltipFn<T> = T | ((context: TooltipContext) => T)
 
@@ -144,6 +56,7 @@ export interface TooltipUI {
 
 // Props
 export interface TooltipProps extends TooltipRootProps {
+  open?: boolean
   label?: string
   trigger?: TooltipTriggerProps
   content?: TooltipContentProps

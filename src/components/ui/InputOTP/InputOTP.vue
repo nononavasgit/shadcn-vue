@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
+import { computed, useAttrs, watch } from 'vue'
 import { PinInputInput, PinInputRoot } from 'reka-ui'
 import { Icon } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
 import {
-  normalizeInputOTPInputProps,
-  resolveInputOTPUIValue,
-  type InputOTPEmits,
+  type InputOTPContext,
   type InputOTPGroupContext,
   type InputOTPInputContext,
   type InputOTPProps,
+  type InputOTPSeparatorContext,
   type InputOTPSlots,
   type InputOTPValue,
 } from '.'
@@ -26,10 +26,24 @@ const props = withDefaults(defineProps<InputOTPProps>(), {
   groups: undefined,
   ui: undefined,
 })
-const emit = defineEmits<InputOTPEmits>()
+const emit = defineEmits<{
+  complete: [value: InputOTPValue]
+  valueChange: [value: InputOTPValue]
+}>()
 const slots = defineSlots<InputOTPSlots>()
 const attrs = useAttrs()
-const model = defineModel<InputOTPValue>({ default: () => [] })
+const value = defineModel<InputOTPValue>('value', { default: () => [] })
+
+watch(value, (nextValue, previousValue) => {
+  if (nextValue !== previousValue) emit('valueChange', nextValue)
+})
+
+const inputOTPContext = computed<InputOTPContext>(() => {
+  const { ui, ...inputOTPProps } = props
+  void ui
+
+  return { props: inputOTPProps, value: value.value }
+})
 
 const groupSizes = computed(() => {
   const maxlength = Math.max(1, Math.floor(props.maxlength))
@@ -53,11 +67,10 @@ const groupSizes = computed(() => {
   return sizes
 })
 
-const calculatedGroups = computed(() => {
+const groupContexts = computed(() => {
   let startIndex = 0
-  const inputProps = normalizeInputOTPInputProps(props.input)
 
-  const groups = groupSizes.value.map((size, groupIndex, allGroups) => {
+  return groupSizes.value.map((size, groupIndex, allGroups) => {
     const context: InputOTPGroupContext = {
       groupIndex,
       size,
@@ -65,126 +78,103 @@ const calculatedGroups = computed(() => {
       first: groupIndex === 0,
       last: groupIndex === allGroups.length - 1,
     }
-    const groupUI = normalizeHTMLAttributes(resolveInputOTPUIValue(props.ui?.group, context))
-    const group = {
-      key: `group-${groupIndex}`,
-      context,
-      ui: {
-        ...groupUI,
-        class: cn('flex items-center', groupUI.class),
-        style: groupUI.style,
-      },
-      inputs: Array.from({ length: size }, (_, indexInGroup) => {
-        const inputContext: InputOTPInputContext = {
-          ...context,
-          index: startIndex + indexInGroup,
-          indexInGroup,
-          firstInGroup: indexInGroup === 0,
-          lastInGroup: indexInGroup === size - 1,
-        }
-        const inputUI = normalizeHTMLAttributes(
-          resolveInputOTPUIValue(props.ui?.input, inputContext),
-        )
-
-        return {
-          key: `input-${inputContext.index}`,
-          context: inputContext,
-          ui: {
-            ...inputUI,
-            ...inputProps,
-            index: inputContext.index,
-            'aria-invalid': attrs['aria-invalid'],
-            class: cn(
-              'relative size-9 border-y border-r border-input bg-transparent text-center text-sm shadow-xs transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md focus:z-10 focus:border-primary focus:ring-3 focus:ring-primary/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30 dark:aria-invalid:ring-destructive/40',
-              inputUI.class,
-            ),
-            style: inputUI.style,
-          },
-        }
-      }),
-    }
 
     startIndex += size
-    return group
-  })
-
-  return groups.map((group, index) => {
-    const nextGroup = groups[index + 1]
-    if (!nextGroup) return { ...group, separator: undefined }
-
-    const context = {
-      index,
-      previousGroup: group.context,
-      nextGroup: nextGroup.context,
-    }
-    const separatorUI = normalizeHTMLAttributes(
-      resolveInputOTPUIValue(props.ui?.separator, context),
-    )
-
-    return {
-      ...group,
-      separator: {
-        context,
-        slotName: `separator-${index}` as const,
-        ui: {
-          ...separatorUI,
-          class: cn(separatorUI.class),
-          style: separatorUI.style,
-        },
-      },
-    }
+    return context
   })
 })
 
-const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+function getInputContexts(groupContext: InputOTPGroupContext): InputOTPInputContext[] {
+  return Array.from({ length: groupContext.size }, (_, indexInGroup) => ({
+    ...groupContext,
+    index: groupContext.startIndex + indexInGroup,
+    indexInGroup,
+    firstInGroup: indexInGroup === 0,
+    lastInGroup: indexInGroup === groupContext.size - 1,
+  }))
+}
+
+function getSeparatorContext(index: number): InputOTPSeparatorContext | undefined {
+  const previousGroup = groupContexts.value[index]
+  const nextGroup = groupContexts.value[index + 1]
+  if (!previousGroup || !nextGroup) return undefined
+
+  return { index, previousGroup, nextGroup }
+}
+
+const rootProps = computed(() => {
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, inputOTPContext.value))
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      as: props.as,
-      asChild: props.asChild,
-      defaultValue: props.defaultValue,
-      placeholder: props.placeholder,
-      mask: props.mask,
-      otp: props.otp,
-      type: props.type,
-      dir: props.dir,
-      disabled: props.disabled,
-      id: props.id,
-      name: props.name,
-      required: props.required,
-      onComplete: (value: InputOTPValue) => emit('complete', value),
-      class: cn('flex items-center gap-2', attrs.class, rootUI.class),
-      style: [attrs.style, rootUI.style],
-    },
+    ...attrs,
+    ...rootUI,
+    as: props.as,
+    asChild: props.asChild,
+    placeholder: props.placeholder,
+    mask: props.mask,
+    otp: props.otp,
+    type: props.type,
+    dir: props.dir,
+    disabled: props.disabled,
+    id: props.id,
+    name: props.name,
+    required: props.required,
+    onComplete: (completedValue: InputOTPValue) => emit('complete', completedValue),
+    class: cn('flex items-center gap-2', attrs.class, rootUI.class),
+    style: [attrs.style, rootUI.style],
   }
 })
+
+function getGroupProps(context: InputOTPGroupContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.group, context))
+  return { ...ui, class: cn('flex items-center', ui.class), style: ui.style }
+}
+
+function getInputProps(context: InputOTPInputContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.input, context))
+  return {
+    ...ui,
+    as: props.input?.as,
+    asChild: props.input?.asChild,
+    disabled: props.input?.disabled,
+    index: context.index,
+    'aria-invalid': attrs['aria-invalid'],
+    class: cn(
+      'relative size-9 border-y border-r border-input bg-transparent text-center text-sm shadow-xs transition-all outline-none first:rounded-l-md first:border-l last:rounded-r-md focus:z-10 focus:border-primary focus:ring-3 focus:ring-primary/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30 dark:aria-invalid:ring-destructive/40',
+      ui.class,
+    ),
+    style: ui.style,
+  }
+}
+
+function getSeparatorProps(context: InputOTPSeparatorContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.separator, context))
+  return { ...ui, class: cn(ui.class), style: ui.style }
+}
 </script>
 
 <template>
-  <PinInputRoot v-slot="context" v-model="model" v-bind="calculatedUI.root" data-slot="input-otp">
+  <PinInputRoot v-slot="context" v-model="value" v-bind="rootProps" data-slot="input-otp">
     <slot v-if="slots.default" v-bind="context" />
 
-    <template v-for="group in calculatedGroups" v-else :key="group.key">
-      <div v-bind="group.ui" data-slot="input-otp-group">
+    <template v-for="(groupContext, groupIndex) in groupContexts" v-else :key="groupIndex">
+      <div v-bind="getGroupProps(groupContext)" data-slot="input-otp-group">
         <PinInputInput
-          v-for="input in group.inputs"
-          :key="input.key"
-          v-bind="input.ui"
+          v-for="inputContext in getInputContexts(groupContext)"
+          :key="inputContext.index"
+          v-bind="getInputProps(inputContext)"
           data-slot="input-otp-input"
         />
       </div>
 
       <div
-        v-if="props.separator && group.separator"
-        v-bind="group.separator.ui"
+        v-if="props.separator && getSeparatorContext(groupIndex)"
+        v-bind="getSeparatorProps(getSeparatorContext(groupIndex)!)"
         data-slot="input-otp-separator"
         role="separator"
       >
-        <slot :name="group.separator.slotName" v-bind="group.separator.context">
-          <slot name="separator" v-bind="group.separator.context">
+        <slot :name="`separator-${groupIndex}`" v-bind="getSeparatorContext(groupIndex)!">
+          <slot name="separator" v-bind="getSeparatorContext(groupIndex)!">
             <Icon name="minus" />
           </slot>
         </slot>

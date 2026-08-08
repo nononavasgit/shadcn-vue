@@ -33,20 +33,23 @@ const isExternal = computed(
   () => typeof props.to === 'string' && /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(props.to),
 )
 const externalHref = computed(() => (typeof props.to === 'string' ? props.to : undefined))
-const calculatedUI = computed(() => {
-  const buttonProps: Partial<LinkProps> = { ...props }
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, linkContext.value))
-  delete buttonProps.to
-  delete buttonProps.replace
 
-  buttonProps.ui = {
-    ...props.ui,
-    root: rootUI,
-  }
-
-  return {
-    root: mergeProps(attrs, buttonProps, { as: 'a' }),
-  }
+  return mergeProps(attrs, {
+    as: 'a' as const,
+    label: props.label,
+    variant: props.variant,
+    severity: props.severity,
+    size: props.size,
+    rounded: props.rounded,
+    square: props.square,
+    loading: props.loading,
+    color: props.color,
+    icon: props.icon,
+    trailingIcon: props.trailingIcon,
+    ui: { root: rootUI },
+  })
 })
 
 type Navigate = (event?: MouseEvent) => void | Promise<void>
@@ -58,19 +61,14 @@ function handleClick(event: PointerEvent, navigate?: Navigate) {
 </script>
 
 <template>
-  <Button
-    v-if="isExternal"
-    v-bind="calculatedUI.root"
-    :href="externalHref"
-    @click="emit('click', $event)"
-  >
+  <Button v-if="isExternal" v-bind="rootProps" :href="externalHref" @click="emit('click', $event)">
     <template v-for="slotName in slotNames" #[slotName]>
       <slot :name="slotName" v-bind="linkContext" />
     </template>
   </Button>
 
   <RouterLink v-else v-slot="{ href, navigate }" :to="props.to" :replace="props.replace" custom>
-    <Button v-bind="calculatedUI.root" :href="href" @click="handleClick($event, navigate)">
+    <Button v-bind="rootProps" :href="href" @click="handleClick($event, navigate)">
       <template v-for="slotName in slotNames" #[slotName]>
         <slot :name="slotName" v-bind="linkContext" />
       </template>

@@ -24,29 +24,27 @@ const labelContext = computed<LabelContext>(() => {
   return { props: labelProps }
 })
 
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, labelContext.value))
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      as: props.as,
-      asChild: props.asChild,
-      for: props.for,
-      class: cn(
-        'flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50',
-        attrs.class,
-        rootUI.class,
-      ),
-      style: [attrs.style, rootUI.style],
-    },
+    ...attrs,
+    ...rootUI,
+    as: props.as,
+    asChild: props.asChild,
+    for: props.for,
+    class: cn(
+      'flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50',
+      attrs.class,
+      rootUI.class,
+    ),
+    style: [attrs.style, rootUI.style],
   }
 })
 </script>
 
 <template>
-  <Label v-bind="calculatedUI.root" data-slot="label">
+  <Label v-bind="rootProps" data-slot="label">
     <slot v-bind="labelContext" />
   </Label>
 </template>

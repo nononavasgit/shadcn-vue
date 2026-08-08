@@ -3,7 +3,6 @@ import type {
   PinInputRootProps as RekaPinInputRootProps,
 } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
-import { useResolve } from '@/composables/useResolve'
 
 export { default as InputOTP } from './InputOTP.vue'
 
@@ -13,7 +12,6 @@ export type InputOTPRootProps = Pick<
   RekaPinInputRootProps,
   | 'as'
   | 'asChild'
-  | 'defaultValue'
   | 'placeholder'
   | 'mask'
   | 'otp'
@@ -26,18 +24,9 @@ export type InputOTPRootProps = Pick<
 >
 export type InputOTPInputProps = Pick<RekaPinInputInputProps, 'as' | 'asChild' | 'disabled'>
 
-export function normalizeInputOTPInputProps(
-  source: InputOTPInputProps | null | undefined,
-): InputOTPInputProps | undefined {
-  if (!source) return undefined
-  const { as, asChild, disabled } = source
-  return { as, asChild, disabled }
-}
-
 // Props
-export interface InputOTPProps extends Omit<InputOTPRootProps, 'defaultValue'> {
-  modelValue?: InputOTPValue
-  defaultValue?: InputOTPValue
+export interface InputOTPProps extends InputOTPRootProps {
+  value?: InputOTPValue
   maxlength?: number
   groups?: number[]
   separator?: boolean
@@ -46,24 +35,18 @@ export interface InputOTPProps extends Omit<InputOTPRootProps, 'defaultValue'> {
 }
 
 // UI
-export type InputOTPUIValue<T, C> = T | ((context: C) => T)
+export type InputOTPFn<T, C> = T | ((context: C) => T)
 export interface InputOTPUI {
-  root?: HTMLAttributes
-  group?: InputOTPUIValue<HTMLAttributes, InputOTPGroupContext>
-  input?: InputOTPUIValue<HTMLAttributes, InputOTPInputContext>
-  separator?: InputOTPUIValue<HTMLAttributes, InputOTPSeparatorContext>
-}
-
-export function resolveInputOTPUIValue<T, C>(
-  value: InputOTPUIValue<T, C> | undefined,
-  context: C,
-): T | undefined {
-  return useResolve(value, context)
+  root?: InputOTPFn<HTMLAttributes, InputOTPContext>
+  group?: InputOTPFn<HTMLAttributes, InputOTPGroupContext>
+  input?: InputOTPFn<HTMLAttributes, InputOTPInputContext>
+  separator?: InputOTPFn<HTMLAttributes, InputOTPSeparatorContext>
 }
 
 // Context
 export interface InputOTPContext {
-  modelValue: InputOTPValue
+  props: Omit<InputOTPProps, 'ui'>
+  value: InputOTPValue
 }
 
 export interface InputOTPGroupContext {
@@ -89,7 +72,8 @@ export interface InputOTPSeparatorContext {
 
 // Emits
 export interface InputOTPEmits {
-  'update:modelValue': [value: InputOTPValue]
+  'update:value': [value: InputOTPValue]
+  valueChange: [value: InputOTPValue]
   complete: [value: InputOTPValue]
 }
 

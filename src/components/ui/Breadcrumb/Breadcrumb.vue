@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
+import { computed, useAttrs, useSlots } from 'vue'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { Link, normalizeLinkProps } from '@/components/ui/Link'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 import type {
   BreadcrumbContext,
   BreadcrumbEllipsisContext,
+  BreadcrumbItem,
   BreadcrumbItemContext,
   BreadcrumbProps,
   BreadcrumbSlots,
@@ -17,7 +18,6 @@ import type {
 defineOptions({ inheritAttrs: false })
 
 const { t } = useI18n()
-
 const props = withDefaults(defineProps<BreadcrumbProps>(), {
   items: () => [],
   ellipsisIndex: undefined,
@@ -27,198 +27,218 @@ const props = withDefaults(defineProps<BreadcrumbProps>(), {
 })
 defineSlots<BreadcrumbSlots>()
 
+const attrs = useAttrs()
+const slots = useSlots()
+
 const breadcrumbContext = computed<BreadcrumbContext>(() => {
   const { ui, ...breadcrumbProps } = props
   void ui
+  return { props: breadcrumbProps }
+})
 
+const ellipsisRange = computed(() => props.ellipsisIndex ?? [])
+const hasEllipsis = computed(() => {
+  const [start, end] = ellipsisRange.value
+  return (
+    start !== undefined &&
+    end !== undefined &&
+    start >= 0 &&
+    end >= start &&
+    start < props.items.length
+  )
+})
+
+const ellipsisContext = computed<BreadcrumbEllipsisContext>(() => {
+  const [start, end] = ellipsisRange.value
   return {
-    props: breadcrumbProps,
+    ...breadcrumbContext.value,
+    items:
+      hasEllipsis.value && start !== undefined && end !== undefined
+        ? props.items.slice(start, end + 1)
+        : [],
   }
 })
 
-const attrs = useAttrs()
+const rootProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.root, breadcrumbContext.value))
+  return {
+    ...attrs,
+    ...ui,
+    class: cn(attrs.class, ui.class),
+    style: [attrs.style, ui.style],
+  }
+})
 
-const calculatedUI = computed(() => {
-  // Normalize
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, breadcrumbContext.value))
-  const listUI = normalizeHTMLAttributes(useResolve(props.ui?.list, breadcrumbContext.value))
-  const ellipsisContainerUI = normalizeHTMLAttributes(
+const listProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.list, breadcrumbContext.value))
+  return {
+    ...ui,
+    class: cn(
+      'flex flex-wrap items-center gap-1.5 text-sm break-words text-muted-foreground sm:gap-2.5',
+      ui.class,
+    ),
+    style: ui.style,
+  }
+})
+
+const ellipsisContainerProps = computed(() => {
+  const ui = normalizeHTMLAttributes(
     useResolve(props.ui?.ellipsisContainer, breadcrumbContext.value),
   )
-  const separatorContainerUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.separatorContainer, breadcrumbContext.value),
-  )
-  const [ellipsisStart, ellipsisEnd] = props.ellipsisIndex ?? []
-  const hasEllipsis =
-    ellipsisStart !== undefined &&
-    ellipsisEnd !== undefined &&
-    ellipsisStart >= 0 &&
-    ellipsisEnd >= ellipsisStart &&
-    ellipsisStart < props.items.length
-  const breadcrumbEllipsisContext: BreadcrumbEllipsisContext = {
-    ...breadcrumbContext.value,
-    items: hasEllipsis ? props.items.slice(ellipsisStart, ellipsisEnd + 1) : [],
-  }
-
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      class: cn(attrs.class, rootUI.class),
-      style: [attrs.style, rootUI.style],
-    },
-    list: {
-      ...listUI,
-      class: cn(
-        'flex flex-wrap items-center gap-1.5 text-sm break-words text-muted-foreground sm:gap-2.5',
-        listUI.class,
-      ),
-      style: listUI.style,
-    },
-    ellipsisContainer: {
-      'aria-label': t('more'),
-      ...ellipsisContainerUI,
-      class: cn('flex size-9 items-center justify-center', ellipsisContainerUI.class),
-      style: ellipsisContainerUI.style,
-    },
-    ellipsisIcon: {
-      ...normalizeIconProps(props.ellipsisIcon),
-    },
-    ellipsisContext: breadcrumbEllipsisContext,
-    separatorContainer: {
-      role: 'presentation',
-      'aria-hidden': true,
-      ...separatorContainerUI,
-    },
-    separatorIcon: {
-      ...normalizeIconProps(props.separatorIcon),
-    },
-    items: props.items.flatMap((item, index) => {
-      if (hasEllipsis && index > ellipsisStart && index <= ellipsisEnd) return []
-
-      // Items
-      const ellipsis = hasEllipsis && index === ellipsisStart
-      const breadcrumbItemContext = {
-        ...breadcrumbContext.value,
-        item,
-        index,
-        first: index === 0,
-        last:
-          index === props.items.length - 1 || (ellipsis && ellipsisEnd === props.items.length - 1),
-        linked: !ellipsis && item.to !== undefined,
-        ellipsis,
-      } satisfies BreadcrumbItemContext
-      const itemUI = normalizeHTMLAttributes(useResolve(props.ui?.item, breadcrumbItemContext))
-      const linkUI = normalizeHTMLAttributes(useResolve(props.ui?.link, breadcrumbItemContext))
-      const pageUI = normalizeHTMLAttributes(useResolve(props.ui?.page, breadcrumbItemContext))
-      const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, breadcrumbItemContext))
-
-      const link = normalizeLinkProps({
-        to: item.to!,
-        label: item.label,
-        icon: item.icon,
-      })
-      const key = String(item.id)
-
-      return {
-        key,
-        data: item,
-        context: breadcrumbItemContext,
-        slotNames: {
-          item: `item-${key}`,
-          icon: `icon-${key}`,
-        } as const,
-        item: {
-          'aria-current': breadcrumbItemContext.last,
-          ...itemUI,
-          class: cn('inline-flex items-center gap-1.5', itemUI.class),
-          style: itemUI.style,
-        },
-        link: {
-          ...linkUI,
-          ...link,
-          to: item.to!,
-          'aria-disabled': item.disabled || undefined,
-          class: cn(
-            'h-auto gap-1 p-0 text-sm font-normal transition-colors hover:text-muted-foreground',
-            linkUI.class,
-          ),
-          style: linkUI.style,
-        },
-        page: {
-          ...pageUI,
-          class: cn('inline-flex items-center gap-1 font-normal text-foreground', pageUI.class),
-          style: pageUI.style,
-        },
-        icon: {
-          ...normalizeIconProps(item.icon),
-        },
-        label: { ...labelUI, class: cn(labelUI.class), style: labelUI.style },
-      }
-    }),
+    'aria-label': t('more'),
+    ...ui,
+    class: cn('flex size-9 items-center justify-center', ui.class),
+    style: ui.style,
   }
 })
+
+const separatorContainerProps = computed(() => {
+  const ui = normalizeHTMLAttributes(
+    useResolve(props.ui?.separatorContainer, breadcrumbContext.value),
+  )
+  return { role: 'presentation', 'aria-hidden': true, ...ui }
+})
+
+const ellipsisIconProps = computed(() => normalizeIconProps(props.ellipsisIcon))
+const separatorIconProps = computed(() => normalizeIconProps(props.separatorIcon))
+
+function getItemContext(item: BreadcrumbItem, index: number): BreadcrumbItemContext | undefined {
+  const [start, end] = ellipsisRange.value
+  if (
+    hasEllipsis.value &&
+    start !== undefined &&
+    end !== undefined &&
+    index > start &&
+    index <= end
+  ) {
+    return undefined
+  }
+
+  const ellipsis = hasEllipsis.value && index === start
+  return {
+    ...breadcrumbContext.value,
+    item,
+    index,
+    first: index === 0,
+    last: index === props.items.length - 1 || (ellipsis && end === props.items.length - 1),
+    linked: !ellipsis && item.to !== undefined,
+    ellipsis,
+  }
+}
+
+const itemContexts = computed(() =>
+  props.items.flatMap((item, index) => {
+    const context = getItemContext(item, index)
+    return context ? [context] : []
+  }),
+)
+
+function getKey(context: BreadcrumbItemContext) {
+  return String(context.item.id)
+}
+
+function getSlotNames(context: BreadcrumbItemContext) {
+  const key = getKey(context)
+  return { item: `item-${key}` as const, icon: `icon-${key}` as const }
+}
+
+function getItemProps(context: BreadcrumbItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+  return {
+    'aria-current': context.last,
+    ...ui,
+    class: cn('inline-flex items-center gap-1.5', ui.class),
+    style: ui.style,
+  }
+}
+
+function getLinkProps(context: BreadcrumbItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.link, context))
+  const item = context.item
+  return {
+    ...ui,
+    ...normalizeLinkProps({ to: item.to!, label: item.label, icon: item.icon }),
+    to: item.to!,
+    'aria-disabled': item.disabled || undefined,
+    class: cn(
+      'h-auto gap-1 p-0 text-sm font-normal transition-colors hover:text-muted-foreground',
+      ui.class,
+    ),
+    style: ui.style,
+  }
+}
+
+function getPageProps(context: BreadcrumbItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.page, context))
+  return {
+    ...ui,
+    class: cn('inline-flex items-center gap-1 font-normal text-foreground', ui.class),
+    style: ui.style,
+  }
+}
+
+function getLabelProps(context: BreadcrumbItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
+  return { ...ui, class: cn(ui.class), style: ui.style }
+}
+
+function getIconProps(context: BreadcrumbItemContext) {
+  return normalizeIconProps(context.item.icon)
+}
 </script>
 
 <template>
-  <nav v-bind="calculatedUI.root" data-slot="breadcrumb">
-    <ol v-bind="calculatedUI.list" data-slot="breadcrumb-list">
+  <nav v-bind="rootProps" data-slot="breadcrumb">
+    <ol v-bind="listProps" data-slot="breadcrumb-list">
       <slot v-bind="breadcrumbContext">
-        <template v-for="item in calculatedUI.items" :key="item.key">
-          <li v-bind="item.item" data-slot="breadcrumb-item">
-            <slot :name="item.slotNames.item" v-bind="item.context">
-              <slot name="item" v-bind="item.context">
-                <template v-if="item.context.ellipsis">
-                  <div v-bind="calculatedUI.ellipsisContainer">
-                    <slot name="ellipsis" v-bind="calculatedUI.ellipsisContext">
+        <template v-for="context in itemContexts" :key="getKey(context)">
+          <li v-bind="getItemProps(context)" data-slot="breadcrumb-item">
+            <slot :name="getSlotNames(context).item" v-bind="context">
+              <slot name="item" v-bind="context">
+                <template v-if="context.ellipsis">
+                  <div v-bind="ellipsisContainerProps">
+                    <slot name="ellipsis" v-bind="ellipsisContext">
                       <span
-                        v-bind="calculatedUI.ellipsisContainer"
+                        v-bind="ellipsisContainerProps"
                         data-slot="breadcrumb-ellipsis"
                         role="presentation"
                         aria-hidden="true"
                       >
-                        <Icon
-                          v-if="calculatedUI.ellipsisIcon.name"
-                          v-bind="calculatedUI.ellipsisIcon"
-                          :name="calculatedUI.ellipsisIcon.name"
-                        />
+                        <Icon v-if="ellipsisIconProps?.name" v-bind="ellipsisIconProps" />
                       </span>
                     </slot>
                   </div>
                 </template>
 
                 <Link
-                  v-else-if="item.context.linked"
-                  v-bind="item.link"
+                  v-else-if="context.linked"
+                  v-bind="getLinkProps(context)"
                   data-slot="breadcrumb-link"
                 >
-                  <template v-if="$slots[item.slotNames.icon] || $slots.icon" #leading>
-                    <slot :name="item.slotNames.icon" v-bind="item.context">
-                      <slot name="icon" v-bind="item.context" />
+                  <template v-if="slots[getSlotNames(context).icon] || slots.icon" #leading>
+                    <slot :name="getSlotNames(context).icon" v-bind="context">
+                      <slot name="icon" v-bind="context" />
                     </slot>
                   </template>
                 </Link>
 
-                <span v-else v-bind="item.page" data-slot="breadcrumb-page">
-                  <slot :name="item.slotNames.icon" v-bind="item.context">
-                    <slot name="icon" v-bind="item.context">
-                      <Icon v-if="item.icon?.name" v-bind="item.icon" :name="item.icon.name" />
+                <span v-else v-bind="getPageProps(context)" data-slot="breadcrumb-page">
+                  <slot :name="getSlotNames(context).icon" v-bind="context">
+                    <slot name="icon" v-bind="context">
+                      <Icon v-if="getIconProps(context)" v-bind="getIconProps(context)!" />
                     </slot>
                   </slot>
-                  <span v-bind="item.label">{{ item.data.label }}</span>
+                  <span v-bind="getLabelProps(context)">{{ context.item.label }}</span>
                 </span>
               </slot>
             </slot>
           </li>
 
-          <template v-if="!item.context.last">
-            <li v-bind="calculatedUI.separatorContainer" data-slot="breadcrumb-separator">
+          <template v-if="!context.last">
+            <li v-bind="separatorContainerProps" data-slot="breadcrumb-separator">
               <slot name="separator" v-bind="breadcrumbContext">
-                <Icon
-                  v-if="calculatedUI.separatorIcon?.name"
-                  v-bind="calculatedUI.separatorIcon"
-                  :name="calculatedUI.separatorIcon.name"
-                />
+                <Icon v-if="separatorIconProps?.name" v-bind="separatorIconProps" />
               </slot>
             </li>
           </template>

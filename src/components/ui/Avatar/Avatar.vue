@@ -7,7 +7,6 @@ import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
 import type { AvatarContext, AvatarEmits, AvatarLoadingState, AvatarProps, AvatarSlots } from '.'
-import { normalizeImageProps, normalizeFallbackProps } from '.'
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<AvatarProps>(), {
@@ -30,47 +29,49 @@ const avatarContext = computed<AvatarContext>(() => {
 })
 
 const attrs = useAttrs()
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, avatarContext.value))
-  const imageUI = normalizeHTMLAttributes(useResolve(props.ui?.image, avatarContext.value))
-  const fallbackUI = normalizeHTMLAttributes(useResolve(props.ui?.fallback, avatarContext.value))
-
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      as: props.as,
-      asChild: props.asChild,
-      class: cn(
-        'relative flex size-8 shrink-0 overflow-hidden rounded-full',
-        attrs.class,
-        rootUI.class,
-      ),
-      style: [attrs.style, rootUI.style],
-    },
-    image: props.src
-      ? {
-          ...imageUI,
-          ...normalizeImageProps(props.image),
-          src: props.src,
-          alt: props.alt,
-          class: cn('aspect-square size-full', imageUI.class),
-        }
-      : undefined,
-    fallback: {
-      ...fallbackUI,
-      ...normalizeFallbackProps(props.fallback),
-      delayMs: props.delayMs,
-      class: cn(
-        'flex size-full items-center justify-center rounded-full bg-muted',
-        fallbackUI.class,
-      ),
-    },
-    icon: {
-      ...normalizeIconProps(props.icon),
-    },
+    ...attrs,
+    ...rootUI,
+    as: props.as,
+    asChild: props.asChild,
+    class: cn(
+      'relative flex size-8 shrink-0 overflow-hidden rounded-full',
+      attrs.class,
+      rootUI.class,
+    ),
+    style: [attrs.style, rootUI.style],
   }
 })
+
+const imageProps = computed(() => {
+  if (!props.src) return undefined
+  const imageUI = normalizeHTMLAttributes(useResolve(props.ui?.image, avatarContext.value))
+  return {
+    ...imageUI,
+    as: props.image?.as,
+    asChild: props.image?.asChild,
+    crossOrigin: props.image?.crossOrigin,
+    referrerPolicy: props.image?.referrerPolicy,
+    src: props.src,
+    alt: props.alt,
+    class: cn('aspect-square size-full', imageUI.class),
+  }
+})
+
+const fallbackProps = computed(() => {
+  const fallbackUI = normalizeHTMLAttributes(useResolve(props.ui?.fallback, avatarContext.value))
+  return {
+    ...fallbackUI,
+    as: props.fallback?.as,
+    asChild: props.fallback?.asChild,
+    delayMs: props.delayMs,
+    class: cn('flex size-full items-center justify-center rounded-full bg-muted', fallbackUI.class),
+  }
+})
+
+const iconProps = computed(() => normalizeIconProps(props.icon))
 
 type OriginalLoadingState = AvatarImageEmits['loadingStatusChange'][0]
 
@@ -87,21 +88,17 @@ function handleLoadingStateChange(state: OriginalLoadingState) {
 </script>
 
 <template>
-  <AvatarRoot v-bind="calculatedUI.root" data-slot="avatar">
+  <AvatarRoot v-bind="rootProps" data-slot="avatar">
     <AvatarImage
-      v-if="calculatedUI.image"
-      v-bind="calculatedUI.image"
+      v-if="imageProps"
+      v-bind="imageProps"
       data-slot="avatar-image"
       @loading-status-change="handleLoadingStateChange"
     />
 
-    <AvatarFallback v-bind="calculatedUI.fallback" data-slot="avatar-fallback">
+    <AvatarFallback v-bind="fallbackProps" data-slot="avatar-fallback">
       <slot name="fallback" v-bind="avatarContext">
-        <Icon
-          v-if="calculatedUI.icon.name"
-          v-bind="calculatedUI.icon"
-          :name="calculatedUI.icon.name"
-        />
+        <Icon v-if="iconProps?.name" v-bind="iconProps" />
         <template v-else>{{ props.label }}</template>
       </slot>
     </AvatarFallback>

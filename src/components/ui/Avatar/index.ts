@@ -54,22 +54,3 @@ export interface AvatarContext {
 export interface AvatarSlots {
   fallback?(props: AvatarContext): unknown
 }
-
-// Normalize
-export function normalizeImageProps(
-  source: AvatarImageProps | null | undefined,
-): AvatarImageProps | undefined {
-  if (!source) return undefined
-
-  const { as, asChild, crossOrigin, referrerPolicy } = source
-  return { as, asChild, crossOrigin, referrerPolicy }
-}
-
-export function normalizeFallbackProps(
-  source: AvatarFallbackProps | null | undefined,
-): AvatarFallbackProps | undefined {
-  if (!source) return undefined
-
-  const { as, asChild } = source
-  return { as, asChild }
-}

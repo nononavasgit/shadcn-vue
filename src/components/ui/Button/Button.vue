@@ -69,44 +69,36 @@ const calculatedVariants = computed(() => {
     .join(' ')
 })
 
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, buttonContext.value))
-  const iconUI = normalizeHTMLAttributes(useResolve(props.ui?.root, buttonContext.value))
-  const trailingIconUI = normalizeHTMLAttributes(useResolve(props.ui?.root, buttonContext.value))
-  const loadingIconUI = normalizeHTMLAttributes(useResolve(props.ui?.root, buttonContext.value))
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      as: props.as,
-      asChild: props.asChild,
-      'aria-busy': ariaBusy.value,
-      'aria-disabled': ariaDisabled.value,
-      class: cn(
-        'inline-flex shrink-0 items-center justify-center gap-2 rounded-md border border-transparent text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
-        calculatedVariants.value,
-        attrs.class,
-        rootUI.class,
-      ),
-      style: [colorStyle.value, attrs.style, rootUI.style],
-    },
-    icon: {
-      ...iconUI,
-      ...normalizeIconProps(props.icon),
-      class: cn(iconUI.class),
-    },
-    trailingIcon: {
-      ...trailingIconUI,
-      ...normalizeIconProps(props.trailingIcon),
-      class: cn(trailingIconUI.class),
-    },
-    loadingIcon: {
-      ...loadingIconUI,
-      name: 'spinner' as const,
-      class: cn('animate-spin', loadingIconUI.class),
-    },
+    ...attrs,
+    ...rootUI,
+    as: props.as,
+    asChild: props.asChild,
+    'aria-busy': ariaBusy.value,
+    'aria-disabled': ariaDisabled.value,
+    class: cn(
+      'inline-flex shrink-0 items-center justify-center gap-2 rounded-md border border-transparent text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
+      calculatedVariants.value,
+      attrs.class,
+      rootUI.class,
+    ),
+    style: [colorStyle.value, attrs.style, rootUI.style],
   }
+})
+
+const iconProps = computed(() => {
+  return { ...normalizeIconProps(props.icon) }
+})
+
+const trailingIconProps = computed(() => {
+  return { ...normalizeIconProps(props.trailingIcon) }
+})
+
+const loadingIconProps = computed(() => {
+  return { name: 'spinner' as const, ui: { root: { class: 'animate-spin' } } }
 })
 
 function handleClick(event: PointerEvent) {
@@ -121,29 +113,25 @@ function handleClick(event: PointerEvent) {
 </script>
 
 <template>
-  <Primitive v-bind="calculatedUI.root" @click="handleClick">
+  <Primitive v-bind="rootProps" @click="handleClick">
     <slot v-if="props.asChild" v-bind="buttonContext" />
     <template v-else>
       <template v-if="props.loading">
         <slot name="loading" v-bind="buttonContext">
-          <Icon v-bind="calculatedUI.loadingIcon" />
+          <Icon v-bind="loadingIconProps" />
         </slot>
       </template>
       <slot v-else name="leading" v-bind="buttonContext">
-        <Icon
-          v-if="calculatedUI.icon.name"
-          v-bind="calculatedUI.icon"
-          :name="calculatedUI.icon.name"
-        />
+        <Icon v-if="iconProps.name" v-bind="iconProps" :name="iconProps.name" />
       </slot>
 
       <slot v-bind="buttonContext">{{ props.label }}</slot>
 
       <slot name="trailing" v-bind="buttonContext">
         <Icon
-          v-if="calculatedUI.trailingIcon.name"
-          v-bind="calculatedUI.trailingIcon"
-          :name="calculatedUI.trailingIcon.name"
+          v-if="trailingIconProps.name"
+          v-bind="trailingIconProps"
+          :name="trailingIconProps.name"
         />
       </slot>
     </template>

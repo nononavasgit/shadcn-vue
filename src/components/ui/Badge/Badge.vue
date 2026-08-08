@@ -37,7 +37,7 @@ const { colorStyle } = useColor(
   computed(() => props.color),
   'badge',
 )
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const calculatedVariants = badgeVariants({
     size: props.size,
     variant: props.variant,
@@ -47,42 +47,29 @@ const calculatedUI = computed(() => {
 
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, badgeContext.value))
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      as: props.as,
-      asChild: props.asChild,
-      class: cn(calculatedVariants, attrs.class, rootUI.class),
-      style: [colorStyle.value, attrs.style, rootUI.style],
-    },
-    icon: {
-      ...normalizeIconProps(props.icon),
-    },
-    trailingIcon: {
-      ...normalizeIconProps(props.trailingIcon),
-    },
+    ...attrs,
+    ...rootUI,
+    as: props.as,
+    asChild: props.asChild,
+    class: cn(calculatedVariants, attrs.class, rootUI.class),
+    style: [colorStyle.value, attrs.style, rootUI.style],
   }
 })
+
+const iconProps = computed(() => normalizeIconProps(props.icon))
+const trailingIconProps = computed(() => normalizeIconProps(props.trailingIcon))
 </script>
 
 <template>
-  <Primitive v-bind="calculatedUI.root">
+  <Primitive v-bind="rootProps">
     <slot name="leading" v-bind="badgeContext">
-      <Icon
-        v-if="calculatedUI.icon.name"
-        v-bind="calculatedUI.icon"
-        :name="calculatedUI.icon.name"
-      />
+      <Icon v-if="iconProps?.name" v-bind="iconProps" />
     </slot>
 
     <slot v-bind="badgeContext">{{ props.label }}</slot>
 
     <slot name="trailing" v-bind="badgeContext">
-      <Icon
-        v-if="calculatedUI.trailingIcon.name"
-        v-bind="calculatedUI.trailingIcon"
-        :name="calculatedUI.trailingIcon.name"
-      />
+      <Icon v-if="trailingIconProps?.name" v-bind="trailingIconProps" />
     </slot>
   </Primitive>
 </template>

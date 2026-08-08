@@ -276,9 +276,6 @@ export interface ButtonProps extends Pick<PrimitiveProps, 'as' | 'asChild'> {
 // UI
 export interface ButtonUI {
   root?: ButtonFn<HTMLAttributes>
-  icon?: ButtonFn<HTMLAttributes>
-  trailingIcon?: ButtonFn<HTMLAttributes>
-  loadingIcon?: ButtonFn<HTMLAttributes>
 }
 
 // Context

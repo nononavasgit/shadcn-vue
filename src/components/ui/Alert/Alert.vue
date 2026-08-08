@@ -45,75 +45,71 @@ const alertContext = computed<AlertContext>(() => {
   }
 })
 
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const calculatedVariants = alertVariants({
     variant: props.variant,
     severity: props.severity,
     color: Boolean(props.color),
   })
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, alertContext.value))
-  const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, alertContext.value))
-  const descriptionUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.description, alertContext.value),
-  )
-  const closeButtonContainerUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.closeButtonContainer, alertContext.value),
-  )
-  const closeButton = normalizeButtonProps(props.closeButton)
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      role: props.decorative ? 'none' : 'alert',
-      class: cn(
-        'relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current',
-        calculatedVariants,
-        props.closable && (closeButton?.label ? 'pr-24' : 'pr-12'),
-        attrs.class,
-        rootUI.class,
-      ),
-      style: [colorStyle.value, attrs.style, rootUI.style],
-    },
-    icon: {
-      'aria-hidden': true,
-      ...normalizeIconProps(props.icon),
-    },
-    label: {
-      ...labelUI,
-      class: cn('col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight', labelUI.class),
-    },
-    description: {
-      ...descriptionUI,
-      class: cn('col-start-2 text-sm text-current/80 [&_p]:leading-relaxed', descriptionUI.class),
-    },
-    closeButtonContainer: {
-      ...closeButtonContainerUI,
-      class: cn('absolute top-2 right-2 shrink-0', closeButtonContainerUI.class),
-    },
-    closeButton: {
-      ...closeButton,
-      ui: {
-        ...closeButton?.ui,
-        root: (obj: ButtonContext) => {
-          const res =
-            typeof closeButton?.ui?.root == 'function'
-              ? closeButton?.ui?.root?.(obj)
-              : closeButton?.ui?.root
-          return {
-            'aria-label': t('close'),
-            ...res,
-          }
-        },
+    ...attrs,
+    ...rootUI,
+    role: props.decorative ? 'none' : 'alert',
+    class: cn(
+      'relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current',
+      calculatedVariants,
+      props.closable && (props.closeButton?.label ? 'pr-24' : 'pr-12'),
+      attrs.class,
+      rootUI.class,
+    ),
+    style: [colorStyle.value, attrs.style, rootUI.style],
+  }
+})
+
+const iconProps = computed(() => normalizeIconProps(props.icon))
+
+const labelProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, alertContext.value))
+  return {
+    ...ui,
+    class: cn('col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight', ui.class),
+  }
+})
+
+const descriptionProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.description, alertContext.value))
+  return {
+    ...ui,
+    class: cn('col-start-2 text-sm text-current/80 [&_p]:leading-relaxed', ui.class),
+  }
+})
+
+const closeButtonContainerProps = computed(() => {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.closeButtonContainer, alertContext.value))
+  return { ...ui, class: cn('absolute top-2 right-2 shrink-0', ui.class) }
+})
+
+const closeButtonProps = computed(() => {
+  const button = normalizeButtonProps(props.closeButton)
+  return {
+    ...button,
+    ui: {
+      ...button?.ui,
+      root: (context: ButtonContext) => {
+        const root =
+          typeof button?.ui?.root === 'function' ? button.ui.root(context) : button?.ui?.root
+        return { 'aria-label': t('close'), ...root }
       },
-      size: closeButton?.size ?? ('xs' as const),
-      square: closeButton?.square ?? true,
-      rounded: closeButton?.rounded ?? true,
-      variant: closeButton?.variant ?? props.variant,
-      severity: closeButton?.severity ?? props.severity,
-      color: closeButton?.color ?? props.color,
-      icon: closeButton?.icon ?? ('x' as const),
     },
+    size: button?.size ?? ('xs' as const),
+    square: button?.square ?? true,
+    rounded: button?.rounded ?? true,
+    variant: button?.variant ?? props.variant,
+    severity: button?.severity ?? props.severity,
+    color: button?.color ?? props.color,
+    icon: button?.icon ?? ('x' as const),
   }
 })
 
@@ -123,30 +119,26 @@ function close() {
 }
 </script>
 <template>
-  <div v-if="visible" v-bind="calculatedUI.root" data-slot="alert">
-    <slot v-if="calculatedUI.icon.name || slots.icon" name="icon" v-bind="alertContext">
-      <Icon
-        v-if="calculatedUI.icon.name"
-        v-bind="calculatedUI.icon"
-        :name="calculatedUI.icon.name"
-      />
+  <div v-if="visible" v-bind="rootProps" data-slot="alert">
+    <slot v-if="iconProps?.name || slots.icon" name="icon" v-bind="alertContext">
+      <Icon v-if="iconProps?.name" v-bind="iconProps" />
     </slot>
 
-    <div v-if="props.label || slots.label" v-bind="calculatedUI.label" data-slot="alert-title">
+    <div v-if="props.label || slots.label" v-bind="labelProps" data-slot="alert-title">
       <slot name="label" v-bind="alertContext">{{ props.label }}</slot>
     </div>
 
     <div
       v-if="props.description || slots.description"
       data-slot="alert-description"
-      v-bind="calculatedUI.description"
+      v-bind="descriptionProps"
     >
       <slot name="description" v-bind="alertContext">{{ props.description }}</slot>
     </div>
 
-    <div v-if="props.closable" v-bind="calculatedUI.closeButtonContainer">
+    <div v-if="props.closable" v-bind="closeButtonContainerProps">
       <slot name="close" v-bind="alertContext">
-        <Button v-bind="calculatedUI.closeButton" @click="close" />
+        <Button v-bind="closeButtonProps" @click="close" />
       </slot>
     </div>
   </div>

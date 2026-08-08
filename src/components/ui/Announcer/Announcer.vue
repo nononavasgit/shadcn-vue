@@ -43,19 +43,17 @@ const role = computed(() => {
   if (politeness.value === 'polite') return 'status'
   return undefined
 })
-const calculatedUI = computed(() => {
+const rootProps = computed(() => {
   const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, announcerContext.value))
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      'aria-atomic': props.atomic,
-      'aria-live': ariaLive.value,
-      role: role.value,
-      class: cn('sr-only', attrs.class, rootUI.class),
-      style: [attrs.style, rootUI.style],
-    },
+    ...attrs,
+    ...rootUI,
+    'aria-atomic': props.atomic,
+    'aria-live': ariaLive.value,
+    role: role.value,
+    class: cn('sr-only', attrs.class, rootUI.class),
+    style: [attrs.style, rootUI.style],
   }
 })
 
@@ -63,7 +61,7 @@ defineExpose({ message, politeness, set, polite, assertive })
 </script>
 
 <template>
-  <span v-bind="calculatedUI.root" data-slot="announcer">
+  <span v-bind="rootProps" data-slot="announcer">
     <slot v-bind="announcerContext">{{ message }}</slot>
   </span>
 </template>

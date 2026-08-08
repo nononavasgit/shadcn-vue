@@ -13,10 +13,7 @@ import type { EmitsAsProps } from '@/types/emits'
 export { default as Dialog } from './Dialog.vue'
 
 // Props Reka
-export type DialogRootProps = Pick<
-  RekaDialogRootProps,
-  'open' | 'defaultOpen' | 'modal' | 'unmountOnHide'
->
+export type DialogRootProps = Pick<RekaDialogRootProps, 'open' | 'modal' | 'unmountOnHide'>
 export type DialogTriggerProps = Pick<RekaDialogTriggerProps, 'as' | 'asChild'>
 export type DialogContentProps = Pick<
   RekaDialogContentProps,
@@ -29,8 +26,8 @@ export function normalizeDialogRootProps(
   source: DialogRootProps | null | undefined,
 ): DialogRootProps | undefined {
   if (!source) return undefined
-  const { open, defaultOpen, modal, unmountOnHide } = source
-  return { open, defaultOpen, modal, unmountOnHide }
+  const { open, modal, unmountOnHide } = source
+  return { open, modal, unmountOnHide }
 }
 
 export function normalizeDialogTriggerProps(
@@ -118,7 +115,10 @@ export interface DialogContext {
 }
 
 // Emits
-export type DialogEmits = RekaDialogRootEmits
+export type DialogEmits = RekaDialogRootEmits & {
+  show: []
+  close: []
+}
 
 // Slots
 export interface DialogSlots {

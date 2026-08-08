@@ -13,7 +13,7 @@ import type { EmitsAsProps } from '@/types/emits'
 export { default as Popover } from './Popover.vue'
 
 // Props Reka
-export type PopoverRootProps = Pick<RekaPopoverRootProps, 'open' | 'defaultOpen' | 'modal'>
+export type PopoverRootProps = Pick<RekaPopoverRootProps, 'modal'>
 export type PopoverTriggerProps = Pick<RekaPopoverTriggerProps, 'as' | 'asChild'>
 export type PopoverContentProps = Pick<
   RekaPopoverContentProps,
@@ -51,104 +51,6 @@ export type PopoverArrowProps = Pick<
   'as' | 'asChild' | 'width' | 'height' | 'rounded'
 >
 
-export function normalizePopoverRootProps(
-  source: PopoverRootProps | null | undefined,
-): PopoverRootProps | undefined {
-  if (!source) return undefined
-  const { defaultOpen, modal, open } = source
-  return { defaultOpen, modal, open }
-}
-
-export function normalizePopoverTriggerProps(
-  source: PopoverTriggerProps | null | undefined,
-): PopoverTriggerProps | undefined {
-  if (!source) return undefined
-  const { as, asChild } = source
-  return { as, asChild }
-}
-
-export function normalizePopoverContentProps(
-  source: PopoverContentProps | null | undefined,
-): PopoverContentProps | undefined {
-  if (!source) return undefined
-  const {
-    as,
-    asChild,
-    align,
-    alignFlip,
-    alignOffset,
-    arrowPadding,
-    avoidCollisions,
-    collisionBoundary,
-    collisionPadding,
-    dir,
-    disableOutsidePointerEvents,
-    disableUpdateOnLayoutShift,
-    forceMount,
-    hideShiftedArrow,
-    hideWhenDetached,
-    positionStrategy,
-    prioritizePosition,
-    side,
-    sideFlip,
-    sideOffset,
-    sticky,
-    updatePositionStrategy,
-    onCloseAutoFocus,
-    onEscapeKeyDown,
-    onFocusOutside,
-    onInteractOutside,
-    onOpenAutoFocus,
-    onPointerDownOutside,
-  } = source
-  return {
-    as,
-    asChild,
-    align,
-    alignFlip,
-    alignOffset,
-    arrowPadding,
-    avoidCollisions,
-    collisionBoundary,
-    collisionPadding,
-    dir,
-    disableOutsidePointerEvents,
-    disableUpdateOnLayoutShift,
-    forceMount,
-    hideShiftedArrow,
-    hideWhenDetached,
-    positionStrategy,
-    prioritizePosition,
-    side,
-    sideFlip,
-    sideOffset,
-    sticky,
-    updatePositionStrategy,
-    onCloseAutoFocus,
-    onEscapeKeyDown,
-    onFocusOutside,
-    onInteractOutside,
-    onOpenAutoFocus,
-    onPointerDownOutside,
-  }
-}
-
-export function normalizePopoverPortalProps(
-  source: PopoverPortalProps | null | undefined,
-): PopoverPortalProps | undefined {
-  if (!source) return undefined
-  const { defer, disabled, to, forceMount } = source
-  return { defer, disabled, to, forceMount }
-}
-
-export function normalizePopoverArrowProps(
-  source: PopoverArrowProps | null | undefined,
-): PopoverArrowProps | undefined {
-  if (!source) return undefined
-  const { as, asChild, width, height, rounded } = source
-  return { as, asChild, width, height, rounded }
-}
-
 // Fn
 export type PopoverFn<T> = T | ((context: PopoverContext) => T)
 
@@ -162,6 +64,7 @@ export interface PopoverUI {
 
 // Props
 export interface PopoverProps extends PopoverRootProps {
+  open?: boolean
   trigger?: PopoverTriggerProps
   content?: PopoverContentProps
   portal?: PopoverPortalProps

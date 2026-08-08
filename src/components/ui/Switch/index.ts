@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from 'vue'
-import type { SwitchRootEmits, SwitchRootProps } from 'reka-ui'
+import type { SwitchRootProps } from 'reka-ui'
 
 export { default as Switch } from './Switch.vue'
 
@@ -11,23 +11,15 @@ export type SwitchFn<T> = T | ((context: SwitchContext) => T)
 // UI
 export interface SwitchUI {
   root?: SwitchFn<HTMLAttributes>
+  thumb?: SwitchFn<HTMLAttributes>
 }
 
 // Props
 export interface SwitchProps extends Pick<
   SwitchRootProps<SwitchValue>,
-  | 'as'
-  | 'asChild'
-  | 'defaultValue'
-  | 'modelValue'
-  | 'disabled'
-  | 'id'
-  | 'name'
-  | 'value'
-  | 'trueValue'
-  | 'falseValue'
-  | 'required'
+  'as' | 'asChild' | 'disabled' | 'id' | 'name' | 'trueValue' | 'falseValue' | 'required'
 > {
+  value?: SwitchValue
   ui?: SwitchUI
 }
 
@@ -39,7 +31,10 @@ export interface SwitchContext {
 }
 
 // Emits
-export type SwitchEmits = SwitchRootEmits<SwitchValue>
+export interface SwitchEmits {
+  'update:value': [value: SwitchValue]
+  valueChange: [value: SwitchValue]
+}
 
 // Slots
 export interface SwitchSlots {

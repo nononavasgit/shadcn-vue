@@ -147,9 +147,6 @@ const calculatedUI = computed(() => {
       class: cn('flex items-center gap-2 font-semibold text-foreground', labelUI.class),
       style: labelUI.style,
     },
-    icon: {
-      ...normalizeIconProps(props.icon),
-    },
     description: {
       ...descriptionUI,
       'data-slot': 'sheet-description',
@@ -180,9 +177,11 @@ const calculatedUI = computed(() => {
       ),
       style: closeUI.style,
     },
-    closeIcon: { ...normalizeIconProps(props.closeIcon) },
   }
 })
+
+const icon = computed(() => normalizeIconProps(props.icon))
+const closeIcon = computed(() => normalizeIconProps(props.closeIcon))
 </script>
 
 <template>
@@ -198,11 +197,7 @@ const calculatedUI = computed(() => {
           <slot name="close" v-bind="sheetContext">
             <DialogClose v-bind="calculatedUI.close">
               <slot name="closeIcon" v-bind="sheetContext">
-                <Icon
-                  v-if="calculatedUI.closeIcon.name"
-                  v-bind="calculatedUI.closeIcon"
-                  :name="calculatedUI.closeIcon.name"
-                />
+                <Icon v-if="icon?.name" v-bind="icon" />
               </slot>
             </DialogClose>
           </slot>
@@ -216,11 +211,7 @@ const calculatedUI = computed(() => {
         >
           <slot name="header" v-bind="sheetContext">
             <DialogTitle v-if="props.label || slots.label" v-bind="calculatedUI.label">
-              <Icon
-                v-if="calculatedUI.icon.name"
-                v-bind="calculatedUI.icon"
-                :name="calculatedUI.icon.name"
-              />
+              <Icon v-if="closeIcon?.name" v-bind="closeIcon" />
               <slot name="label" v-bind="sheetContext">{{ props.label }}</slot>
             </DialogTitle>
 

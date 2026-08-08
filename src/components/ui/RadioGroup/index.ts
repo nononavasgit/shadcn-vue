@@ -1,18 +1,28 @@
-import type { Component, HTMLAttributes } from 'vue'
+import type {
+  RadioGroupItemProps as RekaRadioGroupItemProps,
+  RadioGroupRootProps as RekaRadioGroupRootProps,
+} from 'reka-ui'
+import type { HTMLAttributes } from 'vue'
 
 export { default as RadioGroup } from './RadioGroup.vue'
 export { default as RadioGroupItem } from './RadioGroupItem.vue'
 
 export type RadioGroupValue = string | number
 
-export interface RadioGroupItemProps {
+// Props Reka
+export type RadioGroupRootProps = Pick<
+  RekaRadioGroupRootProps,
+  'disabled' | 'name' | 'required' | 'orientation' | 'dir' | 'loop' | 'as' | 'asChild'
+>
+
+export type RadioGroupItemProps = Omit<
+  Pick<
+    RekaRadioGroupItemProps,
+    'value' | 'disabled' | 'id' | 'name' | 'required' | 'as' | 'asChild'
+  >,
+  'value'
+> & {
   value: RadioGroupValue
-  disabled?: boolean
-  id?: string
-  name?: string
-  required?: boolean
-  as?: string | Component
-  asChild?: boolean
 }
 
 export function normalizeRadioGroupItemProps(
@@ -28,53 +38,55 @@ export interface RadioGroupOption extends Pick<RadioGroupItemProps, 'value' | 'd
 }
 export type RadioGroupItem = RadioGroupOption
 
-// Context RadioGroup
-export interface RadioGroupUIContext {
+// Fn
+export type RadioGroupFn<T> = T | ((context: RadioGroupContext) => T)
+export type RadioGroupItemFn<T> = T | ((context: RadioGroupItemContext) => T)
+
+// UI
+export interface RadioGroupUI {
+  root?: RadioGroupFn<HTMLAttributes>
+  item?: RadioGroupItemFn<HTMLAttributes>
+  radio?: RadioGroupItemFn<HTMLAttributes>
+  content?: RadioGroupItemFn<HTMLAttributes>
+  label?: RadioGroupItemFn<HTMLAttributes>
+  description?: RadioGroupItemFn<HTMLAttributes>
+}
+
+// Props
+export interface RadioGroupProps extends RadioGroupRootProps {
+  grouped?: boolean
+  radioPosition?: 'left' | 'right'
+  rovingFocus?: boolean
+  items?: RadioGroupOption[]
+  ui?: RadioGroupUI
+}
+
+// Context
+export interface RadioGroupContext {
+  props: Omit<RadioGroupProps, 'ui'>
+  value: RadioGroupValue | undefined
+}
+
+export interface RadioGroupItemContext extends RadioGroupContext {
   item: RadioGroupOption
   index: number
   selected: boolean
 }
 
-export type RadioGroupUIValue<T> = T | ((context: RadioGroupUIContext) => T)
-
-export interface RadioGroupUI {
-  root?: HTMLAttributes
-  item?: RadioGroupUIValue<HTMLAttributes>
-  radio?: RadioGroupUIValue<HTMLAttributes>
-  content?: RadioGroupUIValue<HTMLAttributes>
-  label?: RadioGroupUIValue<HTMLAttributes>
-  description?: RadioGroupUIValue<HTMLAttributes>
-}
-
-export interface RadioGroupProps {
-  modelValue?: RadioGroupValue
-  defaultValue?: RadioGroupValue
-  disabled?: boolean
-  name?: string
-  required?: boolean
-  orientation?: 'horizontal' | 'vertical'
-  grouped?: boolean
-  radioPosition?: 'left' | 'right'
-  dir?: 'ltr' | 'rtl'
-  loop?: boolean
-  rovingFocus?: boolean
-  as?: string | Component
-  asChild?: boolean
-  items?: RadioGroupOption[]
-  ui?: RadioGroupUI
-}
-
+// Emits
 export interface RadioGroupEmits {
-  'update:modelValue': [value: RadioGroupValue]
+  'update:value': [value: RadioGroupValue | undefined]
+  valueChange: [value: RadioGroupValue | undefined]
 }
 
+// Slots
 export interface RadioGroupSlots {
-  default?(props: { modelValue: RadioGroupValue | undefined }): unknown
-  item?(props: RadioGroupUIContext): unknown
-  leading?(props: RadioGroupUIContext): unknown
-  trailing?(props: RadioGroupUIContext): unknown
-  [name: `leading-${string}`]: ((props: RadioGroupUIContext) => unknown) | undefined
-  [name: `trailing-${string}`]: ((props: RadioGroupUIContext) => unknown) | undefined
+  default?(props: { value: RadioGroupValue | undefined }): unknown
+  item?(props: RadioGroupItemContext): unknown
+  leading?(props: RadioGroupItemContext): unknown
+  trailing?(props: RadioGroupItemContext): unknown
+  [name: `leading-${string}`]: ((props: RadioGroupItemContext) => unknown) | undefined
+  [name: `trailing-${string}`]: ((props: RadioGroupItemContext) => unknown) | undefined
 }
 
 export interface RadioGroupItemSlots {

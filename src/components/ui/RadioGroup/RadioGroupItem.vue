@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { RadioGroupItem } from '@/components/primitives/RadioGroup'
+import { RadioGroupIndicator, RadioGroupItem } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import type { RadioGroupItemProps, RadioGroupItemSlots } from '.'
 
@@ -9,7 +9,7 @@ defineOptions({ inheritAttrs: false })
 const props = defineProps<RadioGroupItemProps>()
 defineSlots<RadioGroupItemSlots>()
 const attrs = useAttrs()
-const calculatedUI = computed(() => ({
+const rootProps = computed(() => ({
   ...attrs,
   as: props.as,
   asChild: props.asChild,
@@ -26,13 +26,15 @@ const calculatedUI = computed(() => ({
 </script>
 
 <template>
-  <RadioGroupItem v-bind="calculatedUI">
+  <RadioGroupItem v-bind="rootProps" data-slot="radio-group-item">
     <template #default="slotProps">
-      <slot v-bind="slotProps">
-        <span class="flex items-center justify-center">
-          <span class="size-2 rounded-full bg-current" />
-        </span>
-      </slot>
+      <RadioGroupIndicator data-slot="radio-group-indicator">
+        <slot v-bind="slotProps">
+          <span class="flex items-center justify-center">
+            <span class="size-2 rounded-full bg-current" />
+          </span>
+        </slot>
+      </RadioGroupIndicator>
     </template>
   </RadioGroupItem>
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, useAttrs, useId } from 'vue'
-import { RadioGroup as RadioGroupBase } from '@/components/primitives/RadioGroup'
+import { computed, useAttrs, useId, watch } from 'vue'
+import { RadioGroupRoot } from 'reka-ui'
 import { Label } from '@/components/ui/Label'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useResolve } from '@/composables/useResolve'
@@ -8,10 +8,11 @@ import { cn } from '@/lib/utils'
 import { normalizeRadioGroupItemProps } from '.'
 import RadioGroupItem from './RadioGroupItem.vue'
 import type {
+  RadioGroupContext,
   RadioGroupEmits,
+  RadioGroupItemContext,
   RadioGroupProps,
   RadioGroupSlots,
-  RadioGroupUIContext,
   RadioGroupValue,
 } from '.'
 
@@ -27,123 +28,151 @@ const props = withDefaults(defineProps<RadioGroupProps>(), {
   items: () => [],
   ui: undefined,
 })
-defineEmits<RadioGroupEmits>()
 defineSlots<RadioGroupSlots>()
+const emit = defineEmits<RadioGroupEmits>()
 
 const attrs = useAttrs()
-const modelValue = defineModel<RadioGroupValue>()
+const value = defineModel<RadioGroupValue>('value')
 const radioGroupId = useId()
 
-const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+watch(value, (nextValue, previousValue) => {
+  if (nextValue !== previousValue) emit('valueChange', nextValue)
+})
+
+const radioGroupContext = computed<RadioGroupContext>(() => {
+  const { ui, ...radioGroupProps } = props
+  void ui
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      as: props.as,
-      asChild: props.asChild,
-      defaultValue: props.defaultValue,
-      disabled: props.disabled,
-      name: props.name,
-      orientation: props.orientation,
-      dir: props.dir,
-      loop: props.loop,
-      required: props.required,
-      rovingFocus: props.rovingFocus,
-      class: cn(
-        'grid gap-3',
-        props.orientation === 'horizontal' && 'grid-flow-col auto-cols-fr',
-        props.orientation === 'horizontal' && props.grouped && 'w-fit auto-cols-max',
-        attrs.class,
-        rootUI.class,
-      ),
-      style: [attrs.style, rootUI.style],
-    },
-    items: props.items.map((item, index) => {
-      const context: RadioGroupUIContext = {
-        item,
-        index,
-        selected: Object.is(modelValue.value, item.value),
-      }
-      const key = String(item.value)
-      const inputId = `${radioGroupId}-${key}`
-      const itemUI = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
-      const radioUI = normalizeHTMLAttributes(useResolve(props.ui?.radio, context))
-      const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
-      const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
-      const descriptionUI = normalizeHTMLAttributes(useResolve(props.ui?.description, context))
-      const radioProps = normalizeRadioGroupItemProps(item)
-
-      return {
-        key,
-        data: item,
-        context,
-        radioPosition: props.radioPosition,
-        slots: {
-          leading: `leading-${key}` as `leading-${string}`,
-          trailing: `trailing-${key}` as `trailing-${string}`,
-        },
-        item: {
-          ...itemUI,
-          for: inputId,
-          class: cn(
-            'flex cursor-pointer items-center gap-2 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50',
-            itemUI?.class,
-          ),
-        },
-        radio: {
-          ...radioUI,
-          ...radioProps,
-          id: inputId,
-          class: cn(radioUI.class),
-        },
-        content: {
-          ...contentUI,
-          class: cn('grid gap-1', contentUI.class),
-        },
-        label: {
-          ...labelUI,
-          class: cn('text-sm font-medium', labelUI.class),
-        },
-        description: {
-          ...descriptionUI,
-          class: cn('text-sm text-muted-foreground', descriptionUI.class),
-        },
-      }
-    }),
+    props: radioGroupProps,
+    value: value.value,
   }
 })
+
+const rootProps = computed(() => {
+  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, radioGroupContext.value))
+
+  return {
+    ...attrs,
+    ...rootUI,
+    as: props.as,
+    asChild: props.asChild,
+    disabled: props.disabled,
+    name: props.name,
+    orientation: props.orientation,
+    dir: props.dir,
+    loop: props.loop,
+    required: props.required,
+    rovingFocus: props.rovingFocus,
+    class: cn(
+      'grid gap-3',
+      props.orientation === 'horizontal' && 'grid-flow-col auto-cols-fr',
+      props.orientation === 'horizontal' && props.grouped && 'w-fit auto-cols-max',
+      attrs.class,
+      rootUI.class,
+    ),
+    style: [attrs.style, rootUI.style],
+  }
+})
+
+function getKey(context: RadioGroupItemContext) {
+  return String(context.item.value)
+}
+
+function getInputId(context: RadioGroupItemContext) {
+  return `${radioGroupId}-${getKey(context)}`
+}
+
+const itemContexts = computed<RadioGroupItemContext[]>(() =>
+  props.items.map((item, index) => ({
+    ...radioGroupContext.value,
+    item,
+    index,
+    selected: Object.is(value.value, item.value),
+  })),
+)
+
+function getItemProps(context: RadioGroupItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+
+  return {
+    ...ui,
+    for: getInputId(context),
+    class: cn(
+      'flex cursor-pointer items-center gap-2 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50',
+      ui.class,
+    ),
+    style: ui.style,
+  }
+}
+
+function getRadioProps(context: RadioGroupItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.radio, context))
+
+  return {
+    ...ui,
+    ...normalizeRadioGroupItemProps(context.item),
+    id: getInputId(context),
+    class: cn(ui.class),
+    style: ui.style,
+  }
+}
+
+function getContentProps(context: RadioGroupItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
+  return { ...ui, class: cn('grid gap-1', ui.class), style: ui.style }
+}
+
+function getLabelProps(context: RadioGroupItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
+  return { ...ui, class: cn('text-sm font-medium', ui.class), style: ui.style }
+}
+
+function getDescriptionProps(context: RadioGroupItemContext) {
+  const ui = normalizeHTMLAttributes(useResolve(props.ui?.description, context))
+  return { ...ui, class: cn('text-sm text-muted-foreground', ui.class), style: ui.style }
+}
+
+function getSlotNames(context: RadioGroupItemContext) {
+  const key = getKey(context)
+  return {
+    leading: `leading-${key}` as `leading-${string}`,
+    trailing: `trailing-${key}` as `trailing-${string}`,
+  }
+}
 </script>
 
 <template>
-  <RadioGroupBase v-model="modelValue" v-bind="calculatedUI.root">
-    <template v-if="calculatedUI.items.length">
-      <template v-for="item in calculatedUI.items" :key="item.key">
-        <slot name="item" v-bind="item.context">
-          <Label v-bind="item.item">
-            <slot :name="item.slots.leading" v-bind="item.context">
-              <slot name="leading" v-bind="item.context" />
+  <RadioGroupRoot v-model="value" v-bind="rootProps" data-slot="radio-group">
+    <template v-if="itemContexts.length">
+      <template v-for="context in itemContexts" :key="getKey(context)">
+        <slot name="item" v-bind="context">
+          <Label v-bind="getItemProps(context)">
+            <slot :name="getSlotNames(context).leading" v-bind="context">
+              <slot name="leading" v-bind="context" />
             </slot>
 
-            <RadioGroupItem v-if="item.radioPosition === 'left'" v-bind="item.radio" />
+            <RadioGroupItem v-if="props.radioPosition === 'left'" v-bind="getRadioProps(context)" />
 
-            <span v-bind="item.content">
-              <span v-bind="item.label">{{ item.data.label }}</span>
-              <span v-if="item.data.description" v-bind="item.description">
-                {{ item.data.description }}
+            <span v-bind="getContentProps(context)">
+              <span v-bind="getLabelProps(context)">{{ context.item.label }}</span>
+              <span v-if="context.item.description" v-bind="getDescriptionProps(context)">
+                {{ context.item.description }}
               </span>
             </span>
 
-            <RadioGroupItem v-if="item.radioPosition === 'right'" v-bind="item.radio" />
+            <RadioGroupItem
+              v-if="props.radioPosition === 'right'"
+              v-bind="getRadioProps(context)"
+            />
 
-            <slot :name="item.slots.trailing" v-bind="item.context">
-              <slot name="trailing" v-bind="item.context" />
+            <slot :name="getSlotNames(context).trailing" v-bind="context">
+              <slot name="trailing" v-bind="context" />
             </slot>
           </Label>
         </slot>
       </template>
     </template>
-    <slot v-else :model-value="modelValue" />
-  </RadioGroupBase>
+    <slot v-else :value="value" />
+  </RadioGroupRoot>
 </template>

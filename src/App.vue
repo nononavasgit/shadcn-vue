@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { ConfigProvider } from '@/components/provider'
 import { Listbox } from '@/components/ui'
-import type { ListboxItem, ListboxValue } from '@/components/ui/Listbox'
+import type { ListboxGroup, ListboxItem, ListboxValue } from '@/components/ui/Listbox'
 
 const frameworks: ListboxItem[] = [
   { value: 'vue', label: 'Vue', icon: 'success' },
@@ -18,8 +18,28 @@ const tools: ListboxItem[] = [
   { value: 'vitest', label: 'Vitest' },
 ]
 
+const groupedTools: ListboxGroup[] = [
+  {
+    id: 'frontend',
+    label: 'Frontend',
+    items: [
+      { value: 'vue', label: 'Vue', icon: 'success' },
+      { value: 'tailwind', label: 'Tailwind CSS', icon: 'info' },
+    ],
+  },
+  {
+    id: 'tooling',
+    label: 'Herramientas',
+    items: [
+      { value: 'typescript', label: 'TypeScript', icon: 'info' },
+      { value: 'vite', label: 'Vite', icon: 'warning' },
+    ],
+  },
+]
+
 const framework = ref<ListboxValue>('vue')
 const selectedTools = ref<ListboxValue[]>(['typescript', 'vite'])
+const groupedTool = ref<ListboxValue>('vue')
 </script>
 
 <template>
@@ -40,7 +60,12 @@ const selectedTools = ref<ListboxValue[]>(['typescript', 'vite'])
               <p class="text-sm text-muted-foreground">Selecciona un framework.</p>
             </div>
 
-            <Listbox v-model:value="framework" :items="frameworks">
+            <Listbox
+              aria-label="hola"
+              aria-invalid="true"
+              v-model:value="framework"
+              :items="frameworks"
+            >
               <template #item-leading-react>
                 <span
                   class="grid size-5 place-items-center rounded-full bg-primary text-xs text-primary-foreground"
@@ -76,6 +101,23 @@ const selectedTools = ref<ListboxValue[]>(['typescript', 'vite'])
             </div>
 
             <Listbox value="svelte" :items="frameworks" disabled />
+          </article>
+
+          <article class="space-y-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+            <div class="space-y-1">
+              <h2 class="font-semibold">Opciones agrupadas</h2>
+              <p class="text-sm text-muted-foreground">
+                Los grupos admiten labels y slots propios.
+              </p>
+            </div>
+
+            <Listbox v-model:value="groupedTool" :groups="groupedTools">
+              <template #group-label-tooling="{ group }"> {{ group.label }} · Desarrollo </template>
+            </Listbox>
+
+            <p class="text-sm text-muted-foreground">
+              Seleccionado: <code class="text-foreground">{{ groupedTool }}</code>
+            </p>
           </article>
         </section>
       </div>

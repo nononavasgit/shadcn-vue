@@ -30,18 +30,28 @@ export interface ListboxItem {
   disabled?: boolean
 }
 
+export interface ListboxGroup {
+  id: string | number
+  label: string
+  items: ListboxItem[]
+}
+
 export interface ListboxProps extends ListboxRootProps {
   value?: ListboxModelValue
   items?: ListboxItem[]
+  groups?: ListboxGroup[]
   ui?: ListboxUI
 }
 
 export type ListboxFn<T> = T | ((context: ListboxContext) => T)
 export type ListboxItemFn<T> = T | ((context: ListboxItemContext) => T)
+export type ListboxGroupFn<T> = T | ((context: ListboxGroupContext) => T)
 
 export interface ListboxUI {
   root?: ListboxFn<HTMLAttributes>
   content?: ListboxFn<HTMLAttributes>
+  group?: ListboxGroupFn<HTMLAttributes>
+  groupLabel?: ListboxGroupFn<HTMLAttributes>
   item?: ListboxItemFn<HTMLAttributes>
   label?: ListboxItemFn<HTMLAttributes>
   indicator?: ListboxItemFn<HTMLAttributes>
@@ -56,6 +66,13 @@ export interface ListboxItemContext extends ListboxContext {
   item: ListboxItem
   index: number
   selected: boolean
+  group?: ListboxGroup
+  groupIndex?: number
+}
+
+export interface ListboxGroupContext extends ListboxContext {
+  group: ListboxGroup
+  index: number
 }
 
 export interface ListboxEmits {
@@ -67,8 +84,12 @@ export type ListboxSlots = {
   default?(props: ListboxContext): unknown
   item?(props: ListboxItemContext): unknown
   'item-leading'?(props: ListboxItemContext): unknown
+  group?(props: ListboxGroupContext): unknown
+  'group-label'?(props: ListboxGroupContext): unknown
   indicator?(props: ListboxItemContext): unknown
 } & {
   [name: `item-${string}`]: ((props: ListboxItemContext) => unknown) | undefined
   [name: `item-leading-${string}`]: ((props: ListboxItemContext) => unknown) | undefined
+  [name: `group-${string}`]: ((props: ListboxGroupContext) => unknown) | undefined
+  [name: `group-label-${string}`]: ((props: ListboxGroupContext) => unknown) | undefined
 }

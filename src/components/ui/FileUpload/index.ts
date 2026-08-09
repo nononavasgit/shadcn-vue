@@ -1,5 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes, InputHTMLAttributes } from 'vue'
+import type { AttachmentMediaVariants } from '@/components/ui/Attachment'
 
 export { default as FileUpload } from './FileUpload.vue'
 
@@ -35,6 +36,16 @@ export const fileUploadMediaVariants = cva(
 export const fileUploadLabelVariants = cva('text-sm font-medium')
 export const fileUploadDescriptionVariants = cva('text-xs text-muted-foreground')
 
+export const fileUploadListVariants = cva('grid gap-2', {
+  variants: {
+    mediaVariant: {
+      default: 'grid-cols-1',
+      image: 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4',
+    },
+  },
+  defaultVariants: { mediaVariant: 'default' },
+})
+
 export type FileUploadVariants = VariantProps<typeof fileUploadDropzoneVariants>
 export type FileUploadFn<T> = T | ((context: FileUploadContext) => T)
 
@@ -57,21 +68,28 @@ export interface FileUploadProps {
   disabled?: boolean
   name?: string
   required?: boolean
+  maxFiles?: number
+  maxSize?: number
+  showList?: boolean
+  attachmentMediaVariant?: AttachmentMediaVariants['variant']
   ui?: FileUploadUI
 }
 
 export interface FileUploadContext {
   props: Omit<FileUploadProps, 'ui'>
   files: File[]
+  errors: string[]
   isDragging: boolean
   open: () => void
   remove: (index: number) => void
   clear: () => void
+  clearErrors: () => void
 }
 
 export interface FileUploadEmits {
   'update:files': [files: File[]]
   filesChange: [files: File[]]
+  error: [errors: string[]]
 }
 
 export interface FileUploadSlots {
@@ -79,15 +97,6 @@ export interface FileUploadSlots {
   media?(props: FileUploadContext): unknown
   label?(props: FileUploadContext): unknown
   description?(props: FileUploadContext): unknown
-  file?(props: FileUploadContext & { file: File; index: number }): unknown
-}
-
-export function formatFileSize(bytes: number, decimals = 1) {
-  if (bytes === 0) return '0 B'
-
-  const units = ['B', 'KB', 'MB', 'GB', 'TB']
-  const unitIndex = Math.floor(Math.log(bytes) / Math.log(1024))
-  const value = bytes / 1024 ** unitIndex
-
-  return `${value.toFixed(unitIndex === 0 ? 0 : decimals)} ${units[unitIndex]}`
+  alert?(props: FileUploadContext): unknown
+  file?(props: FileUploadContext & { file: File; index: number; removeFile: () => void }): unknown
 }

@@ -1,18 +1,21 @@
 <script setup lang="ts">
-import { computed, ref, useAttrs } from 'vue'
-import { FileIcon, UploadIcon, XIcon } from '@lucide/vue'
+import { computed, onBeforeUnmount, ref, useAttrs, watch } from 'vue'
 import { Attachment } from '@/components/ui/Attachment'
+import { Alert } from '@/components/ui/Alert'
 import { Button } from '@/components/ui/Button'
+import { Icon } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
+import { useI18n } from '@/i18n'
+import { useFiles } from '@/composables'
 import {
   fileUploadDescriptionVariants,
   fileUploadDropzoneVariants,
   fileUploadLabelVariants,
+  fileUploadListVariants,
   fileUploadMediaVariants,
   fileUploadVariants,
-  formatFileSize,
   type FileUploadContext,
   type FileUploadEmits,
   type FileUploadProps,
@@ -22,13 +25,17 @@ import {
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<FileUploadProps>(), {
-  label: 'Arrastra y suelta archivos aquí',
-  description: 'o haz clic para seleccionar',
+  label: undefined,
+  description: undefined,
   accept: undefined,
   multiple: false,
   disabled: false,
   name: undefined,
   required: false,
+  maxFiles: undefined,
+  maxSize: undefined,
+  showList: true,
+  attachmentMediaVariant: 'default',
   ui: undefined,
 })
 const emit = defineEmits<FileUploadEmits>()
@@ -38,7 +45,13 @@ const files = defineModel<File[]>('files', { default: () => [] })
 const attrs = useAttrs()
 const input = ref<HTMLInputElement>()
 const dragDepth = ref(0)
+const errors = ref<string[]>([])
+const previews = new Map<File, string>()
 const isDragging = computed(() => dragDepth.value > 0)
+const { t } = useI18n()
+const { formatFileSize, getFileIcon } = useFiles()
+const displayLabel = computed(() => props.label ?? t('fileUploadLabel'))
+const displayDescription = computed(() => props.description ?? t('fileUploadDescription'))
 
 const fileUploadContext = computed<FileUploadContext>(() => {
   const { ui, ...fileUploadProps } = props
@@ -47,10 +60,12 @@ const fileUploadContext = computed<FileUploadContext>(() => {
   return {
     props: fileUploadProps,
     files: files.value,
+    errors: errors.value,
     isDragging: isDragging.value,
     open: openFileDialog,
     remove: removeFile,
     clear: clearFiles,
+    clearErrors,
   }
 })
 
@@ -83,6 +98,7 @@ const inputProps = computed(() => {
   const ui = normalizeHTMLAttributes(useResolve(props.ui?.input, fileUploadContext.value))
   return {
     ...ui,
+    tabindex: -1,
     accept: props.accept,
     multiple: props.multiple,
     disabled: props.disabled,
@@ -112,8 +128,51 @@ const descriptionProps = computed(() => {
 
 const listProps = computed(() => {
   const ui = normalizeHTMLAttributes(useResolve(props.ui?.list, fileUploadContext.value))
-  return { ...ui, class: cn('grid gap-2', ui.class) }
+  return {
+    ...ui,
+    'data-media-variant': props.attachmentMediaVariant,
+    class: cn(fileUploadListVariants({ mediaVariant: props.attachmentMediaVariant }), ui.class),
+  }
 })
+
+const alertProps = computed(() => {
+  return {
+    label: t('fileUploadLimitTitle'),
+    severity: 'error' as const,
+    variant: 'soft' as const,
+    icon: 'error' as const,
+    closable: true,
+  }
+})
+
+watch(files, (nextFiles) => {
+  for (const [file, preview] of previews) {
+    if (!nextFiles.includes(file)) {
+      URL.revokeObjectURL(preview)
+      previews.delete(file)
+    }
+  }
+})
+
+onBeforeUnmount(() => {
+  for (const preview of previews.values()) URL.revokeObjectURL(preview)
+  previews.clear()
+})
+
+function getFilePreview(file: File) {
+  const currentPreview = previews.get(file)
+  if (currentPreview) return currentPreview
+
+  const preview = URL.createObjectURL(file)
+  previews.set(file, preview)
+  return preview
+}
+
+function getMediaVariant(file: File) {
+  return props.attachmentMediaVariant === 'image' 
+    ? 'image'
+    : 'default'
+}
 
 function updateFiles(nextFiles: File[]) {
   const selectedFiles = props.multiple ? nextFiles : nextFiles.slice(0, 1)
@@ -122,7 +181,38 @@ function updateFiles(nextFiles: File[]) {
 }
 
 function addFiles(nextFiles: File[]) {
-  updateFiles(props.multiple ? [...files.value, ...nextFiles] : nextFiles)
+  clearErrors()
+
+  const incomingFiles = props.multiple ? nextFiles : nextFiles.slice(0, 1)
+  const acceptedFiles = props.multiple ? [...files.value] : []
+  let totalSize = acceptedFiles.reduce((total, file) => total + file.size, 0)
+  let exceedsFileCount = false
+  let exceedsTotalSize = false
+
+  for (const file of incomingFiles) {
+    if (props.multiple && props.maxFiles !== undefined && acceptedFiles.length >= props.maxFiles) {
+      exceedsFileCount = true
+      continue
+    }
+
+    if (props.maxSize !== undefined && totalSize + file.size > props.maxSize) {
+      exceedsTotalSize = true
+      continue
+    }
+
+    acceptedFiles.push(file)
+    totalSize += file.size
+  }
+
+  if (exceedsFileCount && props.maxFiles !== undefined) {
+    errors.value.push(t('fileUploadMaxFiles', { count: props.maxFiles }))
+  }
+  if (exceedsTotalSize && props.maxSize !== undefined) {
+    errors.value.push(t('fileUploadMaxSize', { size: formatFileSize(props.maxSize) }))
+  }
+
+  if (errors.value.length) emit('error', errors.value)
+  updateFiles(acceptedFiles)
 }
 
 function removeFile(index: number) {
@@ -131,6 +221,11 @@ function removeFile(index: number) {
 
 function clearFiles() {
   updateFiles([])
+  clearErrors()
+}
+
+function clearErrors() {
+  errors.value = []
 }
 
 function openFileDialog() {
@@ -199,36 +294,61 @@ function handleDrop(event: DragEvent) {
 
       <slot v-bind="fileUploadContext">
         <div v-bind="mediaProps" data-slot="file-upload-media">
-          <slot name="media" v-bind="fileUploadContext"><UploadIcon /></slot>
+          <slot name="media" v-bind="fileUploadContext"><Icon name="upload" /></slot>
         </div>
 
         <div class="space-y-1 text-center" data-slot="file-upload-content">
           <p v-bind="labelProps" data-slot="file-upload-label">
-            <slot name="label" v-bind="fileUploadContext">{{ props.label }}</slot>
+            <slot name="label" v-bind="fileUploadContext">{{ displayLabel }}</slot>
           </p>
           <p
-            v-if="props.description || $slots.description"
+            v-if="displayDescription || $slots.description"
             v-bind="descriptionProps"
             data-slot="file-upload-description"
           >
-            <slot name="description" v-bind="fileUploadContext">{{ props.description }}</slot>
+            <slot name="description" v-bind="fileUploadContext">{{ displayDescription }}</slot>
           </p>
         </div>
       </slot>
     </div>
 
-    <div v-if="files.length" v-bind="listProps" data-slot="file-upload-list">
+    <slot v-if="errors.length" name="alert" v-bind="fileUploadContext">
+      <Alert v-bind="alertProps" @close="clearErrors">
+        <template #description>
+          <p v-for="error in errors" :key="error">{{ error }}</p>
+        </template>
+      </Alert>
+    </slot>
+
+    <div v-if="props.showList && files.length" v-bind="listProps" data-slot="file-upload-list">
       <template
         v-for="(file, index) in files"
         :key="`${file.name}-${file.size}-${file.lastModified}-${index}`"
       >
-        <slot name="file" v-bind="fileUploadContext" :file="file" :index="index">
+        <slot
+          name="file"
+          v-bind="fileUploadContext"
+          :file="file"
+          :index="index"
+          :remove-file="() => removeFile(index)"
+        >
           <Attachment
             class="w-full"
             :label="file.name"
-            :description="`${file.type || 'Archivo'} · ${formatFileSize(file.size)}`"
+            :description="`${formatFileSize(file.size)}`"
+            :media-variant="getMediaVariant(file)"
+            :orientation="getMediaVariant(file) === 'image' ? 'vertical' : 'horizontal'"
           >
-            <template #media><FileIcon /></template>
+            <template #media>
+              <img
+                v-if="getMediaVariant(file) === 'image'"
+                :src="getFilePreview(file)"
+                :alt="file.name"
+                width="60"
+                height="60"
+              />
+              <Icon v-else :name="getFileIcon(file)" />
+            </template>
             <template #actions>
               <Button
                 type="button"
@@ -236,11 +356,10 @@ function handleDrop(event: DragEvent) {
                 severity="secondary"
                 size="xs"
                 square
-                :aria-label="`Eliminar ${file.name}`"
+                :aria-label="t('fileUploadRemove', { name: file.name })"
+                icon="x"
                 @click="removeFile(index)"
-              >
-                <XIcon />
-              </Button>
+              />
             </template>
           </Attachment>
         </slot>

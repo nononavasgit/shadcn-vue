@@ -19,6 +19,14 @@ import {
   Plus,
   MoreHorizontal,
   User,
+  Upload,
+  File,
+  FileText,
+  FileArchive,
+  FileSpreadsheet,
+  Image,
+  AudioLines,
+  Video,
 } from '@lucide/vue'
 
 export const ICONS = {
@@ -42,6 +50,14 @@ export const ICONS = {
   plus: Plus,
   moreHorizontal: MoreHorizontal,
   user: User,
+  upload: Upload,
+  file: File,
+  fileText: FileText,
+  fileArchive: FileArchive,
+  fileSpreadsheet: FileSpreadsheet,
+  image: Image,
+  audio: AudioLines,
+  video: Video,
 } as const
 
 export type IconName = keyof typeof ICONS

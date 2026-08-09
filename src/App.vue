@@ -23,8 +23,8 @@ import { Attachment, FileUpload, Spinner, Button } from '@/components/ui'
             Archivos adjuntos con metadatos, estados de subida y acciones.
           </p>
         </header>
-        
-        <Button label="hola" :icon="{  }" :ui="{root: { 'aria-xd': 'e', si: true }}" />
+
+        <Button label="hola" :icon="{}" :ui="{ root: { 'aria-xd': 'e', si: true } }" />
 
         <section class="grid gap-4">
           <div>
@@ -34,7 +34,14 @@ import { Attachment, FileUpload, Spinner, Button } from '@/components/ui'
             </p>
           </div>
 
-          <FileUpload class="max-w-2xl" multiple accept="image/*,.pdf,.doc,.docx" />
+          <FileUpload
+            class="max-w-2xl"
+            multiple
+            :max-files="4"
+            :max-size="1 * 1024"
+            accept="image/*,.pdf,.doc,.docx"
+            attachment-media-variant="image"
+          />
         </section>
 
         <section class="grid gap-4">
@@ -55,7 +62,6 @@ import { Attachment, FileUpload, Spinner, Button } from '@/components/ui'
             </template>
           </Attachment>
         </section>
-        
 
         <section class="grid gap-4">
           <div>
@@ -191,9 +197,9 @@ import { Attachment, FileUpload, Spinner, Button } from '@/components/ui'
 
             <Attachment
               orientation="vertical"
-              media-variant="image"
               label="reunión.jpg"
               description="JPG · 820 KB"
+              media-variant="image"
             >
               <template #media>
                 <img

@@ -27,4 +27,11 @@ export default {
   timeFieldDayPeriod: 'Periodo del día',
   timeFieldLiteral: 'Separador',
   timeFieldTimeZoneName: 'Zona horaria',
+  fileUploadLabel: 'Arrastra y suelta archivos aquí',
+  fileUploadDescription: 'o haz clic para seleccionar',
+  fileUploadFile: 'Archivo',
+  fileUploadRemove: 'Eliminar {name}',
+  fileUploadLimitTitle: 'No se han podido añadir algunos archivos',
+  fileUploadMaxFiles: 'Puedes subir un máximo de {count} archivos.',
+  fileUploadMaxSize: 'El tamaño total no puede superar {size}.',
 } satisfies Messages

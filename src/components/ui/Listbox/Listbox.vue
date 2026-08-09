@@ -1,13 +1,8 @@
 <script setup lang="ts">
 import { computed, useAttrs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import {
-  ListboxContent,
-  ListboxFilter,
-  ListboxGroup,
-  ListboxGroupLabel,
-  ListboxRoot,
-} from 'reka-ui'
+import { ListboxContent, ListboxGroup, ListboxGroupLabel, ListboxRoot } from 'reka-ui'
+import { Input, normalizeInputProps } from '@/components/ui/Input'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
@@ -74,9 +69,9 @@ const rootProps = computed(() => {
     required: props.required,
     selectionBehavior: props.selectionBehavior,
     class: cn(
-      'min-w-40 overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md',
+      'min-w-40 overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md transition-[color,box-shadow] focus-within:border-primary focus-within:ring-3 focus-within:ring-primary/50',
       (attrs['aria-invalid'] === true || attrs['aria-invalid'] === 'true') &&
-        'border-destructive ring-3 ring-destructive/20 dark:ring-destructive/40',
+        'border-destructive ring-3 ring-destructive/20 focus-within:border-destructive focus-within:ring-destructive/20 dark:ring-destructive/40 dark:focus-within:ring-destructive/40',
       attrs.class,
       ui.class,
     ),
@@ -100,9 +95,11 @@ const filterProps = computed(() => {
 
   return {
     ...props.filterInput,
+    ...normalizeInputProps(props.filterInput),
     ...ui,
+    disabled: props.disabled || props.filterInput?.disabled,
     class: cn(
-      'mb-1 flex h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50',
+      'mb-1 focus-visible:border-input focus-visible:ring-0',
       props.filterInput?.class,
       ui.class,
     ),
@@ -112,13 +109,15 @@ const filterProps = computed(() => {
 
 const normalizedSearch = computed(() => search.value.trim().toLocaleLowerCase())
 
-function matchesSearch(item: ListboxItemContext['item']) {
-  if (!props.filter || !normalizedSearch.value) return true
-  return item.label.toLocaleLowerCase().includes(normalizedSearch.value)
+function filterItems(items: ListboxItemContext['item'][]) {
+  if (!props.filter || !normalizedSearch.value) return items
+  if (props.filterFn) return props.filterFn(items, search.value)
+
+  return items.filter((item) => item.label.toLocaleLowerCase().includes(normalizedSearch.value))
 }
 
 const itemContexts = computed<ListboxItemContext[]>(() =>
-  props.items.filter(matchesSearch).map((item, index) => ({
+  filterItems(props.items).map((item, index) => ({
     ...listboxContext.value,
     item,
     index,
@@ -130,7 +129,7 @@ const itemContexts = computed<ListboxItemContext[]>(() =>
 
 const groupContexts = computed<ListboxGroupContext[]>(() =>
   props.groups
-    .map((group) => ({ ...group, items: group.items.filter(matchesSearch) }))
+    .map((group) => ({ ...group, items: filterItems(group.items) }))
     .filter((group) => group.items.length)
     .map((group, index) => ({
       ...listboxContext.value,
@@ -215,9 +214,9 @@ function getGroupSlotNames(context: ListboxGroupContext) {
 
 <template>
   <ListboxRoot v-model="value" v-bind="rootProps" data-slot="listbox">
-    <ListboxFilter
+    <Input
       v-if="props.filter"
-      v-model="search"
+      v-model:value="search"
       v-bind="filterProps"
       data-slot="listbox-filter"
     />

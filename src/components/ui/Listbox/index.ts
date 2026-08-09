@@ -1,16 +1,18 @@
 import type { HTMLAttributes, InputHTMLAttributes } from 'vue'
-import type {
-  ListboxFilterProps as RekaListboxFilterProps,
-  ListboxRootProps as RekaListboxRootProps,
-} from 'reka-ui'
+import type { ListboxRootProps as RekaListboxRootProps } from 'reka-ui'
 import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { NormalizeInputProps } from '@/components/ui/Input'
 
 export { default as Listbox } from './Listbox.vue'
 
 export type ListboxValue = string | number
 export type ListboxModelValue = ListboxValue | ListboxValue[] | undefined
-export type ListboxFilterInputProps = Pick<RekaListboxFilterProps, 'autoFocus' | 'disabled'> &
-  Omit<InputHTMLAttributes, 'disabled' | 'value'>
+export type ListboxFilterInputProps = Omit<
+  NormalizeInputProps,
+  'value' | 'onUpdate:value' | 'onValueChange'
+> &
+  Omit<InputHTMLAttributes, 'value'>
+export type ListboxFilterFn = (items: ListboxItem[], search: string) => ListboxItem[]
 
 export type ListboxRootProps = Pick<
   RekaListboxRootProps<ListboxValue>,
@@ -45,6 +47,7 @@ export interface ListboxProps extends ListboxRootProps {
   value?: ListboxModelValue
   search?: string
   filter?: boolean
+  filterFn?: ListboxFilterFn
   filterInput?: ListboxFilterInputProps
   emptyText?: string
   noResultsText?: string

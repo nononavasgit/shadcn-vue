@@ -10,7 +10,7 @@ import {
   XIcon,
 } from '@lucide/vue'
 import { ConfigProvider } from '@/components/provider'
-import { Attachment, Spinner } from '@/components/ui'
+import { Attachment, FileUpload, Spinner } from '@/components/ui'
 </script>
 
 <template>
@@ -23,6 +23,17 @@ import { Attachment, Spinner } from '@/components/ui'
             Archivos adjuntos con metadatos, estados de subida y acciones.
           </p>
         </header>
+
+        <section class="grid gap-4">
+          <div>
+            <h2 class="text-lg font-semibold">Dropzone</h2>
+            <p class="text-sm text-muted-foreground">
+              Selección mediante clic o arrastrando archivos sobre la zona.
+            </p>
+          </div>
+
+          <FileUpload class="max-w-2xl" multiple accept="image/*,.pdf,.doc,.docx" />
+        </section>
 
         <section class="grid gap-4">
           <div>

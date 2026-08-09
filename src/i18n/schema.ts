@@ -5,6 +5,7 @@ export interface Messages {
   loading: string
   commandPlaceholder: string
   noResults: string
+  empty: string
   decrement: string
   increment: string
   minimum: string

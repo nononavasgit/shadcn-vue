@@ -1,34 +1,21 @@
-import type { HTMLAttributes, SVGAttributes } from 'vue'
+import { isKnownHtmlAttr, isKnownMathMLAttr, isKnownSvgAttr } from '@vue/shared'
 
-/** Normalizes HTML attributes */
-export function normalizeHTMLAttributes(value: HTMLAttributes | undefined): HTMLAttributes {
-  if (!value) return {}
+function isNativeAttribute(key: string): boolean {
+  const normalized = key.toLowerCase()
 
-  const { class: className, style, id, title, role, tabindex, ...attrs } = value
-
-  return {
-    class: className as HTMLAttributes['class'],
-    style: style as HTMLAttributes['style'],
-    id: id as string | undefined,
-    title: title as string | undefined,
-    role: role as string | undefined,
-    tabindex: tabindex as HTMLAttributes['tabindex'],
-    ...attrs,
-  }
+  return (
+    isKnownHtmlAttr(normalized) ||
+    isKnownSvgAttr(key) ||
+    isKnownSvgAttr(normalized) ||
+    isKnownMathMLAttr(normalized) ||
+    normalized.startsWith('aria-') ||
+    normalized.startsWith('data-')
+  )
 }
 
-/** Normalizes SVG attributes */
-export function normalizeSVGAttributes(value: SVGAttributes | undefined): SVGAttributes {
-  if (!value) return {}
+/** Removes non-native HTML, SVG and MathML attributes. SSR safe. */
+export function normalizeHTMLAttributes<T extends object>(value: T | undefined): T {
+  if (!value) return {} as T
 
-  const { class: className, style, id, role, tabindex, ...attrs } = value
-
-  return {
-    class: className as SVGAttributes['class'],
-    style: style as SVGAttributes['style'],
-    id: id as string | undefined,
-    role: role as string | undefined,
-    tabindex: tabindex as SVGAttributes['tabindex'],
-    ...attrs,
-  }
+  return Object.fromEntries(Object.entries(value).filter(([key]) => isNativeAttribute(key))) as T
 }

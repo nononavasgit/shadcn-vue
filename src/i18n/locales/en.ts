@@ -28,4 +28,11 @@ export default {
   timeFieldDayPeriod: 'Day period',
   timeFieldLiteral: 'Separator',
   timeFieldTimeZoneName: 'Time zone',
+  fileUploadLabel: 'Drag and drop files here',
+  fileUploadDescription: 'or click to browse',
+  fileUploadFile: 'File',
+  fileUploadRemove: 'Remove {name}',
+  fileUploadLimitTitle: 'Some files could not be added',
+  fileUploadMaxFiles: 'You can upload a maximum of {count} files.',
+  fileUploadMaxSize: 'The total size cannot exceed {size}.',
 } satisfies Messages

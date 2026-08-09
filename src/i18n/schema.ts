@@ -26,4 +26,11 @@ export interface Messages {
   timeFieldDayPeriod: string
   timeFieldLiteral: string
   timeFieldTimeZoneName: string
+  fileUploadLabel: string
+  fileUploadDescription: string
+  fileUploadFile: string
+  fileUploadRemove: string
+  fileUploadLimitTitle: string
+  fileUploadMaxFiles: string
+  fileUploadMaxSize: string
 }

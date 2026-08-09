@@ -7,6 +7,7 @@ export default {
   loading: 'Loading',
   commandPlaceholder: 'Search for a command...',
   noResults: 'No results found.',
+  empty: 'No options available.',
   decrement: 'Decrease',
   increment: 'Increase',
   minimum: 'Minimum',

@@ -2,18 +2,18 @@
 import { computed, useAttrs } from 'vue'
 import { Input } from '@/components/ui/Input'
 import { cn } from '@/lib/utils'
-import type { TimePickerProps, TimePickerValue } from '.'
+import type { InputTimeProps, InputTimeValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<TimePickerProps>(), {
+const props = withDefaults(defineProps<InputTimeProps>(), {
   showClock: true,
   ui: undefined,
 })
-const emit = defineEmits<{ valueChange: [value: TimePickerValue] }>()
+const emit = defineEmits<{ valueChange: [value: InputTimeValue] }>()
 
 const attrs = useAttrs()
-const value = defineModel<TimePickerValue>('value', { default: '' })
+const value = defineModel<InputTimeValue>('value', { default: '' })
 
 const inputProps = computed(() => {
   const { showClock, ...inputProps } = props

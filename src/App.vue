@@ -40,6 +40,7 @@ const groupedTools: ListboxGroup[] = [
 const framework = ref<ListboxValue>('vue')
 const selectedTools = ref<ListboxValue[]>(['typescript', 'vite'])
 const groupedTool = ref<ListboxValue>('vue')
+const search = ref('')
 </script>
 
 <template>
@@ -111,13 +112,36 @@ const groupedTool = ref<ListboxValue>('vue')
               </p>
             </div>
 
-            <Listbox v-model:value="groupedTool" :groups="groupedTools">
+            <Listbox
+              v-model:value="groupedTool"
+              v-model:search="search"
+              :groups="groupedTools"
+              :filter-input="{
+                placeholder: 'Buscar herramienta...',
+                'aria-label': 'Buscar herramienta',
+              }"
+              filter
+            >
               <template #group-label-tooling="{ group }"> {{ group.label }} · Desarrollo </template>
+              <template #no-results="{ search: currentSearch }">
+                No hay resultados para “{{ currentSearch }}”.
+              </template>
             </Listbox>
 
             <p class="text-sm text-muted-foreground">
               Seleccionado: <code class="text-foreground">{{ groupedTool }}</code>
             </p>
+          </article>
+
+          <article class="space-y-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+            <div class="space-y-1">
+              <h2 class="font-semibold">Sin opciones</h2>
+              <p class="text-sm text-muted-foreground">Estado vacío personalizado mediante slot.</p>
+            </div>
+
+            <Listbox :items="[]">
+              <template #empty>No hay elementos que mostrar.</template>
+            </Listbox>
           </article>
         </section>
       </div>

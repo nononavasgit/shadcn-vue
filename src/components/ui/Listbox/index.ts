@@ -1,11 +1,16 @@
-import type { HTMLAttributes } from 'vue'
-import type { ListboxRootProps as RekaListboxRootProps } from 'reka-ui'
+import type { HTMLAttributes, InputHTMLAttributes } from 'vue'
+import type {
+  ListboxFilterProps as RekaListboxFilterProps,
+  ListboxRootProps as RekaListboxRootProps,
+} from 'reka-ui'
 import type { NormalizeIconProps } from '@/components/ui/Icon'
 
 export { default as Listbox } from './Listbox.vue'
 
 export type ListboxValue = string | number
 export type ListboxModelValue = ListboxValue | ListboxValue[] | undefined
+export type ListboxFilterInputProps = Pick<RekaListboxFilterProps, 'autoFocus' | 'disabled'> &
+  Omit<InputHTMLAttributes, 'disabled' | 'value'>
 
 export type ListboxRootProps = Pick<
   RekaListboxRootProps<ListboxValue>,
@@ -38,6 +43,11 @@ export interface ListboxGroup {
 
 export interface ListboxProps extends ListboxRootProps {
   value?: ListboxModelValue
+  search?: string
+  filter?: boolean
+  filterInput?: ListboxFilterInputProps
+  emptyText?: string
+  noResultsText?: string
   items?: ListboxItem[]
   groups?: ListboxGroup[]
   ui?: ListboxUI
@@ -49,7 +59,10 @@ export type ListboxGroupFn<T> = T | ((context: ListboxGroupContext) => T)
 
 export interface ListboxUI {
   root?: ListboxFn<HTMLAttributes>
+  filter?: ListboxFn<HTMLAttributes>
   content?: ListboxFn<HTMLAttributes>
+  empty?: ListboxFn<HTMLAttributes>
+  noResults?: ListboxFn<HTMLAttributes>
   group?: ListboxGroupFn<HTMLAttributes>
   groupLabel?: ListboxGroupFn<HTMLAttributes>
   item?: ListboxItemFn<HTMLAttributes>
@@ -60,6 +73,7 @@ export interface ListboxUI {
 export interface ListboxContext {
   props: Omit<ListboxProps, 'ui'>
   value: ListboxModelValue
+  search: string
 }
 
 export interface ListboxItemContext extends ListboxContext {
@@ -77,7 +91,9 @@ export interface ListboxGroupContext extends ListboxContext {
 
 export interface ListboxEmits {
   'update:value': [value: ListboxModelValue]
+  'update:search': [value: string]
   valueChange: [value: ListboxModelValue]
+  searchChange: [value: string]
 }
 
 export type ListboxSlots = {
@@ -86,6 +102,8 @@ export type ListboxSlots = {
   'item-leading'?(props: ListboxItemContext): unknown
   group?(props: ListboxGroupContext): unknown
   'group-label'?(props: ListboxGroupContext): unknown
+  empty?(props: ListboxContext): unknown
+  'no-results'?(props: ListboxContext): unknown
   indicator?(props: ListboxItemContext): unknown
 } & {
   [name: `item-${string}`]: ((props: ListboxItemContext) => unknown) | undefined

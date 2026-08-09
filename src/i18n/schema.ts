@@ -16,4 +16,13 @@ export interface Messages {
   more: string
   morePages: string
   'page_{n}': string
+  timeFieldDay: string
+  timeFieldMonth: string
+  timeFieldYear: string
+  timeFieldHour: string
+  timeFieldMinute: string
+  timeFieldSecond: string
+  timeFieldDayPeriod: string
+  timeFieldLiteral: string
+  timeFieldTimeZoneName: string
 }

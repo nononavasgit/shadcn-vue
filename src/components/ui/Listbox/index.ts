@@ -1,5 +1,6 @@
 import type { HTMLAttributes } from 'vue'
 import type { ListboxRootProps as RekaListboxRootProps } from 'reka-ui'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
 
 export { default as Listbox } from './Listbox.vue'
 
@@ -25,6 +26,7 @@ export interface ListboxItem {
   id?: string | number
   value: ListboxValue
   label: string
+  icon?: NormalizeIconProps
   disabled?: boolean
 }
 
@@ -61,8 +63,12 @@ export interface ListboxEmits {
   valueChange: [value: ListboxModelValue]
 }
 
-export interface ListboxSlots {
+export type ListboxSlots = {
   default?(props: ListboxContext): unknown
   item?(props: ListboxItemContext): unknown
+  'item-leading'?(props: ListboxItemContext): unknown
   indicator?(props: ListboxItemContext): unknown
+} & {
+  [name: `item-${string}`]: ((props: ListboxItemContext) => unknown) | undefined
+  [name: `item-leading-${string}`]: ((props: ListboxItemContext) => unknown) | undefined
 }

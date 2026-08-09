@@ -5,10 +5,10 @@ import { Listbox } from '@/components/ui'
 import type { ListboxItem, ListboxValue } from '@/components/ui/Listbox'
 
 const frameworks: ListboxItem[] = [
-  { value: 'vue', label: 'Vue' },
-  { value: 'react', label: 'React' },
-  { value: 'svelte', label: 'Svelte' },
-  { value: 'angular', label: 'Angular', disabled: true },
+  { value: 'vue', label: 'Vue', icon: 'success' },
+  { value: 'react', label: 'React', icon: 'info' },
+  { value: 'svelte', label: 'Svelte', icon: 'warning' },
+  { value: 'angular', label: 'Angular', icon: 'error', disabled: true },
 ]
 
 const tools: ListboxItem[] = [
@@ -40,7 +40,15 @@ const selectedTools = ref<ListboxValue[]>(['typescript', 'vite'])
               <p class="text-sm text-muted-foreground">Selecciona un framework.</p>
             </div>
 
-            <Listbox v-model:value="framework" :items="frameworks" />
+            <Listbox v-model:value="framework" :items="frameworks">
+              <template #item-leading-react>
+                <span
+                  class="grid size-5 place-items-center rounded-full bg-primary text-xs text-primary-foreground"
+                >
+                  R
+                </span>
+              </template>
+            </Listbox>
 
             <p class="text-sm text-muted-foreground">
               Seleccionado: <code class="text-foreground">{{ framework }}</code>

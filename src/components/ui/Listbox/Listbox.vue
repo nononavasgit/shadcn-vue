@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed, useAttrs, watch } from 'vue'
 import { ListboxContent, ListboxItem, ListboxItemIndicator, ListboxRoot } from 'reka-ui'
-import { Icon } from '@/components/ui/Icon'
+import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
 import type { ListboxContext, ListboxItemContext, ListboxProps, ListboxSlots } from '.'
+import type { IconProps } from '@/components/ui/Icon'
 
 defineOptions({ inheritAttrs: false })
 
@@ -104,6 +105,19 @@ function getIndicatorProps(context: ListboxItemContext) {
   return { ...ui, class: cn('ml-auto flex size-4 items-center justify-center', ui.class) }
 }
 
+function getIconProps(context: ListboxItemContext): IconProps {
+  return normalizeIconProps(context.item.icon)!
+}
+
+function getSlotNames(context: ListboxItemContext) {
+  const key = getKey(context)
+
+  return {
+    item: `item-${key}` as `item-${string}`,
+    leading: `item-leading-${key}` as `item-leading-${string}`,
+  }
+}
+
 function getKey(context: ListboxItemContext) {
   return context.item.id ?? String(context.item.value)
 }
@@ -119,17 +133,29 @@ function getKey(context: ListboxItemContext) {
           v-bind="getItemProps(itemContext)"
           data-slot="listbox-item"
         >
-          <slot name="item" v-bind="itemContext">
-            <span v-bind="getLabelProps(itemContext)">{{ itemContext.item.label }}</span>
-
-            <ListboxItemIndicator
-              v-bind="getIndicatorProps(itemContext)"
-              data-slot="listbox-item-indicator"
-            >
-              <slot name="indicator" v-bind="itemContext">
-                <Icon name="check" class="size-4" />
+          <slot :name="getSlotNames(itemContext).item" v-bind="itemContext">
+            <slot name="item" v-bind="itemContext">
+              <slot :name="getSlotNames(itemContext).leading" v-bind="itemContext">
+                <slot name="item-leading" v-bind="itemContext">
+                  <Icon
+                    v-if="itemContext.item.icon"
+                    v-bind="getIconProps(itemContext)"
+                    data-slot="listbox-item-icon"
+                  />
+                </slot>
               </slot>
-            </ListboxItemIndicator>
+
+              <span v-bind="getLabelProps(itemContext)">{{ itemContext.item.label }}</span>
+
+              <ListboxItemIndicator
+                v-bind="getIndicatorProps(itemContext)"
+                data-slot="listbox-item-indicator"
+              >
+                <slot name="indicator" v-bind="itemContext">
+                  <Icon name="check" class="size-4" />
+                </slot>
+              </ListboxItemIndicator>
+            </slot>
           </slot>
         </ListboxItem>
       </slot>

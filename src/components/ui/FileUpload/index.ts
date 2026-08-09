@@ -61,8 +61,8 @@ export interface FileUploadUI {
 
 export interface FileUploadProps {
   files?: File[]
-  label?: string
-  description?: string
+  label?: string | null
+  description?: string | null
   accept?: string
   multiple?: boolean
   disabled?: boolean

@@ -93,7 +93,7 @@ const contentProps = computed(() => {
 
 const filterProps = computed(() => {
   const ui = normalizeHTMLAttributes(useResolve(props.ui?.filter, listboxContext.value))
-  
+
   return {
     ...ui,
     ...normalizeInputProps(props.filterInput),

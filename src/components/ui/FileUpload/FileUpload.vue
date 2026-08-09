@@ -25,8 +25,8 @@ import {
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<FileUploadProps>(), {
-  label: undefined,
-  description: undefined,
+  label: null,
+  description: null,
   accept: undefined,
   multiple: false,
   disabled: false,
@@ -50,8 +50,6 @@ const previews = new Map<File, string>()
 const isDragging = computed(() => dragDepth.value > 0)
 const { t } = useI18n()
 const { formatFileSize, getFileIcon } = useFiles()
-const displayLabel = computed(() => props.label ?? t('fileUploadLabel'))
-const displayDescription = computed(() => props.description ?? t('fileUploadDescription'))
 
 const fileUploadContext = computed<FileUploadContext>(() => {
   const { ui, ...fileUploadProps } = props
@@ -168,10 +166,8 @@ function getFilePreview(file: File) {
   return preview
 }
 
-function getMediaVariant(file: File) {
-  return props.attachmentMediaVariant === 'image' 
-    ? 'image'
-    : 'default'
+function getMediaVariant() {
+  return props.attachmentMediaVariant === 'image' ? 'image' : 'default'
 }
 
 function updateFiles(nextFiles: File[]) {
@@ -298,15 +294,15 @@ function handleDrop(event: DragEvent) {
         </div>
 
         <div class="space-y-1 text-center" data-slot="file-upload-content">
-          <p v-bind="labelProps" data-slot="file-upload-label">
-            <slot name="label" v-bind="fileUploadContext">{{ displayLabel }}</slot>
+          <p v-if="props.label || $slots.label" v-bind="labelProps" data-slot="file-upload-label">
+            <slot name="label" v-bind="fileUploadContext">{{ props.label }}</slot>
           </p>
           <p
-            v-if="displayDescription || $slots.description"
+            v-if="props.description || $slots.description"
             v-bind="descriptionProps"
             data-slot="file-upload-description"
           >
-            <slot name="description" v-bind="fileUploadContext">{{ displayDescription }}</slot>
+            <slot name="description" v-bind="fileUploadContext">{{ props.description }}</slot>
           </p>
         </div>
       </slot>
@@ -336,12 +332,12 @@ function handleDrop(event: DragEvent) {
             class="w-full"
             :label="file.name"
             :description="`${formatFileSize(file.size)}`"
-            :media-variant="getMediaVariant(file)"
-            :orientation="getMediaVariant(file) === 'image' ? 'vertical' : 'horizontal'"
+            :media-variant="getMediaVariant()"
+            :orientation="getMediaVariant() === 'image' ? 'vertical' : 'horizontal'"
           >
             <template #media>
               <img
-                v-if="getMediaVariant(file) === 'image'"
+                v-if="getMediaVariant() === 'image'"
                 :src="getFilePreview(file)"
                 :alt="file.name"
                 width="60"

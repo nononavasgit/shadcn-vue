@@ -1,4 +1,21 @@
+import {
+  CalendarDate,
+  CalendarDateTime,
+  getLocalTimeZone,
+  now,
+  parseDate,
+  parseDateTime,
+  parseTime,
+  parseZonedDateTime,
+  Time,
+  today,
+  ZonedDateTime,
+} from '@internationalized/date'
+import type { DateValue as InternationalizedDateValue } from '@internationalized/date'
+
 export type DateValue = Date | number | string
+export type { InternationalizedDateValue }
+export { CalendarDate, CalendarDateTime, Time, ZonedDateTime }
 
 export interface DateFormatOptions {
   locale?: string | string[]
@@ -30,11 +47,31 @@ export function formatDate(value: DateValue, options: DateFormatOptions = {}): s
   }).format(normalizeDate(value))
 }
 
+export function createTime(hour = 0, minute = 0, second = 0, millisecond = 0): Time {
+  return new Time(hour, minute, second, millisecond)
+}
+
+export function getToday(timeZone = getLocalTimeZone()): CalendarDate {
+  return today(timeZone)
+}
+
+export function getNow(timeZone = getLocalTimeZone()): ZonedDateTime {
+  return now(timeZone)
+}
+
 export function useDates() {
   return {
+    createTime,
     formatDate,
     getDefaultLocale,
+    getLocalTimeZone,
+    getNow,
+    getToday,
     normalizeDate,
+    parseDate,
+    parseDateTime,
+    parseTime,
+    parseZonedDateTime,
     toDatetime,
   }
 }

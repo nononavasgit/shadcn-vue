@@ -75,6 +75,7 @@
     "cli": "node ./bin/shadcn-vue.mjs"
   },
   "dependencies": {
+    "@internationalized/date": "^3.12.3",
     "@lucide/vue": "^1.25.0",
     "@vueuse/core": "^14.4.0",
     "class-variance-authority": "^0.7.1",

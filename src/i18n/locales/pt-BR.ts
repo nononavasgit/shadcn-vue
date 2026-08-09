@@ -18,4 +18,13 @@ export default {
   'page_{n}': 'Página {n}',
   more: 'Mais',
   morePages: 'Mais páginas',
+  timeFieldDay: 'Dia',
+  timeFieldMonth: 'Mês',
+  timeFieldYear: 'Ano',
+  timeFieldHour: 'Hora',
+  timeFieldMinute: 'Minuto',
+  timeFieldSecond: 'Segundo',
+  timeFieldDayPeriod: 'Período do dia',
+  timeFieldLiteral: 'Separador',
+  timeFieldTimeZoneName: 'Fuso horário',
 } satisfies Messages

@@ -12,8 +12,6 @@ export type ListboxFilterInputProps = Omit<
   'value' | 'onUpdate:value' | 'onValueChange'
 > &
   Omit<InputHTMLAttributes, 'value'>
-export type ListboxFilterFn = (items: ListboxItem[], search: string) => ListboxItem[]
-
 export type ListboxRootProps = Pick<
   RekaListboxRootProps<ListboxValue>,
   | 'as'
@@ -47,7 +45,7 @@ export interface ListboxProps extends ListboxRootProps {
   value?: ListboxModelValue
   search?: string
   filter?: boolean
-  filterFn?: ListboxFilterFn
+  ignoreFilter?: boolean
   filterInput?: ListboxFilterInputProps
   emptyText?: string
   noResultsText?: string

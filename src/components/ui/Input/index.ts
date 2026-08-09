@@ -1,4 +1,4 @@
-import type { HTMLAttributes } from 'vue'
+import type { HTMLAttributes} from 'vue'
 import type { PrimitiveProps } from 'reka-ui'
 import type { EmitsAsProps } from '@/types/emits'
 
@@ -40,9 +40,14 @@ export function normalizeInputProps(
 ): NormalizeInputProps | undefined {
   if (!source) return undefined
 
-  const { as, asChild, value, ui, 'onUpdate:value': onUpdateValue, onValueChange } = source
+  const { as, asChild, value, ui, 'onUpdate:value': onUpdateValue, onValueChange,  id, disabled, readonly, name, placeholder} = source
 
   return {
+    id,
+    disabled,
+    readonly,
+    name,
+    placeholder,
     as,
     asChild,
     value,

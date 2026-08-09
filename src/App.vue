@@ -116,10 +116,7 @@ const search = ref('')
               v-model:value="groupedTool"
               v-model:search="search"
               :groups="groupedTools"
-              :filter-input="{
-                placeholder: 'Buscar herramienta...',
-                'aria-label': 'Buscar herramienta',
-              }"
+              :filterInput="{ placeholder: 'Eyy' }" 
               filter
             >
               <template #group-label-tooling="{ group }"> {{ group.label }} · Desarrollo </template>

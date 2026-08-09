@@ -22,6 +22,7 @@ const props = withDefaults(defineProps<ListboxProps>(), {
   selectionBehavior: 'toggle',
   highlightOnHover: true,
   filter: false,
+  ignoreFilter: false,
   items: () => [],
   groups: () => [],
   ui: undefined,
@@ -92,11 +93,10 @@ const contentProps = computed(() => {
 
 const filterProps = computed(() => {
   const ui = normalizeHTMLAttributes(useResolve(props.ui?.filter, listboxContext.value))
-
+  
   return {
-    ...props.filterInput,
-    ...normalizeInputProps(props.filterInput),
     ...ui,
+    ...normalizeInputProps(props.filterInput),
     disabled: props.disabled || props.filterInput?.disabled,
     class: cn(
       'mb-1 focus-visible:border-input focus-visible:ring-0',
@@ -110,8 +110,7 @@ const filterProps = computed(() => {
 const normalizedSearch = computed(() => search.value.trim().toLocaleLowerCase())
 
 function filterItems(items: ListboxItemContext['item'][]) {
-  if (!props.filter || !normalizedSearch.value) return items
-  if (props.filterFn) return props.filterFn(items, search.value)
+  if (!props.filter || props.ignoreFilter || !normalizedSearch.value) return items
 
   return items.filter((item) => item.label.toLocaleLowerCase().includes(normalizedSearch.value))
 }

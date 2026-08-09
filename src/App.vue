@@ -1,126 +1,197 @@
 <script setup lang="ts">
-import { ref, shallowRef } from 'vue'
+import {
+  CheckIcon,
+  ClockIcon,
+  FileArchiveIcon,
+  FileCodeIcon,
+  FileTextIcon,
+  FileWarningIcon,
+  RefreshCwIcon,
+  XIcon,
+} from '@lucide/vue'
 import { ConfigProvider } from '@/components/provider'
-import { Label, TimeField } from '@/components/ui'
-import type { TimeFieldValue } from '@/components/ui/TimeField'
-import { useDates } from '@/composables'
-
-const { createTime } = useDates()
-
-const basicTime = shallowRef(createTime(18, 30, 10))
-const twelveHourTime = shallowRef(createTime(14, 45))
-const preciseTime = shallowRef(createTime(18, 20, 35))
-const constrainedTime = shallowRef(createTime(12))
-const emptyTime = ref<TimeFieldValue>()
+import { Attachment, Spinner } from '@/components/ui'
 </script>
 
 <template>
   <ConfigProvider>
     <main class="min-h-screen bg-background px-6 py-12 text-foreground">
-      <div class="mx-auto grid max-w-4xl gap-8">
+      <div class="mx-auto grid w-full max-w-5xl gap-10">
         <header class="space-y-2">
-          <h1 class="text-3xl font-bold tracking-tight">TimeField</h1>
-          <p class="text-muted-foreground">Ejemplos de entrada de hora con segmentos accesibles.</p>
+          <h1 class="text-3xl font-bold tracking-tight">Attachment</h1>
+          <p class="text-muted-foreground">
+            Archivos adjuntos con metadatos, estados de subida y acciones.
+          </p>
         </header>
 
-        <section class="grid gap-6 md:grid-cols-2">
-          <article class="space-y-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-            <div class="space-y-1">
-              <h2 class="font-semibold">Formato de 24 horas</h2>
-              <p class="text-sm text-muted-foreground">Horas y minutos.</p>
-            </div>
+        <section class="grid gap-4">
+          <div>
+            <h2 class="text-lg font-semibold">Básico</h2>
+            <p class="text-sm text-muted-foreground">Un archivo con icono y acción.</p>
+          </div>
 
-            <div class="grid gap-2">
-              <Label for="basic-time">Hora de inicio</Label>
-              {{ basicTime }}
-              <TimeField
-                id="basic-time"
-                v-model:value="basicTime"
-                :hour-cycle="24"
-                granularity="second"
-              />
-              <code class="text-xs text-muted-foreground">{{ basicTime?.toString() }}</code>
-            </div>
-          </article>
+          <Attachment class="w-full max-w-md" label="documentacion.pdf" description="PDF · 2,4 MB">
+            <template #media>
+              <FileTextIcon />
+            </template>
 
-          <article class="space-y-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-            <div class="space-y-1">
-              <h2 class="font-semibold">Formato de 12 horas</h2>
-              <p class="text-sm text-muted-foreground">Incluye el segmento AM/PM.</p>
-            </div>
+            <template #actions>
+              <button aria-label="Eliminar documentacion.pdf" type="button">
+                <XIcon />
+              </button>
+            </template>
+          </Attachment>
+        </section>
 
-            <div class="grid gap-2">
-              <Label for="twelve-hour-time">Hora de la cita</Label>
-              <TimeField id="twelve-hour-time" v-model:value="twelveHourTime" :hour-cycle="12" />
-              <code class="text-xs text-muted-foreground">{{ twelveHourTime.toString() }}</code>
-            </div>
-          </article>
+        <section class="grid gap-4">
+          <div>
+            <h2 class="text-lg font-semibold">Estados</h2>
+            <p class="text-sm text-muted-foreground">Ciclo completo de un archivo subido.</p>
+          </div>
 
-          <article class="space-y-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-            <div class="space-y-1">
-              <h2 class="font-semibold">Con segundos</h2>
-              <p class="text-sm text-muted-foreground">Granularidad y pasos de cinco segundos.</p>
-            </div>
+          <div class="grid max-w-xl gap-2">
+            <Attachment
+              class="w-full"
+              state="idle"
+              label="informe.pdf"
+              description="Preparado para subir"
+            >
+              <template #media><ClockIcon /></template>
+              <template #actions>
+                <button aria-label="Eliminar informe.pdf" type="button"><XIcon /></button>
+              </template>
+            </Attachment>
 
-            <div class="grid gap-2">
-              <Label for="precise-time">Hora exacta</Label>
-              <TimeField
-                id="precise-time"
-                v-model:value="preciseTime"
-                :hour-cycle="24"
-                granularity="second"
-                :step="{ second: 5 }"
-                step-snapping
-              />
-              <code class="text-xs text-muted-foreground">{{ preciseTime.toString() }}</code>
-            </div>
-          </article>
+            <Attachment
+              class="w-full"
+              state="uploading"
+              label="recursos.zip"
+              description="Subiendo · 64 %"
+            >
+              <template #media><Spinner /></template>
+              <template #actions>
+                <button aria-label="Cancelar subida" type="button"><XIcon /></button>
+              </template>
+            </Attachment>
 
-          <article class="space-y-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-            <div class="space-y-1">
-              <h2 class="font-semibold">Hora limitada</h2>
-              <p class="text-sm text-muted-foreground">Solo admite valores entre 09:00 y 17:00.</p>
-            </div>
+            <Attachment
+              class="w-full"
+              state="processing"
+              label="clientes.csv"
+              description="Procesando documento"
+            >
+              <template #media><FileArchiveIcon /></template>
+              <template #actions>
+                <button aria-label="Cancelar procesamiento" type="button"><XIcon /></button>
+              </template>
+            </Attachment>
 
-            <div class="grid gap-2">
-              <Label for="constrained-time">Horario laboral</Label>
-              <TimeField
-                id="constrained-time"
-                v-model:value="constrainedTime"
-                :hour-cycle="24"
-                :min-value="createTime(9)"
-                :max-value="createTime(17)"
-              />
-              <code class="text-xs text-muted-foreground">{{ constrainedTime.toString() }}</code>
-            </div>
-          </article>
+            <Attachment
+              class="w-full"
+              state="error"
+              label="presupuesto.xlsx"
+              description="No se ha podido subir"
+            >
+              <template #media><FileWarningIcon /></template>
+              <template #actions>
+                <button aria-label="Reintentar subida" type="button"><RefreshCwIcon /></button>
+                <button aria-label="Eliminar presupuesto.xlsx" type="button"><XIcon /></button>
+              </template>
+            </Attachment>
 
-          <article class="space-y-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-            <div class="space-y-1">
-              <h2 class="font-semibold">Sin valor inicial</h2>
-              <p class="text-sm text-muted-foreground">Los segmentos muestran su placeholder.</p>
-            </div>
+            <Attachment
+              class="w-full"
+              state="done"
+              label="contrato.pdf"
+              description="Subido · 1,8 MB"
+            >
+              <template #media><CheckIcon /></template>
+              <template #actions>
+                <button aria-label="Eliminar contrato.pdf" type="button"><XIcon /></button>
+              </template>
+            </Attachment>
+          </div>
+        </section>
 
-            <div class="grid gap-2">
-              <Label for="empty-time">Hora opcional</Label>
-              <TimeField id="empty-time" v-model:value="emptyTime" :hour-cycle="24" />
-              <code class="text-xs text-muted-foreground">
-                {{ emptyTime?.toString() ?? 'Sin seleccionar' }}
-              </code>
-            </div>
-          </article>
+        <section class="grid gap-4">
+          <div>
+            <h2 class="text-lg font-semibold">Tamaños</h2>
+            <p class="text-sm text-muted-foreground">Variantes default, sm y xs.</p>
+          </div>
 
-          <article class="space-y-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-            <div class="space-y-1">
-              <h2 class="font-semibold">Estados</h2>
-              <p class="text-sm text-muted-foreground">Ejemplos deshabilitado y de solo lectura.</p>
-            </div>
+          <div class="grid max-w-md gap-3">
+            <Attachment class="w-full" label="Tamaño predeterminado" description="PDF · 2,4 MB">
+              <template #media><FileTextIcon /></template>
+            </Attachment>
+            <Attachment class="w-full" size="sm" label="Tamaño pequeño" description="Vue · 12 KB">
+              <template #media><FileCodeIcon /></template>
+            </Attachment>
+            <Attachment class="w-full" size="xs" label="Tamaño extra pequeño">
+              <template #media><FileCodeIcon /></template>
+            </Attachment>
+          </div>
+        </section>
 
-            <div class="flex flex-wrap gap-3">
-              <TimeField :value="createTime(8, 15)" :hour-cycle="24" disabled />
-              <TimeField :value="createTime(16, 30)" :hour-cycle="24" readonly />
-            </div>
-          </article>
+        <section class="grid gap-4">
+          <div>
+            <h2 class="text-lg font-semibold">Grupo e imágenes</h2>
+            <p class="text-sm text-muted-foreground">
+              Adjuntos verticales en una fila desplazable.
+            </p>
+          </div>
+
+          <div class="flex max-w-full min-w-0 snap-x gap-2 overflow-x-auto pb-1">
+            <Attachment
+              orientation="vertical"
+              media-variant="image"
+              label="escritorio.jpg"
+              description="JPG · 940 KB"
+            >
+              <template #media>
+                <img
+                  src="https://images.unsplash.com/photo-1497215728101-856f4ea42174?w=640&auto=format&fit=crop&q=80"
+                  alt="Escritorio de trabajo"
+                />
+              </template>
+              <template #actions>
+                <button aria-label="Eliminar escritorio.jpg" type="button"><XIcon /></button>
+              </template>
+            </Attachment>
+
+            <Attachment
+              orientation="vertical"
+              media-variant="image"
+              label="oficina.jpg"
+              description="JPG · 1,1 MB"
+            >
+              <template #media>
+                <img
+                  src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=640&auto=format&fit=crop&q=80"
+                  alt="Oficina luminosa"
+                />
+              </template>
+              <template #actions>
+                <button aria-label="Eliminar oficina.jpg" type="button"><XIcon /></button>
+              </template>
+            </Attachment>
+
+            <Attachment
+              orientation="vertical"
+              media-variant="image"
+              label="reunión.jpg"
+              description="JPG · 820 KB"
+            >
+              <template #media>
+                <img
+                  src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=640&auto=format&fit=crop&q=80"
+                  alt="Sala de reuniones"
+                />
+              </template>
+              <template #actions>
+                <button aria-label="Eliminar reunión.jpg" type="button"><XIcon /></button>
+              </template>
+            </Attachment>
+          </div>
         </section>
       </div>
     </main>

@@ -10,7 +10,7 @@ import {
   XIcon,
 } from '@lucide/vue'
 import { ConfigProvider } from '@/components/provider'
-import { Attachment, FileUpload, Spinner } from '@/components/ui'
+import { Attachment, FileUpload, Spinner, Button } from '@/components/ui'
 </script>
 
 <template>
@@ -23,6 +23,8 @@ import { Attachment, FileUpload, Spinner } from '@/components/ui'
             Archivos adjuntos con metadatos, estados de subida y acciones.
           </p>
         </header>
+        
+        <Button label="hola" :icon="{  }" :ui="{root: { 'aria-xd': 'e', si: true }}" />
 
         <section class="grid gap-4">
           <div>
@@ -53,6 +55,7 @@ import { Attachment, FileUpload, Spinner } from '@/components/ui'
             </template>
           </Attachment>
         </section>
+        
 
         <section class="grid gap-4">
           <div>

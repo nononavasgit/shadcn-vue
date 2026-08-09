@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs, useSlots, watch } from 'vue'
 import { ProgressRoot, ProgressIndicator } from 'reka-ui'
-import { normalizeHTMLAttributes, normalizeSVGAttributes } from '@/composables/useNormalize'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useResolve } from '@/composables/useResolve'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
@@ -98,7 +98,7 @@ const rootProps = computed(() => {
 })
 
 const svgProps = computed(() => {
-  const svgUI = normalizeSVGAttributes(useResolve(props.ui?.svg, progressCircularContext.value))
+  const svgUI = normalizeHTMLAttributes(useResolve(props.ui?.svg, progressCircularContext.value))
 
   return {
     ...svgUI,
@@ -108,7 +108,9 @@ const svgProps = computed(() => {
 })
 
 const trackProps = computed(() => {
-  const trackUI = normalizeSVGAttributes(useResolve(props.ui?.track, progressCircularContext.value))
+  const trackUI = normalizeHTMLAttributes(
+    useResolve(props.ui?.track, progressCircularContext.value),
+  )
 
   return {
     ...trackUI,
@@ -132,7 +134,7 @@ const indicatorProps = computed(() => ({
 }))
 
 const indicatorCircleProps = computed(() => {
-  const indicatorUI = normalizeSVGAttributes(
+  const indicatorUI = normalizeHTMLAttributes(
     useResolve(props.ui?.indicator, progressCircularContext.value),
   )
 

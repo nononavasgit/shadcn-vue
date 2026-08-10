@@ -19,7 +19,6 @@ import {
   timelineVariants,
 } from '.'
 import { Primitive } from 'reka-ui'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 
 defineOptions({ inheritAttrs: false })
@@ -64,7 +63,7 @@ const timelineContext = computed<TimelineContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, timelineContext.value))
+  const rootUI = useUi(props.ui?.root, timelineContext.value)
 
   return {
     ...attrs,
@@ -91,7 +90,7 @@ function getItemContext(item: TimelineProps['items'][number], index: number): Ti
 }
 
 function getItemProps(context: TimelineItemContext) {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.item, context))
+  const ui = useUi(props.ui?.item, context)
   return {
     ...ui,
     class: cn(
@@ -106,7 +105,7 @@ function getItemProps(context: TimelineItemContext) {
 }
 
 function getContentProps(context: TimelineItemContext) {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.content, context))
+  const ui = useUi(props.ui?.content, context)
   return {
     ...ui,
     class: cn(
@@ -123,7 +122,7 @@ function getContentProps(context: TimelineItemContext) {
 }
 
 function getHeaderProps(context: TimelineItemContext) {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.header, context))
+  const ui = useUi(props.ui?.header, context)
   return {
     ...ui,
     class: cn(props.orientation === 'horizontal' ? 'w-full' : '', ui.class),
@@ -132,7 +131,7 @@ function getHeaderProps(context: TimelineItemContext) {
 }
 
 function getSeparatorProps(context: TimelineItemContext) {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.separator, context))
+  const ui = useUi(props.ui?.separator, context)
   const completed = activeIndex.value > context.index
   return {
     ...ui,
@@ -155,7 +154,7 @@ function getSeparatorProps(context: TimelineItemContext) {
 }
 
 function getLabelProps(context: TimelineItemContext) {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, context))
+  const ui = useUi(props.ui?.label, context)
   return {
     ...ui,
     class: cn('text-sm font-semibold text-foreground', ui.class),
@@ -164,7 +163,7 @@ function getLabelProps(context: TimelineItemContext) {
 }
 
 function getDescriptionProps(context: TimelineItemContext) {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.description, context))
+  const ui = useUi(props.ui?.description, context)
   return {
     ...ui,
     class: cn(
@@ -177,7 +176,7 @@ function getDescriptionProps(context: TimelineItemContext) {
 }
 
 function getIndicatorProps(context: TimelineItemContext) {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.indicator, context))
+  const ui = useUi(props.ui?.indicator, context)
   return {
     'aria-hidden': true,
     ...ui,

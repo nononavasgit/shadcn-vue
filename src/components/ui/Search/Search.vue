@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { SearchContext, SearchProps, SearchSlots } from '.'
@@ -21,7 +20,7 @@ const searchContext = computed<SearchContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, searchContext.value))
+  const rootUI = useUi(props.ui?.root, searchContext.value)
 
   return {
     ...attrs,

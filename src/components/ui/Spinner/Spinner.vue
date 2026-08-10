@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
@@ -29,7 +28,7 @@ const spinnerContext = computed<SpinnerContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, spinnerContext.value))
+  const rootUI = useUi(props.ui?.root, spinnerContext.value)
 
   return {
     ...attrs,
@@ -43,7 +42,7 @@ const rootProps = computed(() => {
 })
 
 const loadingProps = computed(() => {
-  const loadingUI = normalizeHTMLAttributes(useUi(props.ui?.loading, spinnerContext.value))
+  const loadingUI = useUi(props.ui?.loading, spinnerContext.value)
 
   return {
     ...loadingUI,
@@ -57,7 +56,7 @@ const iconProps = computed(() => ({
 }))
 
 const contentProps = computed(() => {
-  const contentUI = normalizeHTMLAttributes(useUi(props.ui?.content, spinnerContext.value))
+  const contentUI = useUi(props.ui?.content, spinnerContext.value)
 
   return {
     ...contentUI,

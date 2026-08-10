@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useDates } from '@/composables/useDates'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
@@ -34,7 +33,7 @@ const timeContext = computed<TimeContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, timeContext.value))
+  const rootUI = useUi(props.ui?.root, timeContext.value)
 
   return {
     ...attrs,

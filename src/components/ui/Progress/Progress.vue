@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs, useSlots, watch } from 'vue'
 import { ProgressIndicator, ProgressRoot } from 'reka-ui'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
@@ -58,7 +57,7 @@ const progressContext = computed<ProgressContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, progressContext.value))
+  const rootUI = useUi(props.ui?.root, progressContext.value)
 
   return {
     ...attrs,
@@ -82,9 +81,7 @@ const rootProps = computed(() => {
 })
 
 const indicatorProps = computed(() => {
-  const indicatorUI = normalizeHTMLAttributes(
-    useUi(props.ui?.indicator, progressContext.value),
-  )
+  const indicatorUI = useUi(props.ui?.indicator, progressContext.value)
 
   return {
     ...indicatorUI,
@@ -100,7 +97,7 @@ const indicatorProps = computed(() => {
 })
 
 const labelProps = computed(() => {
-  const labelUI = normalizeHTMLAttributes(useUi(props.ui?.label, progressContext.value))
+  const labelUI = useUi(props.ui?.label, progressContext.value)
 
   return {
     ...labelUI,

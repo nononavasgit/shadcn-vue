@@ -3,7 +3,6 @@ import { computed, useAttrs } from 'vue'
 import type { AvatarImageEmits } from 'reka-ui'
 import { AvatarFallback, AvatarImage, AvatarRoot } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { AvatarContext, AvatarEmits, AvatarLoadingState, AvatarProps, AvatarSlots } from '.'
@@ -30,7 +29,7 @@ const avatarContext = computed<AvatarContext>(() => {
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, avatarContext.value))
+  const rootUI = useUi(props.ui?.root, avatarContext.value)
   return {
     ...attrs,
     ...rootUI,
@@ -47,7 +46,7 @@ const rootProps = computed(() => {
 
 const imageProps = computed(() => {
   if (!props.src) return undefined
-  const imageUI = normalizeHTMLAttributes(useUi(props.ui?.image, avatarContext.value))
+  const imageUI = useUi(props.ui?.image, avatarContext.value)
   return {
     ...imageUI,
     as: props.image?.as,
@@ -61,7 +60,7 @@ const imageProps = computed(() => {
 })
 
 const fallbackProps = computed(() => {
-  const fallbackUI = normalizeHTMLAttributes(useUi(props.ui?.fallback, avatarContext.value))
+  const fallbackUI = useUi(props.ui?.fallback, avatarContext.value)
   return {
     ...fallbackUI,
     as: props.fallback?.as,

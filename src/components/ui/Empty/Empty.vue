@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { EmptyContext, EmptyProps, EmptySlots } from '.'
@@ -24,7 +23,7 @@ const emptyContext = computed<EmptyContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, emptyContext.value))
+  const rootUI = useUi(props.ui?.root, emptyContext.value)
   return {
     ...attrs,
     ...rootUI,
@@ -38,11 +37,11 @@ const rootProps = computed(() => {
 })
 
 const headerProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.header, emptyContext.value))
+  const ui = useUi(props.ui?.header, emptyContext.value)
   return { ...ui, class: cn('flex max-w-sm flex-col items-center gap-2 text-center', ui.class) }
 })
 const mediaProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.media, emptyContext.value))
+  const ui = useUi(props.ui?.media, emptyContext.value)
   return {
     ...ui,
     class: cn(
@@ -53,11 +52,11 @@ const mediaProps = computed(() => {
   }
 })
 const labelProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, emptyContext.value))
+  const ui = useUi(props.ui?.label, emptyContext.value)
   return { ...ui, class: cn('text-lg font-medium tracking-tight', ui.class) }
 })
 const descriptionProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.description, emptyContext.value))
+  const ui = useUi(props.ui?.description, emptyContext.value)
   return {
     ...ui,
     class: cn(
@@ -67,7 +66,7 @@ const descriptionProps = computed(() => {
   }
 })
 const contentProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.content, emptyContext.value))
+  const ui = useUi(props.ui?.content, emptyContext.value)
   return {
     ...ui,
     class: cn('flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm', ui.class),

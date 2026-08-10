@@ -2,10 +2,13 @@ import { describe, expect, it, vi } from 'vitest'
 import { useUi } from '@/composables/useUi'
 
 describe('useUi', () => {
-  it('devuelve el valor recibido directamente', () => {
-    const ui = { class: 'text-primary', 'aria-label': 'Guardar' }
+  it('normaliza el valor recibido directamente', () => {
+    const ui = { class: 'text-primary', 'aria-label': 'Guardar', invalid: true }
 
-    expect(useUi(ui, { disabled: false })).toBe(ui)
+    expect(useUi(ui, { disabled: false })).toEqual({
+      class: 'text-primary',
+      'aria-label': 'Guardar',
+    })
   })
 
   it('resuelve una función con el contexto recibido', () => {
@@ -19,7 +22,7 @@ describe('useUi', () => {
     expect(resolveUi).toHaveBeenCalledWith(context)
   })
 
-  it('devuelve undefined cuando no se proporciona un valor', () => {
-    expect(useUi(undefined, { disabled: false })).toBeUndefined()
+  it('devuelve un objeto vacío cuando no se proporciona un valor', () => {
+    expect(useUi(undefined, { disabled: false })).toEqual({})
   })
 })

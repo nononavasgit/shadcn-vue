@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs, watch } from 'vue'
 import { TimeFieldInput, TimeFieldRoot } from 'reka-ui'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -65,7 +64,7 @@ const timeFieldContext = computed<TimeFieldContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, timeFieldContext.value))
+  const rootUI = useUi(props.ui?.root, timeFieldContext.value)
 
   return {
     ...attrs,

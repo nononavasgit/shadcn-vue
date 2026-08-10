@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { KbdGroupContext, KbdGroupProps, KbdGroupSlots } from '.'
@@ -23,7 +22,7 @@ const kbdGroupContext = computed<KbdGroupContext>(() => {
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, kbdGroupContext.value))
+  const rootUI = useUi(props.ui?.root, kbdGroupContext.value)
 
   return {
     ...attrs,

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { CardContext, CardProps, CardSlots } from '.'
@@ -25,7 +24,7 @@ const cardContext = computed<CardContext>(() => {
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, cardContext.value))
+  const rootUI = useUi(props.ui?.root, cardContext.value)
   return {
     ...attrs,
     ...rootUI,
@@ -39,7 +38,7 @@ const rootProps = computed(() => {
 })
 
 const headerProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.header, cardContext.value))
+  const ui = useUi(props.ui?.header, cardContext.value)
   return {
     ...ui,
     class: cn(
@@ -49,26 +48,26 @@ const headerProps = computed(() => {
   }
 })
 const labelProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, cardContext.value))
+  const ui = useUi(props.ui?.label, cardContext.value)
   return { ...ui, class: cn('leading-none font-semibold', ui.class) }
 })
 const descriptionProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.description, cardContext.value))
+  const ui = useUi(props.ui?.description, cardContext.value)
   return { ...ui, class: cn('text-sm text-muted-foreground', ui.class) }
 })
 const actionProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.action, cardContext.value))
+  const ui = useUi(props.ui?.action, cardContext.value)
   return {
     ...ui,
     class: cn('col-start-2 row-span-2 row-start-1 self-start justify-self-end', ui.class),
   }
 })
 const contentProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.content, cardContext.value))
+  const ui = useUi(props.ui?.content, cardContext.value)
   return { ...ui, class: cn('px-6', ui.class) }
 })
 const footerProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.footer, cardContext.value))
+  const ui = useUi(props.ui?.footer, cardContext.value)
   return { ...ui, class: cn('flex items-center px-6 [.border-t]:pt-6', ui.class) }
 })
 </script>

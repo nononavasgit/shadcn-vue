@@ -12,7 +12,6 @@ import {
 } from 'reka-ui'
 import { Button } from '@/components/ui/Button'
 import { normalizeIconProps } from '@/components/ui/Icon'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -72,7 +71,7 @@ const paginationContext = computed<PaginationContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, paginationContext.value))
+  const rootUI = useUi(props.ui?.root, paginationContext.value)
 
   return {
     ...attrs,
@@ -95,7 +94,7 @@ const rootProps = computed(() => {
 })
 
 const listProps = computed(() => {
-  const listUI = normalizeHTMLAttributes(useUi(props.ui?.list, paginationContext.value))
+  const listUI = useUi(props.ui?.list, paginationContext.value)
 
   return {
     ...listUI,
@@ -106,7 +105,7 @@ const listProps = computed(() => {
 })
 
 const firstProps = computed(() => {
-  const firstUI = normalizeHTMLAttributes(useUi(props.ui?.first, paginationContext.value))
+  const firstUI = useUi(props.ui?.first, paginationContext.value)
 
   return {
     ...firstUI,
@@ -119,9 +118,7 @@ const firstProps = computed(() => {
 })
 
 const previousProps = computed(() => {
-  const previousUI = normalizeHTMLAttributes(
-    useUi(props.ui?.previous, paginationContext.value),
-  )
+  const previousUI = useUi(props.ui?.previous, paginationContext.value)
 
   return {
     ...previousUI,
@@ -134,7 +131,7 @@ const previousProps = computed(() => {
 })
 
 const nextProps = computed(() => {
-  const nextUI = normalizeHTMLAttributes(useUi(props.ui?.next, paginationContext.value))
+  const nextUI = useUi(props.ui?.next, paginationContext.value)
 
   return {
     ...nextUI,
@@ -147,7 +144,7 @@ const nextProps = computed(() => {
 })
 
 const lastProps = computed(() => {
-  const lastUI = normalizeHTMLAttributes(useUi(props.ui?.last, paginationContext.value))
+  const lastUI = useUi(props.ui?.last, paginationContext.value)
 
   return {
     ...lastUI,
@@ -177,7 +174,7 @@ function getItemContexts(items: PaginationGeneratedItem[]): PaginationItemContex
 }
 
 function getItemProps(context: PaginationItemContext) {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.item, context))
+  const ui = useUi(props.ui?.item, context)
 
   return {
     ...ui,
@@ -191,7 +188,7 @@ function getItemProps(context: PaginationItemContext) {
 }
 
 function getEllipsisProps(context: PaginationItemContext) {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.ellipsis, context))
+  const ui = useUi(props.ui?.ellipsis, context)
 
   return {
     ...ui,

@@ -7,10 +7,10 @@ import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import {
   buttonVariants,
+  createButtonContext,
   type ButtonEmits,
   type ButtonProps,
   type ButtonSlots,
-  type ButtonContext,
 } from '.'
 
 defineOptions({ inheritAttrs: false })
@@ -31,18 +31,9 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   ui: undefined,
 })
 const emit = defineEmits<ButtonEmits>()
-defineSlots<ButtonSlots>()
+const slots = defineSlots<ButtonSlots>()
 
-const buttonContext = computed(() => {
-  const { ui, ...buttonProps } = props
-  void ui
-
-  const buttonContext: ButtonContext = {
-    props: buttonProps,
-  }
-
-  return buttonContext
-})
+const buttonContext = computed(() => createButtonContext(props))
 
 const attrs = useAttrs()
 const { colorStyle } = useColor(
@@ -113,36 +104,45 @@ function handleClick(event: PointerEvent) {
 </script>
 
 <template>
-  <Primitive v-bind="rootProps" @click="handleClick">
+  <Primitive v-bind="rootProps" data-button-ui="root" @click="handleClick">
     <template v-if="props.asChild">
-      <div data-slot="default">
+      <div data-button-slot="default">
         <slot v-bind="buttonContext" />
       </div>
     </template>
     <template v-else>
-      <div v-if="props.loading" data-slot="loading">
-        <slot name="loading" v-bind="buttonContext">
-          <Icon v-bind="loadingIconProps" />
-        </slot>
+      <div v-if="props.loading && slots.loading" data-button-slot="loading">
+        <slot name="loading" v-bind="buttonContext"> </slot>
       </div>
+      <Icon
+        v-if="props.loading && !slots.loading"
+        v-bind="loadingIconProps"
+        data-button="loadingIcon"
+      />
 
-      <div v-else data-slot="leading">
-        <slot name="leading" v-bind="buttonContext">
-          <Icon v-if="iconProps.name" v-bind="iconProps" :name="iconProps.name" />
-        </slot>
-      </div>
+      <template v-if="!props.loading">
+        <div v-if="slots.leading" data-button-slot="leading">
+          <slot name="leading" v-bind="buttonContext"></slot>
+        </div>
+        <Icon
+          v-else-if="iconProps.name"
+          v-bind="iconProps"
+          :name="iconProps.name"
+          data-button="leadingIcon"
+        />
+      </template>
 
       <slot v-bind="buttonContext">{{ props.label }}</slot>
 
-      <div data-slot="trailing">
-        <slot name="trailing" v-bind="buttonContext">
-          <Icon
-            v-if="trailingIconProps.name"
-            v-bind="trailingIconProps"
-            :name="trailingIconProps.name"
-          />
-        </slot>
+      <div v-if="slots.trailing" data-button-slot="trailing">
+        <slot name="trailing" v-bind="buttonContext"></slot>
       </div>
+      <Icon
+        v-else-if="trailingIconProps.name"
+        v-bind="trailingIconProps"
+        :name="trailingIconProps.name"
+        data-button="trailingIcon"
+      />
     </template>
   </Primitive>
 </template>

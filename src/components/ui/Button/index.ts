@@ -280,7 +280,50 @@ export interface ButtonUI {
 
 // Context
 export interface ButtonContext {
-  props: Omit<ButtonProps, 'ui' | 'icon' | 'trailingIcon'>
+  as: ButtonProps['as']
+  asChild: ButtonProps['asChild']
+  label: ButtonProps['label']
+  variant: ButtonProps['variant']
+  severity: ButtonProps['severity']
+  size: ButtonProps['size']
+  rounded: ButtonProps['rounded']
+  square: ButtonProps['square']
+  loading: ButtonProps['loading']
+  color: ButtonProps['color']
+  icon: ButtonProps['icon']
+  trailingIcon: ButtonProps['trailingIcon']
+}
+
+export function createButtonContext(props: ButtonProps): ButtonContext {
+  const {
+    as,
+    asChild,
+    label,
+    variant,
+    severity,
+    size,
+    rounded,
+    square,
+    loading,
+    color,
+    icon,
+    trailingIcon,
+  } = props
+
+  return {
+    as,
+    asChild,
+    label,
+    variant,
+    severity,
+    size,
+    rounded,
+    square,
+    loading,
+    color,
+    icon,
+    trailingIcon,
+  }
 }
 
 // Emits

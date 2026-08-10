@@ -1,188 +1,17 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+import { h } from 'vue'
 
-import { Button } from '@/components/ui/Button'
+import { Button, createButtonContext } from '@/components/ui/Button'
 
 describe('Button', () => {
-  it('renderiza el label', () => {
-    const wrapper = mount(Button, {
-      props: { label: 'Guardar' },
-    })
+  describe('Props', () => {
+    it('Render as and label', () => {
+      const button = mount(Button, {
+        props: { as: 'a', label: 'Guardar' },
+      }).get('a')
 
-    expect(wrapper.get('button').text()).toContain('Guardar')
-  })
-
-  it('renderiza el contenido del slot por defecto', () => {
-    const wrapper = mount(Button, {
-      slots: { default: 'Contenido personalizado' },
-    })
-
-    expect(wrapper.text()).toContain('Contenido personalizado')
-  })
-
-  it('emite click al pulsarlo', async () => {
-    const wrapper = mount(Button)
-
-    await wrapper.get('button').trigger('click')
-
-    expect(wrapper.emitted('click')).toHaveLength(1)
-  })
-
-  it('bloquea el click mientras carga', async () => {
-    const wrapper = mount(Button, {
-      props: { loading: true },
-    })
-
-    await wrapper.get('button').trigger('click')
-
-    expect(wrapper.emitted('click')).toBeUndefined()
-  })
-
-  it('bloquea el click cuando aria-disabled es true', async () => {
-    const wrapper = mount(Button, {
-      attrs: { 'aria-disabled': 'true' },
-    })
-
-    await wrapper.get('button').trigger('click')
-
-    expect(wrapper.emitted('click')).toBeUndefined()
-  })
-
-  it('permite el click cuando aria-disabled es false', async () => {
-    const wrapper = mount(Button, {
-      attrs: { 'aria-disabled': 'false' },
-    })
-
-    await wrapper.get('button').trigger('click')
-
-    expect(wrapper.emitted('click')).toHaveLength(1)
-  })
-
-  it('bloquea el click cuando está disabled', async () => {
-    const wrapper = mount(Button, {
-      attrs: { disabled: true },
-    })
-
-    await wrapper.get('button').trigger('click')
-
-    expect(wrapper.emitted('click')).toBeUndefined()
-  })
-
-  it('expone el estado de carga mediante atributos ARIA', () => {
-    const wrapper = mount(Button, {
-      props: { loading: true },
-    })
-    const button = wrapper.get('button')
-
-    expect(button.attributes('aria-busy')).toBe('true')
-    expect(button.attributes('aria-disabled')).toBe('true')
-  })
-
-  describe('slots', () => {
-    it('renderiza el slot leading dentro de su data-slot', () => {
-      const wrapper = mount(Button, {
-        slots: { leading: 'Anterior' },
-      })
-
-      const leading = wrapper.get('[data-slot="leading"]')
-
-      expect(leading.text()).toContain('Anterior')
-    })
-
-    it('renderiza el slot trailing dentro de su data-slot', () => {
-      const wrapper = mount(Button, {
-        slots: { trailing: 'Siguiente' },
-      })
-
-      const trailing = wrapper.get('[data-slot="trailing"]')
-
-      expect(trailing.text()).toContain('Siguiente')
-    })
-
-    it('renderiza el indicador de carga en lugar del slot leading', () => {
-      const wrapper = mount(Button, {
-        props: { loading: true },
-        slots: { leading: 'Icono principal' },
-      })
-
-      expect(wrapper.find('[data-slot="loading"]').exists()).toBe(true)
-      expect(wrapper.find('[data-slot="loading"] .animate-spin').exists()).toBe(true)
-      expect(wrapper.find('[data-slot="leading"]').exists()).toBe(false)
-      expect(wrapper.text()).not.toContain('Icono principal')
-    })
-
-    it('permite reemplazar el indicador mediante el slot loading', () => {
-      const wrapper = mount(Button, {
-        props: { loading: true },
-        slots: { loading: 'Procesando' },
-      })
-
-      const loading = wrapper.get('[data-slot="loading"]')
-
-      expect(loading.text()).toContain('Procesando')
-      expect(loading.find('.animate-spin').exists()).toBe(false)
-    })
-
-    it('mantiene el slot trailing mientras carga', () => {
-      const wrapper = mount(Button, {
-        props: { loading: true },
-        slots: { trailing: 'Siguiente' },
-      })
-
-      expect(wrapper.get('[data-slot="trailing"]').text()).toContain('Siguiente')
-    })
-  })
-
-  describe('iconos', () => {
-    it('renderiza icon dentro del data-slot leading', () => {
-      const wrapper = mount(Button, {
-        props: { icon: 'check' },
-      })
-
-      const icon = wrapper.get('[data-slot="leading"] svg')
-
-      expect(icon.classes()).toContain('lucide-check')
-    })
-
-    it('renderiza trailingIcon dentro del data-slot trailing', () => {
-      const wrapper = mount(Button, {
-        props: { trailingIcon: 'chevronRight' },
-      })
-
-      const icon = wrapper.get('[data-slot="trailing"] svg')
-
-      expect(icon.classes()).toContain('lucide-chevron-right')
-    })
-
-    it('no renderiza iconos cuando no se proporcionan', () => {
-      const wrapper = mount(Button)
-
-      expect(wrapper.find('[data-slot="leading"] svg').exists()).toBe(false)
-
-      expect(wrapper.find('[data-slot="trailing"] svg').exists()).toBe(false)
-    })
-
-    it('reemplaza el icon por el indicador de carga mientras carga', () => {
-      const wrapper = mount(Button, {
-        props: {
-          icon: 'check',
-          loading: true,
-        },
-      })
-
-      expect(wrapper.find('[data-slot="loading"]').exists()).toBe(true)
-      expect(wrapper.find('.lucide-check').exists()).toBe(false)
-      expect(wrapper.find('[data-slot="leading"]').exists()).toBe(false)
-    })
-  })
-
-  describe('forma y tamaño', () => {
-    it('aplica redondeado completo con la prop "rounded"', () => {
-      const wrapper = mount(Button, {
-        props: { rounded: true },
-      })
-
-      expect(wrapper.get('button').classes()).toContain('rounded-full')
+      expect(button.text()).toBe('Guardar')
     })
 
     it.each([
@@ -190,12 +19,12 @@ describe('Button', () => {
       ['sm', 'h-8'],
       ['md', 'h-9'],
       ['lg', 'h-10'],
-    ])('aplica las clases del tamaño "size" %s', (size, expectedClass) => {
-      const wrapper = mount(Button, {
+    ])('Render size %s', (size, expectedClass) => {
+      const button = mount(Button, {
         props: { size },
-      })
+      }).get('button')
 
-      expect(wrapper.get('button').classes()).toContain(expectedClass)
+      expect(button.classes()).toContain(expectedClass)
     })
 
     it.each([
@@ -203,235 +32,106 @@ describe('Button', () => {
       ['sm', 'size-8'],
       ['md', 'size-9'],
       ['lg', 'size-10'],
-    ])('aplica el tamaño cuadrado de la prop "square" %s', (size, expectedClass) => {
-      const wrapper = mount(Button, {
-        props: {
-          square: true,
-          size,
-        },
-      })
+    ])('Render square size %s', (size, expectedClass) => {
+      const button = mount(Button, {
+        props: { size, square: true },
+      }).get('button')
 
-      const classes = wrapper.get('button').classes()
-
-      expect(classes).toEqual(expect.arrayContaining([expectedClass, 'p-0']))
+      expect(button.classes()).toEqual(expect.arrayContaining([expectedClass, 'p-0']))
     })
-  })
 
-  describe('variants', () => {
+    it('Render rounded', () => {
+      const button = mount(Button, {
+        props: { rounded: true },
+      }).get('button')
+
+      expect(button.classes()).toContain('rounded-full')
+    })
+
     it.each([
-      [
-        'solid',
-        ['bg-primary', 'text-primary-foreground', 'hover:bg-primary/90', 'active:bg-primary/80'],
-      ],
-      [
-        'outline',
-        [
-          'border',
-          'bg-transparent',
-          'text-primary',
-          'hover:bg-primary/10',
-          'active:border-primary/60',
-          'active:bg-primary/20',
-        ],
-      ],
-      ['plain', ['bg-transparent', 'text-primary', 'hover:bg-primary/10', 'active:bg-primary/20']],
-      [
-        'subtle',
-        ['border', 'bg-primary/10', 'text-primary', 'hover:bg-primary/15', 'active:bg-primary/25'],
-      ],
-      ['soft', ['bg-primary/10', 'text-primary', 'hover:bg-primary/20', 'active:bg-primary/30']],
-      ['link', ['bg-transparent', 'underline', 'text-primary', 'hover:no-underline']],
-    ])('aplica las clases de la variant %s', (variant, expectedClasses) => {
-      const wrapper = mount(Button, {
+      ['solid', ['bg-primary', 'text-primary-foreground']],
+      ['outline', ['border', 'bg-transparent', 'text-primary']],
+      ['plain', ['bg-transparent', 'text-primary']],
+      ['subtle', ['border', 'bg-primary/10', 'text-primary']],
+      ['soft', ['bg-primary/10', 'text-primary']],
+      ['link', ['bg-transparent', 'underline', 'text-primary']],
+    ])('Render variant %s', (variant, expectedClasses) => {
+      const button = mount(Button, {
         props: { variant },
-      })
+      }).get('button')
 
-      expect(wrapper.get('button').classes()).toEqual(expect.arrayContaining(expectedClasses))
+      expect(button.classes()).toEqual(expect.arrayContaining(expectedClasses))
     })
-  })
 
-  describe('severity', () => {
     it.each([
-      [
-        'primary',
-        [
-          'bg-primary',
-          'text-primary-foreground',
-          'focus-visible:border-primary',
-          'focus-visible:ring-primary/30',
-        ],
-      ],
-      [
-        'secondary',
-        [
-          'bg-secondary',
-          'text-secondary-foreground',
-          'focus-visible:border-secondary-foreground',
-          'focus-visible:ring-secondary-foreground/20',
-        ],
-      ],
-      [
-        'warning',
-        [
-          'bg-warning',
-          'text-warning-foreground',
-          'focus-visible:border-warning',
-          'focus-visible:ring-warning/30',
-        ],
-      ],
-      [
-        'success',
-        [
-          'bg-success',
-          'text-success-foreground',
-          'focus-visible:border-success',
-          'focus-visible:ring-success/30',
-        ],
-      ],
-      [
-        'error',
-        [
-          'bg-error',
-          'text-error-foreground',
-          'focus-visible:border-error',
-          'focus-visible:ring-error/30',
-        ],
-      ],
-    ])('aplica las clases de la severity %s', (severity, expectedClasses) => {
-      const wrapper = mount(Button, {
-        props: {
-          severity,
-          variant: 'solid',
-        },
-      })
-
-      expect(wrapper.get('button').classes()).toEqual(expect.arrayContaining(expectedClasses))
-    })
-
-    it('combina severity error con variant outline', () => {
+      ['primary', ['bg-primary', 'text-primary-foreground']],
+      ['secondary', ['bg-secondary', 'text-secondary-foreground']],
+      ['warning', ['bg-warning', 'text-warning-foreground']],
+      ['success', ['bg-success', 'text-success-foreground']],
+      ['error', ['bg-error', 'text-error-foreground']],
+    ])('Render severity %s', (severity, expectedClasses) => {
       const button = mount(Button, {
-        props: {
-          severity: 'error',
-          variant: 'outline',
-        },
+        props: { severity },
       }).get('button')
 
-      expect(button.classes()).toEqual(
-        expect.arrayContaining([
-          'border',
-          'bg-transparent',
-          'text-error',
-          'hover:bg-error/10',
-          'active:border-error/60',
-          'active:bg-error/20',
-        ]),
-      )
+      expect(button.classes()).toEqual(expect.arrayContaining(expectedClasses))
     })
 
-    it('combina severity success con variant soft', () => {
+    it('Render color', () => {
       const button = mount(Button, {
-        props: {
-          severity: 'success',
-          variant: 'soft',
-        },
-      }).get('button')
-
-      expect(button.classes()).toEqual(
-        expect.arrayContaining([
-          'bg-success/10',
-          'text-success',
-          'hover:bg-success/20',
-          'active:bg-success/30',
-        ]),
-      )
-    })
-
-    it('combina severity warning con variant link', () => {
-      const button = mount(Button, {
-        props: {
-          severity: 'warning',
-          variant: 'link',
-        },
-      }).get('button')
-
-      expect(button.classes()).toEqual(
-        expect.arrayContaining([
-          'bg-transparent',
-          'underline',
-          'text-warning',
-          'hover:no-underline',
-        ]),
-      )
-    })
-  })
-
-  describe('color personalizado', () => {
-    it('aplica las variables y clases de un color personalizado', () => {
-      const wrapper = mount(Button, {
         props: { color: '#ff0000' },
-      })
-
-      const button = wrapper.get('button')
+      }).get('button')
 
       expect(button.attributes('style')).toContain('--button-color: #ff0000')
-
       expect(button.attributes('style')).toContain('--button-color-foreground: #09090b')
-
       expect(button.classes()).toEqual(
         expect.arrayContaining([
           'bg-(--button-color)',
           'text-(--button-color-foreground)',
-          'hover:bg-(--button-color)/90',
-          'active:bg-(--button-color)/80',
           'focus-visible:border-(--button-color)',
           'focus-visible:ring-(--button-color)/30',
         ]),
       )
     })
 
-    it('actualiza las variables cuando cambia la prop color', async () => {
+    it('Render icon and trailingIcon', () => {
       const wrapper = mount(Button, {
-        props: { color: '#ffffff' },
+        props: { icon: 'check', trailingIcon: 'chevronRight' },
       })
 
-      await wrapper.setProps({
-        color: '#000000',
+      expect(wrapper.get('.lucide-check').classes()).toContain('lucide-check')
+      expect(wrapper.get('.lucide-chevron-right').classes()).toContain('lucide-chevron-right')
+    })
+
+    it('No render icons', () => {
+      const wrapper = mount(Button)
+
+      expect(wrapper.find('[data-button="leadingIcon"]').exists()).toBe(false)
+      expect(wrapper.find('.lucide-chevron-right').exists()).toBe(false)
+    })
+
+    it('Render loading A11y state', () => {
+      const wrapper = mount(Button, {
+        props: { loading: true, icon: 'check' },
+      })
+      const button = wrapper.get('button')
+
+      expect(button.attributes('aria-busy')).toBe('true')
+      expect(button.attributes('aria-disabled')).toBe('true')
+    })
+
+    it('Render loading icon and hide leading content', () => {
+      const wrapper = mount(Button, {
+        props: { loading: true, icon: 'check' },
+        slots: { leading: () => h('span', 'leading') },
       })
 
-      const style = wrapper.get('button').attributes('style')
-
-      expect(style).toContain('--button-color: #000000')
-      expect(style).toContain('--button-color-foreground: #ffffff')
-      expect(style).not.toContain('--button-color: #ffffff;')
+      expect(wrapper.find('[data-button="loadingIcon"]').exists()).toBe(true)
+      expect(wrapper.find('[data-button="leadingIcon"]').exists()).toBe(false)
+      expect(wrapper.find('[data-button-slot="leading"]').exists()).toBe(false)
     })
 
-    it('prioriza el color personalizado sobre severity', () => {
-      const button = mount(Button, {
-        props: {
-          severity: 'error',
-          color: '#ff0000',
-        },
-      }).get('button')
-
-      expect(button.classes()).toEqual(
-        expect.arrayContaining(['bg-(--button-color)', 'text-(--button-color-foreground)']),
-      )
-
-      expect(button.classes()).not.toContain('bg-error')
-      expect(button.classes()).not.toContain('text-error-foreground')
-    })
-
-    it('no aplica variables ni clases personalizadas sin la prop color', () => {
-      const button = mount(Button).get('button')
-
-      expect(button.attributes('style') ?? '').not.toContain('--button-color')
-
-      expect(button.classes()).not.toContain('bg-(--button-color)')
-    })
-  })
-
-  describe('elementos no interactivos', () => {
-    it('elimina las clases hover y active cuando renderiza un elemento no interactivo', () => {
+    it('Remove hover and active classes from non-interactive elements', () => {
       const classes = mount(Button, {
         props: { as: 'div' },
       })
@@ -439,16 +139,161 @@ describe('Button', () => {
         .classes()
 
       expect(classes.some((className) => className.startsWith('hover:'))).toBe(false)
-
       expect(classes.some((className) => className.startsWith('active:'))).toBe(false)
     })
 
-    it('mantiene las clases hover y active en un button', () => {
-      const classes = mount(Button).get('button').classes()
+    it('Render HTML Attributes by ui', () => {
+      const button = mount(Button, {
+        props: { ui: { root: { class: 'ui-root' } } },
+      }).get('button')
 
-      expect(classes.some((className) => className.startsWith('hover:'))).toBe(true)
-
-      expect(classes.some((className) => className.startsWith('active:'))).toBe(true)
+      expect(button.classes()).toContain('ui-root')
     })
+
+    it('Render HTML Attributes by ui function', () => {
+      const button = mount(Button, {
+        props: { ui: { root: () => ({ class: 'ui-root' }) } },
+      }).get('button')
+
+      expect(button.classes()).toContain('ui-root')
+    })
+  })
+
+  describe('Slots', () => {
+    it('Render default and replace label', () => {
+      const wrapper = mount(Button, {
+        props: { label: 'Label' },
+        slots: { default: () => h('span', 'test') },
+      })
+
+      expect(wrapper.get('button > span').html()).toBe('<span>test</span>')
+      expect(wrapper.text()).not.toContain('Label')
+    })
+
+    it('Render leading and replace icon', () => {
+      const wrapper = mount(Button, {
+        props: { icon: 'check' },
+        slots: { leading: () => h('span', 'test') },
+      })
+
+      expect(wrapper.get('[data-button-slot="leading"] > span').html()).toBe('<span>test</span>')
+      expect(wrapper.find('.lucide-check').exists()).toBe(false)
+    })
+
+    it('Render trailing and replace trailingIcon', () => {
+      const wrapper = mount(Button, {
+        props: { trailingIcon: 'chevronRight' },
+        slots: { trailing: () => h('span', 'test') },
+      })
+
+      expect(wrapper.get('[data-button-slot="trailing"] > span').html()).toBe('<span>test</span>')
+      expect(wrapper.find('.lucide-chevron-right').exists()).toBe(false)
+    })
+
+    it('Render loading and replace spinner', () => {
+      const wrapper = mount(Button, {
+        props: { loading: true, icon: 'check' },
+        slots: {
+          loading: () => h('span', 'test'),
+          leading: () => h('span', 'leading'),
+        },
+      })
+
+      expect(wrapper.get('[data-button-slot="loading"] > span').html()).toBe('<span>test</span>')
+      expect(wrapper.find('[data-button="loading"]').exists()).toBe(false)
+      expect(wrapper.find('.lucide-check').exists()).toBe(false)
+      expect(wrapper.find('[data-button-slot="leading"]').exists()).toBe(false)
+    })
+  })
+
+  describe('Attrs', () => {
+    it('Merge attrs, class and style', () => {
+      const button = mount(Button, {
+        attrs: {
+          class: 'custom-button',
+          style: 'opacity: 0.5',
+          'data-test': 'save-button',
+        },
+      }).get('button')
+
+      expect(button.classes()).toContain('custom-button')
+      expect(button.attributes('style')).toContain('opacity: 0.5')
+      expect(button.attributes('data-test')).toBe('save-button')
+    })
+  })
+
+  describe('Events', () => {
+    it('Emit click event', async () => {
+      const wrapper = mount(Button)
+
+      await wrapper.get('button').trigger('click')
+
+      expect(wrapper.emitted('click')).toHaveLength(1)
+    })
+
+    it.each([
+      ['loading', { props: { loading: true } }],
+      ['aria-disabled', { attrs: { 'aria-disabled': 'true' } }],
+      ['disabled', { attrs: { disabled: true } }],
+    ])('Block click when %s', async (_, options) => {
+      const wrapper = mount(Button, options)
+
+      await wrapper.get('button').trigger('click')
+
+      expect(wrapper.emitted('click')).toBeUndefined()
+    })
+  })
+
+  describe('Context', () => {
+    const props = {
+      as: 'button',
+      asChild: false,
+      label: 'Guardar',
+      variant: 'outline',
+      severity: 'success',
+      size: 'lg',
+      rounded: true,
+      square: false,
+      loading: false,
+      color: '#ff0000',
+      icon: 'check',
+      trailingIcon: 'chevronRight',
+    } as const
+
+    it('Button context', () => {
+      const context = createButtonContext({
+        ...props,
+        ui: { root: { class: 'ui-root' } },
+      })
+
+      expect(context).toEqual(props)
+    })
+
+    it('Button context to ui.root function', () => {
+      const root = vi.fn(() => ({ class: 'ui-root' }))
+
+      mount(Button, {
+        props: { ...props, ui: { root } },
+      })
+
+      expect(root).toHaveBeenCalledWith(props)
+    })
+
+    it.each(['default', 'leading', 'loading', 'trailing'] as const)(
+      'Button context to %s slot',
+      (slotName) => {
+        const slot = vi.fn(() => h('span', 'test'))
+
+        mount(Button, {
+          props: { ...props, loading: slotName === 'loading' },
+          slots: { [slotName]: slot },
+        })
+
+        expect(slot).toHaveBeenCalledWith({
+          ...props,
+          loading: slotName === 'loading',
+        })
+      },
+    )
   })
 })

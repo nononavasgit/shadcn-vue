@@ -128,7 +128,7 @@ const customFiles = ref<File[]>([])
                       size="sm"
                       @click.stop="clear"
                     />
-                    <Button label="Explorar" size="sm" @click.stop="open" />
+                    <Button label="Explorar" icon="x" size="sm" @click.stop="open" />
                   </div>
                 </div>
               </template>

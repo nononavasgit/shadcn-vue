@@ -36,6 +36,7 @@ defineSlots<ButtonSlots>()
 const buttonContext = computed(() => {
   const { ui, ...buttonProps } = props
   void ui
+
   const buttonContext: ButtonContext = {
     props: buttonProps,
   }
@@ -113,26 +114,35 @@ function handleClick(event: PointerEvent) {
 
 <template>
   <Primitive v-bind="rootProps" @click="handleClick">
-    <slot v-if="props.asChild" v-bind="buttonContext" />
+    <template v-if="props.asChild">
+      <div data-slot="default">
+        <slot v-bind="buttonContext" />
+      </div>
+    </template>
     <template v-else>
-      <template v-if="props.loading">
+      <div v-if="props.loading" data-slot="loading">
         <slot name="loading" v-bind="buttonContext">
           <Icon v-bind="loadingIconProps" />
         </slot>
-      </template>
-      <slot v-else name="leading" v-bind="buttonContext">
-        <Icon v-if="iconProps.name" v-bind="iconProps" :name="iconProps.name" />
-      </slot>
+      </div>
+
+      <div v-else data-slot="leading">
+        <slot name="leading" v-bind="buttonContext">
+          <Icon v-if="iconProps.name" v-bind="iconProps" :name="iconProps.name" />
+        </slot>
+      </div>
 
       <slot v-bind="buttonContext">{{ props.label }}</slot>
 
-      <slot name="trailing" v-bind="buttonContext">
-        <Icon
-          v-if="trailingIconProps.name"
-          v-bind="trailingIconProps"
-          :name="trailingIconProps.name"
-        />
-      </slot>
+      <div data-slot="trailing">
+        <slot name="trailing" v-bind="buttonContext">
+          <Icon
+            v-if="trailingIconProps.name"
+            v-bind="trailingIconProps"
+            :name="trailingIconProps.name"
+          />
+        </slot>
+      </div>
     </template>
   </Primitive>
 </template>

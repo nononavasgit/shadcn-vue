@@ -10,9 +10,9 @@ export const badgeVariants = cva(
   {
     variants: {
       size: {
-        sm: 'gap-0.5 px-0.5 text-sm [&_[data-badge-slot=leading]>svg]:size-2.5 [&_[data-badge-slot=trailing]>svg]:size-2.5',
-        md: 'gap-1 px-1 text-base [&_[data-badge-slot=leading]>svg]:size-3 [&_[data-badge-slot=trailing]>svg]:size-3',
-        lg: 'gap-1.5 px-2 text-lg [&_[data-badge-slot=leading]>svg]:size-3.5 [&_[data-badge-slot=trailing]>svg]:size-3.5',
+        sm: 'gap-0.5 px-0.5 text-sm',
+        md: 'gap-1 px-1 text-base',
+        lg: 'gap-1.5 px-2 text-lg',
       },
       variant: {
         solid: '',
@@ -215,15 +215,30 @@ export interface BadgeProps extends PrimitiveProps {
 }
 
 export interface BadgeContext {
-  props: Omit<BadgeProps, 'ui'>
+  as: BadgeProps['as']
+  asChild: BadgeProps['asChild']
+  label: BadgeProps['label']
+  size: BadgeProps['size']
+  variant: BadgeProps['variant']
+  severity: BadgeProps['severity']
+  color: BadgeProps['color']
+  icon: BadgeProps['icon']
+  trailingIcon: BadgeProps['trailingIcon']
 }
 
 export function createBadgeContext(props: BadgeProps): BadgeContext {
-  const { ui, ...badgeProps } = props
-  void ui
+  const { as, asChild, label, size, variant, severity, color, icon, trailingIcon } = props
 
   return {
-    props: badgeProps,
+    as,
+    asChild,
+    label,
+    size,
+    variant,
+    severity,
+    color,
+    icon,
+    trailingIcon,
   }
 }
 

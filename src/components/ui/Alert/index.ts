@@ -72,7 +72,7 @@ export interface AlertContext {
 }
 
 export function createAlertContext(props: AlertProps, close: () => void): AlertContext {
-  const { ui, ...alertProps } = props
+  const { label, description } = props
   void ui
 
   return {

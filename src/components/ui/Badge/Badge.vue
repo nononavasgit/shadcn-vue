@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<BadgeProps>(), {
   trailingIcon: undefined,
   ui: undefined,
 })
-defineSlots<BadgeSlots>()
+const slots = defineSlots<BadgeSlots>()
 
 const badgeContext = computed(() => createBadgeContext(props))
 
@@ -54,24 +54,22 @@ const trailingIconProps = computed(() => normalizeIconProps(props.trailingIcon))
 
 <template>
   <Primitive v-bind="rootProps" data-badge-ui="root">
-    <span data-badge-slot="leading">
-      <slot name="leading" v-bind="badgeContext">
-        <Icon v-if="iconProps?.name" v-bind="iconProps" data-badge="icon" />
-      </slot>
-    </span>
+    <span v-if="slots.leading" data-badge-slot="leading">
+      <slot name="leading" v-bind="badgeContext"></slot
+    ></span>
+    <Icon v-else-if="iconProps?.name" v-bind="iconProps" data-badge="icon" />
 
     <span data-badge-slot="default">
       <slot v-bind="badgeContext">{{ props.label }}</slot>
     </span>
 
-    <span data-badge-slot="trailing">
-      <slot name="trailing" v-bind="badgeContext">
-        <Icon
-          v-if="trailingIconProps?.name"
-          v-bind="trailingIconProps"
-          data-badge="trailing-icon"
-        />
-      </slot>
-    </span>
+    <span v-if="slots.trailing" data-badge-slot="trailing">
+      <slot name="trailing" v-bind="badgeContext"></slot
+    ></span>
+    <Icon
+      v-else-if="trailingIconProps?.name"
+      v-bind="trailingIconProps"
+      data-badge="trailingIcon"
+    />
   </Primitive>
 </template>

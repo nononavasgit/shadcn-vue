@@ -93,15 +93,19 @@ const customFiles = ref<File[]>([])
                 <span class="size-2 rounded-full bg-success" />
               </template>
               Disponible
+              <template #trailing>
+                <Icon name="chevronRight" />
+              </template>
             </Badge>
 
             <Badge
               label="UI personalizada"
+              size="lg"
               :ui="{
-                root: {
-                  class: 'border-dashed uppercase tracking-wider',
+                root: ({ size }) => ({
+                  class: ['border-dashed uppercase tracking-wider', size === 'lg' && 'shadow-sm'],
                   'data-example': 'custom-ui',
-                },
+                }),
               }"
             />
           </div>

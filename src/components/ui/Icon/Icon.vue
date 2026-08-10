@@ -31,5 +31,5 @@ const rootProps = computed(() => {
 </script>
 
 <template>
-  <component v-bind="rootProps" :is="icon" />
+  <component v-bind="rootProps" :is="icon" data-icon-ui="root" />
 </template>

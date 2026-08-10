@@ -45,15 +45,15 @@ export type AlertFn<T> = T | ((context: AlertContext) => T)
 
 // Props
 export interface AlertProps {
-  label?: string
-  description?: string
-  icon?: NormalizeIconProps
-  closeButton?: NormalizeButtonProps
-  variant?: AlertVariants['variant']
-  severity?: AlertVariants['severity']
-  color?: string
-  closable?: boolean
-  decorative?: boolean
+  label: string
+  description: string
+  icon: NormalizeIconProps
+  closeButton: NormalizeButtonProps
+  variant: AlertVariants['variant']
+  severity: AlertVariants['severity']
+  color: string
+  closable: boolean
+  decorative: boolean
   ui?: AlertUI
 }
 
@@ -69,6 +69,16 @@ export interface AlertUI {
 export interface AlertContext {
   props: Omit<AlertProps, 'ui'>
   close: () => void
+}
+
+export function createAlertContext(props: AlertProps, close: () => void): AlertContext {
+  const { ui, ...alertProps } = props
+  void ui
+
+  return {
+    props: alertProps,
+    close,
+  }
 }
 
 // Emits

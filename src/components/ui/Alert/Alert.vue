@@ -8,7 +8,7 @@ import { useColor } from '@/composables'
 import { useI18n } from '@/i18n'
 import {
   alertVariants,
-  type AlertContext,
+  createAlertContext,
   type AlertEmits,
   type AlertProps,
   type AlertSlots,
@@ -21,6 +21,12 @@ const props = withDefaults(defineProps<AlertProps>(), {
   severity: 'primary',
   closable: false,
   decorative: false,
+  closeButton: undefined,
+  color: undefined,
+  description: undefined,
+  icon: undefined,
+  label: undefined,
+  ui: undefined,
 })
 const emit = defineEmits<AlertEmits>()
 defineSlots<AlertSlots>()
@@ -34,15 +40,7 @@ const { colorStyle } = useColor(
   'alert',
 )
 
-const alertContext = computed<AlertContext>(() => {
-  const { ui, ...alertProps } = props
-  void ui
-
-  return {
-    props: alertProps,
-    close,
-  }
-})
+const alertContext = computed(() => createAlertContext(props, close))
 
 const rootProps = computed(() => {
   const calculatedVariants = alertVariants({
@@ -57,7 +55,7 @@ const rootProps = computed(() => {
     ...rootUI,
     role: props.decorative ? 'none' : 'alert',
     class: cn(
-      'relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current',
+      'relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm has-[[data-alert-slot=icon]]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[[data-alert-slot=icon]]:gap-x-3 [&_[data-alert-slot=icon]>svg]:size-4 [&_[data-alert-slot=icon]>svg]:translate-y-0.5 [&_[data-alert-slot=icon]>svg]:text-current',
       calculatedVariants,
       props.closable && (props.closeButton?.label ? 'pr-24' : 'pr-12'),
       attrs.class,
@@ -118,26 +116,38 @@ function close() {
 }
 </script>
 <template>
-  <div v-if="visible" v-bind="rootProps" data-slot="alert">
-    <slot v-if="iconProps?.name || slots.icon" name="icon" v-bind="alertContext">
-      <Icon v-if="iconProps?.name" v-bind="iconProps" />
-    </slot>
+  <div v-if="visible" v-bind="rootProps" data-alert-ui="root">
+    <div v-if="slots.icon" data-alert-slot="icon">
+      <slot :name="'icon'" v-bind="alertContext"></slot>
+    </div>
+    <Icon v-else-if="iconProps?.name" v-bind="iconProps" data-alert="icon" />
 
-    <div v-if="props.label || slots.label" v-bind="labelProps" data-slot="alert-title">
+    <div
+      v-if="props.label || slots.label"
+      v-bind="labelProps"
+      data-alert-ui="label"
+      data-alert-slot="label"
+    >
       <slot name="label" v-bind="alertContext">{{ props.label }}</slot>
     </div>
 
     <div
       v-if="props.description || slots.description"
-      data-slot="alert-description"
       v-bind="descriptionProps"
+      data-alert-ui="description"
+      data-alert-slot="description"
     >
       <slot name="description" v-bind="alertContext">{{ props.description }}</slot>
     </div>
 
-    <div v-if="props.closable" v-bind="closeButtonContainerProps">
+    <div
+      v-if="props.closable"
+      v-bind="closeButtonContainerProps"
+      data-alert-ui="closeButtonContainer"
+      data-alert-slot="close"
+    >
       <slot name="close" v-bind="alertContext">
-        <Button v-bind="closeButtonProps" @click="close" />
+        <Button v-bind="closeButtonProps" data-alert="buttonClose" @click="close" />
       </slot>
     </div>
   </div>

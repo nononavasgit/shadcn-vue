@@ -39,15 +39,18 @@ export interface IconUI {
 
 // Context
 export interface IconContext {
-  props: Omit<IconProps, 'ui'>
+  name: IconProps['name']
+  color: IconProps['color']
+  size: IconProps['size']
 }
 
 export function createIconContext(props: IconProps): IconContext {
-  const { ui, ...iconProps } = props
-  void ui
+  const { name, color, size } = props
 
   return {
-    props: iconProps,
+    name,
+    color,
+    size,
   }
 }
 

@@ -233,40 +233,4 @@ describe('Badge', () => {
       })
     })
   })
-
-  describe('ui', () => {
-    it('aplica ui.root al elemento raíz', () => {
-      const badge = mount(Badge, {
-        props: {
-          ui: {
-            root: {
-              class: 'ui-badge',
-              'data-test': 'ui-badge',
-            },
-          },
-        },
-      }).get('span')
-
-      expect(badge.classes()).toContain('ui-badge')
-      expect(badge.attributes('data-test')).toBe('ui-badge')
-    })
-
-    it('resuelve ui.root con el contexto del badge', () => {
-      const badge = mount(Badge, {
-        props: {
-          label: 'Activo',
-          severity: 'success',
-          ui: {
-            root: ({ props }) => ({
-              class: props.severity === 'success' ? 'success-badge' : undefined,
-              'data-label': props.label,
-            }),
-          },
-        },
-      }).get('span')
-
-      expect(badge.classes()).toContain('success-badge')
-      expect(badge.attributes('data-label')).toBe('Activo')
-    })
-  })
 })

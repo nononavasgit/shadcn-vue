@@ -2,7 +2,7 @@
 import { computed, useAttrs, useSlots } from 'vue'
 import { Primitive } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { FieldSetContext, FieldSetProps, FieldSetSlots } from '.'
 
@@ -29,7 +29,7 @@ const fieldSetContext = computed<FieldSetContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.root, fieldSetContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.root, fieldSetContext.value))
   return {
     ...attrs,
     ...ui,
@@ -40,7 +40,7 @@ const rootProps = computed(() => {
 })
 
 const legendProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.legend, fieldSetContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.legend, fieldSetContext.value))
   return {
     ...ui,
     'data-slot': 'field-legend',
@@ -54,7 +54,7 @@ const legendProps = computed(() => {
 })
 
 const descriptionProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.description, fieldSetContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.description, fieldSetContext.value))
   return {
     ...ui,
     as: 'p' as const,
@@ -68,7 +68,7 @@ const descriptionProps = computed(() => {
 })
 
 const groupProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.group, fieldSetContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.group, fieldSetContext.value))
   return {
     ...ui,
     as: 'div' as const,

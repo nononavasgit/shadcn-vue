@@ -8,7 +8,7 @@ import {
   ScrollAreaViewport,
 } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { ScrollAreaContext, ScrollAreaProps, ScrollAreaSlots } from '.'
 
@@ -38,7 +38,7 @@ const scrollAreaContext = computed<ScrollAreaContext>(() => {
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, scrollAreaContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, scrollAreaContext.value))
 
   return {
     ...attrs,
@@ -55,7 +55,7 @@ const rootProps = computed(() => {
 
 const viewportProps = computed(() => {
   const viewportUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.viewport, scrollAreaContext.value),
+    useUi(props.ui?.viewport, scrollAreaContext.value),
   )
 
   return {
@@ -69,7 +69,7 @@ const viewportProps = computed(() => {
 
 const verticalScrollbarProps = computed(() => {
   const verticalScrollbarUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.verticalScrollbar, scrollAreaContext.value),
+    useUi(props.ui?.verticalScrollbar, scrollAreaContext.value),
   )
 
   return {
@@ -85,7 +85,7 @@ const verticalScrollbarProps = computed(() => {
 
 const thumbVerticalProps = computed(() => {
   const thumbVerticalUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.thumbVertical, scrollAreaContext.value),
+    useUi(props.ui?.thumbVertical, scrollAreaContext.value),
   )
 
   return {
@@ -96,7 +96,7 @@ const thumbVerticalProps = computed(() => {
 
 const horizontalScrollbarProps = computed(() => {
   const horizontalScrollbarUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.horizontalScrollbar, scrollAreaContext.value),
+    useUi(props.ui?.horizontalScrollbar, scrollAreaContext.value),
   )
 
   return {
@@ -112,7 +112,7 @@ const horizontalScrollbarProps = computed(() => {
 
 const thumbHorizontalProps = computed(() => {
   const thumbHorizontalUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.thumbHorizontal, scrollAreaContext.value),
+    useUi(props.ui?.thumbHorizontal, scrollAreaContext.value),
   )
 
   return {
@@ -122,7 +122,7 @@ const thumbHorizontalProps = computed(() => {
 })
 
 const cornerProps = computed(() => {
-  const cornerUI = normalizeHTMLAttributes(useResolve(props.ui?.corner, scrollAreaContext.value))
+  const cornerUI = normalizeHTMLAttributes(useUi(props.ui?.corner, scrollAreaContext.value))
 
   return {
     ...cornerUI,

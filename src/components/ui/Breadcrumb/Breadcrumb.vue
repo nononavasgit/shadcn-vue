@@ -3,7 +3,7 @@ import { computed, useAttrs, useSlots } from 'vue'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { Link, normalizeLinkProps } from '@/components/ui/Link'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
 import type {
@@ -60,7 +60,7 @@ const ellipsisContext = computed<BreadcrumbEllipsisContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.root, breadcrumbContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.root, breadcrumbContext.value))
   return {
     ...attrs,
     ...ui,
@@ -70,7 +70,7 @@ const rootProps = computed(() => {
 })
 
 const listProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.list, breadcrumbContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.list, breadcrumbContext.value))
   return {
     ...ui,
     class: cn(
@@ -83,7 +83,7 @@ const listProps = computed(() => {
 
 const ellipsisContainerProps = computed(() => {
   const ui = normalizeHTMLAttributes(
-    useResolve(props.ui?.ellipsisContainer, breadcrumbContext.value),
+    useUi(props.ui?.ellipsisContainer, breadcrumbContext.value),
   )
   return {
     'aria-label': t('more'),
@@ -95,7 +95,7 @@ const ellipsisContainerProps = computed(() => {
 
 const separatorContainerProps = computed(() => {
   const ui = normalizeHTMLAttributes(
-    useResolve(props.ui?.separatorContainer, breadcrumbContext.value),
+    useUi(props.ui?.separatorContainer, breadcrumbContext.value),
   )
   return { role: 'presentation', 'aria-hidden': true, ...ui }
 })
@@ -144,7 +144,7 @@ function getSlotNames(context: BreadcrumbItemContext) {
 }
 
 function getItemProps(context: BreadcrumbItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.item, context))
   return {
     'aria-current': context.last,
     ...ui,
@@ -154,7 +154,7 @@ function getItemProps(context: BreadcrumbItemContext) {
 }
 
 function getLinkProps(context: BreadcrumbItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.link, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.link, context))
   const item = context.item
   return {
     ...ui,
@@ -170,7 +170,7 @@ function getLinkProps(context: BreadcrumbItemContext) {
 }
 
 function getPageProps(context: BreadcrumbItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.page, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.page, context))
   return {
     ...ui,
     class: cn('inline-flex items-center gap-1 font-normal text-foreground', ui.class),
@@ -179,7 +179,7 @@ function getPageProps(context: BreadcrumbItemContext) {
 }
 
 function getLabelProps(context: BreadcrumbItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, context))
   return { ...ui, class: cn(ui.class), style: ui.style }
 }
 

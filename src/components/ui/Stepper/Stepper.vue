@@ -11,7 +11,7 @@ import {
 } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import {
@@ -116,7 +116,7 @@ const stepperContext = computed<StepperContext>(() => {
 const isVertical = computed(() => props.orientation === 'vertical')
 
 const rootProps = computed(() => {
-  const normalizedRootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, stepperContext.value))
+  const normalizedRootUI = normalizeHTMLAttributes(useUi(props.ui?.root, stepperContext.value))
   const { dir: rootDirection, ...rootUI } = normalizedRootUI
 
   void rootDirection
@@ -131,7 +131,7 @@ const rootProps = computed(() => {
 })
 
 const listProps = computed(() => {
-  const listUI = normalizeHTMLAttributes(useResolve(props.ui?.list, stepperContext.value))
+  const listUI = normalizeHTMLAttributes(useUi(props.ui?.list, stepperContext.value))
 
   return {
     ...listUI,
@@ -207,7 +207,7 @@ function getSlotNames(context: StepperItemContext) {
 }
 
 function getItemProps(context: StepperItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.item, context))
   return {
     ...ui,
     ...normalizeStepperItemProps(context.item),
@@ -223,7 +223,7 @@ function getItemProps(context: StepperItemContext) {
 }
 
 function getTriggerProps(context: StepperItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.trigger, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.trigger, context))
   return {
     ...ui,
     ...normalizeStepperTriggerProps(context.item.trigger),
@@ -237,7 +237,7 @@ function getTriggerProps(context: StepperItemContext) {
 }
 
 function getIndicatorProps(context: StepperItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.indicator, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.indicator, context))
   return {
     ...ui,
     ...normalizeStepperIndicatorProps(context.item.indicator),
@@ -251,12 +251,12 @@ function getIndicatorProps(context: StepperItemContext) {
 }
 
 function getHeaderProps(context: StepperItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.header, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.header, context))
   return { ...ui, class: cn('flex min-w-0 flex-col', ui.class), style: ui.style }
 }
 
 function getLabelProps(context: StepperItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, context))
   return {
     ...ui,
     ...normalizeStepperLabelProps(context.item.labelProps),
@@ -266,7 +266,7 @@ function getLabelProps(context: StepperItemContext) {
 }
 
 function getDescriptionProps(context: StepperItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.description, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.description, context))
   return {
     ...ui,
     ...normalizeStepperDescriptionProps(context.item.descriptionProps),
@@ -276,7 +276,7 @@ function getDescriptionProps(context: StepperItemContext) {
 }
 
 function getSeparatorProps(context: StepperItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.separator, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.separator, context))
   return {
     ...ui,
     ...normalizeStepperSeparatorProps(context.item.separator),
@@ -290,7 +290,7 @@ function getSeparatorProps(context: StepperItemContext) {
 }
 
 function getContentProps(context: StepperItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.content, context))
   return { ...ui, class: cn('mt-6', ui.class), style: ui.style }
 }
 

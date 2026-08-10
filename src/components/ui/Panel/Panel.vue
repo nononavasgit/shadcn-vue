@@ -5,7 +5,7 @@ import { Collapsible } from '@/components/ui/Collapsible'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { useColor } from '@/composables'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { panelVariants } from '.'
 import type { PanelContext, PanelProps, PanelSlots } from '.'
@@ -53,7 +53,7 @@ const panelContext = computed<PanelContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, panelContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, panelContext.value))
 
   return {
     ...attrs,
@@ -65,7 +65,7 @@ const rootProps = computed(() => {
 })
 
 const headerProps = computed(() => {
-  const headerUI = normalizeHTMLAttributes(useResolve(props.ui?.header, panelContext.value))
+  const headerUI = normalizeHTMLAttributes(useUi(props.ui?.header, panelContext.value))
 
   return {
     ...headerUI,
@@ -90,7 +90,7 @@ const triggerProps = computed(() => ({
 const iconProps = computed(() => ({ ...normalizeIconProps(props.icon) }))
 
 const labelProps = computed(() => {
-  const labelUI = normalizeHTMLAttributes(useResolve(props.ui?.label, panelContext.value))
+  const labelUI = normalizeHTMLAttributes(useUi(props.ui?.label, panelContext.value))
 
   return {
     ...labelUI,
@@ -101,7 +101,7 @@ const labelProps = computed(() => {
 })
 
 const arrowsProps = computed(() => {
-  const arrowsUI = normalizeHTMLAttributes(useResolve(props.ui?.arrows, panelContext.value))
+  const arrowsUI = normalizeHTMLAttributes(useUi(props.ui?.arrows, panelContext.value))
 
   return {
     ...arrowsUI,
@@ -112,7 +112,7 @@ const arrowsProps = computed(() => {
 })
 
 const contentProps = computed(() => {
-  const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, panelContext.value))
+  const contentUI = normalizeHTMLAttributes(useUi(props.ui?.content, panelContext.value))
 
   return {
     ...contentUI,

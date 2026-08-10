@@ -2,7 +2,7 @@
 import { computed, useAttrs, useSlots, watch } from 'vue'
 import { ProgressRoot, ProgressIndicator } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import type { ProgressCircularContext, ProgressCircularProps, ProgressCircularSlots } from '.'
@@ -70,7 +70,7 @@ const progressCircularContext = computed<ProgressCircularContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, progressCircularContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, progressCircularContext.value))
 
   return {
     ...attrs,
@@ -98,7 +98,7 @@ const rootProps = computed(() => {
 })
 
 const svgProps = computed(() => {
-  const svgUI = normalizeHTMLAttributes(useResolve(props.ui?.svg, progressCircularContext.value))
+  const svgUI = normalizeHTMLAttributes(useUi(props.ui?.svg, progressCircularContext.value))
 
   return {
     ...svgUI,
@@ -109,7 +109,7 @@ const svgProps = computed(() => {
 
 const trackProps = computed(() => {
   const trackUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.track, progressCircularContext.value),
+    useUi(props.ui?.track, progressCircularContext.value),
   )
 
   return {
@@ -135,7 +135,7 @@ const indicatorProps = computed(() => ({
 
 const indicatorCircleProps = computed(() => {
   const indicatorUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.indicator, progressCircularContext.value),
+    useUi(props.ui?.indicator, progressCircularContext.value),
   )
 
   return {
@@ -158,7 +158,7 @@ const indicatorCircleProps = computed(() => {
 
 const labelProps = computed(() => {
   const labelUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.label, progressCircularContext.value),
+    useUi(props.ui?.label, progressCircularContext.value),
   )
 
   return {

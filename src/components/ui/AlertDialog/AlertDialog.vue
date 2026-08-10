@@ -14,7 +14,7 @@ import {
 import { Button, normalizeButtonProps } from '@/components/ui/Button'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
 import {
@@ -64,7 +64,7 @@ const alertDialogContext = computed<AlertDialogContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, alertDialogContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, alertDialogContext.value))
   return {
     ...attrs,
     ...rootUI,
@@ -76,7 +76,7 @@ const rootProps = computed(() => {
 })
 
 const triggerProps = computed(() => {
-  const triggerUI = normalizeHTMLAttributes(useResolve(props.ui?.trigger, alertDialogContext.value))
+  const triggerUI = normalizeHTMLAttributes(useUi(props.ui?.trigger, alertDialogContext.value))
   return {
     asChild: true,
     ...normalizeAlertDialogTriggerProps(props.trigger),
@@ -86,7 +86,7 @@ const triggerProps = computed(() => {
 })
 
 const overlayProps = computed(() => {
-  const overlayUI = normalizeHTMLAttributes(useResolve(props.ui?.overlay, alertDialogContext.value))
+  const overlayUI = normalizeHTMLAttributes(useUi(props.ui?.overlay, alertDialogContext.value))
   return {
     ...overlayUI,
     class: cn(
@@ -99,7 +99,7 @@ const overlayProps = computed(() => {
 
 const contentProps = computed(() => {
   const normalizedContentUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.content, alertDialogContext.value),
+    useUi(props.ui?.content, alertDialogContext.value),
   )
   const { dir: contentDirection, ...contentUI } = normalizedContentUI
 
@@ -117,12 +117,12 @@ const contentProps = computed(() => {
 })
 
 const headerProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.header, alertDialogContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.header, alertDialogContext.value))
   return { ...ui, class: cn('flex flex-col gap-2 text-center sm:text-left', ui.class) }
 })
 
 const labelProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, alertDialogContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, alertDialogContext.value))
   return {
     ...ui,
     class: cn('flex items-center gap-2 text-lg leading-none font-semibold', ui.class),
@@ -132,17 +132,17 @@ const labelProps = computed(() => {
 const iconProps = computed(() => normalizeIconProps(props.icon))
 
 const descriptionProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.description, alertDialogContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.description, alertDialogContext.value))
   return { ...ui, class: cn('text-sm text-muted-foreground', ui.class) }
 })
 
 const bodyProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.body, alertDialogContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.body, alertDialogContext.value))
   return { ...ui, class: cn('min-h-0 overflow-y-auto', ui.class) }
 })
 
 const footerProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.footer, alertDialogContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.footer, alertDialogContext.value))
   return { ...ui, class: cn('flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', ui.class) }
 })
 

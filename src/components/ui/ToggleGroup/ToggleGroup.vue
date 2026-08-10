@@ -6,7 +6,7 @@ import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { toggleVariants } from '@/components/ui/Toggle'
 import { useColor } from '@/composables'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { IconProps } from '@/components/ui/Icon'
 import type {
@@ -84,7 +84,7 @@ const toggleGroupContext = computed<ToggleGroupContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, toggleGroupContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, toggleGroupContext.value))
 
   return {
     ...attrs,
@@ -129,7 +129,7 @@ const itemContexts = computed<ToggleGroupItemContext[]>(() =>
 )
 
 function getItemProps(context: ToggleGroupItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.item, context))
   return {
     ...ui,
     as: context.item.as,
@@ -157,7 +157,7 @@ function getItemProps(context: ToggleGroupItemContext) {
 }
 
 function getLabelProps(context: ToggleGroupItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, context))
   return { ...ui, class: cn(ui.class), style: ui.style }
 }
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs, watch } from 'vue'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { useAnnouncer } from '@/composables/useAnnouncer'
 import { cn } from '@/lib/utils'
 import type { AnnouncerContext, AnnouncerProps, AnnouncerSlots } from '.'
@@ -44,7 +44,7 @@ const role = computed(() => {
   return undefined
 })
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, announcerContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, announcerContext.value))
 
   return {
     ...attrs,

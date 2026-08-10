@@ -3,7 +3,7 @@ import { computed, mergeProps, useAttrs, useSlots } from 'vue'
 import { RouterLink } from 'vue-router'
 import { Button } from '@/components/ui/Button'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import type { LinkContext, LinkEmits, LinkProps, LinkSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
@@ -34,7 +34,7 @@ const isExternal = computed(
 )
 const externalHref = computed(() => (typeof props.to === 'string' ? props.to : undefined))
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, linkContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, linkContext.value))
 
   return mergeProps(attrs, {
     as: 'a' as const,

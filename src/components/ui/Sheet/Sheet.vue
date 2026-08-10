@@ -12,7 +12,7 @@ import {
 } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { sheetVariants } from '.'
@@ -73,7 +73,7 @@ const sheetContext = computed<SheetContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, sheetContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, sheetContext.value))
 
   return {
     ...attrs,
@@ -87,7 +87,7 @@ const rootProps = computed(() => {
 })
 
 const triggerProps = computed(() => {
-  const triggerUI = normalizeHTMLAttributes(useResolve(props.ui?.trigger, sheetContext.value))
+  const triggerUI = normalizeHTMLAttributes(useUi(props.ui?.trigger, sheetContext.value))
 
   return {
     as: props.trigger?.as,
@@ -100,7 +100,7 @@ const triggerProps = computed(() => {
 })
 
 const overlayProps = computed(() => {
-  const overlayUI = normalizeHTMLAttributes(useResolve(props.ui?.overlay, sheetContext.value))
+  const overlayUI = normalizeHTMLAttributes(useUi(props.ui?.overlay, sheetContext.value))
 
   return {
     ...overlayUI,
@@ -115,7 +115,7 @@ const overlayProps = computed(() => {
 
 const contentProps = computed(() => {
   const normalizedContentUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.content, sheetContext.value),
+    useUi(props.ui?.content, sheetContext.value),
   )
   const { dir: contentDirection, ...contentUI } = normalizedContentUI
   const side = props.content?.side ?? 'right'
@@ -141,7 +141,7 @@ const contentProps = computed(() => {
 })
 
 const headerProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.header, sheetContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.header, sheetContext.value))
   return {
     ...ui,
     'data-slot': 'sheet-header',
@@ -151,7 +151,7 @@ const headerProps = computed(() => {
 })
 
 const labelProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, sheetContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, sheetContext.value))
   return {
     ...ui,
     'data-slot': 'sheet-label',
@@ -161,7 +161,7 @@ const labelProps = computed(() => {
 })
 
 const descriptionProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.description, sheetContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.description, sheetContext.value))
   return {
     ...ui,
     'data-slot': 'sheet-description',
@@ -171,7 +171,7 @@ const descriptionProps = computed(() => {
 })
 
 const bodyProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.body, sheetContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.body, sheetContext.value))
   return {
     ...ui,
     'data-slot': 'sheet-body',
@@ -181,7 +181,7 @@ const bodyProps = computed(() => {
 })
 
 const footerProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.footer, sheetContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.footer, sheetContext.value))
   return {
     ...ui,
     'data-slot': 'sheet-footer',
@@ -191,7 +191,7 @@ const footerProps = computed(() => {
 })
 
 const closeProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.close, sheetContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.close, sheetContext.value))
   return {
     as: props.close?.as,
     asChild: props.close?.asChild,

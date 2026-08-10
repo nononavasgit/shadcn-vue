@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs, watch } from 'vue'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { TextareaContext, TextareaProps, TextareaValue } from '.'
 
@@ -29,7 +29,7 @@ const textareaContext = computed<TextareaContext>(() => {
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, textareaContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, textareaContext.value))
 
   return {
     ...attrs,

@@ -3,7 +3,7 @@ import { computed, useAttrs, watch } from 'vue'
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { tabsVariants } from '.'
 import type { IconProps } from '@/components/ui/Icon'
@@ -43,7 +43,7 @@ const tabsContext = computed<TabsContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const normalizedRootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, tabsContext.value))
+  const normalizedRootUI = normalizeHTMLAttributes(useUi(props.ui?.root, tabsContext.value))
   const { dir: rootDirection, ...rootUI } = normalizedRootUI
 
   void rootDirection
@@ -69,7 +69,7 @@ const rootProps = computed(() => {
 })
 
 const listProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.list, tabsContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.list, tabsContext.value))
 
   return {
     ...ui,
@@ -87,7 +87,7 @@ const listProps = computed(() => {
 })
 
 const contentWrapperProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.contentWrapper, tabsContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.contentWrapper, tabsContext.value))
   return { ...ui, class: cn('min-w-0 flex-1', ui.class), style: ui.style }
 })
 
@@ -103,7 +103,7 @@ const itemContexts = computed<TabsItemContext[]>(() =>
 )
 
 function getTriggerProps(context: TabsItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.trigger, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.trigger, context))
 
   return {
     ...ui,
@@ -122,12 +122,12 @@ function getTriggerProps(context: TabsItemContext) {
 }
 
 function getLabelProps(context: TabsItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, context))
   return { ...ui, class: cn(ui.class), style: ui.style }
 }
 
 function getContentProps(context: TabsItemContext) {
-  const normalizedUI = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
+  const normalizedUI = normalizeHTMLAttributes(useUi(props.ui?.content, context))
   const { dir: contentDirection, ...ui } = normalizedUI
   void contentDirection
 

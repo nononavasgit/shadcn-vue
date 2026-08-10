@@ -3,7 +3,7 @@ import { computed, useAttrs, watch } from 'vue'
 import { Toggle as RekaToggle } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import {
@@ -64,7 +64,7 @@ const rootProps = computed(() => {
     size: props.size,
     color: Boolean(props.color),
   })
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, toggleContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, toggleContext.value))
 
   return {
     ...attrs,

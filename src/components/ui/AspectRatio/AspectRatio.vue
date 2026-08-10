@@ -2,7 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { AspectRatio } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { AspectRatioContext, AspectRatioProps, AspectRatioSlots } from '.'
 
@@ -29,7 +29,7 @@ const aspectRatioContext = computed<AspectRatioContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, aspectRatioContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, aspectRatioContext.value))
 
   return {
     ...attrs,

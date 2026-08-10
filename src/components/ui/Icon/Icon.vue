@@ -2,7 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { ICONS } from './icons.ts'
 import { cn } from '@/lib/utils'
-import { iconVariants, type IconProps, type IconContext } from '.'
+import { createIconContext, iconVariants, type IconProps } from '.'
 import { useUi } from '@/composables/useUi'
 
 defineOptions({ inheritAttrs: false })
@@ -15,16 +15,7 @@ const props = withDefaults(defineProps<IconProps>(), {
 const attrs = useAttrs()
 const icon = computed(() => ICONS[props.name])
 
-const iconContext = computed(() => {
-  const { ui, ...iconProps } = props
-  void ui
-
-  const context: IconContext = {
-    props: iconProps,
-  }
-
-  return context
-})
+const iconContext = computed(() => createIconContext(props))
 
 const rootProps = computed(() => {
   const rootUI = useUi(props.ui?.root, iconContext.value)

@@ -42,6 +42,15 @@ export interface IconContext {
   props: Omit<IconProps, 'ui'>
 }
 
+export function createIconContext(props: IconProps): IconContext {
+  const { ui, ...iconProps } = props
+  void ui
+
+  return {
+    props: iconProps,
+  }
+}
+
 // Normalize
 
 export type NormalizeIconProps = IconName | IconProps

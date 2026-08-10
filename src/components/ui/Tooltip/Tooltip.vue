@@ -8,7 +8,6 @@ import {
   TooltipRoot,
   TooltipTrigger,
 } from 'reka-ui'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { TooltipContext, TooltipEmits, TooltipProps, TooltipSlots } from '.'
@@ -45,7 +44,7 @@ const tooltipContext = computed<TooltipContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, tooltipContext.value))
+  const rootUI = useUi(props.ui?.root, tooltipContext.value)
 
   return {
     ...attrs,
@@ -61,7 +60,7 @@ const rootProps = computed(() => {
 })
 
 const triggerProps = computed(() => {
-  const triggerUI = normalizeHTMLAttributes(useUi(props.ui?.trigger, tooltipContext.value))
+  const triggerUI = useUi(props.ui?.trigger, tooltipContext.value)
 
   return {
     as: props.trigger?.as,
@@ -74,7 +73,7 @@ const triggerProps = computed(() => {
 })
 
 const contentProps = computed(() => {
-  const contentUI = normalizeHTMLAttributes(useUi(props.ui?.content, tooltipContext.value))
+  const contentUI = useUi(props.ui?.content, tooltipContext.value)
 
   return {
     ...contentUI,
@@ -105,7 +104,7 @@ const contentProps = computed(() => {
 })
 
 const arrowProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.arrow, tooltipContext.value))
+  const ui = useUi(props.ui?.arrow, tooltipContext.value)
   return {
     ...ui,
     as: props.arrow?.as,

@@ -5,7 +5,6 @@ import { ToggleGroupItem, ToggleGroupRoot } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { toggleVariants } from '@/components/ui/Toggle'
 import { useColor } from '@/composables'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { IconProps } from '@/components/ui/Icon'
@@ -84,7 +83,7 @@ const toggleGroupContext = computed<ToggleGroupContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, toggleGroupContext.value))
+  const rootUI = useUi(props.ui?.root, toggleGroupContext.value)
 
   return {
     ...attrs,
@@ -129,7 +128,7 @@ const itemContexts = computed<ToggleGroupItemContext[]>(() =>
 )
 
 function getItemProps(context: ToggleGroupItemContext) {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.item, context))
+  const ui = useUi(props.ui?.item, context)
   return {
     ...ui,
     as: context.item.as,
@@ -157,7 +156,7 @@ function getItemProps(context: ToggleGroupItemContext) {
 }
 
 function getLabelProps(context: ToggleGroupItemContext) {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, context))
+  const ui = useUi(props.ui?.label, context)
   return { ...ui, class: cn(ui.class), style: ui.style }
 }
 

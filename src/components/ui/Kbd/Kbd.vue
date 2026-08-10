@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { KbdContext, KbdProps, KbdSlots } from '.'
@@ -24,7 +23,7 @@ const kbdContext = computed<KbdContext>(() => {
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, kbdContext.value))
+  const rootUI = useUi(props.ui?.root, kbdContext.value)
 
   return {
     ...attrs,

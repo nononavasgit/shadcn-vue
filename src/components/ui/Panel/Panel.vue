@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/Button'
 import { Collapsible } from '@/components/ui/Collapsible'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { useColor } from '@/composables'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { panelVariants } from '.'
@@ -53,7 +52,7 @@ const panelContext = computed<PanelContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, panelContext.value))
+  const rootUI = useUi(props.ui?.root, panelContext.value)
 
   return {
     ...attrs,
@@ -65,7 +64,7 @@ const rootProps = computed(() => {
 })
 
 const headerProps = computed(() => {
-  const headerUI = normalizeHTMLAttributes(useUi(props.ui?.header, panelContext.value))
+  const headerUI = useUi(props.ui?.header, panelContext.value)
 
   return {
     ...headerUI,
@@ -90,7 +89,7 @@ const triggerProps = computed(() => ({
 const iconProps = computed(() => ({ ...normalizeIconProps(props.icon) }))
 
 const labelProps = computed(() => {
-  const labelUI = normalizeHTMLAttributes(useUi(props.ui?.label, panelContext.value))
+  const labelUI = useUi(props.ui?.label, panelContext.value)
 
   return {
     ...labelUI,
@@ -101,7 +100,7 @@ const labelProps = computed(() => {
 })
 
 const arrowsProps = computed(() => {
-  const arrowsUI = normalizeHTMLAttributes(useUi(props.ui?.arrows, panelContext.value))
+  const arrowsUI = useUi(props.ui?.arrows, panelContext.value)
 
   return {
     ...arrowsUI,
@@ -112,7 +111,7 @@ const arrowsProps = computed(() => {
 })
 
 const contentProps = computed(() => {
-  const contentUI = normalizeHTMLAttributes(useUi(props.ui?.content, panelContext.value))
+  const contentUI = useUi(props.ui?.content, panelContext.value)
 
   return {
     ...contentUI,

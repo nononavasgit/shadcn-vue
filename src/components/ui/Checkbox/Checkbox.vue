@@ -2,7 +2,6 @@
 import { computed, useAttrs, watch } from 'vue'
 import { Icon } from '@/components/ui/Icon'
 import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { CheckboxContext, CheckboxModelValue, CheckboxProps, CheckboxSlots } from '.'
@@ -42,7 +41,7 @@ const checkboxContext = computed<CheckboxContext>(() => {
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, checkboxContext.value))
+  const rootUI = useUi(props.ui?.root, checkboxContext.value)
 
   return {
     ...attrs,
@@ -66,7 +65,7 @@ const rootProps = computed(() => {
 })
 
 const indicatorProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.indicator, checkboxContext.value))
+  const ui = useUi(props.ui?.indicator, checkboxContext.value)
   return { ...ui, class: cn('grid place-content-center text-current', ui.class) }
 })
 </script>

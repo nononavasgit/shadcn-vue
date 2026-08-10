@@ -4,7 +4,6 @@ import { Attachment } from '@/components/ui/Attachment'
 import { Alert } from '@/components/ui/Alert'
 import { Button } from '@/components/ui/Button'
 import { Icon } from '@/components/ui/Icon'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
@@ -68,7 +67,7 @@ const fileUploadContext = computed<FileUploadContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.root, fileUploadContext.value))
+  const ui = useUi(props.ui?.root, fileUploadContext.value)
   return {
     ...attrs,
     ...ui,
@@ -78,7 +77,7 @@ const rootProps = computed(() => {
 })
 
 const dropzoneProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.dropzone, fileUploadContext.value))
+  const ui = useUi(props.ui?.dropzone, fileUploadContext.value)
   return {
     ...ui,
     role: 'button',
@@ -93,7 +92,7 @@ const dropzoneProps = computed(() => {
 })
 
 const inputProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.input, fileUploadContext.value))
+  const ui = useUi(props.ui?.input, fileUploadContext.value)
   return {
     ...ui,
     tabindex: -1,
@@ -107,7 +106,7 @@ const inputProps = computed(() => {
 })
 
 const mediaProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.media, fileUploadContext.value))
+  const ui = useUi(props.ui?.media, fileUploadContext.value)
   return {
     ...ui,
     class: cn(fileUploadMediaVariants({ dragging: isDragging.value }), ui.class),
@@ -115,17 +114,17 @@ const mediaProps = computed(() => {
 })
 
 const labelProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, fileUploadContext.value))
+  const ui = useUi(props.ui?.label, fileUploadContext.value)
   return { ...ui, class: cn(fileUploadLabelVariants(), ui.class) }
 })
 
 const descriptionProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.description, fileUploadContext.value))
+  const ui = useUi(props.ui?.description, fileUploadContext.value)
   return { ...ui, class: cn(fileUploadDescriptionVariants(), ui.class) }
 })
 
 const listProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.list, fileUploadContext.value))
+  const ui = useUi(props.ui?.list, fileUploadContext.value)
   return {
     ...ui,
     'data-media-variant': props.attachmentMediaVariant,

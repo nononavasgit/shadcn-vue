@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs, watch } from 'vue'
 import { SwitchRoot, SwitchThumb } from 'reka-ui'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { SwitchContext, SwitchProps, SwitchSlots, SwitchValue } from '.'
@@ -35,7 +34,7 @@ const switchContext = computed<SwitchContext>(() => {
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, switchContext.value))
+  const rootUI = useUi(props.ui?.root, switchContext.value)
 
   return {
     ...attrs,
@@ -59,7 +58,7 @@ const rootProps = computed(() => {
 })
 
 const thumbProps = computed(() => {
-  const thumbUI = normalizeHTMLAttributes(useUi(props.ui?.thumb, switchContext.value))
+  const thumbUI = useUi(props.ui?.thumb, switchContext.value)
 
   return {
     ...thumbUI,

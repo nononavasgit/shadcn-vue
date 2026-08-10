@@ -7,7 +7,6 @@ import {
   NumberFieldRoot,
 } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -65,7 +64,7 @@ watch(value, (nextValue, previousValue) => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, numberFieldContext.value))
+  const rootUI = useUi(props.ui?.root, numberFieldContext.value)
 
   return {
     ...attrs,
@@ -93,7 +92,7 @@ const rootProps = computed(() => {
 })
 
 const contentProps = computed(() => {
-  const contentUI = normalizeHTMLAttributes(useUi(props.ui?.content, numberFieldContext.value))
+  const contentUI = useUi(props.ui?.content, numberFieldContext.value)
 
   return {
     ...contentUI,
@@ -109,9 +108,7 @@ const contentProps = computed(() => {
 })
 
 const decrementProps = computed(() => {
-  const decrementUI = normalizeHTMLAttributes(
-    useUi(props.ui?.decrement, numberFieldContext.value),
-  )
+  const decrementUI = useUi(props.ui?.decrement, numberFieldContext.value)
 
   return {
     ...decrementUI,
@@ -129,7 +126,7 @@ const decrementProps = computed(() => {
 })
 
 const inputProps = computed(() => {
-  const inputUI = normalizeHTMLAttributes(useUi(props.ui?.input, numberFieldContext.value))
+  const inputUI = useUi(props.ui?.input, numberFieldContext.value)
 
   return {
     ...inputUI,
@@ -144,9 +141,7 @@ const inputProps = computed(() => {
 })
 
 const incrementProps = computed(() => {
-  const incrementUI = normalizeHTMLAttributes(
-    useUi(props.ui?.increment, numberFieldContext.value),
-  )
+  const incrementUI = useUi(props.ui?.increment, numberFieldContext.value)
 
   return {
     ...incrementUI,

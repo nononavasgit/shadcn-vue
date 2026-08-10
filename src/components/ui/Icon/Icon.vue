@@ -3,7 +3,6 @@ import { computed, useAttrs } from 'vue'
 import { ICONS } from './icons.ts'
 import { cn } from '@/lib/utils'
 import { iconVariants, type IconProps, type IconContext } from '.'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 
 defineOptions({ inheritAttrs: false })
@@ -28,7 +27,7 @@ const iconContext = computed(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, iconContext.value))
+  const rootUI = useUi(props.ui?.root, iconContext.value)
 
   return {
     'aria-hidden': true,

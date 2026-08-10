@@ -3,7 +3,6 @@ import { computed, useAttrs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ListboxContent, ListboxGroup, ListboxGroupLabel, ListboxRoot } from 'reka-ui'
 import { Input, normalizeInputProps } from '@/components/ui/Input'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import ListboxOption from './ListboxOption.vue'
@@ -54,7 +53,7 @@ const listboxContext = computed<ListboxContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.root, listboxContext.value))
+  const ui = useUi(props.ui?.root, listboxContext.value)
 
   return {
     ...ui,
@@ -81,7 +80,7 @@ const rootProps = computed(() => {
 })
 
 const contentProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.content, listboxContext.value))
+  const ui = useUi(props.ui?.content, listboxContext.value)
 
   return {
     ...attrs,
@@ -92,7 +91,7 @@ const contentProps = computed(() => {
 })
 
 const filterProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.filter, listboxContext.value))
+  const ui = useUi(props.ui?.filter, listboxContext.value)
 
   return {
     ...ui,
@@ -151,7 +150,7 @@ const showNoResults = computed(
 )
 
 const emptyProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.empty, listboxContext.value))
+  const ui = useUi(props.ui?.empty, listboxContext.value)
   return {
     role: 'status',
     'aria-live': 'polite',
@@ -162,7 +161,7 @@ const emptyProps = computed(() => {
 })
 
 const noResultsProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.noResults, listboxContext.value))
+  const ui = useUi(props.ui?.noResults, listboxContext.value)
   return {
     role: 'status',
     'aria-live': 'polite',
@@ -186,7 +185,7 @@ function getGroupItemContexts(context: ListboxGroupContext): ListboxItemContext[
 }
 
 function getGroupProps(context: ListboxGroupContext) {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.group, context))
+  const ui = useUi(props.ui?.group, context)
   return {
     ...ui,
     class: cn('py-1 first:pt-0 last:pb-0 [&:not(:first-child)]:border-t', ui.class),
@@ -195,7 +194,7 @@ function getGroupProps(context: ListboxGroupContext) {
 }
 
 function getGroupLabelProps(context: ListboxGroupContext) {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.groupLabel, context))
+  const ui = useUi(props.ui?.groupLabel, context)
   return {
     ...ui,
     class: cn('px-2 py-1.5 text-xs font-medium text-muted-foreground', ui.class),

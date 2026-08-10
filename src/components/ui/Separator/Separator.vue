@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { Separator as RekaSeparator } from 'reka-ui'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { SeparatorContext, SeparatorProps, SeparatorSlots } from '.'
@@ -26,7 +25,7 @@ const separatorContext = computed<SeparatorContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, separatorContext.value))
+  const rootUI = useUi(props.ui?.root, separatorContext.value)
 
   return {
     ...attrs,

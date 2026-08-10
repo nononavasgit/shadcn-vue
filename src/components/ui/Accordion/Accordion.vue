@@ -8,7 +8,6 @@ import {
   AccordionTrigger,
 } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import {
@@ -55,7 +54,7 @@ const accordionContext = computed<AccordionContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, accordionContext.value))
+  const rootUI = useUi(props.ui?.root, accordionContext.value)
 
   return {
     ...attrs,
@@ -92,7 +91,7 @@ function getItemContext(
 }
 
 function getItemProps(context: AccordionItemContext) {
-  const itemUI = normalizeHTMLAttributes(useUi(props.ui?.item, context))
+  const itemUI = useUi(props.ui?.item, context)
   return {
     ...itemUI,
     ...normalizeAccordionItemProps(context.item),
@@ -102,7 +101,7 @@ function getItemProps(context: AccordionItemContext) {
 }
 
 function getTriggerProps(context: AccordionItemContext) {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.trigger, context))
+  const ui = useUi(props.ui?.trigger, context)
   return {
     ...ui,
     ...normalizeAccordionTriggerProps(context.item.trigger),
@@ -115,7 +114,7 @@ function getTriggerProps(context: AccordionItemContext) {
 }
 
 function getContentProps(context: AccordionItemContext) {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.content, context))
+  const ui = useUi(props.ui?.content, context)
   return {
     ...normalizeAccordionContentProps(context.item.content),
     ...ui,

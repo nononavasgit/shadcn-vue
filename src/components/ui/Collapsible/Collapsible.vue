@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs, watch } from 'vue'
 import { CollapsibleContent, CollapsibleRoot, CollapsibleTrigger } from 'reka-ui'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { CollapsibleContext, CollapsibleProps, CollapsibleSlots } from '.'
@@ -38,7 +37,7 @@ const collapsibleContext = computed<CollapsibleContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, collapsibleContext.value))
+  const rootUI = useUi(props.ui?.root, collapsibleContext.value)
 
   return {
     ...attrs,
@@ -54,7 +53,7 @@ const rootProps = computed(() => {
 })
 
 const triggerProps = computed(() => {
-  const triggerUI = normalizeHTMLAttributes(useUi(props.ui?.trigger, collapsibleContext.value))
+  const triggerUI = useUi(props.ui?.trigger, collapsibleContext.value)
 
   return {
     ...triggerUI,
@@ -67,9 +66,7 @@ const triggerProps = computed(() => {
 })
 
 const contentProps = computed(() => {
-  const normalizedContentUI = normalizeHTMLAttributes(
-    useUi(props.ui?.content, collapsibleContext.value),
-  )
+  const normalizedContentUI = useUi(props.ui?.content, collapsibleContext.value)
   const { dir: contentDirection, ...contentUI } = normalizedContentUI
   void contentDirection
 

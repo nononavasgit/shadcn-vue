@@ -7,7 +7,6 @@ import {
   HoverCardRoot,
   HoverCardTrigger,
 } from 'reka-ui'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { HoverCardContext, HoverCardEmits, HoverCardProps, HoverCardSlots } from '.'
@@ -43,7 +42,7 @@ const hoverCardContext = computed<HoverCardContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, hoverCardContext.value))
+  const rootUI = useUi(props.ui?.root, hoverCardContext.value)
 
   return {
     ...attrs,
@@ -57,7 +56,7 @@ const rootProps = computed(() => {
 })
 
 const triggerProps = computed(() => {
-  const triggerUI = normalizeHTMLAttributes(useUi(props.ui?.trigger, hoverCardContext.value))
+  const triggerUI = useUi(props.ui?.trigger, hoverCardContext.value)
 
   return {
     asChild: props.trigger?.asChild ?? true,
@@ -70,9 +69,7 @@ const triggerProps = computed(() => {
 })
 
 const contentProps = computed(() => {
-  const normalizedContentUI = normalizeHTMLAttributes(
-    useUi(props.ui?.content, hoverCardContext.value),
-  )
+  const normalizedContentUI = useUi(props.ui?.content, hoverCardContext.value)
   const { dir: contentDirection, ...contentUI } = normalizedContentUI
 
   void contentDirection
@@ -114,7 +111,7 @@ const portalProps = computed(() => ({
 }))
 
 const arrowProps = computed(() => {
-  const arrowUI = normalizeHTMLAttributes(useUi(props.ui?.arrow, hoverCardContext.value))
+  const arrowUI = useUi(props.ui?.arrow, hoverCardContext.value)
 
   return {
     ...arrowUI,

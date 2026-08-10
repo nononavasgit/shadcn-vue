@@ -12,7 +12,6 @@ import {
 } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { Separator } from '@/components/ui/Separator'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
@@ -79,7 +78,7 @@ const dialogContext = computed<DialogContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, dialogContext.value))
+  const rootUI = useUi(props.ui?.root, dialogContext.value)
 
   return {
     ...attrs,
@@ -91,7 +90,7 @@ const rootProps = computed(() => {
 })
 
 const triggerProps = computed(() => {
-  const triggerUI = normalizeHTMLAttributes(useUi(props.ui?.trigger, dialogContext.value))
+  const triggerUI = useUi(props.ui?.trigger, dialogContext.value)
 
   return {
     asChild: true,
@@ -103,7 +102,7 @@ const triggerProps = computed(() => {
 })
 
 const overlayProps = computed(() => {
-  const overlayUI = normalizeHTMLAttributes(useUi(props.ui?.overlay, dialogContext.value))
+  const overlayUI = useUi(props.ui?.overlay, dialogContext.value)
 
   return {
     ...overlayUI,
@@ -116,9 +115,7 @@ const overlayProps = computed(() => {
 })
 
 const contentProps = computed(() => {
-  const normalizedContentUI = normalizeHTMLAttributes(
-    useUi(props.ui?.content, dialogContext.value),
-  )
+  const normalizedContentUI = useUi(props.ui?.content, dialogContext.value)
   const { dir: contentDirection, ...contentUI } = normalizedContentUI
 
   void contentDirection
@@ -136,7 +133,7 @@ const contentProps = computed(() => {
 })
 
 const headerProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.header, dialogContext.value))
+  const ui = useUi(props.ui?.header, dialogContext.value)
   return {
     ...ui,
     class: cn('flex flex-col gap-2 text-center sm:text-left', ui.class),
@@ -145,7 +142,7 @@ const headerProps = computed(() => {
 })
 
 const labelProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, dialogContext.value))
+  const ui = useUi(props.ui?.label, dialogContext.value)
   return {
     ...ui,
     class: cn('flex items-center gap-2 text-lg leading-none font-semibold', ui.class),
@@ -154,7 +151,7 @@ const labelProps = computed(() => {
 })
 
 const descriptionProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.description, dialogContext.value))
+  const ui = useUi(props.ui?.description, dialogContext.value)
   return {
     ...ui,
     class: cn('text-sm text-muted-foreground', ui.class),
@@ -163,7 +160,7 @@ const descriptionProps = computed(() => {
 })
 
 const bodyProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.body, dialogContext.value))
+  const ui = useUi(props.ui?.body, dialogContext.value)
   return {
     ...ui,
     class: cn('min-h-0 overflow-y-auto', ui.class),
@@ -172,7 +169,7 @@ const bodyProps = computed(() => {
 })
 
 const footerProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.footer, dialogContext.value))
+  const ui = useUi(props.ui?.footer, dialogContext.value)
   return {
     ...ui,
     class: cn('flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', ui.class),
@@ -181,7 +178,7 @@ const footerProps = computed(() => {
 })
 
 const closeProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useUi(props.ui?.close, dialogContext.value))
+  const ui = useUi(props.ui?.close, dialogContext.value)
   return {
     ...normalizeDialogCloseProps(props.close),
     ...ui,

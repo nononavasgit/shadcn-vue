@@ -1,5 +1,6 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
+import { h } from 'vue'
 
 import { Alert, createAlertContext, type AlertProps } from '@/components/ui/Alert'
 import { i18n } from '@/i18n'
@@ -16,51 +17,18 @@ function mountAlert(options: MountingOptions<AlertProps> = {}) {
 
 describe('Alert', () => {
   describe('Props', () => {
-    it('Renderiza label', () => {
-      const alert = mountAlert({
+    it('Render label and description', () => {
+      const wrapper = mountAlert({
         props: {
           label: 'Actualización disponible',
+          description: 'Hay una nueva versión lista para instalar',
         },
       })
 
-      expect(alert.get('[data-alert-slot="label"]').text()).toBe('Actualización disponible')
-    })
-
-    it('Renderiza description', () => {
-      const alert = mountAlert({
-        props: {
-          description: 'La descripción',
-        },
-      })
-
-      expect(alert.get('[data-alert-ui="description"]').text()).toBe('La descripción')
-    })
-
-    it('Renderiza role="none" si es decorativo', () => {
-      const alert = mountAlert({
-        props: { decorative: true },
-      }).get('[data-alert-ui="root"]')
-
-      expect(alert.attributes('role')).toBe('none')
-    })
-
-    it('Renderiza role="alert" si no es decorativo', () => {
-      const alert = mountAlert({
-        props: { decorative: false },
-      }).get('[data-alert-ui="root"]')
-
-      expect(alert.attributes('role')).toBe('alert')
-    })
-
-    it('Renderiza el botón de cierre cuando closable es true y con icono "x" y aria-label', () => {
-      const alert = mountAlert({
-        props: { closable: true },
-      })
-
-      const button = alert.find('[data-alert="buttonClose"]')
-      expect(button.exists()).toBe(true)
-      expect(button.get('svg').classes()).toContain('lucide-x')
-      expect(button.attributes('aria-label')).toBeTruthy()
+      expect(wrapper.get('[data-alert-slot="label"]').text()).toBe('Actualización disponible')
+      expect(wrapper.get('[data-alert-slot="description"]').text()).toBe(
+        'Hay una nueva versión lista para instalar',
+      )
     })
 
     it.each([
@@ -69,7 +37,7 @@ describe('Alert', () => {
       ['plain', ['border-transparent', 'bg-transparent', 'text-(--alert-color)']],
       ['subtle', ['border-(--alert-color)/20', 'bg-(--alert-color)/10', 'text-(--alert-color)']],
       ['soft', ['border-transparent', 'bg-(--alert-color)/10', 'text-(--alert-color)']],
-    ])('Renderiza las clases de la variant %s', (variant, expectedClasses) => {
+    ])('Render variant %s', (variant, expectedClasses) => {
       const alert = mountAlert({
         props: { variant },
       }).get('[data-alert-ui="root"]')
@@ -83,7 +51,7 @@ describe('Alert', () => {
       ['warning', '[--alert-color:var(--warning)]'],
       ['success', '[--alert-color:var(--success)]'],
       ['error', '[--alert-color:var(--error)]'],
-    ])('Renderiza las clases de la severity %s', (severity, expectedClass) => {
+    ])('Render severity %s', (severity, expectedClass) => {
       const alert = mountAlert({
         props: { severity },
       }).get('[data-alert-ui="root"]')
@@ -91,37 +59,69 @@ describe('Alert', () => {
       expect(alert.classes()).toContain(expectedClass)
     })
 
-    it('Renderiza las variables del color personalizado', () => {
+    it('Render color', () => {
       const alert = mountAlert({
         props: { color: '#ff0000' },
-      })
+      }).get('[data-alert-ui="root"]')
 
       expect(alert.attributes('style')).toContain('--alert-color: #ff0000')
       expect(alert.attributes('style')).toContain('--alert-color-foreground: #09090b')
-      expect(alert.classes()).toContain('[--alert-solid:var(--alert-color)]')
+      expect(alert.classes()).toEqual(
+        expect.arrayContaining([
+          '[--alert-solid:var(--alert-color)]',
+          '[--alert-solid-foreground:var(--alert-color-foreground)]',
+        ]),
+      )
     })
 
-    it('Renderiza icon', () => {
-      const alert = mountAlert({
+    it('Render icon', () => {
+      const icon = mountAlert({
         props: { icon: 'check' },
-      })
+      }).get('[data-alert="icon"]')
 
-      expect(alert.get('[data-alert="icon"]').classes()).toContain('lucide-check')
+      expect(icon.classes()).toContain('lucide-check')
     })
 
-    it('Renderiza las propiedades de ui', () => {
+    it('No render optional content', () => {
+      const wrapper = mountAlert()
+
+      expect(wrapper.find('[data-alert="icon"]').exists()).toBe(false)
+      expect(wrapper.find('[data-alert-slot="label"]').exists()).toBe(false)
+      expect(wrapper.find('[data-alert-slot="description"]').exists()).toBe(false)
+      expect(wrapper.find('[data-alert="buttonClose"]').exists()).toBe(false)
+    })
+
+    it('Render close button', () => {
+      const button = mountAlert({
+        props: { closable: true },
+      }).get('[data-alert="buttonClose"]')
+
+      expect(button.attributes('aria-label')).toBeTruthy()
+      expect(button.find('.lucide-x').exists()).toBe(true)
+    })
+
+    it.each([
+      [false, 'alert'],
+      [true, 'none'],
+    ])('Render decorative %s with role %s', (decorative, role) => {
+      const alert = mountAlert({
+        props: { decorative },
+      }).get('[data-alert-ui="root"]')
+
+      expect(alert.attributes('role')).toBe(role)
+    })
+
+    it('Render HTML Attributes by ui', () => {
       const wrapper = mountAlert({
         props: {
-          label: 'Título',
-          description: 'Descripción',
+          label: 'Label',
+          description: 'Description',
           closable: true,
           ui: {
             root: { class: 'ui-root' },
             label: { class: 'ui-label' },
             description: { class: 'ui-description' },
-            closeButtonContainer: {
-              class: 'ui-close-container',
-            },
+            closeButtonContainer: { class: 'ui-close' },
           },
         },
       })
@@ -129,73 +129,73 @@ describe('Alert', () => {
       expect(wrapper.get('[data-alert-ui="root"]').classes()).toContain('ui-root')
       expect(wrapper.get('[data-alert-ui="label"]').classes()).toContain('ui-label')
       expect(wrapper.get('[data-alert-ui="description"]').classes()).toContain('ui-description')
-      expect(wrapper.get('[data-alert-ui="closeButtonContainer"]').classes()).toContain(
-        'ui-close-container',
-      )
+      expect(wrapper.get('[data-alert-ui="closeButtonContainer"]').classes()).toContain('ui-close')
+    })
+
+    it('Render HTML Attributes by ui function', () => {
+      const alert = mountAlert({
+        props: {
+          ui: {
+            root: () => ({ class: 'ui-root' }),
+          },
+        },
+      }).get('[data-alert-ui="root"]')
+
+      expect(alert.classes()).toContain('ui-root')
     })
   })
 
   describe('Slots', () => {
-    it('Renderiza el slot label y remplaza la prop label', () => {
+    it('Render label and replace label prop', () => {
       const wrapper = mountAlert({
-        props: {
-          label: 'Label',
-        },
-        slots: {
-          label: 'Título personalizado',
-        },
+        props: { label: 'Label' },
+        slots: { label: () => h('span', 'test') },
       })
 
-      expect(wrapper.get('[data-alert-slot="label"]').text()).toBe('Título personalizado')
+      expect(wrapper.get('[data-alert-slot="label"] > span').html()).toBe('<span>test</span>')
       expect(wrapper.text()).not.toContain('Label')
     })
 
-    it('Renderiza el slot description y remplaza la prop description', () => {
+    it('Render description and replace description prop', () => {
       const wrapper = mountAlert({
-        props: {
-          description: 'Description',
-        },
-        slots: {
-          description: 'Descripción personalizada',
-        },
+        props: { description: 'Description' },
+        slots: { description: () => h('span', 'test') },
       })
 
-      expect(wrapper.get('[data-alert-slot="description"]').text()).toBe(
-        'Descripción personalizada',
-      )
+      expect(wrapper.get('[data-alert-slot="description"] > span').html()).toBe('<span>test</span>')
       expect(wrapper.text()).not.toContain('Description')
     })
 
-    it('Renderiza el slot icon y remplaza el icon', () => {
+    it('Render icon and replace icon prop', () => {
       const wrapper = mountAlert({
         props: { icon: 'check' },
-        slots: { icon: 'test' },
+        slots: { icon: () => h('span', 'test') },
       })
 
-      expect(wrapper.get('[data-alert-slot="icon"]').text()).toBe('test')
+      expect(wrapper.get('[data-alert-slot="icon"] > span').html()).toBe('<span>test</span>')
       expect(wrapper.find('[data-alert="icon"]').exists()).toBe(false)
     })
 
-    it('Renderiza el slot close y remplaza el botón cerrar', () => {
+    it('Render close and replace close button', () => {
       const wrapper = mountAlert({
         props: { closable: true },
-        slots: { close: 'test' },
+        slots: { close: () => h('span', 'test') },
       })
 
-      expect(wrapper.get('[data-alert-slot="close"]').text()).toBe('test')
+      expect(wrapper.get('[data-alert-slot="close"] > span').html()).toBe('<span>test</span>')
       expect(wrapper.find('[data-alert="buttonClose"]').exists()).toBe(false)
     })
   })
 
   describe('Attrs', () => {
-    it('Reneriza atributos, clases y estilos del consumidor', () => {
+    it('Merge attrs, class and style', () => {
       const alert = mountAlert({
         attrs: {
           class: 'custom-alert',
           style: 'opacity: 0.5',
           'data-test': 'status-alert',
         },
-      })
+      }).get('[data-alert-ui="root"]')
 
       expect(alert.classes()).toContain('custom-alert')
       expect(alert.attributes('style')).toContain('opacity: 0.5')
@@ -203,8 +203,8 @@ describe('Alert', () => {
     })
   })
 
-  describe('Emits', () => {
-    it('Oculta el alert y emite el evento onClose al pulsar el botón', async () => {
+  describe('Events', () => {
+    it('Close alert and emit close event', async () => {
       const wrapper = mountAlert({
         props: { closable: true },
       })
@@ -216,28 +216,108 @@ describe('Alert', () => {
     })
   })
 
-  describe('Contexto', () => {
-    it('AlertContext', () => {
+  describe('Context', () => {
+    it('Alert context', () => {
       const close = vi.fn()
-
-      const props: AlertProps = {
-        label: 'Alert',
-        severity: 'error',
+      const props = {
+        label: 'Actualización disponible',
+        description: 'Hay una nueva versión',
+        icon: 'check',
+        closeButton: { label: 'Cerrar' },
+        variant: 'outline',
+        severity: 'success',
+        color: '#ff0000',
+        closable: true,
+        decorative: false,
         ui: {
-          root: { class: 'foo' },
+          root: { class: 'ui-root' },
         },
-      }
+      } as const
 
       const context = createAlertContext(props, close)
 
-      expect(context.props).toEqual({
-        label: 'Alert',
-        severity: 'error',
+      expect(context).toEqual({
+        label: 'Actualización disponible',
+        description: 'Hay una nueva versión',
+        icon: 'check',
+        closeButton: { label: 'Cerrar' },
+        variant: 'outline',
+        severity: 'success',
+        color: '#ff0000',
+        closable: true,
+        decorative: false,
+        close,
       })
-
-      expect(context.props).not.toBe(props)
-      expect(context.props).not.toHaveProperty('ui')
-      expect(context.close).toBe(close)
     })
+
+    it.each(['root', 'label', 'description', 'closeButtonContainer'] as const)(
+      'Alert context to ui.%s function',
+      (uiName) => {
+        const ui = vi.fn(() => ({ class: `ui-${uiName}` }))
+
+        mountAlert({
+          props: {
+            label: 'Actualización disponible',
+            description: 'Hay una nueva versión',
+            icon: 'check',
+            closeButton: { label: 'Cerrar' },
+            variant: 'outline',
+            severity: 'success',
+            color: '#ff0000',
+            closable: true,
+            decorative: false,
+            ui: { [uiName]: ui },
+          },
+        })
+
+        expect(ui).toHaveBeenCalledWith({
+          label: 'Actualización disponible',
+          description: 'Hay una nueva versión',
+          icon: 'check',
+          closeButton: { label: 'Cerrar' },
+          variant: 'outline',
+          severity: 'success',
+          color: '#ff0000',
+          closable: true,
+          decorative: false,
+          close: expect.any(Function),
+        })
+      },
+    )
+
+    it.each(['icon', 'label', 'description', 'close'] as const)(
+      'Alert context to %s slot',
+      (slotName) => {
+        const slot = vi.fn(() => h('span', 'test'))
+
+        mountAlert({
+          props: {
+            label: 'Actualización disponible',
+            description: 'Hay una nueva versión',
+            icon: 'check',
+            closeButton: { label: 'Cerrar' },
+            variant: 'outline',
+            severity: 'success',
+            color: '#ff0000',
+            closable: true,
+            decorative: false,
+          },
+          slots: { [slotName]: slot },
+        })
+
+        expect(slot).toHaveBeenCalledWith({
+          label: 'Actualización disponible',
+          description: 'Hay una nueva versión',
+          icon: 'check',
+          closeButton: { label: 'Cerrar' },
+          variant: 'outline',
+          severity: 'success',
+          color: '#ff0000',
+          closable: true,
+          decorative: false,
+          close: expect.any(Function),
+        })
+      },
+    )
   })
 })

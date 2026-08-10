@@ -225,7 +225,7 @@ const customFiles = ref<File[]>([])
           <div class="grid gap-3">
             <Alert label="Contenido mediante slots" closable>
               <template #icon>
-                <span class="mt-0.5 size-4 rounded-full bg-success" />
+                <Icon name="check" />
               </template>
               <template #description>
                 El icono y este contenido proceden de slots personalizados.

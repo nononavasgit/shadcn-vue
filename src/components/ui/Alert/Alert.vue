@@ -55,7 +55,8 @@ const rootProps = computed(() => {
     ...rootUI,
     role: props.decorative ? 'none' : 'alert',
     class: cn(
-      'relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm has-[[data-alert-slot=icon]]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[[data-alert-slot=icon]]:gap-x-3 [&_[data-alert-slot=icon]>svg]:size-4 [&_[data-alert-slot=icon]>svg]:translate-y-0.5 [&_[data-alert-slot=icon]>svg]:text-current',
+      'relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm',
+      (props.icon || slots.icon) && 'grid-cols-[calc(var(--spacing)*4)_1fr] gap-x-3',
       calculatedVariants,
       props.closable && (props.closeButton?.label ? 'pr-24' : 'pr-12'),
       attrs.class,
@@ -117,10 +118,19 @@ function close() {
 </script>
 <template>
   <div v-if="visible" v-bind="rootProps" data-alert-ui="root">
-    <div v-if="slots.icon" data-alert-slot="icon">
+    <div
+      v-if="slots.icon"
+      class="[&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current"
+      data-alert-slot="icon"
+    >
       <slot :name="'icon'" v-bind="alertContext"></slot>
     </div>
-    <Icon v-else-if="iconProps?.name" v-bind="iconProps" data-alert="icon" />
+    <div
+      v-else-if="iconProps?.name"
+      class="[&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current"
+    >
+      <Icon v-bind="iconProps" data-alert="icon" />
+    </div>
 
     <div
       v-if="props.label || slots.label"

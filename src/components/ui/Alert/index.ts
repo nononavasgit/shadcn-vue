@@ -67,16 +67,32 @@ export interface AlertUI {
 
 // Context
 export interface AlertContext {
-  props: Omit<AlertProps, 'ui'>
+  label: AlertProps['label']
+  description: AlertProps['description']
+  icon: AlertProps['icon']
+  closeButton: AlertProps['closeButton']
+  variant: AlertProps['variant']
+  severity: AlertProps['severity']
+  color: AlertProps['color']
+  closable: AlertProps['closable']
+  decorative: AlertProps['decorative']
   close: () => void
 }
 
 export function createAlertContext(props: AlertProps, close: () => void): AlertContext {
-  const { label, description } = props
-  void ui
+  const { label, description, icon, closeButton, variant, severity, color, closable, decorative } =
+    props
 
   return {
-    props: alertProps,
+    label,
+    description,
+    icon,
+    closeButton,
+    variant,
+    severity,
+    color,
+    closable,
+    decorative,
     close,
   }
 }

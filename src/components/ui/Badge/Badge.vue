@@ -4,7 +4,7 @@ import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
-import { badgeVariants, type BadgeContext, type BadgeProps, type BadgeSlots } from '.'
+import { badgeVariants, createBadgeContext, type BadgeProps, type BadgeSlots } from '.'
 import { Primitive } from 'reka-ui'
 
 defineOptions({ inheritAttrs: false })
@@ -22,14 +22,7 @@ const props = withDefaults(defineProps<BadgeProps>(), {
 })
 defineSlots<BadgeSlots>()
 
-const badgeContext = computed<BadgeContext>(() => {
-  const { ui, ...badgeProps } = props
-  void ui
-
-  return {
-    props: badgeProps,
-  }
-})
+const badgeContext = computed(() => createBadgeContext(props))
 
 const attrs = useAttrs()
 const { colorStyle } = useColor(
@@ -60,15 +53,25 @@ const trailingIconProps = computed(() => normalizeIconProps(props.trailingIcon))
 </script>
 
 <template>
-  <Primitive v-bind="rootProps">
-    <slot name="leading" v-bind="badgeContext">
-      <Icon v-if="iconProps?.name" v-bind="iconProps" />
-    </slot>
+  <Primitive v-bind="rootProps" data-badge-ui="root">
+    <span data-badge-slot="leading">
+      <slot name="leading" v-bind="badgeContext">
+        <Icon v-if="iconProps?.name" v-bind="iconProps" data-badge="icon" />
+      </slot>
+    </span>
 
-    <slot v-bind="badgeContext">{{ props.label }}</slot>
+    <span data-badge-slot="default">
+      <slot v-bind="badgeContext">{{ props.label }}</slot>
+    </span>
 
-    <slot name="trailing" v-bind="badgeContext">
-      <Icon v-if="trailingIconProps?.name" v-bind="trailingIconProps" />
-    </slot>
+    <span data-badge-slot="trailing">
+      <slot name="trailing" v-bind="badgeContext">
+        <Icon
+          v-if="trailingIconProps?.name"
+          v-bind="trailingIconProps"
+          data-badge="trailing-icon"
+        />
+      </slot>
+    </span>
   </Primitive>
 </template>

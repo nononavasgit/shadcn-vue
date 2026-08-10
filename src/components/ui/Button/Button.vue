@@ -3,7 +3,7 @@ import { computed, useAttrs } from 'vue'
 import { Primitive } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import {
@@ -70,7 +70,7 @@ const calculatedVariants = computed(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, buttonContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, buttonContext.value))
 
   return {
     ...attrs,

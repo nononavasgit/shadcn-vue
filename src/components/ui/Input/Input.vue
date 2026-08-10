@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs, watch } from 'vue'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { InputContext, InputProps, InputValue } from '.'
 
@@ -30,7 +30,7 @@ const inputContext = computed<InputContext>(() => {
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, inputContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, inputContext.value))
 
   return {
     ...attrs,

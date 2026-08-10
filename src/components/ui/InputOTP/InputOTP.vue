@@ -3,7 +3,7 @@ import { computed, useAttrs, watch } from 'vue'
 import { PinInputInput, PinInputRoot } from 'reka-ui'
 import { Icon } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import {
   type InputOTPContext,
@@ -103,7 +103,7 @@ function getSeparatorContext(index: number): InputOTPSeparatorContext | undefine
 }
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, inputOTPContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, inputOTPContext.value))
 
   return {
     ...attrs,
@@ -126,12 +126,12 @@ const rootProps = computed(() => {
 })
 
 function getGroupProps(context: InputOTPGroupContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.group, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.group, context))
   return { ...ui, class: cn('flex items-center', ui.class), style: ui.style }
 }
 
 function getInputProps(context: InputOTPInputContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.input, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.input, context))
   return {
     ...ui,
     as: props.input?.as,
@@ -148,7 +148,7 @@ function getInputProps(context: InputOTPInputContext) {
 }
 
 function getSeparatorProps(context: InputOTPSeparatorContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.separator, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.separator, context))
   return { ...ui, class: cn(ui.class), style: ui.style }
 }
 </script>

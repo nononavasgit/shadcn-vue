@@ -2,7 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { useDates } from '@/composables/useDates'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { TimeContext, TimeProps, TimeSlots } from '.'
 
@@ -34,7 +34,7 @@ const timeContext = computed<TimeContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, timeContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, timeContext.value))
 
   return {
     ...attrs,

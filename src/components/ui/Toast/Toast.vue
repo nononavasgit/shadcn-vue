@@ -13,7 +13,7 @@ import {
 import { Button, normalizeButtonProps } from '@/components/ui/Button'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
 import type { ToastContext, ToastEmits, ToastProps, ToastSlots } from '.'
@@ -63,7 +63,7 @@ const toastContext = computed<ToastContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, toastContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, toastContext.value))
 
   return {
     ...attrs,
@@ -86,27 +86,27 @@ const rootProps = computed(() => {
 const iconProps = computed(() => normalizeIconProps(props.icon))
 
 const iconContainerProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.iconContainer, toastContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.iconContainer, toastContext.value))
   return { ...ui, class: cn('row-span-2 mt-0.5 [&_svg]:size-5', ui.class) }
 })
 
 const contentProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.content, toastContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.content, toastContext.value))
   return { ...ui, class: cn('col-start-2 grid min-w-0 gap-1', ui.class) }
 })
 
 const labelProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, toastContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, toastContext.value))
   return { ...ui, class: cn('text-sm font-semibold', ui.class) }
 })
 
 const descriptionProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.description, toastContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.description, toastContext.value))
   return { ...ui, class: cn('text-sm text-muted-foreground', ui.class) }
 })
 
 const actionProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.action, toastContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.action, toastContext.value))
   return { ...ui, class: cn('col-start-3 row-span-2 self-center', ui.class) }
 })
 
@@ -118,7 +118,7 @@ const actionButtonProps = computed(() => ({
 }))
 
 const closeProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.close, toastContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.close, toastContext.value))
   return {
     ...ui,
     class: cn('absolute top-2 right-2', ui.class),
@@ -136,7 +136,7 @@ const closeButtonProps = computed(() => ({
 }))
 
 const viewportProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.viewport, toastContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.viewport, toastContext.value))
   return {
     as: props.viewport?.as,
     asChild: props.viewport?.asChild,

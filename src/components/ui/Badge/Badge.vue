@@ -2,7 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import { badgeVariants, type BadgeContext, type BadgeProps, type BadgeSlots } from '.'
@@ -45,7 +45,7 @@ const rootProps = computed(() => {
     color: Boolean(props.color),
   })
 
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, badgeContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, badgeContext.value))
   return {
     ...attrs,
     ...rootUI,

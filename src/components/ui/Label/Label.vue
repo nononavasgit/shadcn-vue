@@ -2,7 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { Label } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { LabelContext, LabelProps, LabelSlots } from '.'
 
@@ -25,7 +25,7 @@ const labelContext = computed<LabelContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, labelContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, labelContext.value))
 
   return {
     ...attrs,

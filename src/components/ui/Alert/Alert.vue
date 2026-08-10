@@ -3,7 +3,7 @@ import { computed, ref, useAttrs, useSlots } from 'vue'
 import { Button, ButtonContext, normalizeButtonProps } from '@/components/ui/Button'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import { useI18n } from '@/i18n'
@@ -51,7 +51,7 @@ const rootProps = computed(() => {
     severity: props.severity,
     color: Boolean(props.color),
   })
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, alertContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, alertContext.value))
 
   return {
     ...attrs,
@@ -71,7 +71,7 @@ const rootProps = computed(() => {
 const iconProps = computed(() => normalizeIconProps(props.icon))
 
 const labelProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, alertContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, alertContext.value))
   return {
     ...ui,
     class: cn('col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight', ui.class),
@@ -79,7 +79,7 @@ const labelProps = computed(() => {
 })
 
 const descriptionProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.description, alertContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.description, alertContext.value))
   return {
     ...ui,
     class: cn('col-start-2 text-sm text-current/80 [&_p]:leading-relaxed', ui.class),
@@ -87,7 +87,7 @@ const descriptionProps = computed(() => {
 })
 
 const closeButtonContainerProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.closeButtonContainer, alertContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.closeButtonContainer, alertContext.value))
   return { ...ui, class: cn('absolute top-2 right-2 shrink-0', ui.class) }
 })
 

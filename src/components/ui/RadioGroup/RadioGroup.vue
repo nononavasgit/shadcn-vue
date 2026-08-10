@@ -3,7 +3,7 @@ import { computed, useAttrs, useId, watch } from 'vue'
 import { RadioGroupRoot } from 'reka-ui'
 import { Label } from '@/components/ui/Label'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { normalizeRadioGroupItemProps } from '.'
 import RadioGroupItem from './RadioGroupItem.vue'
@@ -50,7 +50,7 @@ const radioGroupContext = computed<RadioGroupContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, radioGroupContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, radioGroupContext.value))
 
   return {
     ...attrs,
@@ -93,7 +93,7 @@ const itemContexts = computed<RadioGroupItemContext[]>(() =>
 )
 
 function getItemProps(context: RadioGroupItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.item, context))
 
   return {
     ...ui,
@@ -107,7 +107,7 @@ function getItemProps(context: RadioGroupItemContext) {
 }
 
 function getRadioProps(context: RadioGroupItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.radio, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.radio, context))
 
   return {
     ...ui,
@@ -119,17 +119,17 @@ function getRadioProps(context: RadioGroupItemContext) {
 }
 
 function getContentProps(context: RadioGroupItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.content, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.content, context))
   return { ...ui, class: cn('grid gap-1', ui.class), style: ui.style }
 }
 
 function getLabelProps(context: RadioGroupItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, context))
   return { ...ui, class: cn('text-sm font-medium', ui.class), style: ui.style }
 }
 
 function getDescriptionProps(context: RadioGroupItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.description, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.description, context))
   return { ...ui, class: cn('text-sm text-muted-foreground', ui.class), style: ui.style }
 }
 

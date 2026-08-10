@@ -7,7 +7,7 @@ import { Separator, normalizeSeparatorProps } from '@/components/ui/Separator'
 import { Toggle, normalizeToggleProps } from '@/components/ui/Toggle'
 import { ToggleGroup, normalizeToggleGroupProps } from '@/components/ui/ToggleGroup'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { ToolbarContext, ToolbarItemContext, ToolbarProps, ToolbarSlots } from '.'
 
@@ -35,7 +35,7 @@ const toolbarContext = computed<ToolbarContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const normalizedRootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, toolbarContext.value))
+  const normalizedRootUI = normalizeHTMLAttributes(useUi(props.ui?.root, toolbarContext.value))
   const { dir: rootDirection, ...rootUI } = normalizedRootUI
   void rootDirection
 
@@ -69,7 +69,7 @@ const itemContexts = computed<ToolbarItemContext[]>(() =>
 )
 
 function getItemProps(context: ToolbarItemContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.item, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.item, context))
   return {
     ...ui,
     class: cn(

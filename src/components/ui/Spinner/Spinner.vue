@@ -2,7 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
 import type { SpinnerContext, SpinnerProps, SpinnerSlots } from '.'
@@ -29,7 +29,7 @@ const spinnerContext = computed<SpinnerContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, spinnerContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, spinnerContext.value))
 
   return {
     ...attrs,
@@ -43,7 +43,7 @@ const rootProps = computed(() => {
 })
 
 const loadingProps = computed(() => {
-  const loadingUI = normalizeHTMLAttributes(useResolve(props.ui?.loading, spinnerContext.value))
+  const loadingUI = normalizeHTMLAttributes(useUi(props.ui?.loading, spinnerContext.value))
 
   return {
     ...loadingUI,
@@ -57,7 +57,7 @@ const iconProps = computed(() => ({
 }))
 
 const contentProps = computed(() => {
-  const contentUI = normalizeHTMLAttributes(useResolve(props.ui?.content, spinnerContext.value))
+  const contentUI = normalizeHTMLAttributes(useUi(props.ui?.content, spinnerContext.value))
 
   return {
     ...contentUI,

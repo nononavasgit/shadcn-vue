@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import {
   attachmentActionsVariants,
@@ -37,7 +37,7 @@ const attachmentContext = computed<AttachmentContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.root, attachmentContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.root, attachmentContext.value))
 
   return {
     ...attrs,
@@ -59,7 +59,7 @@ const rootProps = computed(() => {
 })
 
 const mediaProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.media, attachmentContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.media, attachmentContext.value))
 
   return {
     ...ui,
@@ -76,7 +76,7 @@ const mediaProps = computed(() => {
 })
 
 const contentProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.content, attachmentContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.content, attachmentContext.value))
   return {
     ...ui,
     class: cn(attachmentContentVariants({ orientation: props.orientation }), ui.class),
@@ -84,7 +84,7 @@ const contentProps = computed(() => {
 })
 
 const labelProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.label, attachmentContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.label, attachmentContext.value))
   return {
     ...ui,
     class: cn(attachmentLabelVariants({ size: props.size, state: props.state }), ui.class),
@@ -92,7 +92,7 @@ const labelProps = computed(() => {
 })
 
 const descriptionProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.description, attachmentContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.description, attachmentContext.value))
   return {
     ...ui,
     class: cn(attachmentDescriptionVariants({ size: props.size, state: props.state }), ui.class),
@@ -100,7 +100,7 @@ const descriptionProps = computed(() => {
 })
 
 const actionsProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.actions, attachmentContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.actions, attachmentContext.value))
   return {
     ...ui,
     class: cn(
@@ -111,7 +111,7 @@ const actionsProps = computed(() => {
 })
 
 const triggerProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.trigger, attachmentContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.trigger, attachmentContext.value))
   return {
     ...ui,
     class: cn(

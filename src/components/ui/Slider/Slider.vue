@@ -2,7 +2,7 @@
 import { computed, useAttrs, watch } from 'vue'
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
 import type { SliderContext, SliderProps, SliderSlots, SliderThumbContext, SliderValue } from '.'
@@ -51,7 +51,7 @@ const sliderContext = computed<SliderContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const normalizedRootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, sliderContext.value))
+  const normalizedRootUI = normalizeHTMLAttributes(useUi(props.ui?.root, sliderContext.value))
   const { dir: rootDirection, ...rootUI } = normalizedRootUI
   const vertical = props.orientation === 'vertical'
 
@@ -84,7 +84,7 @@ const rootProps = computed(() => {
 })
 
 const trackProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.track, sliderContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.track, sliderContext.value))
   const vertical = props.orientation === 'vertical'
 
   return {
@@ -101,7 +101,7 @@ const trackProps = computed(() => {
 })
 
 const rangeProps = computed(() => {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.range, sliderContext.value))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.range, sliderContext.value))
   const vertical = props.orientation === 'vertical'
 
   return {
@@ -125,7 +125,7 @@ const thumbContexts = computed<SliderThumbContext[]>(() =>
 )
 
 function getThumbProps(context: SliderThumbContext) {
-  const ui = normalizeHTMLAttributes(useResolve(props.ui?.thumb, context))
+  const ui = normalizeHTMLAttributes(useUi(props.ui?.thumb, context))
   const rangeAriaLabel =
     context.values.length === 2 ? (context.index === 0 ? t('minimum') : t('maximum')) : undefined
 

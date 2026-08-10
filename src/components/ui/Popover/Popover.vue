@@ -2,7 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { PopoverArrow, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
-import { useResolve } from '@/composables/useResolve'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { PopoverContext, PopoverEmits, PopoverProps, PopoverSlots } from '.'
 
@@ -39,7 +39,7 @@ const popoverContext = computed<PopoverContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = normalizeHTMLAttributes(useResolve(props.ui?.root, popoverContext.value))
+  const rootUI = normalizeHTMLAttributes(useUi(props.ui?.root, popoverContext.value))
 
   return {
     ...attrs,
@@ -51,7 +51,7 @@ const rootProps = computed(() => {
 })
 
 const triggerProps = computed(() => {
-  const triggerUI = normalizeHTMLAttributes(useResolve(props.ui?.trigger, popoverContext.value))
+  const triggerUI = normalizeHTMLAttributes(useUi(props.ui?.trigger, popoverContext.value))
 
   return {
     as: props.trigger?.as,
@@ -64,7 +64,7 @@ const triggerProps = computed(() => {
 
 const contentProps = computed(() => {
   const normalizedContentUI = normalizeHTMLAttributes(
-    useResolve(props.ui?.content, popoverContext.value),
+    useUi(props.ui?.content, popoverContext.value),
   )
   const { dir: contentDirection, ...contentUI } = normalizedContentUI
 
@@ -116,7 +116,7 @@ const portalProps = computed(() => ({
 }))
 
 const arrowProps = computed(() => {
-  const arrowUI = normalizeHTMLAttributes(useResolve(props.ui?.arrow, popoverContext.value))
+  const arrowUI = normalizeHTMLAttributes(useUi(props.ui?.arrow, popoverContext.value))
 
   return {
     ...arrowUI,

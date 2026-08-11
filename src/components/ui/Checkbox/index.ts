@@ -19,7 +19,7 @@ export interface CheckboxUI {
 // Props
 export interface CheckboxProps extends Pick<
   CheckboxRootProps<CheckboxValue>,
-  'as' | 'asChild' | 'disabled' | 'id' | 'name' | 'trueValue' | 'falseValue' | 'required'
+  'trueValue' | 'falseValue'
 > {
   value?: CheckboxModelValue
   ui?: CheckboxUI
@@ -27,9 +27,22 @@ export interface CheckboxProps extends Pick<
 
 // Context
 export interface CheckboxContext {
-  props: Omit<CheckboxProps, 'ui'>
+  trueValue: CheckboxProps['trueValue']
+  falseValue: CheckboxProps['falseValue']
   value: CheckboxModelValue
   state: CheckboxState
+}
+
+export function createCheckboxContext(
+  props: CheckboxProps,
+  value: CheckboxModelValue,
+): CheckboxContext {
+  return {
+    trueValue: props.trueValue,
+    falseValue: props.falseValue,
+    value,
+    state: value === 'indeterminate' ? 'indeterminate' : value === props.trueValue,
+  }
 }
 
 // Emits

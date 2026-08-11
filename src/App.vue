@@ -1,78 +1,77 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { ConfigProvider } from '@/components/provider'
-import { Kbd, KbdGroup } from '@/components/ui'
+import { Checkbox, Label } from '@/components/ui'
+
+const notifications = ref(true)
+const plan = ref<'pro' | 'free'>('free')
+const selection = ref<boolean | 'indeterminate'>('indeterminate')
 </script>
 
 <template>
   <ConfigProvider>
     <main class="min-h-screen bg-background p-6 text-foreground md:p-10">
-      <div class="mx-auto max-w-3xl space-y-10">
+      <div class="mx-auto max-w-2xl space-y-10">
         <header class="space-y-2">
-          <h1 class="text-3xl font-bold">Kbd</h1>
-          <p class="text-muted-foreground">Teclas y combinaciones para acciones rápidas.</p>
+          <h1 class="text-3xl font-bold">Checkbox</h1>
+          <p class="text-muted-foreground">
+            Selecciones binarias, personalizadas e indeterminadas.
+          </p>
         </header>
 
         <section class="space-y-4">
-          <h2 class="text-lg font-semibold">Teclas</h2>
-          <div class="flex flex-wrap items-center gap-3">
-            <Kbd label="Esc" />
-            <Kbd label="Enter" />
-            <Kbd label="Tab" />
-            <Kbd label="⌘" />
-            <Kbd label="⇧" />
-            <Kbd label="⌫" />
+          <h2 class="text-lg font-semibold">Estados</h2>
+          <div class="flex flex-wrap items-center gap-6">
+            <div class="flex items-center gap-2">
+              <Checkbox id="unchecked" />
+              <Label for="unchecked">Sin marcar</Label>
+            </div>
+            <div class="flex items-center gap-2">
+              <Checkbox id="checked" :value="true" />
+              <Label for="checked">Marcado</Label>
+            </div>
+            <div class="flex items-center gap-2">
+              <Checkbox id="disabled" disabled />
+              <Label for="disabled">Deshabilitado</Label>
+            </div>
           </div>
         </section>
 
         <section class="space-y-4 border-t pt-8">
-          <h2 class="text-lg font-semibold">Combinaciones</h2>
-          <div class="divide-y border-y">
-            <div class="flex items-center justify-between gap-6 py-4">
-              <span>Abrir búsqueda</span>
-              <KbdGroup aria-label="Comando K">
-                <Kbd label="⌘" />
-                <span>+</span>
-                <Kbd label="K" />
-              </KbdGroup>
+          <h2 class="text-lg font-semibold">Enlace y valores</h2>
+          <div class="space-y-4">
+            <div class="flex items-center gap-2">
+              <Checkbox id="notifications" v-model:value="notifications" />
+              <Label for="notifications">Recibir notificaciones ({{ notifications }})</Label>
             </div>
-
-            <div class="flex items-center justify-between gap-6 py-4">
-              <span>Guardar cambios</span>
-              <KbdGroup aria-label="Control S">
-                <Kbd label="Ctrl" />
-                <span>+</span>
-                <Kbd label="S" />
-              </KbdGroup>
+            <div class="flex items-center gap-2">
+              <Checkbox id="plan" v-model:value="plan" true-value="pro" false-value="free" />
+              <Label for="plan">Plan seleccionado: {{ plan }}</Label>
             </div>
-
-            <div class="flex items-center justify-between gap-6 py-4">
-              <span>Paleta de comandos</span>
-              <KbdGroup aria-label="Control Mayúsculas P">
-                <Kbd label="Ctrl" />
-                <span>+</span>
-                <Kbd label="⇧" />
-                <span>+</span>
-                <Kbd label="P" />
-              </KbdGroup>
+            <div class="flex items-center gap-2">
+              <Checkbox id="selection" v-model:value="selection" />
+              <Label for="selection">Selección: {{ selection }}</Label>
             </div>
           </div>
         </section>
 
         <section class="space-y-4 border-t pt-8">
           <h2 class="text-lg font-semibold">Slot y UI</h2>
-          <div class="flex flex-wrap items-center gap-4">
-            <Kbd label="Comando">
-              <span aria-hidden="true">⌘</span>
-            </Kbd>
-
-            <Kbd
-              label="Enter"
+          <div class="flex items-center gap-2">
+            <Checkbox
+              id="custom"
+              :value="true"
               :ui="{
-                root: ({ label }) => ({
-                  class: label === 'Enter' && 'h-7 border border-primary/30 bg-primary/10 px-2',
+                root: ({ state }) => ({
+                  class: state === true && 'size-5 rounded-full bg-emerald-600',
                 }),
               }"
-            />
+            >
+              <template #indicator="{ state }">
+                <span class="text-xs font-bold">{{ state === true ? '✓' : '' }}</span>
+              </template>
+            </Checkbox>
+            <Label for="custom">Indicador personalizado</Label>
           </div>
         </section>
       </div>

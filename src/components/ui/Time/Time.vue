@@ -3,7 +3,7 @@ import { computed, useAttrs } from 'vue'
 import { useDates } from '@/composables/useDates'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import type { TimeContext, TimeProps, TimeSlots } from '.'
+import { createTimeContext, type TimeProps, type TimeSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -22,15 +22,7 @@ const formattedDate = computed(() =>
     format: props.format,
   }),
 )
-const timeContext = computed<TimeContext>(() => {
-  const { ui, ...timeProps } = props
-  void ui
-
-  return {
-    props: timeProps,
-    date: formattedDate.value,
-  }
-})
+const timeContext = computed(() => createTimeContext(props, formattedDate.value))
 
 const rootProps = computed(() => {
   const rootUI = useUi(props.ui?.root, timeContext.value)
@@ -47,7 +39,7 @@ const rootProps = computed(() => {
 </script>
 
 <template>
-  <time v-bind="rootProps" data-slot="time">
+  <time v-bind="rootProps" data-time-ui="root" data-time-slot="default">
     <slot v-bind="timeContext">{{ formattedDate }}</slot>
   </time>
 </template>

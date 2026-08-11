@@ -17,8 +17,21 @@ export interface TimeUI {
 }
 
 export interface TimeContext {
-  props: Omit<TimeProps, 'ui'>
+  datetime: TimeProps['datetime']
+  locale: TimeProps['locale']
+  format: TimeProps['format']
   date: string
+}
+
+export function createTimeContext(props: TimeProps, date: string): TimeContext {
+  const { datetime, locale, format } = props
+
+  return {
+    datetime,
+    locale,
+    format,
+    date,
+  }
 }
 
 export interface TimeSlots {

@@ -17,7 +17,7 @@ export interface SwitchUI {
 // Props
 export interface SwitchProps extends Pick<
   SwitchRootProps<SwitchValue>,
-  'as' | 'asChild' | 'disabled' | 'id' | 'name' | 'trueValue' | 'falseValue' | 'required'
+  'trueValue' | 'falseValue'
 > {
   value?: SwitchValue
   ui?: SwitchUI
@@ -25,9 +25,21 @@ export interface SwitchProps extends Pick<
 
 // Context
 export interface SwitchContext {
-  props: Omit<SwitchProps, 'ui'>
+  trueValue: SwitchProps['trueValue']
+  falseValue: SwitchProps['falseValue']
   value: SwitchValue
   checked: boolean
+}
+
+export function createSwitchContext(props: SwitchProps, value: SwitchValue): SwitchContext {
+  const { trueValue, falseValue } = props
+
+  return {
+    trueValue,
+    falseValue,
+    value,
+    checked: value === trueValue,
+  }
 }
 
 // Emits

@@ -6,8 +6,8 @@ import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import {
+  createToggleContext,
   toggleVariants,
-  type ToggleContext,
   type ToggleProps,
   type ToggleSlots,
   type ToggleValue,
@@ -41,20 +41,7 @@ watch(value, (nextValue, previousValue) => {
   if (nextValue !== previousValue) emit('valueChange', nextValue)
 })
 
-const toggleContext = computed<ToggleContext>(() => {
-  const { ui, ...toggleProps } = props
-  void ui
-
-  const currentValue = value.value
-  const pressed = currentValue === true
-
-  return {
-    props: toggleProps,
-    value: currentValue,
-    state: pressed ? 'on' : 'off',
-    pressed,
-  }
-})
+const toggleContext = computed(() => createToggleContext(props, value.value))
 
 const rootProps = computed(() => {
   const calculatedVariants = toggleVariants({
@@ -88,19 +75,29 @@ const trailingIconProps = computed(() => ({ ...normalizeIconProps(props.trailing
 </script>
 
 <template>
-  <RekaToggle v-bind="rootProps" v-model="value" data-slot="toggle">
-    <slot name="leading" v-bind="toggleContext">
-      <Icon v-if="iconProps.name" v-bind="iconProps" :name="iconProps.name" />
-    </slot>
+  <RekaToggle v-bind="rootProps" v-model="value" data-toggle-ui="root">
+    <div v-if="$slots.leading" data-toggle-slot="leading">
+      <slot name="leading" v-bind="toggleContext" />
+    </div>
+    <Icon
+      v-else-if="iconProps.name"
+      v-bind="iconProps"
+      :name="iconProps.name"
+      data-toggle="leadingIcon"
+    />
 
-    <slot v-bind="toggleContext">{{ props.label }}</slot>
+    <div data-toggle-slot="default">
+      <slot v-bind="toggleContext">{{ props.label }}</slot>
+    </div>
 
-    <slot name="trailing" v-bind="toggleContext">
-      <Icon
-        v-if="trailingIconProps.name"
-        v-bind="trailingIconProps"
-        :name="trailingIconProps.name"
-      />
-    </slot>
+    <div v-if="$slots.trailing" data-toggle-slot="trailing">
+      <slot name="trailing" v-bind="toggleContext" />
+    </div>
+    <Icon
+      v-else-if="trailingIconProps.name"
+      v-bind="trailingIconProps"
+      :name="trailingIconProps.name"
+      data-toggle="trailingIcon"
+    />
   </RekaToggle>
 </template>

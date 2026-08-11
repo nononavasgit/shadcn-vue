@@ -161,10 +161,36 @@ export interface ToggleEmits {
 
 // Context
 export interface ToggleContext {
-  props: Omit<ToggleProps, 'ui'>
+  label: ToggleProps['label']
+  icon: ToggleProps['icon']
+  trailingIcon: ToggleProps['trailingIcon']
+  variant: ToggleProps['variant']
+  severity: ToggleProps['severity']
+  size: ToggleProps['size']
+  color: ToggleProps['color']
+  disabled: ToggleProps['disabled']
   value: ToggleValue
   state: ToggleState
   pressed: boolean
+}
+
+export function createToggleContext(props: ToggleProps, value: ToggleValue): ToggleContext {
+  const { label, icon, trailingIcon, variant, severity, size, color, disabled } = props
+  const pressed = value === true
+
+  return {
+    label,
+    icon,
+    trailingIcon,
+    variant,
+    severity,
+    size,
+    color,
+    disabled,
+    value,
+    state: pressed ? 'on' : 'off',
+    pressed,
+  }
 }
 
 // Slots
@@ -172,51 +198,4 @@ export interface ToggleSlots {
   default?(props: ToggleContext): unknown
   leading?(props: ToggleContext): unknown
   trailing?(props: ToggleContext): unknown
-}
-
-// Normalize
-export type NormalizeToggleProps = ToggleProps & EmitsAsProps<ToggleEmits>
-
-export function normalizeToggleProps(
-  source: NormalizeToggleProps | null | undefined,
-): NormalizeToggleProps | undefined {
-  if (!source) return undefined
-
-  const {
-    as,
-    asChild,
-    name,
-    required,
-    value,
-    disabled,
-    label,
-    icon,
-    trailingIcon,
-    variant,
-    severity,
-    size,
-    color,
-    ui,
-    'onUpdate:value': onUpdateValue,
-    onValueChange,
-  } = source
-
-  return {
-    as,
-    asChild,
-    name,
-    required,
-    value,
-    disabled,
-    label,
-    icon,
-    trailingIcon,
-    variant,
-    severity,
-    size,
-    color,
-    ui,
-    'onUpdate:value': onUpdateValue,
-    onValueChange,
-  }
 }

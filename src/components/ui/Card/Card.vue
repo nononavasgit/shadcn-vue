@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, useAttrs } from 'vue'
+import { computed, useAttrs } from 'vue'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { createCardContext, type CardProps, type CardSlots } from '.'
@@ -14,10 +14,6 @@ const props = withDefaults(defineProps<CardProps>(), {
 defineSlots<CardSlots>()
 
 const cardContext = computed(() => createCardContext(props))
-
-onMounted(() => {
-  console.log(props)
-})
 
 const attrs = useAttrs()
 const rootProps = computed(() => {

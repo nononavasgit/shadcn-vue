@@ -3,7 +3,7 @@ import { computed, useAttrs } from 'vue'
 import { AspectRatio } from 'reka-ui'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import type { AspectRatioContext, AspectRatioProps, AspectRatioSlots } from '.'
+import { createAspectRatioContext, type AspectRatioProps, type AspectRatioSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -17,15 +17,7 @@ const props = withDefaults(defineProps<AspectRatioProps>(), {
 })
 const attrs = useAttrs()
 
-const aspectRatioContext = computed<AspectRatioContext>(() => {
-  const { ui, ...aspectRatioProps } = props
-  void ui
-
-  return {
-    props: aspectRatioProps,
-    aspect: props.ratio,
-  }
-})
+const aspectRatioContext = computed(() => createAspectRatioContext(props))
 
 const rootProps = computed(() => {
   const rootUI = useUi(props.ui?.root, aspectRatioContext.value)
@@ -43,7 +35,7 @@ const rootProps = computed(() => {
 </script>
 
 <template>
-  <AspectRatio v-bind="rootProps">
+  <AspectRatio v-bind="rootProps" data-aspect-ratio-ui="root" data-aspect-ratio-slot="default">
     <slot v-bind="aspectRatioContext" />
   </AspectRatio>
 </template>

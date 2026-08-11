@@ -18,8 +18,21 @@ export interface AspectRatioUI {
 
 // Context
 export interface AspectRatioContext {
-  props: Omit<AspectRatioProps, 'ui'>
+  as: AspectRatioProps['as']
+  asChild: AspectRatioProps['asChild']
+  ratio: AspectRatioProps['ratio']
   aspect: number
+}
+
+export function createAspectRatioContext(props: AspectRatioProps): AspectRatioContext {
+  const { as, asChild, ratio } = props
+
+  return {
+    as,
+    asChild,
+    ratio,
+    aspect: ratio ?? 1,
+  }
 }
 
 // Slots

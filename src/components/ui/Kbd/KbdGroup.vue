@@ -2,7 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import type { KbdGroupContext, KbdGroupProps, KbdGroupSlots } from '.'
+import { createKbdGroupContext, type KbdGroupProps, type KbdGroupSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -11,14 +11,7 @@ const props = withDefaults(defineProps<KbdGroupProps>(), {
 })
 defineSlots<KbdGroupSlots>()
 
-const kbdGroupContext = computed<KbdGroupContext>(() => {
-  const { ui, ...kbdGroupProps } = props
-  void ui
-
-  return {
-    props: kbdGroupProps,
-  }
-})
+const kbdGroupContext = computed(() => createKbdGroupContext())
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
@@ -34,7 +27,7 @@ const rootProps = computed(() => {
 </script>
 
 <template>
-  <kbd v-bind="rootProps" data-slot="kbd-group">
+  <kbd v-bind="rootProps" data-kbd-group-ui="root" data-kbd-group-slot="default">
     <slot v-bind="kbdGroupContext" />
   </kbd>
 </template>

@@ -2,7 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import type { KbdContext, KbdProps, KbdSlots } from '.'
+import { createKbdContext, type KbdProps, type KbdSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -12,14 +12,7 @@ const props = withDefaults(defineProps<KbdProps>(), {
 })
 defineSlots<KbdSlots>()
 
-const kbdContext = computed<KbdContext>(() => {
-  const { ui, ...kbdProps } = props
-  void ui
-
-  return {
-    props: kbdProps,
-  }
-})
+const kbdContext = computed(() => createKbdContext(props))
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
@@ -41,7 +34,7 @@ const rootProps = computed(() => {
 </script>
 
 <template>
-  <kbd v-bind="rootProps" data-slot="kbd">
+  <kbd v-bind="rootProps" data-kbd-ui="root" data-kbd-slot="default">
     <slot v-bind="kbdContext">{{ props.label }}</slot>
   </kbd>
 </template>

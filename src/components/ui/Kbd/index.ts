@@ -15,7 +15,13 @@ export interface KbdUI {
 }
 
 export interface KbdContext {
-  props: Omit<KbdProps, 'ui'>
+  label: KbdProps['label']
+}
+
+export function createKbdContext(props: KbdProps): KbdContext {
+  return {
+    label: props.label,
+  }
 }
 
 export interface KbdSlots {
@@ -32,8 +38,10 @@ export interface KbdGroupProps {
 
 export type KbdGroupFn<T> = T | ((context: KbdGroupContext) => T)
 
-export interface KbdGroupContext {
-  props: Omit<KbdGroupProps, 'ui'>
+export type KbdGroupContext = Record<string, never>
+
+export function createKbdGroupContext(): KbdGroupContext {
+  return {}
 }
 
 export interface KbdGroupSlots {

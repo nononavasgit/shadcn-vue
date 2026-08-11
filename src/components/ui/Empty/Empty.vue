@@ -2,7 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import type { EmptyContext, EmptyProps, EmptySlots } from '.'
+import { createEmptyContext, type EmptyProps, type EmptySlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -15,12 +15,7 @@ const props = withDefaults(defineProps<EmptyProps>(), {
 defineSlots<EmptySlots>()
 
 const attrs = useAttrs()
-const emptyContext = computed<EmptyContext>(() => {
-  const { ui, ...emptyProps } = props
-  void ui
-
-  return { props: emptyProps }
-})
+const emptyContext = computed(() => createEmptyContext(props))
 
 const rootProps = computed(() => {
   const rootUI = useUi(props.ui?.root, emptyContext.value)
@@ -75,35 +70,47 @@ const contentProps = computed(() => {
 </script>
 
 <template>
-  <div v-bind="rootProps" data-slot="empty">
+  <div v-bind="rootProps" data-empty-ui="root">
     <div
       v-if="$slots.media || props.label || $slots.label || props.description || $slots.description"
       v-bind="headerProps"
-      data-slot="empty-header"
+      data-empty-ui="header"
     >
       <div
         v-if="$slots.media"
         v-bind="mediaProps"
-        data-slot="empty-media"
+        data-empty-ui="media"
+        data-empty-slot="media"
         :data-variant="props.mediaVariant"
       >
         <slot name="media" v-bind="emptyContext" />
       </div>
 
-      <div v-if="props.label || $slots.label" v-bind="labelProps" data-slot="empty-title">
+      <div
+        v-if="props.label || $slots.label"
+        v-bind="labelProps"
+        data-empty-ui="label"
+        data-empty-slot="label"
+      >
         <slot name="label" v-bind="emptyContext">{{ props.label }}</slot>
       </div>
 
       <div
         v-if="props.description || $slots.description"
         v-bind="descriptionProps"
-        data-slot="empty-description"
+        data-empty-ui="description"
+        data-empty-slot="description"
       >
         <slot name="description" v-bind="emptyContext">{{ props.description }}</slot>
       </div>
     </div>
 
-    <div v-if="$slots.default" v-bind="contentProps" data-slot="empty-content">
+    <div
+      v-if="$slots.default"
+      v-bind="contentProps"
+      data-empty-ui="content"
+      data-empty-slot="default"
+    >
       <slot v-bind="emptyContext" />
     </div>
   </div>

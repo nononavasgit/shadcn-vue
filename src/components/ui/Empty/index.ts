@@ -21,7 +21,19 @@ export interface EmptyProps {
 }
 
 export interface EmptyContext {
-  props: Omit<EmptyProps, 'ui'>
+  label: EmptyProps['label']
+  description: EmptyProps['description']
+  mediaVariant: EmptyProps['mediaVariant']
+}
+
+export function createEmptyContext(props: EmptyProps): EmptyContext {
+  const { label, description, mediaVariant } = props
+
+  return {
+    label,
+    description,
+    mediaVariant,
+  }
 }
 
 export interface EmptySlots {

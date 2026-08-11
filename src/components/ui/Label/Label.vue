@@ -3,7 +3,7 @@ import { computed, useAttrs } from 'vue'
 import { Label } from 'reka-ui'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import type { LabelContext, LabelProps, LabelSlots } from '.'
+import { createLabelContext, type LabelProps, type LabelSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -11,17 +11,10 @@ defineSlots<LabelSlots>()
 
 const props = withDefaults(defineProps<LabelProps>(), {
   for: undefined,
-  as: undefined,
-  asChild: false,
   ui: undefined,
 })
 const attrs = useAttrs()
-const labelContext = computed<LabelContext>(() => {
-  const { ui, ...labelProps } = props
-  void ui
-
-  return { props: labelProps }
-})
+const labelContext = computed(() => createLabelContext(props))
 
 const rootProps = computed(() => {
   const rootUI = useUi(props.ui?.root, labelContext.value)
@@ -29,8 +22,6 @@ const rootProps = computed(() => {
   return {
     ...attrs,
     ...rootUI,
-    as: props.as,
-    asChild: props.asChild,
     for: props.for,
     class: cn(
       'flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50',
@@ -43,7 +34,7 @@ const rootProps = computed(() => {
 </script>
 
 <template>
-  <Label v-bind="rootProps" data-slot="label">
+  <Label v-bind="rootProps" data-label-ui="root" data-label-slot="default">
     <slot v-bind="labelContext" />
   </Label>
 </template>

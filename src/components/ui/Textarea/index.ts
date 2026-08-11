@@ -1,5 +1,4 @@
 import type { HTMLAttributes } from 'vue'
-import type { PrimitiveProps } from 'reka-ui'
 
 export { default as Textarea } from './Textarea.vue'
 
@@ -14,15 +13,20 @@ export interface TextareaUI {
 }
 
 // Props
-export interface TextareaProps extends PrimitiveProps {
+export interface TextareaProps {
   value?: TextareaValue
   ui?: TextareaUI
 }
 
 // Context
 export interface TextareaContext {
-  props: Omit<TextareaProps, 'ui'>
   value: TextareaValue
+}
+
+export function createTextareaContext(value: TextareaValue): TextareaContext {
+  return {
+    value,
+  }
 }
 
 // Emits

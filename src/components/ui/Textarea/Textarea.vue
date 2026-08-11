@@ -2,7 +2,7 @@
 import { computed, useAttrs, watch } from 'vue'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import type { TextareaContext, TextareaProps, TextareaValue } from '.'
+import { createTextareaContext, type TextareaProps, type TextareaValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -16,15 +16,7 @@ watch(value, (nextValue, previousValue) => {
   if (nextValue !== previousValue) emit('valueChange', nextValue)
 })
 
-const textareaContext = computed<TextareaContext>(() => {
-  const { ui, ...textareaProps } = props
-  void ui
-
-  return {
-    props: textareaProps,
-    value: value.value,
-  }
-})
+const textareaContext = computed(() => createTextareaContext(value.value))
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
@@ -45,5 +37,5 @@ const rootProps = computed(() => {
 </script>
 
 <template>
-  <textarea v-model="value" v-bind="rootProps" data-slot="textarea" />
+  <textarea v-model="value" v-bind="rootProps" data-textarea-ui="root" />
 </template>

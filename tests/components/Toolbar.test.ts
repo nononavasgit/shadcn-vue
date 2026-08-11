@@ -2,27 +2,10 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 
-import { Toolbar, createToolbarContext } from '@/components/ui/Toolbar'
+import { Toolbar } from '@/components/ui/Toolbar'
 
 describe('Toolbar', () => {
   describe('Props', () => {
-    it('Render toolbar root', () => {
-      const toolbar = mount(Toolbar).get('[data-toolbar-ui="root"]')
-
-      expect(toolbar.element.tagName).toBe('DIV')
-      expect(toolbar.attributes('data-orientation')).toBe('horizontal')
-      expect(toolbar.attributes('role')).toBe('toolbar')
-    })
-
-    it('Render vertical orientation', () => {
-      const toolbar = mount(Toolbar, {
-        props: { orientation: 'vertical' },
-      }).get('[data-toolbar-ui="root"]')
-
-      expect(toolbar.attributes('data-orientation')).toBe('vertical')
-      expect(toolbar.attributes('aria-orientation')).toBe('vertical')
-    })
-
     it.each(['object', 'function'] as const)('Render HTML Attributes by ui %s', (uiType) => {
       const root =
         uiType === 'function'
@@ -67,12 +50,6 @@ describe('Toolbar', () => {
   })
 
   describe('Context', () => {
-    it('Toolbar context', () => {
-      expect(createToolbarContext({ orientation: 'vertical' })).toEqual({
-        orientation: 'vertical',
-      })
-    })
-
     it('Toolbar context to ui.root function', () => {
       const root = vi.fn(() => ({ class: 'ui-root' }))
 

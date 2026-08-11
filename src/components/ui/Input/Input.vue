@@ -2,7 +2,7 @@
 import { computed, useAttrs, watch } from 'vue'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import type { InputContext, InputProps, InputValue } from '.'
+import { createInputContext, type InputProps, type InputValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -17,15 +17,7 @@ watch(value, (nextValue, previousValue) => {
   if (nextValue !== previousValue) emit('valueChange', nextValue)
 })
 
-const inputContext = computed<InputContext>(() => {
-  const { ui, ...inputProps } = props
-  void ui
-
-  return {
-    props: inputProps,
-    value: value.value,
-  }
-})
+const inputContext = computed(() => createInputContext(value.value))
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
@@ -46,5 +38,5 @@ const rootProps = computed(() => {
 </script>
 
 <template>
-  <input v-model="value" v-bind="rootProps" data-slot="input" />
+  <input v-model="value" v-bind="rootProps" data-input-ui="root" />
 </template>

@@ -118,18 +118,10 @@ function close() {
 </script>
 <template>
   <div v-if="visible" v-bind="rootProps" data-alert-ui="root">
-    <div
-      v-if="slots.icon"
-      class="[&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current"
-      data-alert-slot="icon"
-    >
-      <slot :name="'icon'" v-bind="alertContext"></slot>
-    </div>
-    <div
-      v-else-if="iconProps?.name"
-      class="[&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current"
-    >
-      <Icon v-bind="iconProps" data-alert="icon" />
+    <div class="[&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current" data-alert-slot="icon">
+      <slot name="icon" v-bind="alertContext">
+        <Icon v-if="iconProps?.name" v-bind="iconProps" data-alert="icon"></Icon>
+      </slot>
     </div>
 
     <div

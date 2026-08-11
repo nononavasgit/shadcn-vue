@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { ConfigProvider } from '@/components/provider'
-import { Alert, Badge, Button, FileUpload, Icon } from '@/components/ui'
-
-const basicFiles = ref<File[]>([])
-const documentFiles = ref<File[]>([])
-const imageFiles = ref<File[]>([])
-const limitedFiles = ref<File[]>([])
-const customFiles = ref<File[]>([])
+import { Card, Button, Icon } from '@/components/ui'
 </script>
 
 <template>
@@ -27,6 +21,8 @@ const customFiles = ref<File[]>([])
             Ejemplos de variantes, severidades, tamaños, iconos, estados y personalización.
           </p>
         </header>
+
+        <Card label="hla" description="asdasd"></Card>
 
         <section class="space-y-3">
           <h2 class="text-lg font-semibold">Variantes</h2>

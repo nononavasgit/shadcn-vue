@@ -21,7 +21,17 @@ export interface CardProps {
 }
 
 export interface CardContext {
-  props: Omit<CardProps, 'ui'>
+  label: CardProps['label']
+  description: CardProps['description']
+}
+
+export function createCardContext(props: CardProps): CardContext {
+  const { label, description } = props
+
+  return {
+    label,
+    description,
+  }
 }
 
 export interface CardSlots {

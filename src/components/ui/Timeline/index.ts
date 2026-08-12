@@ -232,8 +232,8 @@ export interface TimelineProps {
 }
 
 // Fn
-export type TimelineFn<T> = T | ((context: TimelineContext) => T)
-export type TimelineItemFn<T> = T | ((context: TimelineItemContext) => T)
+export type TimelineFn<T> = (context: TimelineContext) => T
+export type TimelineItemFn<T> = (context: TimelineItemContext) => T
 
 // UI
 export interface TimelineUI {

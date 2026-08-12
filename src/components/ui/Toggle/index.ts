@@ -133,7 +133,7 @@ export type ToggleRootProps = Pick<
 >
 
 // Fn
-export type ToggleFn<T> = T | ((context: ToggleContext) => T)
+export type ToggleFn<T> = (context: ToggleContext) => T
 
 // UI
 export interface ToggleUI {

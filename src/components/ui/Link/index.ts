@@ -12,7 +12,7 @@ export type LinkProps = Omit<ButtonProps, 'as' | 'asChild' | 'ui'> &
   }
 
 // Fn
-export type LinkFn<T> = T | ((context: LinkContext) => T)
+export type LinkFn<T> = (context: LinkContext) => T
 
 // UI
 export interface LinkUI {

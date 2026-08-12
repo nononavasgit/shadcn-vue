@@ -6,7 +6,7 @@ export { default as Input } from './Input.vue'
 export type InputValue = string
 
 // Fn
-export type InputFn<T> = T | ((context: InputContext) => T)
+export type InputFn<T> = (context: InputContext) => T
 
 // UI
 export interface InputUI {

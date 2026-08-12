@@ -19,11 +19,8 @@ describe('Label', () => {
       expect(label.attributes('for')).toBe('email')
     })
 
-    it.each(['object', 'function'] as const)('Render HTML attributes by ui %s', (uiType) => {
-      const root =
-        uiType === 'function'
-          ? () => ({ class: 'ui-root', 'aria-label': 'Email' })
-          : { class: 'ui-root', 'aria-label': 'Email' }
+    it('Render HTML attributes by ui function', () => {
+      const root = () => ({ class: 'ui-root', 'aria-label': 'Email' })
       const label = mount(Label, {
         props: { ui: { root } },
       }).get('[data-label-ui="root"]')

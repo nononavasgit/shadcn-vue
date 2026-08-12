@@ -53,7 +53,7 @@ export interface NumberFieldProps extends NumberFieldRootProps {
 }
 
 // Fn
-export type NumberFieldFn<T> = T | ((context: NumberFieldContext) => T)
+export type NumberFieldFn<T> = (context: NumberFieldContext) => T
 
 // UI
 export interface NumberFieldUI {

@@ -41,9 +41,9 @@ describe('Empty', () => {
       expect(media.classes()).toEqual(expect.arrayContaining(expectedClasses))
     })
 
-    it.each(['object', 'function'] as const)('Render HTML Attributes by ui %s', (uiType) => {
+    it('Render HTML Attributes by ui function', () => {
       const value = (name: string) => ({ class: `ui-${name}` })
-      const uiValue = (name: string) => (uiType === 'function' ? () => value(name) : value(name))
+      const uiValue = (name: string) => () => value(name)
 
       const wrapper = mount(Empty, {
         props: {
@@ -115,7 +115,7 @@ describe('Empty', () => {
         label: 'Sin resultados',
         description: 'Prueba con otros filtros',
         mediaVariant: 'icon',
-        ui: { root: { class: 'ui-root' } },
+        ui: { root: () => ({ class: 'ui-root' }) },
       })
 
       expect(context).toEqual({

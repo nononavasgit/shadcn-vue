@@ -2,8 +2,8 @@ import { describe, expect, it, vi } from 'vitest'
 import { useUi } from '@/composables/useUi'
 
 describe('useUi', () => {
-  it('normaliza el valor recibido directamente', () => {
-    const ui = { class: 'text-primary', 'aria-label': 'Guardar', invalid: true }
+  it('normaliza el valor devuelto por la función', () => {
+    const ui = () => ({ class: 'text-primary', 'aria-label': 'Guardar', invalid: true })
 
     expect(useUi(ui, { disabled: false })).toEqual({
       class: 'text-primary',

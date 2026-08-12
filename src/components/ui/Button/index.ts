@@ -256,7 +256,7 @@ export const buttonVariants = cva('', {
 export type ButtonVariants = VariantProps<typeof buttonVariants>
 
 // Fn
-export type ButtonFn<T> = T | ((context: ButtonContext) => T)
+export type ButtonFn<T> = (context: ButtonContext) => T
 
 // Props
 export interface ButtonProps extends Pick<PrimitiveProps, 'as' | 'asChild'> {

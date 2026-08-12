@@ -42,8 +42,8 @@ export interface TimeFieldProps extends TimeFieldRootProps {
 }
 
 // Fn
-export type TimeFieldFn<T> = T | ((context: TimeFieldContext) => T)
-export type TimeFieldSegmentFn<T> = T | ((context: TimeFieldSegmentContext) => T)
+export type TimeFieldFn<T> = (context: TimeFieldContext) => T
+export type TimeFieldSegmentFn<T> = (context: TimeFieldSegmentContext) => T
 
 // UI
 export interface TimeFieldUI {

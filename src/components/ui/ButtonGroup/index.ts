@@ -30,7 +30,7 @@ export const buttonGroupVariants = cva(
 
 export type ButtonGroupVariants = VariantProps<typeof buttonGroupVariants>
 
-export type ButtonGroupFn<T> = T | ((context: ButtonGroupContext) => T)
+export type ButtonGroupFn<T> = (context: ButtonGroupContext) => T
 
 export interface ButtonGroupUI {
   root?: ButtonGroupFn<HTMLAttributes>

@@ -32,14 +32,11 @@ describe('Textarea', () => {
       expect(wrapper.get('textarea').element.value).toBe('Actualizado')
     })
 
-    it.each(['object', 'function'] as const)('Render HTML Attributes by ui %s', (uiType) => {
+    it('Render HTML Attributes by ui function', () => {
       const textarea = mount(Textarea, {
         props: {
           ui: {
-            root:
-              uiType === 'function'
-                ? () => ({ class: 'ui-root', 'aria-label': 'Descripción' })
-                : { class: 'ui-root', 'aria-label': 'Descripción' },
+            root: () => ({ class: 'ui-root', 'aria-label': 'Descripción' }),
           },
         },
       }).get('[data-textarea-ui="root"]')

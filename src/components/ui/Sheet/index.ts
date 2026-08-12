@@ -48,7 +48,7 @@ export type SheetContentProps = Pick<
 export type SheetCloseProps = Pick<RekaDialogCloseProps, 'as' | 'asChild'>
 
 // Fn
-export type SheetFn<T> = T | ((context: SheetContext) => T)
+export type SheetFn<T> = (context: SheetContext) => T
 
 // UI
 export interface SheetUI {

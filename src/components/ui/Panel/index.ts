@@ -51,7 +51,7 @@ export interface PanelProps {
 }
 
 // Fn
-export type PanelFn<T> = T | ((context: PanelContext) => T)
+export type PanelFn<T> = (context: PanelContext) => T
 
 // UI
 export interface PanelUI {

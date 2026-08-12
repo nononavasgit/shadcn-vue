@@ -13,7 +13,7 @@ export type ProgressRootProps = Pick<
 >
 export type ProgressIndicatorProps = Pick<RekaProgressIndicatorProps, 'as' | 'asChild'>
 
-export type ProgressFn<T> = T | ((context: ProgressContext) => T)
+export type ProgressFn<T> = (context: ProgressContext) => T
 
 export interface ProgressUI {
   root?: ProgressFn<HTMLAttributes>

@@ -105,7 +105,7 @@ export const attachmentActionsVariants = cva(
 
 export type AttachmentVariants = VariantProps<typeof attachmentVariants>
 export type AttachmentMediaVariants = VariantProps<typeof attachmentMediaVariants>
-export type AttachmentFn<T> = T | ((context: AttachmentContext) => T)
+export type AttachmentFn<T> = (context: AttachmentContext) => T
 
 export interface AttachmentUI {
   root?: AttachmentFn<HTMLAttributes>

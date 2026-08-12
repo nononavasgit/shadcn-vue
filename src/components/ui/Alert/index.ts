@@ -41,7 +41,7 @@ export const alertVariants = cva('', {
 export type AlertVariants = VariantProps<typeof alertVariants>
 
 // Fn
-export type AlertFn<T> = T | ((context: AlertContext) => T)
+export type AlertFn<T> = (context: AlertContext) => T
 
 // Props
 export interface AlertProps {

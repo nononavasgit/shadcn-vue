@@ -197,7 +197,7 @@ export const badgeVariants = cva(
 
 export type BadgeVariants = VariantProps<typeof badgeVariants>
 
-export type BadgeFn<T> = T | ((context: BadgeContext) => T)
+export type BadgeFn<T> = (context: BadgeContext) => T
 
 export interface BadgeUI {
   root?: BadgeFn<HTMLAttributes>

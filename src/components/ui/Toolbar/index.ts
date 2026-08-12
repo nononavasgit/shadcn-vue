@@ -12,7 +12,7 @@ export interface ToolbarProps extends ToolbarRootProps {
   ui?: ToolbarUI
 }
 
-export type ToolbarFn<T> = T | ((context: ToolbarContext) => T)
+export type ToolbarFn<T> = (context: ToolbarContext) => T
 
 export interface ToolbarUI {
   root?: ToolbarFn<HTMLAttributes>

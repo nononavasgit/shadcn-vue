@@ -5,7 +5,7 @@ export { default as ScrollArea } from './ScrollArea.vue'
 
 export type ScrollAreaOrientation = ScrollAreaScrollbarProps['orientation'] | 'both'
 
-export type ScrollAreaFn<T> = T | ((context: ScrollAreaContext) => T)
+export type ScrollAreaFn<T> = (context: ScrollAreaContext) => T
 
 export interface ScrollAreaUI {
   root?: ScrollAreaFn<HTMLAttributes>

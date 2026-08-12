@@ -6,7 +6,7 @@ export { default as Switch } from './Switch.vue'
 export type SwitchValue = boolean | null
 
 // Fn
-export type SwitchFn<T> = T | ((context: SwitchContext) => T)
+export type SwitchFn<T> = (context: SwitchContext) => T
 
 // UI
 export interface SwitchUI {

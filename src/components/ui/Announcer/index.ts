@@ -4,7 +4,7 @@ import type { AnnouncerPoliteness } from '@/composables/useAnnouncer'
 export { default as Announcer } from './Announcer.vue'
 
 // Fn
-export type AnnouncerFn<T> = T | ((context: AnnouncerContext) => T)
+export type AnnouncerFn<T> = (context: AnnouncerContext) => T
 
 // Props
 export interface AnnouncerUI {

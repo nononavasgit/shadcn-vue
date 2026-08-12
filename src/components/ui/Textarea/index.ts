@@ -5,7 +5,7 @@ export { default as Textarea } from './Textarea.vue'
 export type TextareaValue = string | number
 
 // Fn
-export type TextareaFn<T> = T | ((context: TextareaContext) => T)
+export type TextareaFn<T> = (context: TextareaContext) => T
 
 // UI
 export interface TextareaUI {

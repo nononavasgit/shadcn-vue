@@ -1,9 +1,7 @@
 import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 
-type ResolveValue<T, C> = T | ((context: C) => T)
+type UiResolver<T, C> = (context: C) => T
 
-export function useUi<T extends object, C>(value: ResolveValue<T, C> | undefined, context: C): T {
-  const resolvedValue = typeof value === 'function' ? (value as (context: C) => T)(context) : value
-
-  return normalizeHTMLAttributes(resolvedValue)
+export function useUi<T extends object, C>(resolver: UiResolver<T, C> | undefined, context: C): T {
+  return normalizeHTMLAttributes(resolver?.(context))
 }

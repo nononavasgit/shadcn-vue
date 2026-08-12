@@ -28,11 +28,8 @@ describe('ButtonGroup', () => {
       expect(root.classes()).toEqual(expect.arrayContaining(expectedClasses))
     })
 
-    it.each(['object', 'function'] as const)('Render HTML Attributes by ui %s', (uiType) => {
-      const root =
-        uiType === 'function'
-          ? () => ({ class: 'ui-root', 'aria-label': 'Acciones' })
-          : { class: 'ui-root', 'aria-label': 'Acciones' }
+    it('Render HTML Attributes by ui function', () => {
+      const root = () => ({ class: 'ui-root', 'aria-label': 'Acciones' })
       const buttonGroup = mount(ButtonGroup, {
         props: { ui: { root } },
       }).get('[data-button-group-ui="root"]')

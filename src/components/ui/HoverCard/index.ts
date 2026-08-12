@@ -46,7 +46,7 @@ export type HoverCardArrowProps = Pick<
   'as' | 'asChild' | 'width' | 'height' | 'rounded'
 >
 
-export type HoverCardFn<T> = T | ((context: HoverCardContext) => T)
+export type HoverCardFn<T> = (context: HoverCardContext) => T
 
 export interface HoverCardUI {
   root?: HoverCardFn<HTMLAttributes>

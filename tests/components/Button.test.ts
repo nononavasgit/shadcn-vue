@@ -144,7 +144,7 @@ describe('Button', () => {
 
     it('Render HTML Attributes by ui', () => {
       const button = mount(Button, {
-        props: { ui: { root: { class: 'ui-root' } } },
+        props: { ui: { root: () => ({ class: 'ui-root' }) } },
       }).get('button')
 
       expect(button.classes()).toContain('ui-root')
@@ -263,7 +263,7 @@ describe('Button', () => {
     it('Button context', () => {
       const context = createButtonContext({
         ...props,
-        ui: { root: { class: 'ui-root' } },
+        ui: { root: () => ({ class: 'ui-root' }) },
       })
 
       expect(context).toEqual(props)

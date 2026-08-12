@@ -8,7 +8,7 @@ export type CheckboxModelValue = CheckboxValue | 'indeterminate'
 export type CheckboxState = boolean | 'indeterminate'
 
 // Fn
-export type CheckboxFn<T> = T | ((context: CheckboxContext) => T)
+export type CheckboxFn<T> = (context: CheckboxContext) => T
 
 // UI
 export interface CheckboxUI {

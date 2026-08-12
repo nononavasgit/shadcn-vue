@@ -106,7 +106,7 @@ describe('Badge', () => {
       const badge = mount(Badge, {
         props: {
           ui: {
-            root: { class: 'ui-root' },
+            root: () => ({ class: 'ui-root' }),
           },
         },
       }).get('[data-badge-ui="root"]')
@@ -188,7 +188,7 @@ describe('Badge', () => {
         icon: 'check',
         trailingIcon: 'chevronRight',
         ui: {
-          root: { class: 'custom-badge' },
+          root: () => ({ class: 'custom-badge' }),
         },
       }
 

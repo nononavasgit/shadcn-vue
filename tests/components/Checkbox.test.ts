@@ -6,9 +6,9 @@ import { Checkbox, createCheckboxContext } from '@/components/ui/Checkbox'
 
 describe('Checkbox', () => {
   describe('Props', () => {
-    it.each(['object', 'function'] as const)('Render HTML Attributes by ui %s', (uiType) => {
+    it('Render HTML Attributes by ui function', () => {
       const value = (name: string) => ({ class: `ui-${name}` })
-      const uiValue = (name: string) => (uiType === 'function' ? () => value(name) : value(name))
+      const uiValue = (name: string) => () => value(name)
       const wrapper = mount(Checkbox, {
         props: {
           value: true,

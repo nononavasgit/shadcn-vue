@@ -77,7 +77,7 @@ export function normalizeDialogCloseProps(
 }
 
 // Fn
-export type DialogFn<T> = T | ((context: DialogContext) => T)
+export type DialogFn<T> = (context: DialogContext) => T
 
 // UI
 export interface DialogUI {

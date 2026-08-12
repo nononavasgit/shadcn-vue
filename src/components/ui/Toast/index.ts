@@ -22,7 +22,7 @@ export type ToastRootProps = Pick<
 
 export type ToastViewportProps = Pick<RekaToastViewportProps, 'as' | 'asChild' | 'hotkey' | 'label'>
 
-export type ToastFn<T> = T | ((context: ToastContext) => T)
+export type ToastFn<T> = (context: ToastContext) => T
 
 export interface ToastProps extends ToastRootProps {
   open?: boolean

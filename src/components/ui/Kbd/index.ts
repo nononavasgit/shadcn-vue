@@ -8,7 +8,7 @@ export interface KbdProps {
   ui?: KbdUI
 }
 
-export type KbdFn<T> = T | ((context: KbdContext) => T)
+export type KbdFn<T> = (context: KbdContext) => T
 
 export interface KbdUI {
   root?: KbdFn<HTMLAttributes>
@@ -36,7 +36,7 @@ export interface KbdGroupProps {
   ui?: KbdGroupUI
 }
 
-export type KbdGroupFn<T> = T | ((context: KbdGroupContext) => T)
+export type KbdGroupFn<T> = (context: KbdGroupContext) => T
 
 export type KbdGroupContext = Record<string, never>
 

@@ -118,10 +118,10 @@ describe('Alert', () => {
           description: 'Description',
           closable: true,
           ui: {
-            root: { class: 'ui-root' },
-            label: { class: 'ui-label' },
-            description: { class: 'ui-description' },
-            closeButtonContainer: { class: 'ui-close' },
+            root: () => ({ class: 'ui-root' }),
+            label: () => ({ class: 'ui-label' }),
+            description: () => ({ class: 'ui-description' }),
+            closeButtonContainer: () => ({ class: 'ui-close' }),
           },
         },
       })
@@ -230,7 +230,7 @@ describe('Alert', () => {
         closable: true,
         decorative: false,
         ui: {
-          root: { class: 'ui-root' },
+          root: () => ({ class: 'ui-root' }),
         },
       } as const
 

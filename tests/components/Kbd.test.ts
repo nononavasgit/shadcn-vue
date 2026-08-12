@@ -15,11 +15,8 @@ describe('Kbd', () => {
       expect(kbd.text()).toBe('Ctrl')
     })
 
-    it.each(['object', 'function'] as const)('Render HTML Attributes by ui %s', (uiType) => {
-      const root =
-        uiType === 'function'
-          ? () => ({ class: 'ui-root', 'aria-label': 'Control' })
-          : { class: 'ui-root', 'aria-label': 'Control' }
+    it('Render HTML Attributes by ui function', () => {
+      const root = () => ({ class: 'ui-root', 'aria-label': 'Control' })
       const kbd = mount(Kbd, {
         props: { ui: { root } },
       }).get('[data-kbd-ui="root"]')
@@ -61,7 +58,7 @@ describe('Kbd', () => {
     it('Kbd context', () => {
       const context = createKbdContext({
         label: 'Ctrl',
-        ui: { root: { class: 'ui-root' } },
+        ui: { root: () => ({ class: 'ui-root' }) },
       })
 
       expect(context).toEqual({ label: 'Ctrl' })
@@ -92,11 +89,8 @@ describe('Kbd', () => {
 
 describe('KbdGroup', () => {
   describe('Props', () => {
-    it.each(['object', 'function'] as const)('Render HTML Attributes by ui %s', (uiType) => {
-      const root =
-        uiType === 'function'
-          ? () => ({ class: 'ui-root', 'aria-label': 'Atajo' })
-          : { class: 'ui-root', 'aria-label': 'Atajo' }
+    it('Render HTML Attributes by ui function', () => {
+      const root = () => ({ class: 'ui-root', 'aria-label': 'Atajo' })
       const group = mount(KbdGroup, {
         props: { ui: { root } },
       }).get('[data-kbd-group-ui="root"]')

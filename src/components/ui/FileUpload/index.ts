@@ -47,7 +47,7 @@ export const fileUploadListVariants = cva('grid gap-2', {
 })
 
 export type FileUploadVariants = VariantProps<typeof fileUploadDropzoneVariants>
-export type FileUploadFn<T> = T | ((context: FileUploadContext) => T)
+export type FileUploadFn<T> = (context: FileUploadContext) => T
 
 export interface FileUploadUI {
   root?: FileUploadFn<HTMLAttributes>

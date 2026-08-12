@@ -78,12 +78,12 @@ describe('Time', () => {
       expect(time.attributes()).toHaveProperty('data-allow-mismatch')
     })
 
-    it.each(['object', 'function'] as const)('Render HTML Attributes by ui %s', (uiType) => {
+    it('Render HTML Attributes by ui function', () => {
       const root = mount(Time, {
         props: {
           datetime,
           ui: {
-            root: uiType === 'function' ? () => ({ class: 'ui-root' }) : { class: 'ui-root' },
+            root: () => ({ class: 'ui-root' }),
           },
         },
       }).get('[data-time-ui="root"]')
@@ -128,7 +128,7 @@ describe('Time', () => {
           datetime,
           locale: 'en-US',
           format,
-          ui: { root: { class: 'ui-root' } },
+          ui: { root: () => ({ class: 'ui-root' }) },
         },
         'January 15, 2024',
       )

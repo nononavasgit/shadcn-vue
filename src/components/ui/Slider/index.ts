@@ -29,8 +29,8 @@ export type SliderTrackProps = Pick<RekaSliderTrackProps, 'as' | 'asChild'>
 export type SliderRangeProps = Pick<RekaSliderRangeProps, 'as' | 'asChild'>
 export type SliderThumbProps = Pick<RekaSliderThumbProps, 'as' | 'asChild'>
 
-export type SliderFn<T> = T | ((context: SliderContext) => T)
-export type SliderThumbFn<T> = T | ((context: SliderThumbContext) => T)
+export type SliderFn<T> = (context: SliderContext) => T
+export type SliderThumbFn<T> = (context: SliderThumbContext) => T
 
 export interface SliderUI {
   root?: SliderFn<HTMLAttributes>

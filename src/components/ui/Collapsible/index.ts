@@ -27,7 +27,7 @@ export interface CollapsibleProps extends CollapsibleRootProps {
 }
 
 // Fn
-export type CollapsibleFn<T> = T | ((context: CollapsibleContext) => T)
+export type CollapsibleFn<T> = (context: CollapsibleContext) => T
 
 // UI
 export interface CollapsibleUI {

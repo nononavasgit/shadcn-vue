@@ -23,8 +23,8 @@ export interface BreadcrumbProps {
 }
 
 // Fn
-export type BreadcrumbFn<T> = T | ((context: BreadcrumbContext) => T)
-export type BreadcrumbItemFn<T> = T | ((context: BreadcrumbItemContext) => T)
+export type BreadcrumbFn<T> = (context: BreadcrumbContext) => T
+export type BreadcrumbItemFn<T> = (context: BreadcrumbItemContext) => T
 
 // UI
 export interface BreadcrumbUI {

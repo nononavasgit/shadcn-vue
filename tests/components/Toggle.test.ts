@@ -77,11 +77,8 @@ describe('Toggle', () => {
       expect(wrapper.get('[data-toggle="trailingIcon"]').classes()).toContain('lucide-chevron-down')
     })
 
-    it.each(['object', 'function'] as const)('Render HTML Attributes by ui %s', (uiType) => {
-      const root =
-        uiType === 'function'
-          ? () => ({ class: 'ui-root', 'aria-label': 'Bold' })
-          : { class: 'ui-root', 'aria-label': 'Bold' }
+    it('Render HTML Attributes by ui function', () => {
+      const root = () => ({ class: 'ui-root', 'aria-label': 'Bold' })
       const toggle = mount(Toggle, {
         props: { ui: { root } },
       }).get('[data-toggle-ui="root"]')

@@ -44,7 +44,7 @@ export type TooltipContentProps = Pick<
 export type TooltipArrowProps = Pick<RekaTooltipArrowProps, 'as' | 'asChild' | 'width' | 'height'>
 
 // Fn
-export type TooltipFn<T> = T | ((context: TooltipContext) => T)
+export type TooltipFn<T> = (context: TooltipContext) => T
 
 // UI
 export interface TooltipUI {

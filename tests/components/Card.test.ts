@@ -32,13 +32,13 @@ describe('Card', () => {
           label: 'Resumen',
           description: 'Datos de la cuenta',
           ui: {
-            root: { class: 'ui-root' },
-            header: { class: 'ui-header' },
-            label: { class: 'ui-label' },
-            description: { class: 'ui-description' },
-            action: { class: 'ui-action' },
-            content: { class: 'ui-content' },
-            footer: { class: 'ui-footer' },
+            root: () => ({ class: 'ui-root' }),
+            header: () => ({ class: 'ui-header' }),
+            label: () => ({ class: 'ui-label' }),
+            description: () => ({ class: 'ui-description' }),
+            action: () => ({ class: 'ui-action' }),
+            content: () => ({ class: 'ui-content' }),
+            footer: () => ({ class: 'ui-footer' }),
           },
         },
         slots: {
@@ -152,7 +152,7 @@ describe('Card', () => {
       const context = createCardContext({
         label: 'Resumen',
         description: 'Datos de la cuenta',
-        ui: { root: { class: 'ui-root' } },
+        ui: { root: () => ({ class: 'ui-root' }) },
       })
 
       expect(context).toEqual({

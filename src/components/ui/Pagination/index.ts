@@ -34,8 +34,8 @@ export interface PaginationProps extends PaginationRootProps {
 }
 
 // Fn
-export type PaginationFn<T> = T | ((context: PaginationContext) => T)
-export type PaginationItemFn<T> = T | ((context: PaginationItemContext) => T)
+export type PaginationFn<T> = (context: PaginationContext) => T
+export type PaginationItemFn<T> = (context: PaginationItemContext) => T
 
 // UI
 export interface PaginationUI {

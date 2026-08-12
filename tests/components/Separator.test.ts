@@ -6,11 +6,8 @@ import { Separator, createSeparatorContext } from '@/components/ui/Separator'
 
 describe('Separator', () => {
   describe('Props', () => {
-    it.each(['object', 'function'] as const)('Render HTML Attributes by ui %s', (uiType) => {
-      const root =
-        uiType === 'function'
-          ? () => ({ class: 'ui-root', 'aria-label': 'Separador' })
-          : { class: 'ui-root', 'aria-label': 'Separador' }
+    it('Render HTML Attributes by ui function', () => {
+      const root = () => ({ class: 'ui-root', 'aria-label': 'Separador' })
       const separator = mount(Separator, {
         props: { ui: { root } },
       }).get('[data-separator-ui="root"]')
@@ -61,7 +58,7 @@ describe('Separator', () => {
           asChild: false,
           orientation: 'vertical',
           decorative: false,
-          ui: { root: { class: 'ui-root' } },
+          ui: { root: () => ({ class: 'ui-root' }) },
         }),
       ).toEqual(context)
     })

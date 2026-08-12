@@ -69,8 +69,8 @@ export interface AccordionProps extends AccordionRootProps {
 }
 
 // Fn
-export type AccordionFn<T> = T | ((context: AccordionContext) => T)
-export type AccordionItemFn<T> = T | ((context: AccordionItemContext) => T)
+export type AccordionFn<T> = (context: AccordionContext) => T
+export type AccordionItemFn<T> = (context: AccordionItemContext) => T
 
 // UI
 export interface AccordionUI {

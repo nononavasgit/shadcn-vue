@@ -52,7 +52,7 @@ export type PopoverArrowProps = Pick<
 >
 
 // Fn
-export type PopoverFn<T> = T | ((context: PopoverContext) => T)
+export type PopoverFn<T> = (context: PopoverContext) => T
 
 // UI
 export interface PopoverUI {

@@ -54,8 +54,8 @@ export interface ToggleGroupProps extends ToggleGroupRootProps {
 }
 
 // Fn
-export type ToggleGroupFn<T> = T | ((context: ToggleGroupContext) => T)
-export type ToggleGroupItemFn<T> = T | ((context: ToggleGroupItemContext) => T)
+export type ToggleGroupFn<T> = (context: ToggleGroupContext) => T
+export type ToggleGroupItemFn<T> = (context: ToggleGroupItemContext) => T
 
 // UI
 export interface ToggleGroupUI {

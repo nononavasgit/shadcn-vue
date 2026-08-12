@@ -10,7 +10,7 @@ export interface TimeProps {
   ui?: TimeUI
 }
 
-export type TimeFn<T> = T | ((context: TimeContext) => T)
+export type TimeFn<T> = (context: TimeContext) => T
 
 export interface TimeUI {
   root?: TimeFn<HTMLAttributes>

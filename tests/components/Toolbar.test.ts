@@ -6,11 +6,8 @@ import { Toolbar } from '@/components/ui/Toolbar'
 
 describe('Toolbar', () => {
   describe('Props', () => {
-    it.each(['object', 'function'] as const)('Render HTML Attributes by ui %s', (uiType) => {
-      const root =
-        uiType === 'function'
-          ? () => ({ class: 'ui-root', 'aria-label': 'Editor tools' })
-          : { class: 'ui-root', 'aria-label': 'Editor tools' }
+    it('Render HTML Attributes by ui function', () => {
+      const root = () => ({ class: 'ui-root', 'aria-label': 'Editor tools' })
       const toolbar = mount(Toolbar, {
         props: { ui: { root } },
       }).get('[data-toolbar-ui="root"]')

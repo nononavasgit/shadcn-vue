@@ -29,14 +29,11 @@ describe('Input', () => {
       expect(wrapper.get('input').element.value).toBe('Actualizado')
     })
 
-    it.each(['object', 'function'] as const)('Render HTML Attributes by ui %s', (uiType) => {
+    it('Render HTML Attributes by ui function', () => {
       const input = mount(Input, {
         props: {
           ui: {
-            root:
-              uiType === 'function'
-                ? () => ({ class: 'ui-root', 'aria-label': 'Buscar' })
-                : { class: 'ui-root', 'aria-label': 'Buscar' },
+            root: () => ({ class: 'ui-root', 'aria-label': 'Buscar' }),
           },
         },
       }).get('input')

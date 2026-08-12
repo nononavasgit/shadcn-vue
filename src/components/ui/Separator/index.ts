@@ -8,7 +8,7 @@ export type SeparatorRootProps = Pick<
   'as' | 'asChild' | 'orientation' | 'decorative'
 >
 
-export type SeparatorFn<T> = T | ((context: SeparatorContext) => T)
+export type SeparatorFn<T> = (context: SeparatorContext) => T
 
 export interface SeparatorUI {
   root?: SeparatorFn<HTMLAttributes>

@@ -22,7 +22,7 @@ export type AlertDialogContentProps = Pick<
   EmitsAsProps<RekaAlertDialogContentEmits>
 
 // Fn
-export type AlertDialogFn<T> = T | ((context: AlertDialogContext) => T)
+export type AlertDialogFn<T> = (context: AlertDialogContext) => T
 
 export function normalizeAlertDialogTriggerProps(
   source: AlertDialogTriggerProps | null | undefined,

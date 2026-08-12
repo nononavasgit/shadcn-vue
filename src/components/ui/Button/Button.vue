@@ -89,7 +89,7 @@ const trailingIconProps = computed(() => {
 })
 
 const loadingIconProps = computed(() => {
-  return { name: 'spinner' as const, ui: { root: { class: 'animate-spin' } } }
+  return { name: 'spinner' as const, ui: { root: () => ({ class: 'animate-spin' }) } }
 })
 
 function handleClick(event: PointerEvent) {

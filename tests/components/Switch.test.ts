@@ -45,9 +45,9 @@ describe('Switch', () => {
       expect(wrapper.emitted('update:value')).toEqual([[true]])
     })
 
-    it.each(['object', 'function'] as const)('Render HTML Attributes by ui %s', (uiType) => {
+    it('Render HTML Attributes by ui function', () => {
       const value = (name: string) => ({ class: `ui-${name}` })
-      const uiValue = (name: string) => (uiType === 'function' ? () => value(name) : value(name))
+      const uiValue = (name: string) => () => value(name)
 
       const wrapper = mount(Switch, {
         props: {
@@ -127,9 +127,9 @@ describe('Switch', () => {
     }
 
     it('Switch context', () => {
-      expect(createSwitchContext({ ...props, ui: { root: { class: 'ui-root' } } }, true)).toEqual(
-        context,
-      )
+      expect(
+        createSwitchContext({ ...props, ui: { root: () => ({ class: 'ui-root' }) } }, true),
+      ).toEqual(context)
     })
 
     it.each(['root', 'thumb'] as const)('Switch context to ui.%s function', (uiName) => {

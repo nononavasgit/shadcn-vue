@@ -54,7 +54,7 @@ describe('Icon', () => {
           color: '#ffffff',
           size: 'md',
           ui: {
-            root: { class: 'ui-root' },
+            root: () => ({ class: 'ui-root' }),
           },
         },
       })
@@ -107,7 +107,7 @@ describe('Icon', () => {
         color: '#ffffff',
         size: 'lg',
         ui: {
-          root: { class: 'ui-root' },
+          root: () => ({ class: 'ui-root' }),
         },
       })
 

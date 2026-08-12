@@ -5,7 +5,7 @@ export { default as Label } from './Label.vue'
 
 export type LabelRootProps = Pick<LabelPropsReka, 'for'>
 
-export type LabelFn<T> = T | ((context: LabelContext) => T)
+export type LabelFn<T> = (context: LabelContext) => T
 
 export interface LabelUI {
   root?: LabelFn<HTMLAttributes>

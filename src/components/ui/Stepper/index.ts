@@ -103,8 +103,8 @@ export interface StepperProps extends StepperRootProps {
   ui?: StepperUI
 }
 
-export type StepperFn<T> = T | ((context: StepperContext) => T)
-export type StepperItemFn<T> = T | ((context: StepperItemContext) => T)
+export type StepperFn<T> = (context: StepperContext) => T
+export type StepperItemFn<T> = (context: StepperItemContext) => T
 
 export interface StepperUI {
   root?: StepperFn<HTMLAttributes>

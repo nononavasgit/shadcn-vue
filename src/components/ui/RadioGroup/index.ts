@@ -39,8 +39,8 @@ export interface RadioGroupOption extends Pick<RadioGroupItemProps, 'value' | 'd
 export type RadioGroupItem = RadioGroupOption
 
 // Fn
-export type RadioGroupFn<T> = T | ((context: RadioGroupContext) => T)
-export type RadioGroupItemFn<T> = T | ((context: RadioGroupItemContext) => T)
+export type RadioGroupFn<T> = (context: RadioGroupContext) => T
+export type RadioGroupItemFn<T> = (context: RadioGroupItemContext) => T
 
 // UI
 export interface RadioGroupUI {

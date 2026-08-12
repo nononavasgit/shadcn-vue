@@ -2,7 +2,7 @@ import type { HTMLAttributes } from 'vue'
 
 export { default as Empty } from './Empty.vue'
 
-export type EmptyFn<T> = T | ((context: EmptyContext) => T)
+export type EmptyFn<T> = (context: EmptyContext) => T
 
 export interface EmptyUI {
   root?: EmptyFn<HTMLAttributes>

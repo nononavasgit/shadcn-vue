@@ -22,7 +22,7 @@ export const iconVariants = cva('shrink-0', {
 export type IconVariants = VariantProps<typeof iconVariants>
 
 // Fn
-export type IconFn<T> = T | ((context: IconContext) => T)
+export type IconFn<T> = (context: IconContext) => T
 
 // Props
 export interface IconProps {

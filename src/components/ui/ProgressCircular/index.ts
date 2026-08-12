@@ -8,7 +8,7 @@ import type {
 
 export { default as ProgressCircular } from './ProgressCircular.vue'
 
-export type ProgressCircularFn<T> = T | ((context: ProgressCircularContext) => T)
+export type ProgressCircularFn<T> = (context: ProgressCircularContext) => T
 
 export interface ProgressCircularUI {
   root?: ProgressCircularFn<HTMLAttributes>

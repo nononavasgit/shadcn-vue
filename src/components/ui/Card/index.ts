@@ -2,7 +2,7 @@ import type { HTMLAttributes } from 'vue'
 
 export { default as Card } from './Card.vue'
 
-export type CardFn<T> = T | ((context: CardContext) => T)
+export type CardFn<T> = (context: CardContext) => T
 
 export interface CardUI {
   root?: CardFn<HTMLAttributes>

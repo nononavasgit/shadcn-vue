@@ -4,7 +4,7 @@ import type { NormalizeIconProps } from '@/components/ui/Icon'
 export { default as Spinner } from './Spinner.vue'
 
 // Fn
-export type SpinnerFn<T> = T | ((context: SpinnerContext) => T)
+export type SpinnerFn<T> = (context: SpinnerContext) => T
 
 // UI
 export interface SpinnerUI {

@@ -50,14 +50,14 @@ const meta = {
     ButtonGroupUI: {
       control: false,
       description:
-        '`root` admite atributos HTML directamente o una función que recibe `ButtonGroupContext` y devuelve esos atributos.',
+        '`root` es una función que recibe `ButtonGroupContext` y devuelve atributos HTML.',
       table: {
         category: 'Interfaces',
         readonly: true,
         type: {
-          summary: '{ root?: HTMLAttributes | ((context: ButtonGroupContext) => HTMLAttributes) }',
+          summary: '{ root?: (context: ButtonGroupContext) => HTMLAttributes }',
           detail:
-            'interface ButtonGroupUI {\n  root?: HTMLAttributes | ((context: ButtonGroupContext) => HTMLAttributes)\n}\n\n// HTMLAttributes admite class, style, id, role, aria-*, data-* y listeners HTML.',
+            'interface ButtonGroupUI {\n  root?: (context: ButtonGroupContext) => HTMLAttributes\n}\n\n// HTMLAttributes admite class, style, id, role, aria-*, data-* y listeners HTML.',
         },
       },
     },
@@ -101,13 +101,14 @@ const meta = {
       table: { category: 'Props', defaultValue: { summary: 'div' } },
     },
     ui: {
-      control: 'object',
-      description: 'Personaliza las partes internas del componente. Admite la clave `root`.',
+      control: false,
+      description:
+        'Personaliza las partes internas mediante funciones. Admite `root: (context) => HTMLAttributes`.',
       table: {
         category: 'Props',
         type: {
           summary: 'ButtonGroupUI',
-          detail: '{ root?: HTMLAttributes | ((context: ButtonGroupContext) => HTMLAttributes) }',
+          detail: '{ root?: (context: ButtonGroupContext) => HTMLAttributes }',
         },
         defaultValue: { summary: 'undefined' },
       },
@@ -137,7 +138,7 @@ type Story = StoryObj<typeof meta>
 export const Playground: Story = {
   args: {
     ui: {
-      root: (context) => {
+      root: () => {
         return {}
       },
     },
@@ -191,7 +192,7 @@ export const WithInput: Story = {
 export const CustomUi: Story = {
   name: 'UI personalizada',
   args: {
-    ui: { root: { class: 'rounded-lg bg-muted p-1 [&>*]:border-0' } },
+    ui: { root: () => ({ class: 'rounded-lg bg-muted p-1 [&>*]:border-0' }) },
   },
   render: (args) => ({
     components: { Button, ButtonGroup },
@@ -225,8 +226,7 @@ export const UiAsFunction: Story = {
     controls: { exclude: ['ui'] },
     docs: {
       description: {
-        story:
-          '`ui.root` también puede ser una función. Recibe `ButtonGroupContext` y devuelve atributos HTML para la raíz.',
+        story: '`ui.root` recibe `ButtonGroupContext` y devuelve atributos HTML para la raíz.',
       },
     },
   },

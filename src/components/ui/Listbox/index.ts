@@ -54,9 +54,9 @@ export interface ListboxProps extends ListboxRootProps {
   ui?: ListboxUI
 }
 
-export type ListboxFn<T> = T | ((context: ListboxContext) => T)
-export type ListboxItemFn<T> = T | ((context: ListboxItemContext) => T)
-export type ListboxGroupFn<T> = T | ((context: ListboxGroupContext) => T)
+export type ListboxFn<T> = (context: ListboxContext) => T
+export type ListboxItemFn<T> = (context: ListboxItemContext) => T
+export type ListboxGroupFn<T> = (context: ListboxGroupContext) => T
 
 export interface ListboxUI {
   root?: ListboxFn<HTMLAttributes>

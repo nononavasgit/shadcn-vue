@@ -47,7 +47,7 @@ describe('AspectRatio', () => {
     it('Render HTML Attributes by ui', () => {
       const root = mount(AspectRatio, {
         props: {
-          ui: { root: { class: 'ui-root' } },
+          ui: { root: () => ({ class: 'ui-root' }) },
         },
       }).get('[data-aspect-ratio-ui="root"]')
 
@@ -99,7 +99,7 @@ describe('AspectRatio', () => {
         as: 'section',
         asChild: false,
         ratio: 16 / 9,
-        ui: { root: { class: 'ui-root' } },
+        ui: { root: () => ({ class: 'ui-root' }) },
       })
 
       expect(context).toEqual({

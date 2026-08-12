@@ -32,7 +32,7 @@ export interface AvatarProps extends AvatarRootProps {
 }
 
 // Fn
-export type AvatarFn<T> = T | ((context: AvatarContext) => T)
+export type AvatarFn<T> = (context: AvatarContext) => T
 
 // UI
 export interface AvatarUI {

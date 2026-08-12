@@ -99,8 +99,8 @@ export interface TabItem {
 }
 
 // Fn
-export type TabsFn<T> = T | ((context: TabsContext) => T)
-export type TabsItemFn<T> = T | ((context: TabsItemContext) => T)
+export type TabsFn<T> = (context: TabsContext) => T
+export type TabsItemFn<T> = (context: TabsItemContext) => T
 
 // Props
 export interface TabsProps extends TabsRootProps {

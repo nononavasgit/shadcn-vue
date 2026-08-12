@@ -5,7 +5,7 @@ export { default as FieldSet } from './FieldSet.vue'
 export type FieldSetOrientation = 'vertical' | 'horizontal' | 'responsive'
 export type FieldSetLegendVariant = 'legend' | 'label'
 
-export type FieldSetFn<T> = T | ((context: FieldSetContext) => T)
+export type FieldSetFn<T> = (context: FieldSetContext) => T
 
 export interface FieldSetUI {
   root?: FieldSetFn<HTMLAttributes>

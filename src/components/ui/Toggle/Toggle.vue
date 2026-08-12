@@ -66,8 +66,16 @@ const rootProps = computed(() => {
   }
 })
 
-const iconProps = computed(() => ({ ...normalizeIconProps(props.icon) }))
-const trailingIconProps = computed(() => ({ ...normalizeIconProps(props.trailingIcon) }))
+const iconProps = computed(() => {
+  const icon = normalizeIconProps(props.icon)
+
+  return { ...icon, size: icon?.size ?? props.size }
+})
+const trailingIconProps = computed(() => {
+  const icon = normalizeIconProps(props.trailingIcon)
+
+  return { ...icon, size: icon?.size ?? props.size }
+})
 </script>
 
 <template>

@@ -33,7 +33,7 @@ const meta = {
       table: {
         category: 'Interfaces',
         readonly: true,
-        type: { summary: "'sm' | 'md' | 'lg'" },
+        type: { summary: "'xs' | 'sm' | 'md' | 'lg'" },
       },
     },
     IconContext: {
@@ -74,7 +74,7 @@ const meta = {
     },
     size: {
       control: 'inline-radio',
-      options: ['sm', 'md', 'lg'],
+      options: ['xs', 'sm', 'md', 'lg'],
       description: 'Tamaño del icono.',
       table: {
         category: 'Props',

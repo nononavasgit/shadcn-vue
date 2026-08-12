@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 
 import { Toggle } from '@/components/ui/Toggle'
+import { Icon } from '@/components/ui/Icon'
 
 describe('Toggle', () => {
   describe('Props', () => {
@@ -15,7 +16,7 @@ describe('Toggle', () => {
     })
 
     it('Render as native button', () => {
-      const toggle = mount(Toggle).get('[data-toggle-ui="root"]')
+      const toggle = mount(Toggle, { props: { as: 'div' } }).get('[data-toggle-ui="root"]')
 
       expect(toggle.element.tagName).toBe('BUTTON')
     })
@@ -86,9 +87,38 @@ describe('Toggle', () => {
       const wrapper = mount(Toggle, {
         props: { icon: 'check', trailingIcon: 'chevronDown' },
       })
+      const icons = wrapper.findAllComponents(Icon)
 
-      expect(wrapper.get('[data-toggle="leadingIcon"]').classes()).toContain('lucide-check')
-      expect(wrapper.get('[data-toggle="trailingIcon"]').classes()).toContain('lucide-chevron-down')
+      expect(icons[0].props('name')).toBe('check')
+      expect(icons[1].props('name')).toBe('chevronDown')
+    })
+
+    it.each(['xs', 'sm', 'md', 'lg'] as const)('Pass toggle size %s to icons', (size) => {
+      const wrapper = mount(Toggle, {
+        props: {
+          size,
+          icon: 'check',
+          trailingIcon: 'chevronDown',
+        },
+      })
+      const icons = wrapper.findAllComponents(Icon)
+
+      expect(icons[0].props('size')).toBe(size)
+      expect(icons[1].props('size')).toBe(size)
+    })
+
+    it('Prioritize icon sizes over toggle size', () => {
+      const wrapper = mount(Toggle, {
+        props: {
+          size: 'xs',
+          icon: { name: 'check', size: 'md' },
+          trailingIcon: { name: 'chevronDown', size: 'lg' },
+        },
+      })
+      const icons = wrapper.findAllComponents(Icon)
+
+      expect(icons[0].props('size')).toBe('md')
+      expect(icons[1].props('size')).toBe('lg')
     })
 
     it('Render HTML Attributes by ui function', () => {
@@ -129,9 +159,11 @@ describe('Toggle', () => {
           class: 'custom-toggle',
           style: 'opacity: 0.5',
           'data-test': 'bold-toggle',
+          id: 'toggle-id',
         },
       }).get('[data-toggle-ui="root"]')
 
+      expect(toggle.attributes('id')).toBe('toggle-id')
       expect(toggle.classes()).toContain('custom-toggle')
       expect(toggle.attributes('style')).toContain('opacity: 0.5')
       expect(toggle.attributes('data-test')).toBe('bold-toggle')

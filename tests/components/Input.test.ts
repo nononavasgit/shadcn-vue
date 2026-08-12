@@ -47,6 +47,10 @@ describe('Input', () => {
     it('Merge attrs, class and style', () => {
       const input = mount(Input, {
         attrs: {
+          id: 'search-input',
+          type: 'search',
+          placeholder: 'Buscar',
+          disabled: true,
           class: 'custom-input',
           style: 'opacity: 0.5',
           'data-test': 'search-input',
@@ -54,6 +58,10 @@ describe('Input', () => {
         },
       }).get('input')
 
+      expect(input.attributes('id')).toBe('search-input')
+      expect(input.attributes('type')).toBe('search')
+      expect(input.attributes('placeholder')).toBe('Buscar')
+      expect((input.element as HTMLInputElement).disabled).toBe(true)
       expect(input.classes()).toEqual(expect.arrayContaining(['h-9', 'w-full', 'custom-input']))
       expect(input.attributes('style')).toContain('opacity: 0.5')
       expect(input.attributes('data-test')).toBe('search-input')

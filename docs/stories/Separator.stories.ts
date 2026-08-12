@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-import { Separator, type SeparatorContext } from '@/components/ui/Separator'
+import { Separator } from '@/components/ui/Separator'
 
 const meta = {
   title: 'Componentes/Separator',
@@ -124,89 +124,3 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {}
-
-export const Horizontal: Story = {
-  parameters: { controls: { disable: true } },
-  render: () => ({
-    components: { Separator },
-    template: `
-      <div class="grid w-full max-w-xl gap-4">
-        <div>
-          <h3 class="font-medium">Cuenta</h3>
-          <p class="text-sm text-muted-foreground">Gestiona tus datos personales.</p>
-        </div>
-        <Separator />
-        <div>
-          <h3 class="font-medium">Preferencias</h3>
-          <p class="text-sm text-muted-foreground">Configura el comportamiento de la aplicación.</p>
-        </div>
-      </div>
-    `,
-  }),
-}
-
-export const Vertical: Story = {
-  args: { orientation: 'vertical' },
-  parameters: { controls: { exclude: ['orientation'] } },
-  render: (args) => ({
-    components: { Separator },
-    setup: () => ({ args }),
-    template: `
-      <div class="flex h-10 items-center gap-4">
-        <span>Blog</span>
-        <Separator v-bind="args" />
-        <span>Documentación</span>
-        <Separator v-bind="args" />
-        <span>Contacto</span>
-      </div>
-    `,
-  }),
-}
-
-export const Semantic: Story = {
-  name: 'Semántico',
-  args: { decorative: false },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          'Usa `decorative="false"` cuando la separación también representa una estructura semántica.',
-      },
-    },
-  },
-}
-
-export const WithContent: Story = {
-  name: 'Con contenido',
-  parameters: { controls: { disable: true } },
-  render: () => ({
-    components: { Separator },
-    template: `
-      <Separator class="flex h-auto items-center gap-3 bg-transparent before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border">
-        <span class="text-xs font-medium text-muted-foreground uppercase">Sección</span>
-      </Separator>
-    `,
-  }),
-}
-
-export const UiAsFunction: Story = {
-  name: 'UI como función',
-  args: {
-    decorative: false,
-    ui: {
-      root: (context: SeparatorContext) => ({
-        class: context.orientation === 'vertical' ? 'bg-primary' : 'bg-primary/50',
-        'data-decorative': context.decorative,
-        'aria-label': context.decorative ? undefined : 'Cambio de sección',
-      }),
-    },
-  },
-  parameters: {
-    controls: { exclude: ['ui'] },
-    docs: {
-      description: {
-        story: '`ui.root` recibe `SeparatorContext` y devuelve atributos HTML para la raíz.',
-      },
-    },
-  },
-}

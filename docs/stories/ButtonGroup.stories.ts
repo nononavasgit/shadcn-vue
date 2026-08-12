@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { Button } from '@/components/ui/Button'
-import { ButtonGroup, type ButtonGroupContext } from '@/components/ui/ButtonGroup'
-import { Input } from '@/components/ui/Input'
+import { ButtonGroup } from '@/components/ui/ButtonGroup'
 
 const meta = {
   title: 'Componentes/ButtonGroup',
@@ -143,102 +142,4 @@ export const Playground: Story = {
       },
     },
   },
-}
-
-export const Vertical: Story = {
-  args: { orientation: 'vertical' },
-  render: (args) => ({
-    components: { Button, ButtonGroup },
-    setup: () => ({ args }),
-    template: `
-      <ButtonGroup v-bind="args">
-        <Button label="Editar" variant="outline" />
-        <Button label="Duplicar" variant="outline" />
-        <Button label="Eliminar" severity="error" variant="outline" />
-      </ButtonGroup>
-    `,
-  }),
-}
-
-export const Sizes: Story = {
-  parameters: { controls: { disable: true } },
-  render: () => ({
-    components: { Button, ButtonGroup },
-    template: `
-      <div class="flex flex-col items-start gap-4">
-        <ButtonGroup v-for="size in ['xs', 'sm', 'md', 'lg']" :key="size" :size="size">
-          <Button label="Uno" variant="outline" />
-          <Button label="Dos" variant="outline" />
-        </ButtonGroup>
-      </div>
-    `,
-  }),
-}
-
-export const WithInput: Story = {
-  name: 'Con input',
-  render: (args) => ({
-    components: { Button, ButtonGroup, Input },
-    setup: () => ({ args }),
-    template: `
-      <ButtonGroup v-bind="args" class="w-full sm:w-auto">
-        <Input class="min-w-0 sm:w-64" placeholder="Introduce un dominio" />
-        <Button label="Buscar" />
-      </ButtonGroup>
-    `,
-  }),
-}
-
-export const CustomUi: Story = {
-  name: 'UI personalizada',
-  args: {
-    ui: { root: () => ({ class: 'rounded-lg bg-muted p-1 [&>*]:border-0' }) },
-  },
-  render: (args) => ({
-    components: { Button, ButtonGroup },
-    setup: () => ({ args }),
-    template: `
-      <ButtonGroup v-bind="args">
-        <Button label="Día" variant="plain" />
-        <Button label="Semana" variant="plain" />
-        <Button label="Mes" variant="plain" />
-      </ButtonGroup>
-    `,
-  }),
-}
-
-export const UiAsFunction: Story = {
-  name: 'UI como función',
-  args: {
-    orientation: 'horizontal',
-    ui: {
-      root: (context: ButtonGroupContext) => ({
-        class:
-          context.orientation === 'vertical'
-            ? 'rounded-lg bg-muted p-2'
-            : 'rounded-lg bg-muted p-1',
-        'aria-label': `Grupo ${context.orientation}`,
-        'data-size': context.size,
-      }),
-    },
-  },
-  parameters: {
-    controls: { exclude: ['ui'] },
-    docs: {
-      description: {
-        story: '`ui.root` recibe `ButtonGroupContext` y devuelve atributos HTML para la raíz.',
-      },
-    },
-  },
-  render: (args) => ({
-    components: { Button, ButtonGroup },
-    setup: () => ({ args }),
-    template: `
-      <ButtonGroup v-bind="args">
-        <Button label="Día" variant="plain" />
-        <Button label="Semana" variant="plain" />
-        <Button label="Mes" variant="plain" />
-      </ButtonGroup>
-    `,
-  }),
 }

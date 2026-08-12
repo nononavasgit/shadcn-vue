@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-import { Kbd, KbdGroup, type KbdContext } from '@/components/ui/Kbd'
-import { Icon } from '@/components/ui/Icon'
+import { Kbd, KbdGroup } from '@/components/ui/Kbd'
 
 const meta = {
   title: 'Componentes/Kbd',
@@ -81,58 +80,3 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {}
-
-export const CommonKeys: Story = {
-  name: 'Teclas comunes',
-  parameters: { controls: { disable: true } },
-  render: () => ({
-    components: { Kbd },
-    template: `
-      <div class="flex flex-wrap items-center gap-3">
-        <Kbd v-for="key in ['Ctrl', 'Alt', 'Shift', 'Enter', 'Esc', '⌘', '⌥', '⇧']" :key="key" :label="key" />
-      </div>
-    `,
-  }),
-}
-
-export const Group: Story = {
-  name: 'Grupo',
-  parameters: { controls: { disable: true } },
-  render: () => ({
-    components: { Kbd, KbdGroup },
-    template: `
-      <div class="grid gap-4">
-        <div class="flex items-center justify-between gap-8"><span>Buscar</span><KbdGroup><Kbd label="Ctrl" /><span>+</span><Kbd label="K" /></KbdGroup></div>
-        <div class="flex items-center justify-between gap-8"><span>Guardar</span><KbdGroup><Kbd label="Ctrl" /><span>+</span><Kbd label="S" /></KbdGroup></div>
-        <div class="flex items-center justify-between gap-8"><span>Deshacer</span><KbdGroup><Kbd label="Ctrl" /><span>+</span><Kbd label="Z" /></KbdGroup></div>
-      </div>
-    `,
-  }),
-}
-
-export const WithIcon: Story = {
-  name: 'Con icono',
-  parameters: { controls: { disable: true } },
-  render: () => ({
-    components: { Icon, Kbd },
-    template: `<Kbd aria-label="Flecha izquierda"><Icon name="chevronLeft" /></Kbd>`,
-  }),
-}
-
-export const UiAsFunction: Story = {
-  name: 'UI como función',
-  args: {
-    label: 'Enter',
-    ui: {
-      root: (context: KbdContext) => ({
-        class: context.label === 'Enter' ? 'min-w-12 text-primary' : undefined,
-        'aria-label': `Tecla ${context.label}`,
-        'data-key': context.label,
-      }),
-    },
-  },
-  parameters: {
-    controls: { exclude: ['ui'] },
-    docs: { description: { story: '`ui.root` recibe `KbdContext` y devuelve atributos HTML.' } },
-  },
-}

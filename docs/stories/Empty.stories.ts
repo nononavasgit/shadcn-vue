@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { Button } from '@/components/ui/Button'
-import { Empty, type EmptyContext } from '@/components/ui/Empty'
+import { Empty } from '@/components/ui/Empty'
 import { Icon } from '@/components/ui/Icon'
 
 const mediaVariants = ['default', 'icon'] as const
@@ -140,37 +140,4 @@ export const Playground: Story = {
       </Empty>
     `,
   }),
-}
-
-export const CustomSlots: Story = {
-  name: 'Slots personalizados',
-  parameters: { controls: { disable: true } },
-  render: () => ({
-    components: { Button, Empty, Icon },
-    template: `
-      <Empty media-variant="icon">
-        <template #media><Icon name="file" /></template>
-        <template #label>Bandeja vacía</template>
-        <template #description>No tienes mensajes pendientes.</template>
-        <Button label="Actualizar" size="sm" />
-      </Empty>
-    `,
-  }),
-}
-
-export const UiAsFunction: Story = {
-  name: 'UI como función',
-  args: {
-    ui: {
-      root: (context: EmptyContext) => ({
-        class: 'border bg-muted/30',
-        'data-media-variant': context.mediaVariant,
-      }),
-      label: (context: EmptyContext) => ({ title: context.label }),
-    },
-  },
-  parameters: {
-    controls: { exclude: ['ui'] },
-    docs: { description: { story: 'Cada función de `ui` recibe el mismo `EmptyContext`.' } },
-  },
 }

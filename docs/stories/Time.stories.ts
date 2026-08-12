@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-import { Time, type TimeContext } from '@/components/ui/Time'
+import { Time } from '@/components/ui/Time'
 
 const datetime = '2024-01-15T13:45:00.000Z'
 
@@ -94,67 +94,3 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {}
-
-export const Locales: Story = {
-  parameters: { controls: { disable: true } },
-  render: () => ({
-    components: { Time },
-    setup: () => ({ datetime }),
-    template: `
-      <div class="grid gap-3">
-        <div v-for="locale in ['es-ES', 'en-US', 'fr-FR', 'ja-JP']" :key="locale" class="grid grid-cols-[4rem_1fr] gap-4">
-          <code class="text-xs text-muted-foreground">{{ locale }}</code>
-          <Time :datetime="datetime" :locale="locale" :format="{ dateStyle: 'long' }" />
-        </div>
-      </div>
-    `,
-  }),
-}
-
-export const Formats: Story = {
-  parameters: { controls: { disable: true } },
-  render: () => ({
-    components: { Time },
-    setup: () => ({ datetime }),
-    template: `
-      <div class="grid gap-3">
-        <Time :datetime="datetime" locale="es-ES" :format="{ dateStyle: 'full' }" />
-        <Time :datetime="datetime" locale="es-ES" :format="{ dateStyle: 'short' }" />
-        <Time :datetime="datetime" locale="es-ES" :format="{ hour: '2-digit', minute: '2-digit', hour12: false }" />
-      </div>
-    `,
-  }),
-}
-
-export const CustomSlot: Story = {
-  name: 'Slot personalizado',
-  parameters: { controls: { disable: true } },
-  render: () => ({
-    components: { Time },
-    setup: () => ({ datetime }),
-    template: `
-      <Time :datetime="datetime" locale="es-ES" :format="{ dateStyle: 'long' }" v-slot="{ date }">
-        Publicado el <strong>{{ date }}</strong>
-      </Time>
-    `,
-  }),
-}
-
-export const UiAsFunction: Story = {
-  name: 'UI como función',
-  args: {
-    ui: {
-      root: (context: TimeContext) => ({
-        class: 'font-medium text-primary',
-        title: context.date,
-        'data-locale': Array.isArray(context.locale) ? context.locale.join(',') : context.locale,
-      }),
-    },
-  },
-  parameters: {
-    controls: { exclude: ['ui'] },
-    docs: {
-      description: { story: '`ui.root` recibe el valor original y la fecha ya formateada.' },
-    },
-  },
-}

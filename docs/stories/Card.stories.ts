@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { Button } from '@/components/ui/Button'
-import { Card, type CardContext } from '@/components/ui/Card'
+import { Card } from '@/components/ui/Card'
 
 const meta = {
   title: 'Componentes/Card',
@@ -134,38 +134,4 @@ export const Playground: Story = {
       </Card>
     `,
   }),
-}
-
-export const CustomHeader: Story = {
-  name: 'Cabecera personalizada',
-  parameters: { controls: { disable: true } },
-  render: () => ({
-    components: { Card },
-    template: `
-      <Card>
-        <template #header="{ label }">
-          <div class="px-6 text-lg font-semibold">{{ label || 'Informe mensual' }}</div>
-        </template>
-        <p class="text-sm text-muted-foreground">Contenido de la tarjeta.</p>
-      </Card>
-    `,
-  }),
-}
-
-export const UiAsFunction: Story = {
-  name: 'UI como función',
-  args: {
-    ui: {
-      root: (context: CardContext) => ({
-        class: 'border-primary/40',
-        'aria-label': context.label,
-      }),
-      label: () => ({ class: 'text-primary' }),
-      footer: () => ({ class: 'border-t' }),
-    },
-  },
-  parameters: {
-    controls: { exclude: ['ui'] },
-    docs: { description: { story: 'Cada función de `ui` recibe el mismo `CardContext`.' } },
-  },
 }

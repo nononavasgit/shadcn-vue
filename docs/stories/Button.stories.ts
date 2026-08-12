@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite'
-import { Button, type ButtonContext } from '@/components/ui/Button'
+import { Button } from '@/components/ui/Button'
 import { ICONS } from '@/components/ui/Icon/icons'
 
 const sizes = ['xs', 'sm', 'md', 'lg'] as const
@@ -225,89 +225,3 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Playground: Story = {}
-
-export const Variants: Story = {
-  parameters: { controls: { disable: true }, layout: 'padded' },
-  render: () => ({
-    components: { Button },
-    setup: () => ({ variants, severities }),
-    template: `
-      <div class="grid gap-4">
-        <div v-for="variant in variants" :key="variant" class="flex flex-wrap items-center gap-3">
-          <code class="w-16 text-xs text-muted-foreground">{{ variant }}</code>
-          <Button v-for="severity in severities" :key="severity" :label="severity" :variant="variant" :severity="severity" />
-        </div>
-      </div>
-    `,
-  }),
-}
-
-export const Sizes: Story = {
-  parameters: { controls: { disable: true } },
-  render: () => ({
-    components: { Button },
-    setup: () => ({ sizes }),
-    template: `<div class="flex items-center gap-4"><Button v-for="size in sizes" :key="size" :label="size" :size="size" /></div>`,
-  }),
-}
-
-export const Icons: Story = {
-  parameters: { controls: { disable: true } },
-  render: () => ({
-    components: { Button },
-    template: `
-      <div class="flex flex-wrap items-center gap-3">
-        <Button label="Guardar" icon="save" />
-        <Button label="Continuar" trailing-icon="chevronRight" variant="outline" />
-        <Button aria-label="Buscar" icon="search" square />
-        <Button aria-label="Eliminar" icon="trash2" square rounded severity="error" />
-      </div>
-    `,
-  }),
-}
-
-export const Loading: Story = {
-  args: { label: 'Guardando', loading: true, icon: 'save' },
-}
-
-export const CustomColor: Story = {
-  name: 'Color personalizado',
-  args: { label: 'Personalizado', color: '#7c3aed', icon: 'check' },
-}
-
-export const Slots: Story = {
-  parameters: { controls: { disable: true } },
-  render: () => ({
-    components: { Button },
-    template: `
-      <Button variant="outline">
-        <template #leading><span aria-hidden="true">★</span></template>
-        Contenido personalizado
-        <template #trailing><span aria-hidden="true">→</span></template>
-      </Button>
-    `,
-  }),
-}
-
-export const UiAsFunction: Story = {
-  name: 'UI como función',
-  args: {
-    label: 'Condicional',
-    severity: 'success',
-    ui: {
-      root: (context: ButtonContext) => ({
-        class: context.loading ? 'opacity-70' : 'tracking-wide',
-        'data-variant': context.variant,
-        'aria-label': `${context.label}: ${context.severity}`,
-      }),
-    },
-  },
-  parameters: {
-    controls: { exclude: ['ui'] },
-    docs: {
-      description: {
-        story: '`ui.root` recibe `ButtonContext` y devuelve atributos HTML para la raíz.',
-      },
-    },
-  },
-}

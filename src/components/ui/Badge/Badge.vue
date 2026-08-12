@@ -42,7 +42,6 @@ const rootProps = computed(() => {
     ...attrs,
     ...rootUI,
     as: props.as,
-    asChild: props.asChild,
     class: cn(calculatedVariants, attrs.class, rootUI.class),
     style: [colorStyle.value, attrs.style, rootUI.style],
   }

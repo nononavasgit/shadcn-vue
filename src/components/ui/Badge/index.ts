@@ -203,7 +203,7 @@ export interface BadgeUI {
   root?: BadgeFn<HTMLAttributes>
 }
 
-export interface BadgeProps extends PrimitiveProps {
+export interface BadgeProps extends Pick<PrimitiveProps, 'as'> {
   label?: string
   size?: BadgeVariants['size']
   variant?: BadgeVariants['variant']
@@ -216,7 +216,6 @@ export interface BadgeProps extends PrimitiveProps {
 
 export interface BadgeContext {
   as: BadgeProps['as']
-  asChild: BadgeProps['asChild']
   label: BadgeProps['label']
   size: BadgeProps['size']
   variant: BadgeProps['variant']
@@ -227,11 +226,10 @@ export interface BadgeContext {
 }
 
 export function createBadgeContext(props: BadgeProps): BadgeContext {
-  const { as, asChild, label, size, variant, severity, color, icon, trailingIcon } = props
+  const { as, label, size, variant, severity, color, icon, trailingIcon } = props
 
   return {
     as,
-    asChild,
     label,
     size,
     variant,

@@ -179,7 +179,6 @@ describe('Badge', () => {
     it('Badge context', () => {
       const props = {
         as: 'span',
-        asChild: false,
         label: 'Nuevo',
         size: 'lg',
         variant: 'outline',
@@ -196,7 +195,6 @@ describe('Badge', () => {
 
       expect(context).toEqual({
         as: 'span',
-        asChild: false,
         label: 'Nuevo',
         size: 'lg',
         variant: 'outline',
@@ -213,7 +211,6 @@ describe('Badge', () => {
       mount(Badge, {
         props: {
           as: 'span',
-          asChild: false,
           label: 'Nuevo',
           size: 'lg',
           variant: 'outline',
@@ -227,7 +224,6 @@ describe('Badge', () => {
 
       expect(root).toHaveBeenCalledWith({
         as: 'span',
-        asChild: false,
         label: 'Nuevo',
         size: 'lg',
         variant: 'outline',
@@ -244,7 +240,6 @@ describe('Badge', () => {
       mount(Badge, {
         props: {
           as: 'span',
-          asChild: false,
           label: 'Nuevo',
           size: 'lg',
           variant: 'outline',
@@ -260,7 +255,6 @@ describe('Badge', () => {
 
       expect(slot).toHaveBeenCalledWith({
         as: 'span',
-        asChild: false,
         label: 'Nuevo',
         size: 'lg',
         variant: 'outline',

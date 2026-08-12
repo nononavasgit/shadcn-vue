@@ -3,6 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "vite --config ../vite.docs.config.ts",
+    "build": "vite build --config ../vite.docs.config.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o storybook-static"
   },

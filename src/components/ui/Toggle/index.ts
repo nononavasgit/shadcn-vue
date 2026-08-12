@@ -1,8 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
-import type { ToggleProps as TogglePropsReka } from 'reka-ui'
+import type { ToggleProps as RekaToggleProps } from 'reka-ui'
 import type { NormalizeIconProps } from '@/components/ui/Icon'
-import type { EmitsAsProps } from '@/types/emits'
 
 export { default as Toggle } from './Toggle.vue'
 
@@ -126,12 +125,6 @@ export type ToggleVariants = VariantProps<typeof toggleVariants>
 export type ToggleValue = boolean
 export type ToggleState = 'on' | 'off'
 
-// Props Reka
-export type ToggleRootProps = Pick<
-  TogglePropsReka,
-  'as' | 'asChild' | 'name' | 'required' | 'disabled'
->
-
 // Fn
 export type ToggleFn<T> = (context: ToggleContext) => T
 
@@ -141,7 +134,7 @@ export interface ToggleUI {
 }
 
 // Props
-export interface ToggleProps extends ToggleRootProps {
+export interface ToggleProps extends Pick<RekaToggleProps, 'disabled'> {
   value?: ToggleValue
   label?: string
   icon?: NormalizeIconProps

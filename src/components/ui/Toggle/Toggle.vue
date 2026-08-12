@@ -16,8 +16,6 @@ import {
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<ToggleProps>(), {
-  as: 'button',
-  asChild: false,
   label: undefined,
   icon: undefined,
   trailingIcon: undefined,
@@ -55,11 +53,9 @@ const rootProps = computed(() => {
   return {
     ...attrs,
     ...rootUI,
-    as: props.as,
-    asChild: props.asChild,
+    as: 'button' as const,
     disabled: props.disabled,
-    name: props.name,
-    required: props.required,
+    asChild: false,
     class: cn(
       'inline-flex shrink-0 items-center justify-center gap-2 rounded-md border border-transparent text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
       calculatedVariants,

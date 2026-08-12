@@ -14,6 +14,20 @@ describe('Toggle', () => {
       expect(toggle.text()).toBe('Bold')
     })
 
+    it('Render as native button', () => {
+      const toggle = mount(Toggle).get('[data-toggle-ui="root"]')
+
+      expect(toggle.element.tagName).toBe('BUTTON')
+    })
+
+    it('Render disabled', () => {
+      const toggle = mount(Toggle, {
+        props: { disabled: true },
+      }).get('[data-toggle-ui="root"]')
+
+      expect((toggle.element as HTMLButtonElement).disabled).toBe(true)
+    })
+
     it.each([
       ['xs', 'h-7'],
       ['sm', 'h-8'],

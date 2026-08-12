@@ -55,7 +55,6 @@ export default defineConfig({
         'src/assets/icons/**/*.ts',
         'src/index.js',
       ],
-      exclude: ['src/App.vue', 'src/main.ts'],
       rollupTypes: false,
       entryRoot: 'src',
     }),

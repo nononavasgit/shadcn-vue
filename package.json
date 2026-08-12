@@ -63,9 +63,12 @@
     "scripts"
   ],
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --config vite.docs.config.ts",
+    "dev:docs": "vite --config vite.docs.config.ts",
     "build": "vite build",
-    "preview": "vite preview",
+    "build:docs": "vite build --config vite.docs.config.ts",
+    "preview": "vite preview --config vite.docs.config.ts",
+    "preview:docs": "vite preview --config vite.docs.config.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",

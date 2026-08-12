@@ -65,8 +65,10 @@
   "scripts": {
     "dev": "vite --config vite.docs.config.ts",
     "dev:docs": "vite --config vite.docs.config.ts",
+    "storybook": "npm --prefix docs run storybook",
     "build": "vite build",
     "build:docs": "vite build --config vite.docs.config.ts",
+    "build:storybook": "npm --prefix docs run build-storybook",
     "preview": "vite preview --config vite.docs.config.ts",
     "preview:docs": "vite preview --config vite.docs.config.ts",
     "test": "vitest run",

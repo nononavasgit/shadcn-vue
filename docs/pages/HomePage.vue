@@ -3,6 +3,11 @@ import { RouterLink } from 'vue-router'
 
 const components = [
   {
+    name: 'ButtonGroup',
+    path: '/button-group',
+    description: 'Agrupa botones y controles relacionados en una sola unidad visual.',
+  },
+  {
     name: 'Separator',
     path: '/separator',
     description: 'Separa visual o semánticamente grupos de contenido.',

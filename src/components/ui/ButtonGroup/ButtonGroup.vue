@@ -1,36 +1,50 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { ButtonGroup as ButtonGroupBase } from '@/components/primitives/ButtonGroup'
-import { normalizeHTMLAttributes } from '@/composables/useNormalize'
+import { Primitive } from 'reka-ui'
+import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import type { ButtonGroupProps, ButtonGroupSlots } from '.'
+import {
+  buttonGroupVariants,
+  createButtonGroupContext,
+  type ButtonGroupProps,
+  type ButtonGroupSlots,
+} from '.'
 
 defineOptions({ inheritAttrs: false })
 
-defineSlots<ButtonGroupSlots>()
-
 const props = withDefaults(defineProps<ButtonGroupProps>(), {
+  as: 'div',
   orientation: 'horizontal',
+  size: 'md',
   ui: undefined,
 })
+defineSlots<ButtonGroupSlots>()
+
+const buttonGroupContext = computed(() => createButtonGroupContext(props))
+
 const attrs = useAttrs()
-const calculatedUI = computed(() => {
-  const rootUI = normalizeHTMLAttributes(props.ui?.root)
+const rootProps = computed(() => {
+  const rootUI = useUi(props.ui?.root, buttonGroupContext.value)
 
   return {
-    root: {
-      ...attrs,
-      ...rootUI,
-      orientation: props.orientation,
-      class: cn(attrs.class, rootUI.class),
-      style: [attrs.style, rootUI.style],
-    },
+    ...attrs,
+    ...rootUI,
+    as: props.as,
+    role: 'group',
+    'data-orientation': props.orientation,
+    'data-size': props.size,
+    class: cn(
+      buttonGroupVariants({ orientation: props.orientation, size: props.size }),
+      attrs.class,
+      rootUI.class,
+    ),
+    style: [attrs.style, rootUI.style],
   }
 })
 </script>
 
 <template>
-  <ButtonGroupBase v-bind="calculatedUI.root">
-    <slot />
-  </ButtonGroupBase>
+  <Primitive v-bind="rootProps" data-button-group-ui="root" data-button-group-slot="default">
+    <slot v-bind="buttonGroupContext" />
+  </Primitive>
 </template>

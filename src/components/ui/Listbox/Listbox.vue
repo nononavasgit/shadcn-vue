@@ -2,7 +2,7 @@
 import { computed, useAttrs, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ListboxContent, ListboxGroup, ListboxGroupLabel, ListboxRoot } from 'reka-ui'
-import { Input, normalizeInputProps } from '@/components/ui/Input'
+import { Input } from '@/components/ui/Input'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import ListboxOption from './ListboxOption.vue'
@@ -95,7 +95,7 @@ const filterProps = computed(() => {
 
   return {
     ...ui,
-    ...normalizeInputProps(props.filterInput),
+    ...props.filterInput,
     disabled: props.disabled || props.filterInput?.disabled,
     class: cn(
       'mb-1 focus-visible:border-input focus-visible:ring-0',

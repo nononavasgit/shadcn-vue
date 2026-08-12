@@ -38,18 +38,3 @@ export interface InputEmits {
 
 // Normalize
 export type NormalizeInputProps = InputProps & EmitsAsProps<InputEmits>
-
-export function normalizeInputProps(
-  source: NormalizeInputProps | null | undefined,
-): NormalizeInputProps | undefined {
-  if (!source) return undefined
-
-  const { value, ui, 'onUpdate:value': onUpdateValue, onValueChange } = source
-
-  return {
-    value,
-    ui,
-    'onUpdate:value': onUpdateValue,
-    onValueChange,
-  }
-}

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { Alert } from '@/components/ui/Alert'
 import { Toolbar, type ToolbarItemInput } from '@/components/ui/Toolbar'
 import {
   ToggleGroup,
@@ -112,6 +113,50 @@ const items = computed<ToolbarItemInput[]>(() => [
           />
           <code class="text-xs text-muted-foreground">{{ density }}</code>
         </div>
+      </section>
+
+      <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+        <h2 class="font-semibold">Alert</h2>
+
+        <Alert
+          label="Información"
+          description="La configuración se guardará automáticamente."
+          icon="info"
+        />
+
+        <Alert
+          label="Cambios guardados"
+          description="La nueva configuración ya está disponible."
+          icon="success"
+          severity="success"
+          variant="subtle"
+        />
+
+        <Alert
+          label="Revisa los permisos"
+          description="Algunos miembros todavía no tienen acceso al proyecto."
+          icon="warning"
+          severity="warning"
+          variant="outline"
+          closable
+          :close-button="{ label: 'Cerrar', variant: 'plain' }"
+        />
+
+        <Alert
+          label="No se pudo completar la operación"
+          description="Comprueba la conexión e inténtalo de nuevo."
+          icon="error"
+          severity="error"
+          variant="solid"
+        />
+
+        <Alert
+          label="Aviso personalizado"
+          description="Este ejemplo utiliza un color CSS en lugar de una severidad predefinida."
+          icon="info"
+          color="#0f766e"
+          variant="soft"
+        />
       </section>
     </div>
   </main>

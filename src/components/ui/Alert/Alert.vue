@@ -117,39 +117,28 @@ function close() {
 }
 </script>
 <template>
-  <div v-if="visible" v-bind="rootProps" data-alert-ui="root">
-    <div class="[&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current" data-alert-slot="icon">
+  <div v-if="visible" v-bind="rootProps">
+    <div class="[&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current">
       <slot name="icon" v-bind="alertContext">
-        <Icon v-if="iconProps?.name" v-bind="iconProps" data-alert="icon"></Icon>
+        <Icon v-if="iconProps?.name" v-bind="iconProps" data-test-alert-icon="icon"></Icon>
       </slot>
     </div>
 
-    <div
-      v-if="props.label || slots.label"
-      v-bind="labelProps"
-      data-alert-ui="label"
-      data-alert-slot="label"
-    >
+    <div v-if="props.label || slots.label" v-bind="labelProps" data-test-alert-label>
       <slot name="label" v-bind="alertContext">{{ props.label }}</slot>
     </div>
 
     <div
       v-if="props.description || slots.description"
       v-bind="descriptionProps"
-      data-alert-ui="description"
-      data-alert-slot="description"
+      data-test-alert-description
     >
       <slot name="description" v-bind="alertContext">{{ props.description }}</slot>
     </div>
 
-    <div
-      v-if="props.closable"
-      v-bind="closeButtonContainerProps"
-      data-alert-ui="closeButtonContainer"
-      data-alert-slot="close"
-    >
+    <div v-if="props.closable" v-bind="closeButtonContainerProps">
       <slot name="close" v-bind="alertContext">
-        <Button v-bind="closeButtonProps" data-alert="buttonClose" @click="close" />
+        <Button v-bind="closeButtonProps" @click="close" />
       </slot>
     </div>
   </div>

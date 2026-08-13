@@ -39,6 +39,8 @@ export const alertVariants = cva('', {
 })
 
 export type AlertVariants = VariantProps<typeof alertVariants>
+export type AlertVariant = NonNullable<AlertVariants['variant']>
+export type AlertSeverity = NonNullable<AlertVariants['severity']>
 
 // Fn
 export type AlertFn<T> = (context: AlertContext) => T
@@ -49,8 +51,8 @@ export interface AlertProps {
   description?: string
   icon?: NormalizeIconProps
   closeButton?: NormalizeButtonProps
-  variant?: AlertVariants['variant']
-  severity?: AlertVariants['severity']
+  variant?: AlertVariant
+  severity?: AlertSeverity
   color?: string
   closable?: boolean
   decorative?: boolean
@@ -70,29 +72,24 @@ export interface AlertContext {
   label: AlertProps['label']
   description: AlertProps['description']
   icon: AlertProps['icon']
-  closeButton: AlertProps['closeButton']
-  variant: AlertProps['variant']
-  severity: AlertProps['severity']
+  variant: NonNullable<AlertProps['variant']>
+  severity: NonNullable<AlertProps['severity']>
   color: AlertProps['color']
-  closable: AlertProps['closable']
-  decorative: AlertProps['decorative']
+  closable: boolean
+  decorative: boolean
   close: () => void
 }
 
 export function createAlertContext(props: AlertProps, close: () => void): AlertContext {
-  const { label, description, icon, closeButton, variant, severity, color, closable, decorative } =
-    props
-
   return {
-    label,
-    description,
-    icon,
-    closeButton,
-    variant,
-    severity,
-    color,
-    closable,
-    decorative,
+    label: props.label,
+    description: props.description,
+    icon: props.icon,
+    variant: props.variant ?? 'soft',
+    severity: props.severity ?? 'primary',
+    color: props.color,
+    closable: props.closable ?? false,
+    decorative: props.decorative ?? false,
     close,
   }
 }

@@ -1,8 +1,34 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Toolbar, type ToolbarItemInput } from '@/components/ui/Toolbar'
+import {
+  ToggleGroup,
+  type ToggleGroupItem,
+  type ToggleGroupModelValue,
+} from '@/components/ui/ToggleGroup'
 
 const bold = ref(false)
+const alignment = ref<ToggleGroupModelValue>('left')
+const formats = ref<ToggleGroupModelValue>(['bold'])
+const density = ref<ToggleGroupModelValue>('comfortable')
+
+const alignmentItems: ToggleGroupItem[] = [
+  { value: 'left', label: 'Izquierda', icon: 'chevronLeft' },
+  { value: 'center', label: 'Centro' },
+  { value: 'right', label: 'Derecha', trailingIcon: 'chevronRight' },
+]
+
+const formatItems: ToggleGroupItem[] = [
+  { value: 'bold', label: 'Negrita' },
+  { value: 'italic', label: 'Cursiva' },
+  { value: 'underline', label: 'Subrayado', disabled: true },
+]
+
+const densityItems: ToggleGroupItem[] = [
+  { value: 'compact', label: 'Compacta' },
+  { value: 'comfortable', label: 'Cómoda' },
+  { value: 'spacious', label: 'Espaciosa' },
+]
 
 const items = computed<ToolbarItemInput[]>(() => [
   {
@@ -42,7 +68,50 @@ const items = computed<ToolbarItemInput[]>(() => [
       </header>
 
       <section class="rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+        <h2 class="mb-4 font-semibold">Toolbar</h2>
         <Toolbar :items="items" aria-label="Herramientas del editor" />
+      </section>
+
+      <section class="grid gap-6 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+        <h2 class="font-semibold">ToggleGroup</h2>
+
+        <div class="grid gap-2">
+          <h3 class="text-sm font-medium">Selección única</h3>
+          <ToggleGroup
+            v-model:value="alignment"
+            :items="alignmentItems"
+            variant="outline"
+            mandatory
+            aria-label="Alineación"
+          />
+          <code class="text-xs text-muted-foreground">{{ alignment }}</code>
+        </div>
+
+        <div class="grid gap-2">
+          <h3 class="text-sm font-medium">Selección múltiple</h3>
+          <ToggleGroup
+            v-model:value="formats"
+            :items="formatItems"
+            type="multiple"
+            severity="primary"
+            :spacing="2"
+            aria-label="Formato"
+          />
+          <code class="text-xs text-muted-foreground">{{ formats }}</code>
+        </div>
+
+        <div class="grid gap-2">
+          <h3 class="text-sm font-medium">Orientación vertical</h3>
+          <ToggleGroup
+            v-model:value="density"
+            :items="densityItems"
+            orientation="vertical"
+            variant="outline"
+            size="sm"
+            aria-label="Densidad"
+          />
+          <code class="text-xs text-muted-foreground">{{ density }}</code>
+        </div>
       </section>
     </div>
   </main>

@@ -3,6 +3,7 @@ import { computed, useAttrs, watch } from 'vue'
 import type { CSSProperties } from 'vue'
 import { ToggleGroupItem, ToggleGroupRoot } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { toggleGroupVariants } from '@/components/ui/ToggleGroup'
 import { toggleVariants } from '@/components/ui/Toggle'
 import { useColor } from '@/composables'
 import { useUi } from '@/composables/useUi'
@@ -24,8 +25,6 @@ const props = withDefaults(defineProps<ToggleGroupProps>(), {
   rovingFocus: true,
   orientation: 'horizontal',
   loop: true,
-  as: 'div',
-  asChild: false,
   variant: 'plain',
   severity: 'default',
   size: 'md',
@@ -73,12 +72,10 @@ function isSelected(value: ToggleGroupValue) {
 }
 
 const toggleGroupContext = computed<ToggleGroupContext>(() => {
-  const { ui, ...toggleGroupProps } = props
-  void ui
-
   return {
-    props: toggleGroupProps,
     value: value.value,
+    orientation: props.orientation ?? 'horizontal',
+    disabled: props.disabled ?? false,
   }
 })
 
@@ -88,27 +85,19 @@ const rootProps = computed(() => {
   return {
     ...attrs,
     ...rootUI,
-    as: props.as,
-    asChild: props.asChild,
+    as: 'div' as const,
+    asChild: false,
     type: props.type,
     rovingFocus: props.rovingFocus,
     orientation: props.orientation,
     dir: props.dir,
     loop: props.loop,
     disabled: props.disabled,
-    name: props.name,
-    required: props.required,
-    'data-slot': 'toggle-group',
-    'data-orientation': props.orientation ?? 'horizontal',
-    'data-spacing': props.spacing,
     class: cn(
-      'group/toggle-group flex w-fit items-center gap-(--toggle-group-gap) data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch',
-      props.spacing === 0 &&
-        (props.orientation ?? 'horizontal') === 'horizontal' &&
-        '[&>*]:rounded-none [&>*+*]:border-l-0 [&>*:first-child]:rounded-l-md [&>*:last-child]:rounded-r-md',
-      props.spacing === 0 &&
-        props.orientation === 'vertical' &&
-        '[&>*]:rounded-none [&>*+*]:border-t-0 [&>*:first-child]:rounded-t-md [&>*:last-child]:rounded-b-md',
+      toggleGroupVariants({
+        orientation: props.orientation,
+        spaced: props.spacing > 0,
+      }),
       attrs.class,
       rootUI.class,
     ),
@@ -118,12 +107,10 @@ const rootProps = computed(() => {
 
 const itemContexts = computed<ToggleGroupItemContext[]>(() =>
   props.items.map((item, index) => ({
-    ...toggleGroupContext.value,
     item,
     index,
     selected: isSelected(item.value),
-    first: index === 0,
-    last: index === props.items.length - 1,
+    disabled: Boolean(props.disabled || item.disabled),
   })),
 )
 
@@ -131,16 +118,10 @@ function getItemProps(context: ToggleGroupItemContext) {
   const ui = useUi(props.ui?.item, context)
   return {
     ...ui,
-    as: context.item.as,
-    asChild: context.item.asChild,
+    as: 'button' as const,
+    asChild: false,
     value: context.item.value,
     disabled: context.item.disabled,
-    'data-variant': props.variant,
-    'data-severity': props.severity,
-    'data-size': props.size,
-    'data-slot': 'toggle-group-item',
-    'data-orientation': props.orientation ?? 'horizontal',
-    'data-spacing': props.spacing,
     class: cn(
       'inline-flex shrink-0 items-center justify-center gap-2 rounded-md border border-transparent text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:z-10 focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
       toggleVariants({
@@ -179,48 +160,41 @@ function getSlotNames(context: ToggleGroupItemContext) {
 }
 
 function getKey(context: ToggleGroupItemContext) {
-  return String(context.item.id)
+  return String(context.item.value)
 }
 </script>
 
 <template>
   <ToggleGroupRoot v-bind="rootProps" v-model="value">
-    <slot v-bind="toggleGroupContext">
-      <ToggleGroupItem
-        v-for="itemContext in itemContexts"
-        :key="getKey(itemContext)"
-        v-bind="getItemProps(itemContext)"
-      >
-        <slot :name="getSlotNames(itemContext).item" v-bind="itemContext">
-          <slot name="item" v-bind="itemContext">
-            <slot :name="getSlotNames(itemContext).leading" v-bind="itemContext">
-              <slot name="leading" v-bind="itemContext">
-                <Icon
-                  v-if="itemContext.item.icon"
-                  v-bind="getIconProps(itemContext)"
-                  data-slot="toggle-group-icon"
-                />
-              </slot>
+    <ToggleGroupItem
+      v-for="itemContext in itemContexts"
+      :key="getKey(itemContext)"
+      v-bind="getItemProps(itemContext)"
+    >
+      <slot :name="getSlotNames(itemContext).item" v-bind="itemContext">
+        <slot name="item" v-bind="itemContext">
+          <slot :name="getSlotNames(itemContext).leading" v-bind="itemContext">
+            <slot name="leading" v-bind="itemContext">
+              <Icon v-if="itemContext.item.icon" v-bind="getIconProps(itemContext)" />
             </slot>
+          </slot>
 
-            <slot :name="getSlotNames(itemContext).label" v-bind="itemContext">
-              <slot name="label" v-bind="itemContext">
-                <span v-bind="getLabelProps(itemContext)">{{ itemContext.item.label }}</span>
-              </slot>
+          <slot :name="getSlotNames(itemContext).label" v-bind="itemContext">
+            <slot name="label" v-bind="itemContext">
+              <span v-bind="getLabelProps(itemContext)">{{ itemContext.item.label }}</span>
             </slot>
+          </slot>
 
-            <slot :name="getSlotNames(itemContext).trailing" v-bind="itemContext">
-              <slot name="trailing" v-bind="itemContext">
-                <Icon
-                  v-if="itemContext.item.trailingIcon"
-                  v-bind="getTrailingIconProps(itemContext)"
-                  data-slot="toggle-group-trailing-icon"
-                />
-              </slot>
+          <slot :name="getSlotNames(itemContext).trailing" v-bind="itemContext">
+            <slot name="trailing" v-bind="itemContext">
+              <Icon
+                v-if="itemContext.item.trailingIcon"
+                v-bind="getTrailingIconProps(itemContext)"
+              />
             </slot>
           </slot>
         </slot>
-      </ToggleGroupItem>
-    </slot>
+      </slot>
+    </ToggleGroupItem>
   </ToggleGroupRoot>
 </template>

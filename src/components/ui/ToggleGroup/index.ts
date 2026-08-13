@@ -1,4 +1,5 @@
 import type { HTMLAttributes } from 'vue'
+import { cva } from 'class-variance-authority'
 import type {
   ToggleGroupItemProps as RekaToggleGroupItemProps,
   ToggleGroupRootProps as RekaToggleGroupRootProps,
@@ -9,32 +10,54 @@ import type { EmitsAsProps } from '@/types/emits'
 
 export { default as ToggleGroup } from './ToggleGroup.vue'
 
-export type ToggleGroupValue = string | number | bigint | Record<string, unknown> | null
+export const toggleGroupVariants = cva('group/toggle-group flex w-fit gap-(--toggle-group-gap)', {
+  variants: {
+    orientation: {
+      horizontal: 'items-center',
+      vertical: 'flex-col items-stretch',
+    },
+    spaced: {
+      true: '',
+      false: '[&>*]:rounded-none',
+    },
+  },
+  compoundVariants: [
+    {
+      orientation: 'horizontal',
+      spaced: false,
+      class: '[&>*+*]:border-l-0 [&>*:first-child]:rounded-l-md [&>*:last-child]:rounded-r-md',
+    },
+    {
+      orientation: 'vertical',
+      spaced: false,
+      class: '[&>*+*]:border-t-0 [&>*:first-child]:rounded-t-md [&>*:last-child]:rounded-b-md',
+    },
+  ],
+  defaultVariants: {
+    orientation: 'horizontal',
+    spaced: false,
+  },
+})
+
+export type ToggleGroupValue = string | number
 export type ToggleGroupModelValue = ToggleGroupValue | ToggleGroupValue[] | undefined
 
 // Props Reka
 export type ToggleGroupRootProps = Pick<
   RekaToggleGroupRootProps<ToggleGroupModelValue>,
-  | 'as'
-  | 'asChild'
-  | 'name'
-  | 'required'
-  | 'type'
-  | 'dir'
-  | 'loop'
-  | 'rovingFocus'
-  | 'disabled'
-  | 'orientation'
+  'type' | 'dir' | 'loop' | 'rovingFocus' | 'disabled' | 'orientation'
 >
 
-export type ToggleGroupItemProps = Pick<
-  RekaToggleGroupItemProps,
-  'as' | 'asChild' | 'value' | 'disabled'
->
+export type ToggleGroupItemProps = Pick<RekaToggleGroupItemProps, 'value' | 'disabled'>
+
+export type ToggleGroupType = NonNullable<ToggleGroupRootProps['type']>
+export type ToggleGroupOrientation = NonNullable<ToggleGroupRootProps['orientation']>
+export type ToggleGroupVariant = NonNullable<ToggleVariants['variant']>
+export type ToggleGroupSeverity = NonNullable<ToggleVariants['severity']>
+export type ToggleGroupSize = NonNullable<ToggleVariants['size']>
 
 // Item
 export interface ToggleGroupItem extends ToggleGroupItemProps {
-  id: string | number
   label?: string
   icon?: NormalizeIconProps
   trailingIcon?: NormalizeIconProps
@@ -43,10 +66,10 @@ export interface ToggleGroupItem extends ToggleGroupItemProps {
 // Props
 export interface ToggleGroupProps extends ToggleGroupRootProps {
   value?: ToggleGroupModelValue
-  variant?: ToggleVariants['variant']
-  severity?: ToggleVariants['severity']
-  size?: ToggleVariants['size']
-  color?: string
+  variant?: ToggleGroupVariant
+  severity?: ToggleGroupSeverity
+  size?: ToggleGroupSize
+  color?: ToggleVariants['color']
   spacing?: number
   mandatory?: boolean
   items?: ToggleGroupItem[]
@@ -66,16 +89,16 @@ export interface ToggleGroupUI {
 
 // Context
 export interface ToggleGroupContext {
-  props: Omit<ToggleGroupProps, 'ui'>
   value: ToggleGroupModelValue
+  orientation: NonNullable<ToggleGroupProps['orientation']>
+  disabled: boolean
 }
 
-export interface ToggleGroupItemContext extends ToggleGroupContext {
+export interface ToggleGroupItemContext {
   item: ToggleGroupItem
   index: number
   selected: boolean
-  first: boolean
-  last: boolean
+  disabled: boolean
 }
 
 // Emits
@@ -86,7 +109,6 @@ export interface ToggleGroupEmits {
 
 // Slots
 export type ToggleGroupSlots = {
-  default?(props: ToggleGroupContext): unknown
   item?(props: ToggleGroupItemContext): unknown
   leading?(props: ToggleGroupItemContext): unknown
   label?(props: ToggleGroupItemContext): unknown
@@ -100,57 +122,3 @@ export type ToggleGroupSlots = {
 
 // Normalize
 export type NormalizeToggleGroupProps = ToggleGroupProps & EmitsAsProps<ToggleGroupEmits>
-
-export function normalizeToggleGroupProps(
-  source: NormalizeToggleGroupProps | null | undefined,
-): NormalizeToggleGroupProps | undefined {
-  if (!source) return undefined
-
-  const {
-    as,
-    asChild,
-    name,
-    required,
-    type,
-    value,
-    dir,
-    loop,
-    rovingFocus,
-    disabled,
-    orientation,
-    variant,
-    severity,
-    size,
-    color,
-    spacing,
-    mandatory,
-    items,
-    ui,
-    'onUpdate:value': onUpdateValue,
-    onValueChange,
-  } = source
-
-  return {
-    as,
-    asChild,
-    name,
-    required,
-    type,
-    value,
-    dir,
-    loop,
-    rovingFocus,
-    disabled,
-    orientation,
-    variant,
-    severity,
-    size,
-    color,
-    spacing,
-    mandatory,
-    items,
-    ui,
-    'onUpdate:value': onUpdateValue,
-    onValueChange,
-  }
-}

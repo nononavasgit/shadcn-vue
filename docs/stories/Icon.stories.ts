@@ -3,6 +3,7 @@ import { Icon } from '@/components/ui/Icon'
 import { ICONS } from '@/components/ui/Icon/icons'
 
 const iconNames = Object.keys(ICONS)
+const sizes = ['xs', 'sm', 'md', 'lg'] as const
 
 const meta = {
   title: 'Componentes/Icon',
@@ -36,30 +37,15 @@ const meta = {
         type: { summary: "'xs' | 'sm' | 'md' | 'lg'" },
       },
     },
-    IconContext: {
+    NormalizeIconProps: {
       control: false,
-      description: 'Contexto entregado a las funciones de `ui`.',
+      description: 'Admite el nombre del icono o su configuración completa.',
       table: {
         category: 'Interfaces',
         readonly: true,
         type: {
-          summary: '{ name: IconName; size: IconSize; color: string }',
-          detail:
-            'interface IconContext {\n  name: IconName\n  size: IconSize | undefined\n  color: string | undefined\n}',
-        },
-      },
-    },
-    IconUI: {
-      control: false,
-      description:
-        '`root` es una función que recibe `IconContext` y devuelve atributos HTML para el SVG.',
-      table: {
-        category: 'Interfaces',
-        readonly: true,
-        type: {
-          summary: '{ root?: (context: IconContext) => HTMLAttributes }',
-          detail:
-            'interface IconUI {\n  root?: (context: IconContext) => HTMLAttributes\n}\n\n// HTMLAttributes admite class, style, id, role, aria-*, data-* y listeners HTML.',
+          summary: 'IconName | IconConfig',
+          detail: 'type NormalizeIconProps = IconName | IconConfig',
         },
       },
     },
@@ -74,7 +60,7 @@ const meta = {
     },
     size: {
       control: 'inline-radio',
-      options: ['xs', 'sm', 'md', 'lg'],
+      options: sizes,
       description: 'Tamaño del icono.',
       table: {
         category: 'Props',
@@ -89,15 +75,6 @@ const meta = {
         category: 'Props',
         type: { summary: 'string' },
         defaultValue: { summary: 'currentColor' },
-      },
-    },
-    ui: {
-      control: false,
-      description: 'Personaliza el SVG mediante `root: (context: IconContext) => HTMLAttributes`.',
-      table: {
-        category: 'Props',
-        type: { summary: 'IconUI' },
-        defaultValue: { summary: 'undefined' },
       },
     },
   },

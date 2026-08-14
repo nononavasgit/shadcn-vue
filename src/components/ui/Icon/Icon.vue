@@ -2,8 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { ICONS } from './icons.ts'
 import { cn } from '@/lib/utils'
-import { createIconContext, iconVariants, type IconProps } from '.'
-import { useUi } from '@/composables/useUi'
+import { iconVariants, type IconProps } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -15,21 +14,16 @@ const props = withDefaults(defineProps<IconProps>(), {
 const attrs = useAttrs()
 const icon = computed(() => ICONS[props.name])
 
-const iconContext = computed(() => createIconContext(props))
-
 const rootProps = computed(() => {
-  const rootUI = useUi(props.ui?.root, iconContext.value)
-
   return {
     'aria-hidden': true,
     ...attrs,
-    ...rootUI,
-    class: cn(iconVariants({ size: props.size }), rootUI.class, attrs.class),
-    style: [{ color: props.color }, rootUI.style, attrs.style],
+    class: cn(iconVariants({ size: props.size }), attrs.class),
+    style: [{ color: props.color }, attrs.style],
   }
 })
 </script>
 
 <template>
-  <component v-bind="rootProps" :is="icon" data-icon-ui="root" />
+  <component v-bind="rootProps" :is="icon" data-test-icon-root />
 </template>

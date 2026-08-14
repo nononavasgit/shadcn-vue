@@ -1,6 +1,6 @@
 import type { IconName } from './icons.ts'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { HTMLAttributes, toValue } from 'vue'
+import { toValue, type HTMLAttributes } from 'vue'
 
 export { default as Icon } from './Icon.vue'
 export type { IconName } from './icons.ts'
@@ -21,57 +21,24 @@ export const iconVariants = cva('shrink-0', {
 
 // Variants
 export type IconVariants = VariantProps<typeof iconVariants>
-
-// Fn
-export type IconFn<T> = (context: IconContext) => T
+export type IconSize = NonNullable<IconVariants['size']>
 
 // Props
 export interface IconProps {
   name: IconName
-  size?: IconVariants['size']
+  size?: IconSize
   color?: string
-  ui?: IconUI
-}
-
-// UI
-export interface IconUI {
-  root?: IconFn<HTMLAttributes>
-}
-
-// Context
-export interface IconContext {
-  name: IconProps['name']
-  color: IconProps['color']
-  size: IconProps['size']
-}
-
-export function createIconContext(props: IconProps): IconContext {
-  const { name, color, size } = props
-
-  return {
-    name,
-    color,
-    size,
-  }
 }
 
 // Normalize
 
-export type NormalizeIconProps = IconName | IconProps
+export type IconConfig = IconProps & HTMLAttributes
+export type NormalizeIconProps = IconName | IconConfig
 
-export function normalizeIconProps(
-  source: NormalizeIconProps | undefined | string,
-): IconProps | undefined {
+export function normalizeIconProps(source: NormalizeIconProps | undefined): IconConfig | undefined {
   const res = toValue(source)
 
   if (!res) return undefined
-  if (typeof res === 'string') return { name: res as IconName }
-  if (typeof res === 'object')
-    return {
-      name: res?.name,
-      size: res?.size,
-      color: res?.color,
-      ui: res?.ui,
-    }
-  return undefined
+  if (typeof res === 'string') return { name: res }
+  return res
 }

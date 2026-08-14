@@ -1,145 +1,106 @@
-import { mount } from '@vue/test-utils'
+import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 
-import { Icon, createIconContext } from '@/components/ui/Icon'
+import { Icon, normalizeIconProps, type IconProps } from '@/components/ui/Icon'
+
+function mountIcon(options: MountingOptions<IconProps> = {}) {
+  return mount(Icon, { props: { name: 'check' }, ...options })
+}
 
 describe('Icon', () => {
-  describe('Props', () => {
-    it('Render icon', () => {
-      const icon = mount(Icon, {
-        props: { name: 'chevronRight' },
-      })
+  describe('props', () => {
+    describe('name', () => {
+      it.each([
+        { input: 'check' as const, expected: 'lucide-check' },
+        { input: 'chevronRight' as const, expected: 'lucide-chevron-right' },
+        { input: 'error' as const, expected: 'lucide-circle-alert' },
+      ])('renders name=$input', ({ input, expected }) => {
+        const root = mountIcon({ props: { name: input } }).get('[data-test-icon-root]')
 
-      expect(icon.classes()).toContain('lucide-chevron-right')
-      expect(icon.classes()).not.toContain('lucide-check')
+        expect(root.classes()).toContain(expected)
+      })
     })
+
+    describe('size', () => {
+      it.each([
+        { input: 'xs' as const, expected: 'size-3' },
+        { input: 'sm' as const, expected: 'size-4' },
+        { input: 'md' as const, expected: 'size-5' },
+        { input: 'lg' as const, expected: 'size-6' },
+        { input: undefined, expected: 'size-5' },
+      ])('renders size=$input', ({ input, expected }) => {
+        const root = mountIcon({ props: { name: 'check', size: input } }).get(
+          '[data-test-icon-root]',
+        )
+
+        expect(root.classes()).toContain(expected)
+      })
+    })
+
+    describe('color', () => {
+      it.each([
+        { input: '#ff0000', expected: 'color: rgb(255, 0, 0)' },
+        { input: 'currentColor', expected: 'color: currentcolor' },
+        { input: undefined, expected: 'color: currentcolor' },
+      ])('renders color=$input', ({ input, expected }) => {
+        const root = mountIcon({ props: { name: 'check', color: input } }).get(
+          '[data-test-icon-root]',
+        )
+
+        expect(root.attributes('style')).toContain(expected)
+      })
+    })
+  })
+
+  describe('attrs', () => {
+    it('forwards arbitrary attrs to root', () => {
+      const root = mountIcon({
+        attrs: { id: 'status', role: 'img', 'aria-label': 'Status', 'data-testid': 'icon' },
+      }).get('[data-test-icon-root]')
+
+      expect(root.attributes('id')).toBe('status')
+      expect(root.attributes('role')).toBe('img')
+      expect(root.attributes('aria-label')).toBe('Status')
+      expect(root.attributes('data-testid')).toBe('icon')
+    })
+
+    it('forwards class and style to root', () => {
+      const root = mountIcon({
+        attrs: { class: 'custom-icon', style: 'opacity: 0.5' },
+      }).get('[data-test-icon-root]')
+
+      expect(root.classes()).toContain('custom-icon')
+      expect(root.attributes('style')).toContain('opacity: 0.5')
+    })
+  })
+
+  describe('normalizeIconProps contract', () => {
+    const onClick = vi.fn()
 
     it.each([
-      ['xs', 'size-3'],
-      ['sm', 'size-4'],
-      ['md', 'size-5'],
-      ['lg', 'size-6'],
-    ])('Render %s size', (size, expectedClass) => {
-      const icon = mount(Icon, {
-        props: {
-          name: 'check',
-          size,
-        },
-      })
-      expect(icon.classes()).toContain(expectedClass)
-    })
-
-    it('Render style color', () => {
-      const icon = mount(Icon, {
-        props: {
-          name: 'check',
+      { input: 'check' as const, expected: { name: 'check' } },
+      {
+        input: {
+          name: 'error' as const,
+          size: 'sm' as const,
           color: '#ff0000',
-        },
-      })
-
-      expect(icon.attributes('style')).toContain('color: rgb(255, 0, 0)')
-    })
-
-    it('Render color default', () => {
-      const icon = mount(Icon, {
-        props: { name: 'check' },
-      })
-
-      expect(icon.attributes('style')).toContain('color: currentcolor')
-    })
-
-    it('Render HTML Attributes by ui', () => {
-      const wrapper = mount(Icon, {
-        props: {
-          name: 'check',
-          color: '#ffffff',
-          size: 'md',
-          ui: {
-            root: () => ({ class: 'ui-root' }),
-          },
-        },
-      })
-
-      expect(wrapper.get('[data-icon-ui="root"]').classes()).toContain('ui-root')
-    })
-
-    it('Render HTML Attributes by ui function', () => {
-      const wrapper = mount(Icon, {
-        props: {
-          name: 'check',
-          color: '#ffffff',
-          size: 'md',
-          ui: {
-            root: () => ({ class: 'ui-root' }),
-          },
-        },
-      })
-
-      expect(wrapper.get('[data-icon-ui="root"]').classes()).toContain('ui-root')
-    })
-  })
-
-  describe('Attrs', () => {
-    it('Merge custom attrs, class and styles', () => {
-      const icon = mount(Icon, {
-        props: { name: 'check' },
-        attrs: {
           class: 'custom-icon',
-          style: 'opacity: 0.5',
-          'data-test': 'status-icon',
-          'aria-hidden': false,
+          'aria-label': 'Error',
+          onClick,
         },
-      })
-
-      expect(icon.classes()).toEqual(
-        expect.arrayContaining(['lucide-check', 'shrink-0', 'size-5', 'custom-icon']),
-      )
-      expect(icon.attributes('style')).toContain('color: currentcolor')
-      expect(icon.attributes('style')).toContain('opacity: 0.5')
-      expect(icon.attributes('data-test')).toBe('status-icon')
-      expect(icon.attributes('aria-hidden')).toBe('false')
-    })
-  })
-
-  describe('Context', () => {
-    it('Icon context', () => {
-      const context = createIconContext({
-        name: 'check',
-        color: '#ffffff',
-        size: 'lg',
-        ui: {
-          root: () => ({ class: 'ui-root' }),
+        expected: {
+          name: 'error',
+          size: 'sm',
+          color: '#ff0000',
+          class: 'custom-icon',
+          'aria-label': 'Error',
+          onClick,
         },
-      })
-
-      expect(context).toEqual({
-        name: 'check',
-        color: '#ffffff',
-        size: 'lg',
-      })
-    })
-
-    it('Icon context to ui.root function', () => {
-      const root = vi.fn(() => ({
-        class: 'ui-root',
-      }))
-
-      mount(Icon, {
-        props: {
-          name: 'check',
-          color: '#ffffff',
-          size: 'lg',
-          ui: {
-            root,
-          },
-        },
-      })
-
-      expect(root).toHaveBeenCalledWith({
-        name: 'check',
-        color: '#ffffff',
-        size: 'lg',
-      })
+      },
+      { input: undefined, expected: undefined },
+      { input: '', expected: undefined },
+    ])('normalizes $input', ({ input, expected }) => {
+      expect(normalizeIconProps(input)).toEqual(expected)
     })
   })
 })

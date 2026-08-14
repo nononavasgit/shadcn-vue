@@ -2,10 +2,12 @@ import type { HTMLAttributes } from 'vue'
 
 export { default as Card } from './Card.vue'
 
+export type CardLabel = string
+export type CardDescription = string
+
 export type CardFn<T> = (context: CardContext) => T
 
 export interface CardUI {
-  root?: CardFn<HTMLAttributes>
   header?: CardFn<HTMLAttributes>
   label?: CardFn<HTMLAttributes>
   description?: CardFn<HTMLAttributes>
@@ -15,8 +17,8 @@ export interface CardUI {
 }
 
 export interface CardProps {
-  label?: string
-  description?: string
+  label?: CardLabel
+  description?: CardDescription
   ui?: CardUI
 }
 

@@ -17,16 +17,13 @@ const cardContext = computed(() => createCardContext(props))
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
-  const rootUI = useUi(props.ui?.root, cardContext.value)
   return {
     ...attrs,
-    ...rootUI,
     class: cn(
       'flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm',
       attrs.class,
-      rootUI.class,
     ),
-    style: [attrs.style, rootUI.style],
+    style: attrs.style,
   }
 })
 
@@ -35,7 +32,7 @@ const headerProps = computed(() => {
   return {
     ...ui,
     class: cn(
-      '@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[card-slot=action]:grid-cols-[1fr_auto] [.border-b]:pb-6',
+      '@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-test-card-action:grid-cols-[1fr_auto] [.border-b]:pb-6',
       ui.class,
     ),
   }
@@ -66,7 +63,7 @@ const footerProps = computed(() => {
 </script>
 
 <template>
-  <div v-bind="rootProps" data-card-ui="root">
+  <div v-bind="rootProps" data-test-card-root>
     <div
       v-if="
         props.label ||
@@ -77,44 +74,32 @@ const footerProps = computed(() => {
         $slots.action
       "
       v-bind="headerProps"
-      data-card-ui="header"
-      data-card-slot="header"
+      data-test-card-header
     >
       <slot name="header" v-bind="cardContext">
-        <h3
-          v-if="props.label || $slots.label"
-          v-bind="labelProps"
-          data-card-ui="label"
-          data-card-slot="label"
-        >
+        <h3 v-if="props.label || $slots.label" v-bind="labelProps" data-test-card-label>
           <slot name="label" v-bind="cardContext">{{ props.label }}</slot>
         </h3>
 
         <p
           v-if="props.description || $slots.description"
           v-bind="descriptionProps"
-          data-card-ui="description"
-          data-card-slot="description"
+          data-test-card-description
         >
           <slot name="description" v-bind="cardContext">{{ props.description }}</slot>
         </p>
       </slot>
 
-      <div v-if="$slots.action" v-bind="actionProps" data-card-ui="action" data-card-slot="action">
+      <div v-if="$slots.action" v-bind="actionProps" data-test-card-action>
         <slot name="action" v-bind="cardContext" />
       </div>
     </div>
 
-    <div
-      v-if="$slots.default"
-      v-bind="contentProps"
-      data-card-ui="content"
-      data-card-slot="default"
-    >
+    <div v-if="$slots.default" v-bind="contentProps" data-test-card-content>
       <slot v-bind="cardContext" />
     </div>
 
-    <div v-if="$slots.footer" v-bind="footerProps" data-card-ui="footer" data-card-slot="footer">
+    <div v-if="$slots.footer" v-bind="footerProps" data-test-card-footer>
       <slot name="footer" v-bind="cardContext" />
     </div>
   </div>

@@ -17,6 +17,24 @@ const meta = {
   },
   decorators: [() => ({ template: '<div class="w-96"><story /></div>' })],
   argTypes: {
+    CardLabel: {
+      control: false,
+      description: 'Texto utilizado como título de la tarjeta.',
+      table: {
+        category: 'Interfaces',
+        readonly: true,
+        type: { summary: 'string' },
+      },
+    },
+    CardDescription: {
+      control: false,
+      description: 'Texto secundario utilizado como descripción de la tarjeta.',
+      table: {
+        category: 'Interfaces',
+        readonly: true,
+        type: { summary: 'string' },
+      },
+    },
     CardContext: {
       control: false,
       description: 'Contexto entregado a las funciones de `ui` y a todos los slots.',
@@ -26,7 +44,7 @@ const meta = {
         type: {
           summary: '{ label; description }',
           detail:
-            "interface CardContext {\n  label: CardProps['label']\n  description: CardProps['description']\n}",
+            'interface CardContext {\n  label: CardLabel | undefined\n  description: CardDescription | undefined\n}',
         },
       },
     },
@@ -37,9 +55,9 @@ const meta = {
         category: 'Interfaces',
         readonly: true,
         type: {
-          summary: '{ root; header; label; description; action; content; footer }',
+          summary: '{ header; label; description; action; content; footer }',
           detail:
-            'interface CardUI {\n  root?: (context: CardContext) => HTMLAttributes\n  header?: (context: CardContext) => HTMLAttributes\n  label?: (context: CardContext) => HTMLAttributes\n  description?: (context: CardContext) => HTMLAttributes\n  action?: (context: CardContext) => HTMLAttributes\n  content?: (context: CardContext) => HTMLAttributes\n  footer?: (context: CardContext) => HTMLAttributes\n}',
+            'interface CardUI {\n  header?: (context: CardContext) => HTMLAttributes\n  label?: (context: CardContext) => HTMLAttributes\n  description?: (context: CardContext) => HTMLAttributes\n  action?: (context: CardContext) => HTMLAttributes\n  content?: (context: CardContext) => HTMLAttributes\n  footer?: (context: CardContext) => HTMLAttributes\n}',
         },
       },
     },
@@ -82,16 +100,17 @@ const meta = {
     label: {
       control: 'text',
       description: 'Título de la tarjeta.',
-      table: { category: 'Props', type: { summary: 'string' } },
+      table: { category: 'Props', type: { summary: 'CardLabel' } },
     },
     description: {
       control: 'text',
       description: 'Texto secundario de la cabecera.',
-      table: { category: 'Props', type: { summary: 'string' } },
+      table: { category: 'Props', type: { summary: 'CardDescription' } },
     },
     ui: {
       control: 'object',
-      description: 'Personaliza las partes internas mediante funciones que reciben `CardContext`.',
+      description:
+        'Personaliza las partes internas mediante funciones que reciben `CardContext`. Los atributos del elemento raíz se pasan directamente al componente.',
       table: {
         category: 'Props',
         type: { summary: 'CardUI' },
@@ -111,7 +130,6 @@ type Story = StoryObj<typeof meta>
 export const Playground: Story = {
   args: {
     ui: {
-      root: () => ({}),
       header: () => ({}),
       label: () => ({}),
       description: () => ({}),

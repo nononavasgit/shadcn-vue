@@ -1,67 +1,33 @@
 import type {
-  AccordionContentProps as RekaAccordionContentProps,
   AccordionItemProps as RekaAccordionItemProps,
-  AccordionRootEmits,
   AccordionRootProps as RekaAccordionRootProps,
-  AccordionTriggerProps as RekaAccordionTriggerProps,
 } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 import type { NormalizeIconProps } from '@/components/ui/Icon'
 
 export { default as Accordion } from './Accordion.vue'
 
-export type AccordionValue = string | string[] | undefined
+export type AccordionItemValue = string
+export type AccordionValue = AccordionItemValue | AccordionItemValue[] | undefined
 
 export type AccordionRootProps = Pick<
   RekaAccordionRootProps,
-  | 'type'
-  | 'collapsible'
-  | 'modelValue'
-  | 'disabled'
-  | 'dir'
-  | 'orientation'
-  | 'unmountOnHide'
-  | 'as'
-  | 'asChild'
+  'type' | 'collapsible' | 'disabled' | 'unmountOnHide'
 >
+export type AccordionType = NonNullable<AccordionRootProps['type']>
 export type AccordionItemProps = Pick<
   RekaAccordionItemProps,
   'value' | 'disabled' | 'unmountOnHide'
 >
-export type AccordionTriggerProps = Pick<RekaAccordionTriggerProps, 'as' | 'asChild'>
-export type AccordionContentProps = Pick<RekaAccordionContentProps, 'as' | 'asChild' | 'forceMount'>
-
-export function normalizeAccordionTriggerProps(
-  source: AccordionTriggerProps | null | undefined,
-): AccordionTriggerProps | undefined {
-  if (!source) return undefined
-  const { as, asChild } = source
-  return { as, asChild }
-}
-
-export function normalizeAccordionContentProps(
-  source: AccordionContentProps | null | undefined,
-): AccordionContentProps | undefined {
-  if (!source) return undefined
-  const { as, asChild, forceMount } = source
-  return { as, asChild, forceMount }
-}
-
-export function normalizeAccordionItemProps(source: AccordionItemProps): AccordionItemProps {
-  const { value, disabled, unmountOnHide } = source
-  return { value, disabled, unmountOnHide }
-}
-
 export interface AccordionItem extends AccordionItemProps {
   label?: string
   description?: string
   icon?: NormalizeIconProps
-  trigger?: AccordionTriggerProps
-  content?: AccordionContentProps
 }
 
 // Props
 export interface AccordionProps extends AccordionRootProps {
+  value?: AccordionValue
   items?: AccordionItem[]
   iconDropDownOpen?: NormalizeIconProps
   iconDropDownClose?: NormalizeIconProps
@@ -82,11 +48,27 @@ export interface AccordionUI {
 
 // Context
 export interface AccordionContext {
-  props: Omit<AccordionProps, 'ui'>
   value: AccordionValue
+  type: AccordionType
+  collapsible: boolean
+  disabled: boolean
+  unmountOnHide: boolean
 }
 
-export interface AccordionItemContext extends AccordionContext {
+export function createAccordionContext(
+  props: AccordionProps,
+  value: AccordionValue,
+): AccordionContext {
+  return {
+    value,
+    type: props.type ?? 'single',
+    collapsible: props.collapsible ?? false,
+    disabled: props.disabled ?? false,
+    unmountOnHide: props.unmountOnHide ?? true,
+  }
+}
+
+export interface AccordionItemContext {
   item: AccordionItem
   index: number
   open: boolean
@@ -94,8 +76,26 @@ export interface AccordionItemContext extends AccordionContext {
   last: boolean
 }
 
+export function createAccordionItemContext(
+  item: AccordionItem,
+  index: number,
+  value: AccordionValue,
+  itemCount: number,
+): AccordionItemContext {
+  return {
+    item,
+    index,
+    open: Array.isArray(value) ? value.includes(item.value) : value === item.value,
+    first: index === 0,
+    last: index === itemCount - 1,
+  }
+}
+
 // Emits
-export type AccordionEmits = AccordionRootEmits
+export interface AccordionEmits {
+  'update:value': [value: AccordionValue]
+  valueChange: [value: AccordionValue]
+}
 
 // Slots
 export type AccordionSlots = {

@@ -1,163 +1,68 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { Alert } from '@/components/ui/Alert'
-import { Toolbar, type ToolbarItemInput } from '@/components/ui/Toolbar'
-import {
-  ToggleGroup,
-  type ToggleGroupItem,
-  type ToggleGroupModelValue,
-} from '@/components/ui/ToggleGroup'
+import { ref } from 'vue'
+import { Accordion, type AccordionItem, type AccordionValue } from '@/components/ui/Accordion'
+import ConfigProvider from '@/components/provider/ConfigProvider.vue'
 
-const bold = ref(false)
-const alignment = ref<ToggleGroupModelValue>('left')
-const formats = ref<ToggleGroupModelValue>(['bold'])
-const density = ref<ToggleGroupModelValue>('comfortable')
+const accordionSingle = ref<AccordionValue>('installation')
+const accordionMultiple = ref<AccordionValue>(['account'])
 
-const alignmentItems: ToggleGroupItem[] = [
-  { value: 'left', label: 'Izquierda', icon: 'chevronLeft' },
-  { value: 'center', label: 'Centro' },
-  { value: 'right', label: 'Derecha', trailingIcon: 'chevronRight' },
-]
-
-const formatItems: ToggleGroupItem[] = [
-  { value: 'bold', label: 'Negrita' },
-  { value: 'italic', label: 'Cursiva' },
-  { value: 'underline', label: 'Subrayado', disabled: true },
-]
-
-const densityItems: ToggleGroupItem[] = [
-  { value: 'compact', label: 'Compacta' },
-  { value: 'comfortable', label: 'Cómoda' },
-  { value: 'spacious', label: 'Espaciosa' },
-]
-
-const items = computed<ToolbarItemInput[]>(() => [
+const accordionItems: AccordionItem[] = [
   {
-    value: 'save',
-    type: 'button',
-    props: { label: 'Guardar', icon: 'save' },
+    value: 'installation',
+    label: 'Instalación',
+    description: 'Instala el paquete y registra sus estilos globales para empezar.',
+    icon: 'info',
   },
   {
-    value: 'docs',
-    type: 'link',
-    props: { label: 'Documentación', to: 'https://reka-ui.com', variant: 'plain' },
+    value: 'account',
+    label: 'Cuenta',
+    description: 'Gestiona tus datos personales, preferencias y sesiones activas.',
   },
-  { value: 'separator', type: 'separator' },
   {
-    value: 'bold',
-    type: 'toggle',
-    props: {
-      label: 'Negrita',
-      icon: 'check',
-      variant: 'plain',
-      value: bold.value,
-      'onUpdate:value': (value: boolean) => (bold.value = value),
-    },
+    value: 'disabled',
+    label: 'Sección deshabilitada',
+    description: 'Este contenido no se puede abrir.',
+    disabled: true,
   },
-  { value: 'invalid', type: 'unknown', props: { label: 'No se renderiza' } },
-])
+]
 </script>
 
 <template>
-  <main class="min-h-screen bg-background p-8 text-foreground">
-    <div class="mx-auto flex max-w-5xl flex-col gap-6">
-      <header>
-        <h1 class="text-2xl font-semibold">Component playground</h1>
-        <p class="text-sm text-muted-foreground">
-          Edita <code>docs/App.vue</code> para probar los componentes.
-        </p>
-      </header>
+  <ConfigProvider>
+    <main class="min-h-screen bg-background p-8 text-foreground">
+      <div class="mx-auto flex max-w-5xl flex-col gap-6">
+        <header>
+          <h1 class="text-2xl font-semibold">Accordion playground</h1>
+          <p class="text-sm text-muted-foreground">Ejemplos del componente Accordion.</p>
+        </header>
 
-      <section class="rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-        <h2 class="mb-4 font-semibold">Toolbar</h2>
-        <Toolbar :items="items" aria-label="Herramientas del editor" />
-      </section>
+        <section class="grid gap-6 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+          <div class="grid gap-2">
+            <h2 class="font-semibold">Selección única y colapsable</h2>
+            <Accordion
+              v-model:value="accordionSingle"
+              :items="accordionItems"
+              collapsible
+              dir="rtl"
+              @value-change="console.log('Accordion single:', $event)"
+            />
+            <code class="text-xs text-muted-foreground">{{ accordionSingle }}</code>
+          </div>
 
-      <section class="grid gap-6 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-        <h2 class="font-semibold">ToggleGroup</h2>
-
-        <div class="grid gap-2">
-          <h3 class="text-sm font-medium">Selección única</h3>
-          <ToggleGroup
-            v-model:value="alignment"
-            :items="alignmentItems"
-            variant="outline"
-            mandatory
-            aria-label="Alineación"
-          />
-          <code class="text-xs text-muted-foreground">{{ alignment }}</code>
-        </div>
-
-        <div class="grid gap-2">
-          <h3 class="text-sm font-medium">Selección múltiple</h3>
-          <ToggleGroup
-            v-model:value="formats"
-            :items="formatItems"
-            type="multiple"
-            severity="primary"
-            :spacing="2"
-            aria-label="Formato"
-          />
-          <code class="text-xs text-muted-foreground">{{ formats }}</code>
-        </div>
-
-        <div class="grid gap-2">
-          <h3 class="text-sm font-medium">Orientación vertical</h3>
-          <ToggleGroup
-            v-model:value="density"
-            :items="densityItems"
-            orientation="vertical"
-            variant="outline"
-            size="sm"
-            aria-label="Densidad"
-          />
-          <code class="text-xs text-muted-foreground">{{ density }}</code>
-        </div>
-      </section>
-
-      <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-        <h2 class="font-semibold">Alert</h2>
-
-        <Alert
-          label="Información"
-          description="La configuración se guardará automáticamente."
-          icon="info"
-        />
-
-        <Alert
-          label="Cambios guardados"
-          description="La nueva configuración ya está disponible."
-          icon="success"
-          severity="success"
-          variant="subtle"
-        />
-
-        <Alert
-          label="Revisa los permisos"
-          description="Algunos miembros todavía no tienen acceso al proyecto."
-          icon="warning"
-          severity="warning"
-          variant="outline"
-          closable
-          :close-button="{ label: 'Cerrar', variant: 'plain' }"
-        />
-
-        <Alert
-          label="No se pudo completar la operación"
-          description="Comprueba la conexión e inténtalo de nuevo."
-          icon="error"
-          severity="error"
-          variant="solid"
-        />
-
-        <Alert
-          label="Aviso personalizado"
-          description="Este ejemplo utiliza un color CSS en lugar de una severidad predefinida."
-          icon="info"
-          color="#0f766e"
-          variant="soft"
-        />
-      </section>
-    </div>
-  </main>
+          <div class="grid gap-2">
+            <h2 class="font-semibold">Selección múltiple con contenido personalizado</h2>
+            <Accordion v-model:value="accordionMultiple" :items="accordionItems" type="multiple">
+              <template #content="{ item, open }">
+                <p>
+                  {{ item.description }}
+                  <span class="font-medium">Estado: {{ open ? 'abierto' : 'cerrado' }}</span>
+                </p>
+              </template>
+            </Accordion>
+            <code class="text-xs text-muted-foreground">{{ accordionMultiple }}</code>
+          </div>
+        </section>
+      </div>
+    </main>
+  </ConfigProvider>
 </template>

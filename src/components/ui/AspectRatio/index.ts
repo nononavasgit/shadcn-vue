@@ -1,41 +1,21 @@
-import type { HTMLAttributes } from 'vue'
-import type { AspectRatioProps as AspectRatioPropsReka } from 'reka-ui'
-
 export { default as AspectRatio } from './AspectRatio.vue'
 
-// Fn
-export type AspectRatioFn<T> = (context: AspectRatioContext) => T
+export type AspectRatioRatio = number
 
-// Props
-export interface AspectRatioProps extends Pick<AspectRatioPropsReka, 'as' | 'asChild' | 'ratio'> {
-  ui?: AspectRatioUI
+export interface AspectRatioProps {
+  ratio?: AspectRatioRatio
 }
 
-// UI
-export interface AspectRatioUI {
-  root?: AspectRatioFn<HTMLAttributes>
-}
-
-// Context
 export interface AspectRatioContext {
-  as: AspectRatioProps['as']
-  asChild: AspectRatioProps['asChild']
-  ratio: AspectRatioProps['ratio']
-  aspect: number
+  ratio: AspectRatioRatio
 }
 
 export function createAspectRatioContext(props: AspectRatioProps): AspectRatioContext {
-  const { as, asChild, ratio } = props
-
   return {
-    as,
-    asChild,
-    ratio,
-    aspect: ratio ?? 1,
+    ratio: props.ratio ?? 1,
   }
 }
 
-// Slots
 export interface AspectRatioSlots {
   default?(props: AspectRatioContext): unknown
 }

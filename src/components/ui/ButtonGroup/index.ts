@@ -1,6 +1,4 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { HTMLAttributes } from 'vue'
-import type { PrimitiveProps } from 'reka-ui'
 
 export { default as ButtonGroup } from './ButtonGroup.vue'
 
@@ -29,30 +27,23 @@ export const buttonGroupVariants = cva(
 )
 
 export type ButtonGroupVariants = VariantProps<typeof buttonGroupVariants>
+export type ButtonGroupOrientation = NonNullable<ButtonGroupVariants['orientation']>
+export type ButtonGroupSize = NonNullable<ButtonGroupVariants['size']>
 
-export type ButtonGroupFn<T> = (context: ButtonGroupContext) => T
-
-export interface ButtonGroupUI {
-  root?: ButtonGroupFn<HTMLAttributes>
-}
-
-export interface ButtonGroupProps extends Pick<PrimitiveProps, 'as'> {
-  orientation?: ButtonGroupVariants['orientation']
-  size?: ButtonGroupVariants['size']
-  ui?: ButtonGroupUI
+export interface ButtonGroupProps {
+  orientation?: ButtonGroupOrientation
+  size?: ButtonGroupSize
 }
 
 export interface ButtonGroupContext {
-  orientation: ButtonGroupProps['orientation']
-  size: ButtonGroupProps['size']
+  orientation: ButtonGroupOrientation
+  size: ButtonGroupSize
 }
 
 export function createButtonGroupContext(props: ButtonGroupProps): ButtonGroupContext {
-  const { orientation, size } = props
-
   return {
-    orientation,
-    size,
+    orientation: props.orientation ?? 'horizontal',
+    size: props.size ?? 'md',
   }
 }
 

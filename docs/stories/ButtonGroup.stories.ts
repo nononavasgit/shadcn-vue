@@ -2,6 +2,10 @@ import type { Meta, StoryObj } from '@storybook/vue3-vite'
 import { Button } from '@/components/ui/Button'
 import { ButtonGroup } from '@/components/ui/ButtonGroup'
 
+const orientations = ['horizontal', 'vertical'] as const
+const sizes = ['xs', 'sm', 'md', 'lg'] as const
+const contextType = { summary: 'ButtonGroupContext' }
+
 const meta = {
   title: 'Componentes/ButtonGroup',
   component: ButtonGroup,
@@ -46,37 +50,14 @@ const meta = {
         },
       },
     },
-    ButtonGroupUI: {
-      control: false,
-      description:
-        '`root` es una función que recibe `ButtonGroupContext` y devuelve atributos HTML.',
-      table: {
-        category: 'Interfaces',
-        readonly: true,
-        type: {
-          summary: '{ root?: (context: ButtonGroupContext) => HTMLAttributes }',
-          detail:
-            'interface ButtonGroupUI {\n  root?: (context: ButtonGroupContext) => HTMLAttributes\n}\n\n// HTMLAttributes admite class, style, id, role, aria-*, data-* y listeners HTML.',
-        },
-      },
-    },
     default: {
-      name: 'default',
       control: false,
       description: 'Contenido del grupo. Recibe el contexto efectivo mediante sus slot props.',
-      table: {
-        category: 'Slots',
-        readonly: true,
-        type: {
-          summary: 'slotProps: ButtonGroupContext',
-          detail:
-            'default?(slotProps: ButtonGroupContext): unknown\n\nUso: <ButtonGroup v-slot="{ orientation, size }">…</ButtonGroup>',
-        },
-      },
+      table: { category: 'Slots', readonly: true, type: contextType },
     },
     orientation: {
       control: 'inline-radio',
-      options: ['horizontal', 'vertical'],
+      options: orientations,
       description: 'Dirección en la que se distribuyen los controles.',
       table: {
         category: 'Props',
@@ -86,7 +67,7 @@ const meta = {
     },
     size: {
       control: 'select',
-      options: ['xs', 'sm', 'md', 'lg'],
+      options: sizes,
       description: 'Tamaño común aplicado a los hijos.',
       table: {
         category: 'Props',
@@ -94,27 +75,8 @@ const meta = {
         defaultValue: { summary: 'md' },
       },
     },
-    as: {
-      control: 'text',
-      description: 'Elemento o componente usado como raíz.',
-      table: { category: 'Props', defaultValue: { summary: 'div' } },
-    },
-    ui: {
-      control: false,
-      description:
-        'Personaliza las partes internas mediante funciones. Admite `root: (context) => HTMLAttributes`.',
-      table: {
-        category: 'Props',
-        type: {
-          summary: 'ButtonGroupUI',
-          detail: '{ root?: (context: ButtonGroupContext) => HTMLAttributes }',
-        },
-        defaultValue: { summary: 'undefined' },
-      },
-    },
   },
   args: {
-    as: 'div',
     orientation: 'horizontal',
     size: 'md',
   },
@@ -134,12 +96,4 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Playground: Story = {
-  args: {
-    ui: {
-      root: () => {
-        return {}
-      },
-    },
-  },
-}
+export const Playground: Story = {}

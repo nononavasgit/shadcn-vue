@@ -1,7 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
-import { NormalizeIconProps } from '@/components/ui/Icon'
-import { PrimitiveProps } from 'reka-ui'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
 
 export { default as Badge } from './Badge.vue'
 
@@ -196,6 +195,9 @@ export const badgeVariants = cva(
 )
 
 export type BadgeVariants = VariantProps<typeof badgeVariants>
+export type BadgeSize = NonNullable<BadgeVariants['size']>
+export type BadgeVariant = NonNullable<BadgeVariants['variant']>
+export type BadgeSeverity = NonNullable<BadgeVariants['severity']>
 
 export type BadgeFn<T> = (context: BadgeContext) => T
 
@@ -203,11 +205,11 @@ export interface BadgeUI {
   root?: BadgeFn<HTMLAttributes>
 }
 
-export interface BadgeProps extends Pick<PrimitiveProps, 'as'> {
+export interface BadgeProps {
   label?: string
-  size?: BadgeVariants['size']
-  variant?: BadgeVariants['variant']
-  severity?: BadgeVariants['severity']
+  size?: BadgeSize
+  variant?: BadgeVariant
+  severity?: BadgeSeverity
   color?: string
   icon?: NormalizeIconProps
   trailingIcon?: NormalizeIconProps
@@ -215,28 +217,18 @@ export interface BadgeProps extends Pick<PrimitiveProps, 'as'> {
 }
 
 export interface BadgeContext {
-  as: BadgeProps['as']
-  label: BadgeProps['label']
-  size: BadgeProps['size']
-  variant: BadgeProps['variant']
-  severity: BadgeProps['severity']
+  size: BadgeSize
+  variant: BadgeVariant
+  severity: BadgeSeverity
   color: BadgeProps['color']
-  icon: BadgeProps['icon']
-  trailingIcon: BadgeProps['trailingIcon']
 }
 
 export function createBadgeContext(props: BadgeProps): BadgeContext {
-  const { as, label, size, variant, severity, color, icon, trailingIcon } = props
-
   return {
-    as,
-    label,
-    size,
-    variant,
-    severity,
-    color,
-    icon,
-    trailingIcon,
+    size: props.size ?? 'md',
+    variant: props.variant ?? 'solid',
+    severity: props.severity ?? 'primary',
+    color: props.color,
   }
 }
 

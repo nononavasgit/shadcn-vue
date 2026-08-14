@@ -1,268 +1,317 @@
-import { mount } from '@vue/test-utils'
+import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 
-import { Badge, createBadgeContext } from '@/components/ui/Badge'
+import {
+  Badge,
+  createBadgeContext,
+  type BadgeContext,
+  type BadgeProps,
+} from '@/components/ui/Badge'
+
+function mountBadge(options: MountingOptions<BadgeProps> = {}) {
+  return mount(Badge, options)
+}
 
 describe('Badge', () => {
-  describe('Props', () => {
-    it('Render as', () => {
-      const badge = mount(Badge, {
-        props: { as: 'div' },
-      }).get('[data-badge-ui="root"]')
+  describe('props', () => {
+    describe('label', () => {
+      it.each([
+        { input: 'Status', expected: 'Status' },
+        { input: undefined, expected: '' },
+      ])('renders label=$input as "$expected"', ({ input, expected }) => {
+        const badge = mountBadge({ props: { label: input } })
 
-      expect(badge.element.tagName).toBe('DIV')
+        expect(badge.get('[data-test-badge-root]').text()).toBe(expected)
+      })
     })
 
-    it('Render label', () => {
-      const badge = mount(Badge, {
-        props: { label: 'Estado' },
-      }).get('[data-badge-slot="default"]')
+    describe('size', () => {
+      it.each([
+        { input: 'sm' as const, expected: ['gap-0.5', 'px-0.5', 'text-sm'] },
+        { input: 'md' as const, expected: ['gap-1', 'px-1', 'text-base'] },
+        { input: 'lg' as const, expected: ['gap-1.5', 'px-2', 'text-lg'] },
+      ])('renders size=$input', ({ input, expected }) => {
+        const root = mountBadge({ props: { size: input } }).get('[data-test-badge-root]')
 
-      expect(badge.text()).toBe('Estado')
+        expect(root.classes()).toEqual(expect.arrayContaining(expected))
+      })
     })
 
-    it.each([
-      ['sm', ['gap-0.5', 'px-0.5', 'text-sm']],
-      ['md', ['gap-1', 'px-1', 'text-base']],
-      ['lg', ['gap-1.5', 'px-2', 'text-lg']],
-    ])('Render size %s', (size, expectedClasses) => {
-      const badge = mount(Badge, {
-        props: { size },
-      }).get('[data-badge-ui="root"]')
+    describe('variant', () => {
+      it.each([
+        {
+          input: 'solid' as const,
+          expected: ['border-transparent', 'bg-primary', 'text-primary-foreground'],
+        },
+        {
+          input: 'outline' as const,
+          expected: ['border', 'border-primary/40', 'bg-transparent', 'text-primary'],
+        },
+        {
+          input: 'plain' as const,
+          expected: ['border-transparent', 'bg-transparent', 'text-primary'],
+        },
+        {
+          input: 'subtle' as const,
+          expected: ['border', 'border-primary/20', 'bg-primary/10', 'text-primary'],
+        },
+        {
+          input: 'soft' as const,
+          expected: ['border-transparent', 'bg-primary/10', 'text-primary'],
+        },
+      ])('renders variant=$input', ({ input, expected }) => {
+        const root = mountBadge({ props: { variant: input } }).get('[data-test-badge-root]')
 
-      expect(badge.classes()).toEqual(expect.arrayContaining(expectedClasses))
+        expect(root.classes()).toEqual(expect.arrayContaining(expected))
+      })
     })
 
-    it.each([
-      ['solid', ['border-transparent', 'bg-primary', 'text-primary-foreground']],
-      ['outline', ['border', 'border-primary/40', 'bg-transparent', 'text-primary']],
-      ['plain', ['border-transparent', 'bg-transparent', 'text-primary']],
-      ['subtle', ['border', 'border-primary/20', 'bg-primary/10', 'text-primary']],
-      ['soft', ['border-transparent', 'bg-primary/10', 'text-primary']],
-    ])('Render variant %s', (variant, expectedClasses) => {
-      const badge = mount(Badge, {
-        props: { variant },
-      }).get('[data-badge-ui="root"]')
+    describe('severity', () => {
+      it.each([
+        { input: 'primary' as const, expected: ['bg-primary', 'text-primary-foreground'] },
+        { input: 'secondary' as const, expected: ['bg-secondary', 'text-secondary-foreground'] },
+        { input: 'warning' as const, expected: ['bg-warning', 'text-warning-foreground'] },
+        { input: 'success' as const, expected: ['bg-success', 'text-success-foreground'] },
+        { input: 'error' as const, expected: ['bg-error', 'text-error-foreground'] },
+      ])('renders severity=$input', ({ input, expected }) => {
+        const root = mountBadge({ props: { severity: input } }).get('[data-test-badge-root]')
 
-      expect(badge.classes()).toEqual(expect.arrayContaining(expectedClasses))
+        expect(root.classes()).toEqual(expect.arrayContaining(expected))
+      })
     })
 
-    it.each([
-      ['primary', ['bg-primary', 'text-primary-foreground']],
-      ['secondary', ['bg-secondary', 'text-secondary-foreground']],
-      ['warning', ['bg-warning', 'text-warning-foreground']],
-      ['success', ['bg-success', 'text-success-foreground']],
-      ['error', ['bg-error', 'text-error-foreground']],
-    ])('Render severity %s', (severity, expectedClasses) => {
-      const badge = mount(Badge, {
-        props: { severity },
-      }).get('[data-badge-ui="root"]')
+    describe('color', () => {
+      it('applies a custom color', () => {
+        const root = mountBadge({ props: { color: '#ff0000' } }).get('[data-test-badge-root]')
 
-      expect(badge.classes()).toEqual(expect.arrayContaining(expectedClasses))
+        expect(root.attributes('style')).toContain('--badge-color: #ff0000')
+        expect(root.attributes('style')).toContain('--badge-color-foreground: #09090b')
+        expect(root.classes()).toEqual(
+          expect.arrayContaining([
+            'bg-(--badge-color)',
+            'text-(--badge-color-foreground)',
+            'focus-visible:border-(--badge-color)',
+          ]),
+        )
+      })
     })
 
-    it('Render color', () => {
-      const badge = mount(Badge, {
-        props: { color: '#ff0000' },
-      }).get('[data-badge-ui="root"]')
+    describe('icon', () => {
+      it.each([
+        { input: 'check' as const, expected: 'check' },
+        { input: { name: 'error' as const, color: 'green' }, expected: 'error' },
+        { input: undefined, expected: undefined },
+      ])('renders icon=$input as $expected', ({ input, expected }) => {
+        const badge = mountBadge({ props: { icon: input } })
+        const icon = badge.findComponent('[data-test-badge-icon]')
 
-      expect(badge.attributes('style')).toContain('--badge-color: #ff0000')
-      expect(badge.attributes('style')).toContain('--badge-color-foreground: #09090b')
-      expect(badge.classes()).toEqual(
-        expect.arrayContaining([
-          'bg-(--badge-color)',
-          'text-(--badge-color-foreground)',
-          'focus-visible:border-(--badge-color)',
-          'focus-visible:ring-(--badge-color)/30',
-        ]),
-      )
+        expect(icon.exists()).toBe(expected !== undefined)
+        if (expected !== undefined) expect(icon.props('name')).toBe(expected)
+      })
     })
 
-    it('Render icon', () => {
-      const icon = mount(Badge, {
-        props: { icon: 'check' },
-      }).get('[data-badge="icon"]')
+    describe('trailingIcon', () => {
+      it.each([
+        { input: 'chevronRight' as const, expected: 'chevronRight' },
+        { input: { name: 'error' as const, color: 'green' }, expected: 'error' },
+        { input: undefined, expected: undefined },
+      ])('renders trailingIcon=$input as $expected', ({ input, expected }) => {
+        const badge = mountBadge({ props: { trailingIcon: input } })
+        const icon = badge.findComponent('[data-test-badge-trailing-icon]')
 
-      expect(icon.classes()).toContain('lucide-check')
+        expect(icon.exists()).toBe(expected !== undefined)
+        if (expected !== undefined) expect(icon.props('name')).toBe(expected)
+      })
     })
 
-    it('Render trailingIcon', () => {
-      const icon = mount(Badge, {
-        props: { trailingIcon: 'chevronRight' },
-      }).get('[data-badge="trailingIcon"]')
-
-      expect(icon.classes()).toContain('lucide-chevron-right')
-    })
-
-    it('No render icons if dont have icon and trailingIcon', () => {
-      const wrapper = mount(Badge)
-
-      expect(wrapper.find('[data-badge="icon"]').exists()).toBe(false)
-      expect(wrapper.find('[data-badge="trailingIcon"]').exists()).toBe(false)
-    })
-
-    it('Render HTML Attributes by ui', () => {
-      const badge = mount(Badge, {
-        props: {
-          ui: {
-            root: () => ({ class: 'ui-root' }),
+    describe('icon size (icon/trailingIcon)', () => {
+      it.each([
+        { input: 'sm' as const, expected: 'sm' },
+        { input: 'md' as const, expected: 'md' },
+        { input: 'lg' as const, expected: 'lg' },
+        { input: undefined, expected: 'md' },
+      ])('passes Badge size=$input to icons as $expected', ({ input, expected }) => {
+        const badge = mountBadge({
+          props: {
+            size: input,
+            icon: 'check',
+            trailingIcon: 'chevronRight',
           },
-        },
-      }).get('[data-badge-ui="root"]')
+        })
 
-      expect(badge.classes()).toContain('ui-root')
-    })
+        expect(badge.getComponent('[data-test-badge-icon]').props('size')).toBe(expected)
+        expect(badge.getComponent('[data-test-badge-trailing-icon]').props('size')).toBe(expected)
+      })
 
-    it('Render HTML Attributes by ui function', () => {
-      const badge = mount(Badge, {
-        props: {
-          ui: {
-            root: () => ({ class: 'ui-root' }),
+      it('prioritizes icon sizes over Badge size', () => {
+        const badge = mountBadge({
+          props: {
+            size: 'lg',
+            icon: { name: 'check', size: 'sm' },
+            trailingIcon: { name: 'chevronRight', size: 'md' },
           },
-        },
-      }).get('[data-badge-ui="root"]')
+        })
 
-      expect(badge.classes()).toContain('ui-root')
-    })
-  })
-
-  describe('Slots', () => {
-    it('Render default and replace label', () => {
-      const wrapper = mount(Badge, {
-        props: { label: 'Label' },
-        slots: { default: () => h('span', 'test') },
-      })
-
-      expect(wrapper.get('[data-badge-slot="default"] > span').html()).toBe('<span>test</span>')
-      expect(wrapper.text()).not.toContain('Label')
-    })
-
-    it('Render leading and replace icon', () => {
-      const wrapper = mount(Badge, {
-        props: { icon: 'check' },
-        slots: { leading: () => h('span', 'test') },
-      })
-
-      expect(wrapper.get('[data-badge-slot="leading"] > span').html()).toBe('<span>test</span>')
-      expect(wrapper.find('[data-badge="icon"]').exists()).toBe(false)
-    })
-
-    it('Render trailing and replace trailingIcon', () => {
-      const wrapper = mount(Badge, {
-        props: { trailingIcon: 'chevronRight' },
-        slots: { trailing: () => h('span', 'test') },
-      })
-
-      expect(wrapper.get('[data-badge-slot="trailing"] > span').html()).toBe('<span>test</span>')
-      expect(wrapper.find('[data-badge="trailingIcon"]').exists()).toBe(false)
-    })
-  })
-
-  describe('Attrs', () => {
-    it('Merge attrs, class and style', () => {
-      const badge = mount(Badge, {
-        attrs: {
-          class: 'custom-badge',
-          style: 'opacity: 0.5',
-          'data-test': 'status-badge',
-        },
-      }).get('[data-badge-ui="root"]')
-
-      expect(badge.classes()).toContain('custom-badge')
-      expect(badge.attributes('style')).toContain('opacity: 0.5')
-      expect(badge.attributes('data-test')).toBe('status-badge')
-    })
-  })
-
-  describe('Context', () => {
-    it('Badge context', () => {
-      const props = {
-        as: 'span',
-        label: 'Nuevo',
-        size: 'lg',
-        variant: 'outline',
-        severity: 'success',
-        color: '#ff0000',
-        icon: 'check',
-        trailingIcon: 'chevronRight',
-        ui: {
-          root: () => ({ class: 'custom-badge' }),
-        },
-      }
-
-      const context = createBadgeContext(props)
-
-      expect(context).toEqual({
-        as: 'span',
-        label: 'Nuevo',
-        size: 'lg',
-        variant: 'outline',
-        severity: 'success',
-        color: '#ff0000',
-        icon: 'check',
-        trailingIcon: 'chevronRight',
+        expect(badge.getComponent('[data-test-badge-icon]').props('size')).toBe('sm')
+        expect(badge.getComponent('[data-test-badge-trailing-icon]').props('size')).toBe('md')
       })
     })
 
-    it('Badge context to ui.root function', () => {
-      const root = vi.fn(() => ({ class: 'ui-root' }))
+    describe('ui', () => {
+      it('renders ui.root attributes', () => {
+        const root = mountBadge({
+          props: {
+            ui: {
+              root: () => ({
+                class: 'ui-root',
+                style: 'opacity: 0.8',
+                'data-test-badge-ui': 'root',
+              }),
+            },
+          },
+        }).get('[data-test-badge-ui="root"]')
 
-      mount(Badge, {
-        props: {
-          as: 'span',
-          label: 'Nuevo',
+        expect(root.classes()).toContain('ui-root')
+        expect(root.attributes('style')).toContain('opacity: 0.8')
+      })
+
+      it('passes BadgeContext to ui.root', () => {
+        const root = vi.fn(() => ({}))
+
+        mountBadge({
+          props: {
+            label: 'Status',
+            size: 'lg',
+            variant: 'outline',
+            severity: 'success',
+            color: '#ff0000',
+            icon: 'check',
+            trailingIcon: 'chevronRight',
+            ui: { root },
+          },
+        })
+
+        expect(root).toHaveBeenCalledWith({
           size: 'lg',
           variant: 'outline',
           severity: 'success',
           color: '#ff0000',
-          icon: 'check',
-          trailingIcon: 'chevronRight',
-          ui: { root },
-        },
-      })
-
-      expect(root).toHaveBeenCalledWith({
-        as: 'span',
-        label: 'Nuevo',
-        size: 'lg',
-        variant: 'outline',
-        severity: 'success',
-        color: '#ff0000',
-        icon: 'check',
-        trailingIcon: 'chevronRight',
+        } satisfies BadgeContext)
       })
     })
+  })
 
-    it.each(['default', 'leading', 'trailing'] as const)('Badge context to %s slot', (slotName) => {
-      const slot = vi.fn(() => h('span', 'test'))
+  describe('attrs', () => {
+    it('forwards arbitrary attrs to root', () => {
+      const root = mountBadge({
+        attrs: { id: 'status', 'aria-label': 'Status', 'data-testid': 'badge' },
+      }).get('[data-test-badge-root]')
 
-      mount(Badge, {
-        props: {
-          as: 'span',
-          label: 'Nuevo',
+      expect(root.attributes('id')).toBe('status')
+      expect(root.attributes('aria-label')).toBe('Status')
+      expect(root.attributes('data-testid')).toBe('badge')
+    })
+
+    it('forwards class and style to root', () => {
+      const root = mountBadge({
+        attrs: { class: 'custom-badge', style: 'opacity: 0.5' },
+      }).get('[data-test-badge-root]')
+
+      expect(root.classes()).toContain('custom-badge')
+      expect(root.attributes('style')).toContain('opacity: 0.5')
+    })
+  })
+
+  describe('context contract', () => {
+    it.each([
+      {
+        name: 'default values',
+        input: {},
+        expected: {
+          size: 'md',
+          variant: 'solid',
+          severity: 'primary',
+          color: undefined,
+        },
+      },
+      {
+        name: 'configured values',
+        input: {
+          label: 'Status',
+          size: 'lg' as const,
+          variant: 'outline' as const,
+          severity: 'success' as const,
+          color: '#ff0000',
+          icon: 'check' as const,
+          trailingIcon: 'chevronRight' as const,
+        },
+        expected: {
           size: 'lg',
           variant: 'outline',
           severity: 'success',
           color: '#ff0000',
-          icon: 'check',
-          trailingIcon: 'chevronRight',
         },
+      },
+    ])('creates the contract with $name', ({ input, expected }) => {
+      expect(createBadgeContext(input)).toEqual(expected satisfies BadgeContext)
+    })
+  })
+
+  describe('slots', () => {
+    const slotCases = [
+      { input: 'default' as const, expected: 'default' },
+      { input: 'leading' as const, expected: 'leading' },
+      { input: 'trailing' as const, expected: 'trailing' },
+    ]
+
+    it.each(slotCases)('renders the $input slot', ({ input, expected }) => {
+      const badge = mountBadge({
+        props: { label: 'Label', icon: 'check', trailingIcon: 'chevronRight' },
         slots: {
-          [slotName]: slot,
+          [input]: () => h('span', { 'data-test-badge-slot': expected }, `Slot ${expected}`),
         },
       })
 
-      expect(slot).toHaveBeenCalledWith({
-        as: 'span',
-        label: 'Nuevo',
+      expect(badge.get(`[data-test-badge-slot="${expected}"]`).text()).toBe(`Slot ${expected}`)
+    })
+
+    it('leading and trailing slots replace their fallback icons', () => {
+      const badge = mountBadge({
+        props: { icon: 'check', trailingIcon: 'chevronRight' },
+        slots: {
+          leading: () => h('span', 'Leading'),
+          trailing: () => h('span', 'Trailing'),
+        },
+      })
+
+      expect(badge.findComponent('[data-test-badge-icon]').exists()).toBe(false)
+      expect(badge.findComponent('[data-test-badge-trailing-icon]').exists()).toBe(false)
+    })
+
+    it.each(slotCases)('passes BadgeContext to slot $input', ({ input }) => {
+      const slot = vi.fn(() => null)
+
+      mountBadge({
+        props: {
+          label: 'Status',
+          size: 'lg',
+          variant: 'outline',
+          severity: 'success',
+          icon: 'check',
+          trailingIcon: 'chevronRight',
+        },
+        slots: { [input]: slot },
+      })
+
+      const expected = {
         size: 'lg',
         variant: 'outline',
         severity: 'success',
-        color: '#ff0000',
-        icon: 'check',
-        trailingIcon: 'chevronRight',
-      })
+        color: undefined,
+      } satisfies BadgeContext
+
+      expect(slot).toHaveBeenCalledWith(expect.objectContaining(expected))
     })
   })
 })

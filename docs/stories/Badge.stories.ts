@@ -6,24 +6,25 @@ const sizes = ['sm', 'md', 'lg'] as const
 const variants = ['solid', 'outline', 'plain', 'subtle', 'soft'] as const
 const severities = ['primary', 'secondary', 'warning', 'success', 'error'] as const
 const iconNames = Object.keys(ICONS)
+const contextType = { summary: 'BadgeContext' }
 
 const meta = {
   title: 'Componentes/Badge',
   component: Badge,
   parameters: {
+    layout: 'centered',
     docs: {
       argTypes: { sort: 'none' },
       description: {
         component:
-          'Muestra una etiqueta compacta para estados, categorías o metadatos, con variantes semánticas e iconos opcionales.',
+          'Muestra una etiqueta compacta con raíz `span` para estados, categorías o metadatos, con variantes semánticas e iconos opcionales.',
       },
     },
-    layout: 'centered',
   },
   argTypes: {
     BadgeSize: {
       control: false,
-      description: 'Tamaños admitidos por el badge.',
+      description: 'Tamaños visuales disponibles para el Badge.',
       table: {
         category: 'Interfaces',
         readonly: true,
@@ -32,7 +33,7 @@ const meta = {
     },
     BadgeVariant: {
       control: false,
-      description: 'Variantes visuales admitidas.',
+      description: 'Tratamientos visuales disponibles para el Badge.',
       table: {
         category: 'Interfaces',
         readonly: true,
@@ -41,7 +42,7 @@ const meta = {
     },
     BadgeSeverity: {
       control: false,
-      description: 'Severidades semánticas admitidas.',
+      description: 'Intenciones semánticas de color disponibles.',
       table: {
         category: 'Interfaces',
         readonly: true,
@@ -50,64 +51,43 @@ const meta = {
     },
     BadgeContext: {
       control: false,
-      description: 'Contexto entregado a las funciones de `ui` y a todos los slots.',
+      description: 'Representa la apariencia efectiva del Badge.',
       table: {
         category: 'Interfaces',
         readonly: true,
         type: {
-          summary: '{ as; label; size; variant; severity; color; icon; trailingIcon }',
+          summary: '{ size; variant; severity; color }',
           detail:
-            "interface BadgeContext {\n  as: BadgeProps['as']\n  label: string | undefined\n  size: BadgeSize | undefined\n  variant: BadgeVariant | undefined\n  severity: BadgeSeverity | undefined\n  color: string | undefined\n  icon: NormalizeIconProps | undefined\n  trailingIcon: NormalizeIconProps | undefined\n}",
+            'interface BadgeContext {\n  size: BadgeSize\n  variant: BadgeVariant\n  severity: BadgeSeverity\n  color: string | undefined\n}',
         },
       },
     },
     BadgeUI: {
       control: false,
-      description:
-        '`root` es una función que recibe `BadgeContext` y devuelve atributos HTML para la raíz.',
+      description: 'Define los atributos HTML personalizables de la raíz.',
       table: {
         category: 'Interfaces',
         readonly: true,
         type: {
-          summary: '{ root?: (context: BadgeContext) => HTMLAttributes }',
+          summary: '{ root }',
           detail: 'interface BadgeUI {\n  root?: (context: BadgeContext) => HTMLAttributes\n}',
         },
       },
     },
     default: {
-      name: 'default',
       control: false,
-      description: 'Contenido principal. Sustituye a `label`.',
-      table: {
-        category: 'Slots',
-        readonly: true,
-        type: { summary: 'slotProps: BadgeContext' },
-      },
+      description: 'Personaliza el contenido principal y sustituye a `label`.',
+      table: { category: 'slots', readonly: true, type: contextType },
     },
     leading: {
-      name: 'leading',
       control: false,
-      description: 'Contenido inicial. Sustituye a `icon`.',
-      table: {
-        category: 'Slots',
-        readonly: true,
-        type: { summary: 'slotProps: BadgeContext' },
-      },
+      description: 'Personaliza el contenido inicial y sustituye a `icon`.',
+      table: { category: 'slots', readonly: true, type: contextType },
     },
     trailing: {
-      name: 'trailing',
       control: false,
-      description: 'Contenido final. Sustituye a `trailingIcon`.',
-      table: {
-        category: 'Slots',
-        readonly: true,
-        type: { summary: 'slotProps: BadgeContext' },
-      },
-    },
-    as: {
-      control: 'text',
-      description: 'Elemento o componente usado como raíz.',
-      table: { category: 'Props', defaultValue: { summary: 'span' } },
+      description: 'Personaliza el contenido final y sustituye a `trailingIcon`.',
+      table: { category: 'slots', readonly: true, type: contextType },
     },
     label: {
       control: 'text',
@@ -117,7 +97,7 @@ const meta = {
     size: {
       control: 'inline-radio',
       options: sizes,
-      description: 'Tamaño del badge.',
+      description: 'Tamaño visual del Badge.',
       table: {
         category: 'Props',
         type: { summary: 'BadgeSize' },
@@ -127,7 +107,7 @@ const meta = {
     variant: {
       control: 'select',
       options: variants,
-      description: 'Tratamiento visual del badge.',
+      description: 'Tratamiento visual del Badge.',
       table: {
         category: 'Props',
         type: { summary: 'BadgeVariant' },
@@ -137,7 +117,7 @@ const meta = {
     severity: {
       control: 'select',
       options: severities,
-      description: 'Color semántico del badge. `color` tiene prioridad cuando se define.',
+      description: 'Intención semántica de color. `color` tiene prioridad visual.',
       table: {
         category: 'Props',
         type: { summary: 'BadgeSeverity' },
@@ -152,35 +132,32 @@ const meta = {
     icon: {
       control: 'select',
       options: [undefined, ...iconNames],
-      description: 'Icono inicial. Admite `IconName` o `IconProps`.',
+      description:
+        'Icono inicial. Hereda `size` del Badge salvo que la configuración del icono defina su propio tamaño.',
       table: { category: 'Props', type: { summary: 'NormalizeIconProps' } },
     },
     trailingIcon: {
       control: 'select',
       options: [undefined, ...iconNames],
-      description: 'Icono final. Admite `IconName` o `IconProps`.',
+      description:
+        'Icono final. Hereda `size` del Badge salvo que la configuración del icono defina su propio tamaño.',
       table: { category: 'Props', type: { summary: 'NormalizeIconProps' } },
     },
     ui: {
-      control: false,
-      description:
-        'Personaliza la raíz mediante `root: (context: BadgeContext) => HTMLAttributes`.',
-      table: {
-        category: 'Props',
-        type: { summary: 'BadgeUI' },
-        defaultValue: { summary: 'undefined' },
-      },
+      control: 'object',
+      description: 'Personaliza la raíz mediante una función que recibe `BadgeContext`.',
+      table: { category: 'Props', type: { summary: 'BadgeUI' } },
     },
   },
   args: {
-    as: 'span',
     label: 'Badge',
     size: 'md',
     variant: 'solid',
     severity: 'primary',
     color: undefined,
-    icon: undefined,
-    trailingIcon: undefined,
+    icon: 'info',
+    trailingIcon: 'chevronRight',
+    ui: undefined,
   },
 } satisfies Meta<typeof Badge>
 

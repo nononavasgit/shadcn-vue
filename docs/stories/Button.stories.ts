@@ -50,28 +50,14 @@ const meta = {
     },
     ButtonContext: {
       control: false,
-      description: 'Contexto entregado a `ui.root` y a todos los slots.',
+      description: 'Contexto entregado a todos los slots.',
       table: {
         category: 'Interfaces',
         readonly: true,
         type: {
-          summary:
-            '{ as; asChild; label; variant; severity; size; rounded; square; loading; color; icon; trailingIcon }',
+          summary: '{ variant; severity; size; rounded; square; loading; color }',
           detail:
-            "interface ButtonContext {\n  as: ButtonProps['as']\n  asChild: boolean | undefined\n  label: string | undefined\n  variant: ButtonVariant | undefined\n  severity: ButtonSeverity | undefined\n  size: ButtonSize | undefined\n  rounded: boolean | undefined\n  square: boolean | undefined\n  loading: boolean | undefined\n  color: string | undefined\n  icon: NormalizeIconProps | undefined\n  trailingIcon: NormalizeIconProps | undefined\n}",
-        },
-      },
-    },
-    ButtonUI: {
-      control: false,
-      description:
-        '`root` es una función que recibe `ButtonContext` y devuelve atributos HTML para la raíz.',
-      table: {
-        category: 'Interfaces',
-        readonly: true,
-        type: {
-          summary: '{ root?: (context: ButtonContext) => HTMLAttributes }',
-          detail: 'interface ButtonUI {\n  root?: (context: ButtonContext) => HTMLAttributes\n}',
+            'interface ButtonContext {\n  variant: ButtonVariant\n  severity: ButtonSeverity\n  size: ButtonSize\n  rounded: boolean\n  square: boolean\n  loading: boolean\n  color: string | undefined\n}',
         },
       },
     },
@@ -194,16 +180,6 @@ const meta = {
       description: 'Icono final. Admite `IconName` o `IconProps`.',
       table: { category: 'Props', type: { summary: 'NormalizeIconProps' } },
     },
-    ui: {
-      control: false,
-      description:
-        'Personaliza la raíz mediante `root: (context: ButtonContext) => HTMLAttributes`.',
-      table: {
-        category: 'Props',
-        type: { summary: 'ButtonUI' },
-        defaultValue: { summary: 'undefined' },
-      },
-    },
   },
   args: {
     as: 'button',
@@ -224,4 +200,10 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Playground: Story = {}
+export const Playground: Story = {
+  render: (args) => ({
+    components: { Button },
+    setup: () => ({ args }),
+    template: '<Button v-bind="args" />',
+  }),
+}

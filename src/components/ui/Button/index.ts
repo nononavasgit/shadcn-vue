@@ -254,75 +254,46 @@ export const buttonVariants = cva('', {
 
 // Variants
 export type ButtonVariants = VariantProps<typeof buttonVariants>
-
-// Fn
-export type ButtonFn<T> = (context: ButtonContext) => T
+export type ButtonVariant = NonNullable<ButtonVariants['variant']>
+export type ButtonSeverity = NonNullable<ButtonVariants['severity']>
+export type ButtonSize = NonNullable<ButtonVariants['size']>
 
 // Props
 export interface ButtonProps extends Pick<PrimitiveProps, 'as' | 'asChild'> {
   label?: string
-  variant?: ButtonVariants['variant']
-  severity?: ButtonVariants['severity']
-  size?: ButtonVariants['size']
+  variant?: ButtonVariant
+  severity?: ButtonSeverity
+  size?: ButtonSize
   rounded?: ButtonVariants['rounded'] | boolean
   square?: ButtonVariants['square'] | boolean
   loading?: boolean
   color?: string
   icon?: NormalizeIconProps
   trailingIcon?: NormalizeIconProps
-  ui?: ButtonUI
-}
-
-// UI
-export interface ButtonUI {
-  root?: ButtonFn<HTMLAttributes>
 }
 
 // Context
 export interface ButtonContext {
-  as: ButtonProps['as']
-  asChild: ButtonProps['asChild']
-  label: ButtonProps['label']
-  variant: ButtonProps['variant']
-  severity: ButtonProps['severity']
-  size: ButtonProps['size']
-  rounded: ButtonProps['rounded']
-  square: ButtonProps['square']
-  loading: ButtonProps['loading']
+  variant: ButtonVariant
+  severity: ButtonSeverity
+  size: ButtonSize
+  rounded: boolean
+  square: boolean
+  loading: boolean
   color: ButtonProps['color']
-  icon: ButtonProps['icon']
-  trailingIcon: ButtonProps['trailingIcon']
 }
 
 export function createButtonContext(props: ButtonProps): ButtonContext {
-  const {
-    as,
-    asChild,
-    label,
-    variant,
-    severity,
-    size,
-    rounded,
-    square,
-    loading,
-    color,
-    icon,
-    trailingIcon,
-  } = props
+  const { variant, severity, size, rounded, square, loading, color } = props
 
   return {
-    as,
-    asChild,
-    label,
-    variant,
-    severity,
-    size,
-    rounded,
-    square,
-    loading,
+    variant: variant ?? 'solid',
+    severity: severity ?? 'primary',
+    size: size ?? 'md',
+    rounded: rounded ?? false,
+    square: square ?? false,
+    loading: loading ?? false,
     color,
-    icon,
-    trailingIcon,
   }
 }
 
@@ -339,46 +310,4 @@ export interface ButtonSlots {
   trailing?(props: ButtonContext): unknown
 }
 
-// Normalize
-
-export type NormalizeButtonProps = ButtonProps & EmitsAsProps<ButtonEmits>
-
-export function normalizeButtonProps(
-  source: NormalizeButtonProps | null | undefined,
-): NormalizeButtonProps | undefined {
-  if (!source) return undefined
-
-  const {
-    as,
-    asChild,
-    label,
-    loading,
-    variant,
-    color,
-    icon,
-    severity,
-    rounded,
-    trailingIcon,
-    size,
-    square,
-    ui,
-    onClick,
-  } = source
-
-  return {
-    as,
-    asChild,
-    label,
-    loading,
-    variant,
-    color,
-    icon,
-    trailingIcon,
-    severity,
-    rounded,
-    size,
-    square,
-    ui,
-    onClick,
-  }
-}
+export type NormalizeButtonProps = ButtonProps & EmitsAsProps<ButtonEmits> & HTMLAttributes

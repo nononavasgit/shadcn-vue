@@ -11,7 +11,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from 'reka-ui'
-import { Button, normalizeButtonProps } from '@/components/ui/Button'
+import { Button } from '@/components/ui/Button'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
@@ -147,12 +147,12 @@ const cancelButtonProps = computed(() => ({
   label: t('cancel'),
   variant: 'outline' as const,
   severity: 'secondary' as const,
-  ...normalizeButtonProps(props.cancelButton),
+  ...props.cancelButton,
 }))
 
 const actionButtonProps = computed(() => ({
   label: t('continue'),
-  ...normalizeButtonProps(props.actionButton),
+  ...props.actionButton,
 }))
 </script>
 

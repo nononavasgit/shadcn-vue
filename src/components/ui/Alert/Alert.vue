@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, useAttrs, useSlots } from 'vue'
-import { Button, normalizeButtonProps, type ButtonContext } from '@/components/ui/Button'
+import { Button } from '@/components/ui/Button'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
@@ -87,17 +87,10 @@ const closeButtonContainerProps = computed(() => {
 })
 
 const closeButtonProps = computed(() => {
-  const button = normalizeButtonProps(props.closeButton)
+  const button = props.closeButton
   return {
     ...button,
-    ui: {
-      ...button?.ui,
-      root: (context: ButtonContext) => {
-        const root =
-          typeof button?.ui?.root === 'function' ? button.ui.root(context) : button?.ui?.root
-        return { 'aria-label': t('close'), ...root }
-      },
-    },
+    'aria-label': t('close'),
     size: button?.size ?? ('xs' as const),
     square: button?.square ?? true,
     rounded: button?.rounded ?? true,

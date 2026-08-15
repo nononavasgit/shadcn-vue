@@ -10,7 +10,7 @@ import {
   ToastTitle,
   ToastViewport,
 } from 'reka-ui'
-import { Button, normalizeButtonProps } from '@/components/ui/Button'
+import { Button } from '@/components/ui/Button'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
@@ -113,7 +113,7 @@ const actionButtonProps = computed(() => ({
   variant: 'outline' as const,
   severity: 'secondary' as const,
   size: 'sm' as const,
-  ...normalizeButtonProps(props.actionButton),
+  ...props.actionButton,
 }))
 
 const closeProps = computed(() => {
@@ -131,7 +131,7 @@ const closeButtonProps = computed(() => ({
   variant: 'plain' as const,
   severity: 'secondary' as const,
   icon: 'x' as const,
-  ...normalizeButtonProps(props.closeButton),
+  ...props.closeButton,
 }))
 
 const viewportProps = computed(() => {

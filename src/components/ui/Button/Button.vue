@@ -2,7 +2,6 @@
 import { computed, useAttrs } from 'vue'
 import { Primitive } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
-import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import {
@@ -28,10 +27,9 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   color: undefined,
   icon: undefined,
   trailingIcon: undefined,
-  ui: undefined,
 })
 const emit = defineEmits<ButtonEmits>()
-const slots = defineSlots<ButtonSlots>()
+defineSlots<ButtonSlots>()
 
 const buttonContext = computed(() => createButtonContext(props))
 
@@ -61,11 +59,8 @@ const calculatedVariants = computed(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = useUi(props.ui?.root, buttonContext.value)
-
   return {
     ...attrs,
-    ...rootUI,
     as: props.as,
     asChild: props.asChild,
     'aria-busy': ariaBusy.value,
@@ -74,22 +69,29 @@ const rootProps = computed(() => {
       'inline-flex shrink-0 items-center justify-center gap-2 rounded-md border border-transparent text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=size-])]:size-4',
       calculatedVariants.value,
       attrs.class,
-      rootUI.class,
     ),
-    style: [colorStyle.value, attrs.style, rootUI.style],
+    style: [colorStyle.value, attrs.style],
   }
 })
 
 const iconProps = computed(() => {
-  return { ...normalizeIconProps(props.icon) }
+  const icon = normalizeIconProps(props.icon)
+
+  return { ...icon, size: icon?.size ?? props.size }
 })
 
 const trailingIconProps = computed(() => {
-  return { ...normalizeIconProps(props.trailingIcon) }
+  const icon = normalizeIconProps(props.trailingIcon)
+
+  return { ...icon, size: icon?.size ?? props.size }
 })
 
 const loadingIconProps = computed(() => {
-  return { name: 'spinner' as const, ui: { root: () => ({ class: 'animate-spin' }) } }
+  return {
+    name: 'spinner' as const,
+    size: props.size,
+    class: 'animate-spin',
+  }
 })
 
 function handleClick(event: PointerEvent) {
@@ -104,45 +106,29 @@ function handleClick(event: PointerEvent) {
 </script>
 
 <template>
-  <Primitive v-bind="rootProps" data-button-ui="root" @click="handleClick">
-    <template v-if="props.asChild">
-      <div data-button-slot="default">
-        <slot v-bind="buttonContext" />
-      </div>
-    </template>
+  <Primitive v-bind="rootProps" data-button-ui="root" data-test-button-root @click="handleClick">
+    <slot v-if="props.asChild" v-bind="buttonContext" />
     <template v-else>
-      <div v-if="props.loading && slots.loading" data-button-slot="loading">
-        <slot name="loading" v-bind="buttonContext"> </slot>
-      </div>
-      <Icon
-        v-if="props.loading && !slots.loading"
-        v-bind="loadingIconProps"
-        data-button="loadingIcon"
-      />
-
-      <template v-if="!props.loading">
-        <div v-if="slots.leading" data-button-slot="leading">
-          <slot name="leading" v-bind="buttonContext"></slot>
-        </div>
-        <Icon
-          v-else-if="iconProps.name"
-          v-bind="iconProps"
-          :name="iconProps.name"
-          data-button="leadingIcon"
-        />
+      <template v-if="props.loading">
+        <slot name="loading" v-bind="buttonContext">
+          <Icon v-bind="loadingIconProps" data-test-button-loading-icon />
+        </slot>
+      </template>
+      <template v-else>
+        <slot name="leading" v-bind="buttonContext">
+          <Icon v-if="iconProps.name" v-bind="iconProps" data-test-button-icon />
+        </slot>
       </template>
 
       <slot v-bind="buttonContext">{{ props.label }}</slot>
 
-      <div v-if="slots.trailing" data-button-slot="trailing">
-        <slot name="trailing" v-bind="buttonContext"></slot>
-      </div>
-      <Icon
-        v-else-if="trailingIconProps.name"
-        v-bind="trailingIconProps"
-        :name="trailingIconProps.name"
-        data-button="trailingIcon"
-      />
+      <slot name="trailing" v-bind="buttonContext">
+        <Icon
+          v-if="trailingIconProps.name"
+          v-bind="trailingIconProps"
+          data-test-button-trailing-icon
+        />
+      </slot>
     </template>
   </Primitive>
 </template>

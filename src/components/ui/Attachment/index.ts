@@ -1,5 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
 
 export { default as Attachment } from './Attachment.vue'
 
@@ -8,23 +9,23 @@ export const attachmentVariants = cva(
   {
     variants: {
       orientation: { horizontal: 'w-fit max-w-full', vertical: 'w-40 flex-col items-stretch' },
-      size: { default: '', sm: '', xs: '' },
+      size: { md: '', sm: '', xs: '' },
       state: {
-        idle: '',
+        idle: 'border-dashed',
         uploading: '',
         processing: '',
-        error: 'border-destructive/50 bg-destructive/5 text-destructive',
+        error: 'border-error/50 bg-error/5 text-error',
         done: '',
       },
     },
     compoundVariants: [
-      { orientation: 'horizontal', size: 'default', class: 'gap-3 p-3' },
+      { orientation: 'horizontal', size: 'md', class: 'gap-3 p-3' },
       { orientation: 'horizontal', size: 'sm', class: 'gap-2.5 p-2.5' },
       { orientation: 'horizontal', size: 'xs', class: 'gap-2 p-2' },
-      { orientation: 'vertical', size: ['default', 'sm'], class: 'gap-2 p-2' },
+      { orientation: 'vertical', size: ['md', 'sm'], class: 'gap-2 p-2' },
       { orientation: 'vertical', size: 'xs', class: 'gap-1.5 p-1.5' },
     ],
-    defaultVariants: { orientation: 'horizontal', size: 'default', state: 'idle' },
+    defaultVariants: { orientation: 'horizontal', size: 'md', state: 'idle' },
   },
 )
 
@@ -34,16 +35,16 @@ export const attachmentMediaVariants = cva(
     variants: {
       orientation: { horizontal: '', vertical: '' },
       size: {
-        default: 'size-10 [&_svg:not([class*=size-])]:size-5',
+        md: 'size-10 [&_svg:not([class*=size-])]:size-5',
         sm: 'size-8 [&_svg:not([class*=size-])]:size-4',
         xs: 'size-6 [&_svg:not([class*=size-])]:size-3.5',
       },
-      variant: { default: '', image: '[&_img]:size-full [&_img]:object-cover' },
+      variant: { icon: '', image: '[&_img]:size-full [&_img]:object-cover' },
       state: {
         idle: '',
         uploading: '',
         processing: '',
-        error: 'bg-destructive/10 text-destructive',
+        error: 'bg-error/10 text-error',
         done: '',
       },
     },
@@ -52,8 +53,8 @@ export const attachmentMediaVariants = cva(
     ],
     defaultVariants: {
       orientation: 'horizontal',
-      size: 'default',
-      variant: 'default',
+      size: 'md',
+      variant: 'icon',
       state: 'idle',
     },
   },
@@ -66,7 +67,7 @@ export const attachmentContentVariants = cva('relative z-10 min-w-0 flex-1', {
 
 export const attachmentLabelVariants = cva('truncate font-medium', {
   variants: {
-    size: { default: 'text-sm', sm: 'text-xs', xs: 'text-[11px]' },
+    size: { md: 'text-sm', sm: 'text-xs', xs: 'text-[11px]' },
     state: {
       idle: '',
       uploading: 'animate-pulse',
@@ -75,40 +76,45 @@ export const attachmentLabelVariants = cva('truncate font-medium', {
       done: '',
     },
   },
-  defaultVariants: { size: 'default', state: 'idle' },
+  defaultVariants: { size: 'md', state: 'idle' },
 })
 
 export const attachmentDescriptionVariants = cva('truncate text-muted-foreground', {
   variants: {
-    size: { default: 'text-xs', sm: 'text-[11px]', xs: 'text-[11px]' },
+    size: { md: 'text-xs', sm: 'text-[11px]', xs: 'text-[11px]' },
     state: {
       idle: '',
       uploading: '',
       processing: '',
-      error: 'text-destructive',
+      error: 'text-error',
       done: '',
     },
   },
-  defaultVariants: { size: 'default', state: 'idle' },
+  defaultVariants: { size: 'md', state: 'idle' },
 })
 
 export const attachmentActionsVariants = cva(
-  'relative z-20 ml-auto flex shrink-0 items-center gap-1 [&_button]:size-7 [&_button]:rounded-md',
+  'relative z-20 ml-auto flex shrink-0 items-center gap-1 ',
   {
     variants: {
       orientation: { horizontal: '', vertical: 'absolute top-3 right-3 ml-0' },
-      size: { default: '', sm: '', xs: '[&_button]:size-6' },
+      size: { md: '', sm: '', xs: '' },
     },
-    defaultVariants: { orientation: 'horizontal', size: 'default' },
+    defaultVariants: { orientation: 'horizontal', size: 'md' },
   },
 )
 
 export type AttachmentVariants = VariantProps<typeof attachmentVariants>
 export type AttachmentMediaVariants = VariantProps<typeof attachmentMediaVariants>
+export type AttachmentOrientation = NonNullable<AttachmentVariants['orientation']>
+export type AttachmentSize = NonNullable<AttachmentVariants['size']>
+export type AttachmentState = NonNullable<AttachmentVariants['state']>
+export type AttachmentMediaVariant = 'icon' | 'image'
+export type AttachmentLabel = string
+export type AttachmentDescription = string
 export type AttachmentFn<T> = (context: AttachmentContext) => T
 
 export interface AttachmentUI {
-  root?: AttachmentFn<HTMLAttributes>
   media?: AttachmentFn<HTMLAttributes>
   content?: AttachmentFn<HTMLAttributes>
   label?: AttachmentFn<HTMLAttributes>
@@ -118,17 +124,36 @@ export interface AttachmentUI {
 }
 
 export interface AttachmentProps {
-  label?: string
-  description?: string
-  orientation?: AttachmentVariants['orientation']
-  size?: AttachmentVariants['size']
-  state?: AttachmentVariants['state']
-  mediaVariant?: AttachmentMediaVariants['variant']
+  label?: AttachmentLabel
+  description?: AttachmentDescription
+  icon?: NormalizeIconProps
+  orientation?: AttachmentOrientation
+  size?: AttachmentSize
+  state?: AttachmentState
+  mediaVariant?: AttachmentMediaVariant
   ui?: AttachmentUI
 }
 
 export interface AttachmentContext {
-  props: Omit<AttachmentProps, 'ui'>
+  label: AttachmentLabel | undefined
+  description: AttachmentDescription | undefined
+  icon: AttachmentProps['icon']
+  orientation: AttachmentOrientation
+  size: AttachmentSize
+  state: AttachmentState
+  mediaVariant: AttachmentMediaVariant
+}
+
+export function createAttachmentContext(props: AttachmentProps): AttachmentContext {
+  return {
+    label: props.label,
+    description: props.description,
+    icon: props.icon,
+    orientation: props.orientation ?? 'horizontal',
+    size: props.size ?? 'md',
+    state: props.state ?? 'idle',
+    mediaVariant: props.mediaVariant ?? 'icon',
+  }
 }
 
 export interface AttachmentSlots {

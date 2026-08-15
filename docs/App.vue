@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Alert } from '@/components/ui/Alert'
-import { FieldSet } from '@/components/ui/FieldSet'
-import { Input } from '@/components/ui/Input'
+import { Attachment } from '@/components/ui/Attachment'
+import { Button } from '@/components/ui/Button'
+import { Icon } from '@/components/ui/Icon'
 import ConfigProvider from '@/components/provider/ConfigProvider.vue'
 </script>
 
@@ -10,96 +10,118 @@ import ConfigProvider from '@/components/provider/ConfigProvider.vue'
     <main class="min-h-screen bg-background p-8 text-foreground">
       <div class="mx-auto flex max-w-3xl flex-col gap-8">
         <header>
-          <h1 class="text-2xl font-semibold">FieldSet playground</h1>
-          <p class="text-sm text-muted-foreground">Ejemplos del componente FieldSet.</p>
+          <h1 class="text-2xl font-semibold">Attachment playground</h1>
+          <p class="text-sm text-muted-foreground">Ejemplos del componente Attachment.</p>
         </header>
 
-        <section class="grid gap-8 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-          <FieldSet
-            legend="Datos personales"
-            description="Completa la información que aparecerá en tu perfil."
+        <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+          <Attachment
+            label="Informe trimestral.pdf"
+            description="2.4 MB · PDF"
+            media-variant="icon"
+            icon="fileText"
           >
-            <div class="grid gap-2">
-              <label class="text-sm font-medium" for="name">Nombre</label>
-              <Input id="name" placeholder="Nombre completo" />
-            </div>
-            <div class="grid gap-2">
-              <label class="text-sm font-medium" for="email">Correo electrónico</label>
-              <Input id="email" type="email" placeholder="correo@ejemplo.com" />
-            </div>
-          </FieldSet>
-
-          <FieldSet
-            legend="Preferencias"
-            legend-variant="label"
-            description="La variante label muestra una leyenda más compacta."
-          >
-            <label class="flex items-center gap-3 text-sm">
-              <input type="checkbox" class="size-4" />
-              Recibir novedades por correo
-            </label>
-            <label class="flex items-center gap-3 text-sm">
-              <input type="checkbox" class="size-4" />
-              Activar recomendaciones personalizadas
-            </label>
-          </FieldSet>
-
-          <FieldSet>
-            <template #legend>Contenido mediante slots</template>
-            <template #description>
-              La leyenda y la descripción también admiten contenido personalizado.
+            <template #actions>
+              <Button icon="save" size="sm" square aria-label="Guardar archivo" />
             </template>
-            <p class="text-sm">Contenido principal del grupo.</p>
-          </FieldSet>
-        </section>
+          </Attachment>
 
-        <header>
-          <h2 class="text-2xl font-semibold">Alert playground</h2>
-          <p class="text-sm text-muted-foreground">Ejemplos del componente Alert.</p>
-        </header>
+          <Attachment
+            label="Vista previa del proyecto"
+            description="Imagen · 1920 × 1080"
+            orientation="vertical"
+            media-variant="image"
+          >
+            <template #media>
+              <div class="flex size-full items-center justify-center bg-primary/10 text-primary">
+                <Icon name="image" size="lg" />
+              </div>
+            </template>
+            <template #actions>
+              <Button icon="moreHorizontal" size="sm" square aria-label="Más opciones" />
+            </template>
+          </Attachment>
 
-        <section class="grid max-w-xl gap-4">
-          <Alert
-            label="Cambios guardados"
-            description="La configuración se ha actualizado correctamente."
-            icon="success"
-            severity="success"
-            closable
-          />
+          <Attachment
+            label="Subiendo datos.zip"
+            description="68% completado"
+            size="sm"
+            state="idle"
+            media-variant="icon"
+            icon="fileArchive"
+          >
+          </Attachment>
 
-          <Alert
-            label="Revisa los datos"
-            description="Algunos campos necesitan tu atención antes de continuar."
-            icon="warning"
-            variant="outline"
-            severity="warning"
-          />
+          <Attachment
+            label="Subiendo datos.zip"
+            description="68% completado"
+            size="sm"
+            state="uploading"
+            media-variant="icon"
+            icon="fileArchive"
+          >
+          </Attachment>
 
-          <Alert
-            label="No se pudo completar la operación"
-            description="Inténtalo de nuevo dentro de unos minutos."
+          <Attachment
+            label="Subiendo datos.zip"
+            description="68% completado"
+            size="sm"
+            state="processing"
+            media-variant="icon"
+            icon="fileArchive"
+          >
+          </Attachment>
+
+          <Attachment
+            label="Subiendo datos.zip"
+            description="68% completado"
+            size="sm"
+            state="done"
+            media-variant="icon"
+            icon="fileArchive"
+          >
+          </Attachment>
+
+          <Attachment
+            label="No se pudo cargar el archivo"
+            description="Inténtalo de nuevo."
+            size="xs"
+            state="error"
+            media-variant="icon"
             icon="error"
-            variant="solid"
-            severity="error"
-            closable
-          />
-
-          <Alert
-            label="Color personalizado"
-            description="Este aviso utiliza un color CSS en lugar de una severidad semántica."
-            icon="info"
-            color="#7c3aed"
-          />
-
-          <Alert severity="secondary" decorative>
-            <template #icon>
-              <span aria-hidden="true">✨</span>
+            class="w-full"
+          >
+            <template #actions="slotProps">
+              <Button label="Reintentar" :size="'xs'" variant="outline" severity="error" />
             </template>
-            <template #label>Contenido personalizado</template>
-            <template #description>
-              Los slots reciben el contexto visual y de comportamiento del Alert.
+          </Attachment>
+
+          <Attachment
+            label="No se pudo cargar el archivo"
+            description="Inténtalo de nuevo."
+            state="error"
+            media-variant="icon"
+            icon="error"
+            class="w-full"
+          >
+            <template #actions="slotProps">
+              <Button label="Reintentar" :size="'md'" variant="outline" severity="error" />
             </template>
-          </Alert>
+          </Attachment>
+
+          <Attachment
+            label="No se pudo cargar el archivo"
+            description="Inténtalo de nuevo."
+            size="sm"
+            state="error"
+            media-variant="icon"
+            icon="error"
+            class="w-full"
+          >
+            <template #actions="slotProps">
+              <Button label="Reintentar" :size="'sm'" variant="outline" severity="error" />
+            </template>
+          </Attachment>
         </section>
       </div>
     </main>

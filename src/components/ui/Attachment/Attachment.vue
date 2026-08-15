@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
+import { computed, useAttrs, useSlots } from 'vue'
+import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import {
@@ -9,6 +10,7 @@ import {
   attachmentLabelVariants,
   attachmentMediaVariants,
   attachmentVariants,
+  createAttachmentContext,
   type AttachmentContext,
   type AttachmentProps,
   type AttachmentSlots,
@@ -19,28 +21,22 @@ defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<AttachmentProps>(), {
   label: undefined,
   description: undefined,
+  icon: undefined,
   orientation: 'horizontal',
-  size: 'default',
+  size: 'md',
   state: 'idle',
-  mediaVariant: 'default',
+  mediaVariant: 'icon',
   ui: undefined,
 })
 defineSlots<AttachmentSlots>()
 
 const attrs = useAttrs()
-const attachmentContext = computed<AttachmentContext>(() => {
-  const { ui, ...attachmentProps } = props
-  void ui
-
-  return { props: attachmentProps }
-})
+const slots = useSlots()
+const attachmentContext = computed<AttachmentContext>(() => createAttachmentContext(props))
 
 const rootProps = computed(() => {
-  const ui = useUi(props.ui?.root, attachmentContext.value)
-
   return {
     ...attrs,
-    ...ui,
     'data-orientation': props.orientation,
     'data-size': props.size,
     'data-state': props.state,
@@ -51,9 +47,8 @@ const rootProps = computed(() => {
         state: props.state,
       }),
       attrs.class,
-      ui.class,
     ),
-    style: [attrs.style, ui.style],
+    style: attrs.style,
   }
 })
 
@@ -72,6 +67,27 @@ const mediaProps = computed(() => {
       ui.class,
     ),
   }
+})
+
+const mediaIconProps = computed(() => {
+  const icon = normalizeIconProps(props.icon)
+  const size = props.size
+
+  if (props.state === 'uploading') {
+    return {
+      ...icon,
+      name: 'spinner' as const,
+      size,
+      class: cn(icon?.class, 'animate-spin'),
+    }
+  }
+
+  return { ...icon, size, name: icon?.name }
+})
+
+const hasMedia = computed(() => {
+  if (props.mediaVariant === 'image') return Boolean(slots.media)
+  return props.state === 'uploading' || Boolean(mediaIconProps.value.name)
 })
 
 const contentProps = computed(() => {
@@ -122,38 +138,57 @@ const triggerProps = computed(() => {
 </script>
 
 <template>
-  <div v-bind="rootProps" data-slot="attachment">
+  <div v-bind="rootProps" data-slot="attachment" data-test-attachment-root>
     <div
-      v-if="$slots.media"
+      v-if="hasMedia"
       v-bind="mediaProps"
       data-slot="attachment-media"
+      data-test-attachment-media
       :data-variant="props.mediaVariant"
     >
-      <slot name="media" v-bind="attachmentContext" />
+      <slot v-if="props.mediaVariant === 'image'" name="media" v-bind="attachmentContext" />
+      <Icon v-else-if="mediaIconProps?.name" v-bind="mediaIconProps" data-test-attachment-icon />
     </div>
 
     <div
       v-if="props.label || props.description || $slots.label || $slots.description"
       v-bind="contentProps"
       data-slot="attachment-content"
+      data-test-attachment-content
     >
-      <div v-if="props.label || $slots.label" v-bind="labelProps" data-slot="attachment-title">
+      <div
+        v-if="props.label || $slots.label"
+        v-bind="labelProps"
+        data-slot="attachment-title"
+        data-test-attachment-label
+      >
         <slot name="label" v-bind="attachmentContext">{{ props.label }}</slot>
       </div>
       <div
         v-if="props.description || $slots.description"
         v-bind="descriptionProps"
         data-slot="attachment-description"
+        data-test-attachment-description
       >
         <slot name="description" v-bind="attachmentContext">{{ props.description }}</slot>
       </div>
     </div>
 
-    <div v-if="$slots.actions" v-bind="actionsProps" data-slot="attachment-actions">
+    <div
+      v-if="$slots.actions"
+      v-bind="actionsProps"
+      data-slot="attachment-actions"
+      data-test-attachment-actions
+    >
       <slot name="actions" v-bind="attachmentContext" />
     </div>
 
-    <div v-if="$slots.trigger" v-bind="triggerProps" data-slot="attachment-trigger">
+    <div
+      v-if="$slots.trigger"
+      v-bind="triggerProps"
+      data-slot="attachment-trigger"
+      data-test-attachment-trigger
+    >
       <slot name="trigger" v-bind="attachmentContext" />
     </div>
   </div>

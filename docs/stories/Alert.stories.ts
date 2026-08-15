@@ -19,6 +19,7 @@ const meta = {
       },
     },
   },
+  decorators: [() => ({ template: '<div class="w-72"><story /></div>' })],
   argTypes: {
     AlertVariant: {
       control: false,
@@ -40,28 +41,27 @@ const meta = {
     },
     AlertContext: {
       control: false,
-      description: 'Representa el contenido, apariencia y comportamiento efectivo del alert.',
+      description: 'Representa la apariencia y el comportamiento efectivo del alert.',
       table: {
         category: 'Interfaces',
         readonly: true,
         type: {
-          summary:
-            '{ label; description; icon; variant; severity; color; closable; decorative; close }',
+          summary: '{ variant; severity; color; closable; decorative; close }',
           detail:
-            'interface AlertContext {\n  label: string | undefined\n  description: string | undefined\n  icon: NormalizeIconProps | undefined\n  variant: AlertVariant\n  severity: AlertSeverity\n  color: string | undefined\n  closable: boolean\n  decorative: boolean\n  close: () => void\n}',
+            'interface AlertContext {\n  variant: AlertVariant\n  severity: AlertSeverity\n  color: string | undefined\n  closable: boolean\n  decorative: boolean\n  close: () => void\n}',
         },
       },
     },
     AlertUI: {
       control: false,
-      description: 'Define los atributos HTML de las partes personalizables del alert.',
+      description: 'Define los atributos HTML de las partes internas personalizables del alert.',
       table: {
         category: 'Interfaces',
         readonly: true,
         type: {
-          summary: '{ root; label; description; closeButtonContainer }',
+          summary: '{ label; description; closeButtonContainer }',
           detail:
-            'interface AlertUI {\n  root?: (context: AlertContext) => HTMLAttributes\n  label?: (context: AlertContext) => HTMLAttributes\n  description?: (context: AlertContext) => HTMLAttributes\n  closeButtonContainer?: (context: AlertContext) => HTMLAttributes\n}',
+            'interface AlertUI {\n  label?: (context: AlertContext) => HTMLAttributes\n  description?: (context: AlertContext) => HTMLAttributes\n  closeButtonContainer?: (context: AlertContext) => HTMLAttributes\n}',
         },
       },
     },

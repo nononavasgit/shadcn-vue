@@ -14,7 +14,12 @@ const preview: Preview = {
 
       return {
         components: { ConfigProvider },
-        template: '<ConfigProvider><story /></ConfigProvider>',
+        setup: () => ({ theme: context.globals.theme }),
+        template: `
+          <div :class="theme === 'dark' && 'dark'" class="min-h-screen bg-background p-4 text-foreground">
+            <ConfigProvider><story /></ConfigProvider>
+          </div>
+        `,
       }
     },
   ],
@@ -26,10 +31,23 @@ const preview: Preview = {
         icon: 'globe',
         dynamicTitle: true,
         items: [
+          { value: 'ar', title: 'العربية' },
           { value: 'en', title: 'English' },
           { value: 'es', title: 'Español' },
           { value: 'pt-BR', title: 'Português (Brasil)' },
           { value: 'pt-PT', title: 'Português (Portugal)' },
+        ],
+      },
+    },
+    theme: {
+      description: 'Tema global de los componentes',
+      defaultValue: 'light',
+      toolbar: {
+        icon: 'contrast',
+        dynamicTitle: true,
+        items: [
+          { value: 'light', title: 'Claro', icon: 'sun' },
+          { value: 'dark', title: 'Oscuro', icon: 'moon' },
         ],
       },
     },
@@ -44,6 +62,7 @@ const preview: Preview = {
     docs: {
       codePanel: true,
     },
+    backgrounds: { disable: true },
     layout: 'centered',
   },
   tags: ['autodocs'],

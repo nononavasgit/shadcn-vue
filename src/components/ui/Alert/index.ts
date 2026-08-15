@@ -61,7 +61,6 @@ export interface AlertProps {
 
 // UI
 export interface AlertUI {
-  root?: AlertFn<HTMLAttributes>
   label?: AlertFn<HTMLAttributes>
   description?: AlertFn<HTMLAttributes>
   closeButtonContainer?: AlertFn<HTMLAttributes>
@@ -69,9 +68,6 @@ export interface AlertUI {
 
 // Context
 export interface AlertContext {
-  label: AlertProps['label']
-  description: AlertProps['description']
-  icon: AlertProps['icon']
   variant: NonNullable<AlertProps['variant']>
   severity: NonNullable<AlertProps['severity']>
   color: AlertProps['color']
@@ -82,9 +78,6 @@ export interface AlertContext {
 
 export function createAlertContext(props: AlertProps, close: () => void): AlertContext {
   return {
-    label: props.label,
-    description: props.description,
-    icon: props.icon,
     variant: props.variant ?? 'soft',
     severity: props.severity ?? 'primary',
     color: props.color,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, useAttrs, useSlots } from 'vue'
-import { Button, ButtonContext, normalizeButtonProps } from '@/components/ui/Button'
+import { Button, normalizeButtonProps, type ButtonContext } from '@/components/ui/Button'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
@@ -48,21 +48,18 @@ const rootProps = computed(() => {
     severity: props.severity,
     color: Boolean(props.color),
   })
-  const rootUI = useUi(props.ui?.root, alertContext.value)
-
   return {
     ...attrs,
-    ...rootUI,
     role: props.decorative ? 'none' : 'alert',
     class: cn(
       'relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm',
       (props.icon || slots.icon) && 'grid-cols-[calc(var(--spacing)*4)_1fr] gap-x-3',
+      '[&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current',
       calculatedVariants,
       props.closable && (props.closeButton?.label ? 'pr-24' : 'pr-12'),
       attrs.class,
-      rootUI.class,
     ),
-    style: [colorStyle.value, attrs.style, rootUI.style],
+    style: [colorStyle.value, attrs.style],
   }
 })
 
@@ -117,12 +114,10 @@ function close() {
 }
 </script>
 <template>
-  <div v-if="visible" v-bind="rootProps">
-    <div class="[&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current">
-      <slot name="icon" v-bind="alertContext">
-        <Icon v-if="iconProps?.name" v-bind="iconProps" data-test-alert-icon="icon"></Icon>
-      </slot>
-    </div>
+  <div v-if="visible" v-bind="rootProps" data-test-alert-root>
+    <slot name="icon" v-bind="alertContext">
+      <Icon v-if="iconProps?.name" v-bind="iconProps" data-test-alert-icon />
+    </slot>
 
     <div v-if="props.label || slots.label" v-bind="labelProps" data-test-alert-label>
       <slot name="label" v-bind="alertContext">{{ props.label }}</slot>
@@ -138,7 +133,7 @@ function close() {
 
     <div v-if="props.closable" v-bind="closeButtonContainerProps">
       <slot name="close" v-bind="alertContext">
-        <Button v-bind="closeButtonProps" @click="close" />
+        <Button v-bind="closeButtonProps" data-test-alert-close-button @click="close" />
       </slot>
     </div>
   </div>

@@ -1,11 +1,13 @@
 import { createI18n, useI18n as useVueI18n } from 'vue-i18n'
 import type { Messages } from './schema'
+import ar from './locales/ar'
 import en from './locales/en'
 import es from './locales/es'
 import ptBR from './locales/pt-BR'
 import ptPT from './locales/pt-PT'
 
 export const messages = {
+  ar,
   en,
   es,
   'pt-BR': ptBR,
@@ -18,6 +20,7 @@ export type TranslationKey = keyof Messages
 function normalizeLocale(locale: string): SupportedLocale | undefined {
   const normalized = locale.trim().replaceAll('_', '-').toLowerCase()
 
+  if (normalized === 'ar' || normalized.startsWith('ar-')) return 'ar'
   if (normalized === 'pt-br' || normalized.startsWith('pt-br-')) return 'pt-BR'
   if (normalized === 'pt-pt' || normalized.startsWith('pt-pt-')) return 'pt-PT'
   if (normalized === 'pt') return 'pt-BR'

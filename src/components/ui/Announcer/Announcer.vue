@@ -1,66 +1,50 @@
 <script setup lang="ts">
-import { computed, useAttrs, watch } from 'vue'
-import { useUi } from '@/composables/useUi'
-import { useAnnouncer } from '@/composables/useAnnouncer'
+import { computed, useAttrs, useSlots } from 'vue'
 import { cn } from '@/lib/utils'
-import type { AnnouncerContext, AnnouncerProps, AnnouncerSlots } from '.'
+import {
+  createAnnouncerContext,
+  type AnnouncerContext,
+  type AnnouncerProps,
+  type AnnouncerSlots,
+} from '.'
 
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<AnnouncerProps>(), {
   atomic: true,
+  message: '',
   politeness: 'polite',
-  ui: undefined,
 })
 defineSlots<AnnouncerSlots>()
 
 const attrs = useAttrs()
-const { message, politeness, set, polite, assertive } = useAnnouncer({
-  politeness: props.politeness,
-})
-
-watch(
-  () => props.politeness,
-  (value) => {
-    politeness.value = value
-  },
-)
+const slots = useSlots()
+const hasDefaultSlot = computed(() => Boolean(slots.default))
 
 const announcerContext = computed<AnnouncerContext>(() => {
-  const { ui, ...announcerProps } = props
-  void ui
-
-  return {
-    props: announcerProps,
-    message: message.value,
-  }
+  return createAnnouncerContext(props)
 })
 
-const ariaLive = computed(() => politeness.value)
+const ariaLive = computed(() => props.politeness)
 const role = computed(() => {
-  if (politeness.value === 'assertive') return 'alert'
-  if (politeness.value === 'polite') return 'status'
+  if (props.politeness === 'assertive') return 'alert'
+  if (props.politeness === 'polite') return 'status'
   return undefined
 })
 const rootProps = computed(() => {
-  const rootUI = useUi(props.ui?.root, announcerContext.value)
-
   return {
     ...attrs,
-    ...rootUI,
     'aria-atomic': props.atomic,
     'aria-live': ariaLive.value,
     role: role.value,
-    class: cn('sr-only', attrs.class, rootUI.class),
-    style: [attrs.style, rootUI.style],
+    class: cn(!hasDefaultSlot.value && 'sr-only', attrs.class),
+    style: [attrs.style],
   }
 })
-
-defineExpose({ message, politeness, set, polite, assertive })
 </script>
 
 <template>
-  <span v-bind="rootProps" data-slot="announcer">
-    <slot v-bind="announcerContext">{{ message }}</slot>
+  <span v-bind="rootProps" data-test-announcer-root>
+    <slot v-bind="announcerContext">{{ props.message }}</slot>
   </span>
 </template>

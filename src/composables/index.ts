@@ -1,6 +1,5 @@
 export { getContrastColor, useColor } from './useColor'
 export { setLocale } from '@/i18n'
 export * from './useDates'
-export * from './useAnnouncer'
 export * from './useFilter'
 export * from './useFiles'

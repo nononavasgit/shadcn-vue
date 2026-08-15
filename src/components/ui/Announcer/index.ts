@@ -1,26 +1,29 @@
-import type { HTMLAttributes } from 'vue'
-import type { AnnouncerPoliteness } from '@/composables/useAnnouncer'
+export type AnnouncerPoliteness = 'assertive' | 'polite' | 'off'
 
 export { default as Announcer } from './Announcer.vue'
 
-// Fn
-export type AnnouncerFn<T> = (context: AnnouncerContext) => T
-
 // Props
-export interface AnnouncerUI {
-  root?: AnnouncerFn<HTMLAttributes>
-}
-
 export interface AnnouncerProps {
   atomic?: boolean
+  message?: string
   politeness?: AnnouncerPoliteness
-  ui?: AnnouncerUI
 }
 
 // Context
 export interface AnnouncerContext {
-  props: Omit<AnnouncerProps, 'ui'>
+  props: Required<AnnouncerProps>
   message: string
+}
+
+export function createAnnouncerContext(props: AnnouncerProps): AnnouncerContext {
+  return {
+    props: {
+      atomic: props.atomic ?? true,
+      message: props.message ?? '',
+      politeness: props.politeness ?? 'polite',
+    },
+    message: props.message ?? '',
+  }
 }
 
 // Slots

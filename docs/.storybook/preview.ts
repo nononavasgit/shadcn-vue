@@ -16,7 +16,7 @@ const preview: Preview = {
         components: { ConfigProvider },
         setup: () => ({ theme: context.globals.theme }),
         template: `
-          <div :class="theme === 'dark' && 'dark'" class="min-h-screen bg-background p-4 text-foreground">
+          <div :class="theme === 'dark' && 'dark'" class="bg-background p-4 text-foreground">
             <ConfigProvider><story /></ConfigProvider>
           </div>
         `,

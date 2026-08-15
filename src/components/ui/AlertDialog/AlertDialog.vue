@@ -17,8 +17,8 @@ import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
 import {
-  normalizeAlertDialogContentProps,
-  normalizeAlertDialogTriggerProps,
+  createAlertDialogContext,
+  type AlertDialogExpose,
   type AlertDialogEmits,
   type AlertDialogContext,
   type AlertDialogProps,
@@ -31,14 +31,13 @@ defineSlots<AlertDialogSlots>()
 const emit = defineEmits<AlertDialogEmits>()
 
 const props = withDefaults(defineProps<AlertDialogProps>(), {
+  disableOutsidePointerEvents: true,
   unmountOnHide: true,
   label: undefined,
   description: undefined,
   icon: undefined,
   actionButton: undefined,
   cancelButton: undefined,
-  trigger: undefined,
-  content: undefined,
   ui: undefined,
 })
 
@@ -51,35 +50,28 @@ function close() {
   open.value = false
 }
 
-const alertDialogContext = computed<AlertDialogContext>(() => {
-  const { ui, ...alertDialogProps } = props
-  void ui
+defineExpose<AlertDialogExpose>({ close })
 
-  return {
-    props: alertDialogProps,
-    open: open.value ?? false,
-    close,
-  }
+const alertDialogContext = computed<AlertDialogContext>(() => {
+  return createAlertDialogContext(props, open.value, close)
 })
 
 const rootProps = computed(() => {
-  const rootUI = useUi(props.ui?.root, alertDialogContext.value)
   return {
     ...attrs,
-    ...rootUI,
-    defaultOpen: props.defaultOpen,
     unmountOnHide: props.unmountOnHide,
-    class: cn(attrs.class, rootUI.class),
-    style: [attrs.style, rootUI.style],
+    defaultOpen: false,
+    class: cn(attrs.class),
+    style: [attrs.style],
   }
 })
 
 const triggerProps = computed(() => {
   const triggerUI = useUi(props.ui?.trigger, alertDialogContext.value)
   return {
-    asChild: true,
-    ...normalizeAlertDialogTriggerProps(props.trigger),
     ...triggerUI,
+    as: 'div',
+    asChild: true,
     class: cn(triggerUI.class),
   }
 })
@@ -103,9 +95,11 @@ const contentProps = computed(() => {
   void contentDirection
 
   return {
-    disableOutsidePointerEvents: true,
-    ...normalizeAlertDialogContentProps(props.content),
     ...contentUI,
+    as: 'div',
+    asChild: false,
+    disableOutsidePointerEvents: props.disableOutsidePointerEvents,
+    forceMount: props.forceMount,
     class: cn(
       'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 pointer-events-auto fixed top-1/2 left-1/2 z-50 grid max-h-[90dvh] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 grid-rows-[auto_minmax(0,1fr)_auto] gap-4 overflow-hidden rounded-lg border bg-background p-6 shadow-lg duration-200 sm:max-w-lg',
       contentUI.class,
@@ -157,28 +151,28 @@ const actionButtonProps = computed(() => ({
 </script>
 
 <template>
-  <AlertDialogRoot v-bind="rootProps" v-model:open="open" data-slot="alert-dialog">
-    <AlertDialogTrigger v-bind="triggerProps" data-slot="alert-dialog-trigger">
+  <AlertDialogRoot v-bind="rootProps" v-model:open="open" data-test-alert-dialog-root>
+    <AlertDialogTrigger v-bind="triggerProps" data-test-alert-dialog-trigger>
       <slot v-bind="alertDialogContext" />
     </AlertDialogTrigger>
 
     <AlertDialogPortal>
-      <AlertDialogOverlay v-bind="overlayProps" data-slot="alert-dialog-overlay" />
-      <AlertDialogContent v-bind="contentProps" data-slot="alert-dialog-content">
+      <AlertDialogOverlay v-bind="overlayProps" data-test-alert-dialog-overlay />
+      <AlertDialogContent v-bind="contentProps" data-test-alert-dialog-content>
         <div
           v-if="
             props.label || props.description || slots.header || slots.label || slots.description
           "
           v-bind="headerProps"
-          data-slot="alert-dialog-header"
+          data-test-alert-dialog-header
         >
           <slot name="header" v-bind="alertDialogContext">
             <AlertDialogTitle
               v-if="props.label || slots.label"
               v-bind="labelProps"
-              data-slot="alert-dialog-title"
+              data-test-alert-dialog-label
             >
-              <Icon v-if="iconProps?.name" v-bind="iconProps" />
+              <Icon v-if="iconProps?.name" v-bind="iconProps" data-test-alert-dialog-icon />
               <slot name="label" v-bind="alertDialogContext">
                 {{ props.label }}
               </slot>
@@ -187,7 +181,7 @@ const actionButtonProps = computed(() => ({
             <AlertDialogDescription
               v-if="props.description || slots.description"
               v-bind="descriptionProps"
-              data-slot="alert-dialog-description"
+              data-test-alert-dialog-description
             >
               <slot name="description" v-bind="alertDialogContext">
                 {{ props.description }}
@@ -200,25 +194,25 @@ const actionButtonProps = computed(() => ({
           <slot name="content" v-bind="alertDialogContext" />
         </div>
 
-        <div v-bind="footerProps" data-slot="alert-dialog-footer">
+        <div v-bind="footerProps" data-test-alert-dialog-footer>
           <slot name="footer" v-bind="alertDialogContext">
             <AlertDialogCancel
               as-child
-              data-slot="alert-dialog-cancel"
+              data-test-alert-dialog-cancel
               @click="emit('cancel', $event)"
             >
               <slot name="cancel" v-bind="alertDialogContext">
-                <Button v-bind="cancelButtonProps" />
+                <Button v-bind="cancelButtonProps" data-test-alert-dialog-cancel-button />
               </slot>
             </AlertDialogCancel>
 
             <AlertDialogAction
               as-child
-              data-slot="alert-dialog-action"
+              data-test-alert-dialog-action
               @click="emit('action', $event)"
             >
               <slot name="action" v-bind="alertDialogContext">
-                <Button v-bind="actionButtonProps" />
+                <Button v-bind="actionButtonProps" data-test-alert-dialog-action-button />
               </slot>
             </AlertDialogAction>
           </slot>

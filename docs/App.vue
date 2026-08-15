@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { Attachment } from '@/components/ui/Attachment'
-import { Button } from '@/components/ui/Button'
-import { Icon } from '@/components/ui/Icon'
 import ConfigProvider from '@/components/provider/ConfigProvider.vue'
+import { AlertDialog } from '@/components/ui/AlertDialog'
+import { Button } from '@/components/ui/Button'
 </script>
 
 <template>
@@ -10,118 +9,91 @@ import ConfigProvider from '@/components/provider/ConfigProvider.vue'
     <main class="min-h-screen bg-background p-8 text-foreground">
       <div class="mx-auto flex max-w-3xl flex-col gap-8">
         <header>
-          <h1 class="text-2xl font-semibold">Attachment playground</h1>
-          <p class="text-sm text-muted-foreground">Ejemplos del componente Attachment.</p>
+          <h1 class="text-2xl font-semibold">AlertDialog playground</h1>
+          <p class="text-sm text-muted-foreground">Ejemplos del componente AlertDialog.</p>
         </header>
 
-        <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-          <Attachment
-            label="Informe trimestral.pdf"
-            description="2.4 MB · PDF"
-            media-variant="icon"
-            icon="fileText"
-          >
-            <template #actions>
-              <Button icon="save" size="sm" square aria-label="Guardar archivo" />
-            </template>
-          </Attachment>
+        <section class="grid gap-6 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <h2 class="font-medium">Confirmacion basica</h2>
+              <p class="text-sm text-muted-foreground">Confirma una accion antes de continuar.</p>
+            </div>
 
-          <Attachment
-            label="Vista previa del proyecto"
-            description="Imagen · 1920 × 1080"
-            orientation="vertical"
-            media-variant="image"
-          >
-            <template #media>
-              <div class="flex size-full items-center justify-center bg-primary/10 text-primary">
-                <Icon name="image" size="lg" />
-              </div>
-            </template>
-            <template #actions>
-              <Button icon="moreHorizontal" size="sm" square aria-label="Más opciones" />
-            </template>
-          </Attachment>
+            <AlertDialog
+              label="Publicar cambios"
+              description="Los cambios estaran disponibles para todos los usuarios."
+              :action-button="{ label: 'Publicar' }"
+            >
+              <Button label="Publicar" />
+            </AlertDialog>
+          </div>
 
-          <Attachment
-            label="Subiendo datos.zip"
-            description="68% completado"
-            size="sm"
-            state="idle"
-            media-variant="icon"
-            icon="fileArchive"
-          >
-          </Attachment>
+          <div class="flex items-center justify-between gap-4 border-t pt-6">
+            <div>
+              <h2 class="font-medium">Accion destructiva</h2>
+              <p class="text-sm text-muted-foreground">
+                Advierte sobre una operacion irreversible.
+              </p>
+            </div>
 
-          <Attachment
-            label="Subiendo datos.zip"
-            description="68% completado"
-            size="sm"
-            state="uploading"
-            media-variant="icon"
-            icon="fileArchive"
-          >
-          </Attachment>
+            <AlertDialog
+              label="Eliminar proyecto"
+              description="Esta accion no se puede deshacer. Se eliminaran todos los datos del proyecto."
+              icon="warning"
+              :action-button="{ label: 'Eliminar', severity: 'error' }"
+              :cancel-button="{ label: 'Conservar proyecto' }"
+            >
+              <Button label="Eliminar" severity="error" variant="outline" />
+            </AlertDialog>
+          </div>
 
-          <Attachment
-            label="Subiendo datos.zip"
-            description="68% completado"
-            size="sm"
-            state="processing"
-            media-variant="icon"
-            icon="fileArchive"
-          >
-          </Attachment>
+          <div class="flex items-center justify-between gap-4 border-t pt-6">
+            <div>
+              <h2 class="font-medium">Con contenido</h2>
+              <p class="text-sm text-muted-foreground">
+                Incluye informacion adicional en el cuerpo.
+              </p>
+            </div>
 
-          <Attachment
-            label="Subiendo datos.zip"
-            description="68% completado"
-            size="sm"
-            state="done"
-            media-variant="icon"
-            icon="fileArchive"
-          >
-          </Attachment>
+            <AlertDialog
+              label="Restablecer configuracion"
+              description="Se recuperaran los valores predeterminados."
+              icon="settings"
+              :action-button="{ label: 'Restablecer', severity: 'warning' }"
+            >
+              <Button label="Restablecer" variant="outline" />
 
-          <Attachment
-            label="No se pudo cargar el archivo"
-            description="Inténtalo de nuevo."
-            size="xs"
-            state="error"
-            media-variant="icon"
-            icon="error"
-            class="w-full"
-          >
-            <template #actions="slotProps">
-              <Button label="Reintentar" :size="'xs'" variant="outline" severity="error" />
-            </template>
-          </Attachment>
+              <template #content>
+                <div class="rounded-md border bg-muted/40 p-3 text-sm">
+                  Se restableceran las preferencias de apariencia, notificaciones y privacidad.
+                </div>
+              </template>
+            </AlertDialog>
+          </div>
 
-          <Attachment
-            label="No se pudo cargar el archivo"
-            description="Inténtalo de nuevo."
-            state="error"
-            media-variant="icon"
-            icon="error"
-            class="w-full"
-          >
-            <template #actions="slotProps">
-              <Button label="Reintentar" :size="'md'" variant="outline" severity="error" />
-            </template>
-          </Attachment>
+          <div class="flex items-center justify-between gap-4 border-t pt-6">
+            <div>
+              <h2 class="font-medium">Slots personalizados</h2>
+              <p class="text-sm text-muted-foreground">Personaliza el titulo y las acciones.</p>
+            </div>
 
-          <Attachment
-            label="No se pudo cargar el archivo"
-            description="Inténtalo de nuevo."
-            size="sm"
-            state="error"
-            media-variant="icon"
-            icon="error"
-            class="w-full"
-          >
-            <template #actions="slotProps">
-              <Button label="Reintentar" :size="'sm'" variant="outline" severity="error" />
-            </template>
-          </Attachment>
+            <AlertDialog description="La sesion actual se cerrara inmediatamente.">
+              <Button label="Cerrar sesion" variant="plain" />
+
+              <template #label>
+                <span class="text-error">Cerrar sesion</span>
+              </template>
+
+              <template #cancel>
+                <Button label="Volver" variant="plain" severity="secondary" />
+              </template>
+
+              <template #action>
+                <Button label="Cerrar sesion" severity="error" />
+              </template>
+            </AlertDialog>
+          </div>
         </section>
       </div>
     </main>

@@ -1,83 +1,42 @@
 import type {
-  AlertDialogContentEmits as RekaAlertDialogContentEmits,
   AlertDialogContentProps as RekaAlertDialogContentProps,
   AlertDialogEmits as RekaAlertDialogEmits,
   AlertDialogProps as RekaAlertDialogProps,
-  AlertDialogTriggerProps as RekaAlertDialogTriggerProps,
 } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 import type { NormalizeButtonProps } from '@/components/ui/Button'
 import type { NormalizeIconProps } from '@/components/ui/Icon'
-import type { EmitsAsProps } from '@/types/emits'
 
 export { default as AlertDialog } from './AlertDialog.vue'
 
-export type AlertDialogRootProps = Pick<RekaAlertDialogProps, 'defaultOpen' | 'unmountOnHide'>
-export type AlertDialogTriggerProps = Pick<RekaAlertDialogTriggerProps, 'as' | 'asChild'>
-
+export type AlertDialogRootProps = Pick<RekaAlertDialogProps, 'unmountOnHide'>
 export type AlertDialogContentProps = Pick<
   RekaAlertDialogContentProps,
-  'as' | 'asChild' | 'forceMount' | 'disableOutsidePointerEvents'
-> &
-  EmitsAsProps<RekaAlertDialogContentEmits>
+  'forceMount' | 'disableOutsidePointerEvents'
+>
 
 // Fn
 export type AlertDialogFn<T> = (context: AlertDialogContext) => T
 
-export function normalizeAlertDialogTriggerProps(
-  source: AlertDialogTriggerProps | null | undefined,
-): AlertDialogTriggerProps | undefined {
-  if (!source) return undefined
-  const { as, asChild } = source
-  return { as, asChild }
-}
-
-export function normalizeAlertDialogContentProps(
-  source: AlertDialogContentProps | null | undefined,
-): AlertDialogContentProps | undefined {
-  if (!source) return undefined
-  const {
-    as,
-    asChild,
-    forceMount,
-    disableOutsidePointerEvents,
-    onOpenAutoFocus,
-    onCloseAutoFocus,
-    onEscapeKeyDown,
-    onPointerDownOutside,
-    onFocusOutside,
-    onInteractOutside,
-  } = source
-  return {
-    as,
-    asChild,
-    forceMount,
-    disableOutsidePointerEvents,
-    onOpenAutoFocus,
-    onCloseAutoFocus,
-    onEscapeKeyDown,
-    onPointerDownOutside,
-    onFocusOutside,
-    onInteractOutside,
-  }
-}
-
 // Props
-export interface AlertDialogProps extends AlertDialogRootProps {
+export interface AlertDialogProps extends AlertDialogRootProps, AlertDialogContentProps {
   open?: boolean
   label?: string
   description?: string
   icon?: NormalizeIconProps
   actionButton?: NormalizeButtonProps
   cancelButton?: NormalizeButtonProps
-  trigger?: AlertDialogTriggerProps
-  content?: AlertDialogContentProps
   ui?: AlertDialogUI
+}
+
+// Expose
+export interface AlertDialogExpose {
+  /** Closes the alert dialog through the exposed component API or slot context. */
+  close: () => void
 }
 
 // UI
 export interface AlertDialogUI {
-  root?: AlertDialogFn<HTMLAttributes>
   trigger?: AlertDialogFn<HTMLAttributes>
   overlay?: AlertDialogFn<HTMLAttributes>
   content?: AlertDialogFn<HTMLAttributes>
@@ -90,9 +49,21 @@ export interface AlertDialogUI {
 
 // Context
 export interface AlertDialogContext {
-  props: Omit<AlertDialogProps, 'ui'>
+  ui: AlertDialogProps['ui']
   open: boolean
   close: () => void
+}
+
+export function createAlertDialogContext(
+  props: Pick<AlertDialogProps, 'ui'>,
+  open: AlertDialogProps['open'],
+  close: () => void,
+): AlertDialogContext {
+  return {
+    ui: props.ui,
+    open: open ?? false,
+    close,
+  }
 }
 
 // Emits

@@ -1,66 +1,55 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Accordion, type AccordionItem, type AccordionValue } from '@/components/ui/Accordion'
+import { FieldSet } from '@/components/ui/FieldSet'
+import { Input } from '@/components/ui/Input'
 import ConfigProvider from '@/components/provider/ConfigProvider.vue'
-
-const accordionSingle = ref<AccordionValue>('installation')
-const accordionMultiple = ref<AccordionValue>(['account'])
-
-const accordionItems: AccordionItem[] = [
-  {
-    value: 'installation',
-    label: 'Instalación',
-    description: 'Instala el paquete y registra sus estilos globales para empezar.',
-    icon: 'info',
-  },
-  {
-    value: 'account',
-    label: 'Cuenta',
-    description: 'Gestiona tus datos personales, preferencias y sesiones activas.',
-  },
-  {
-    value: 'disabled',
-    label: 'Sección deshabilitada',
-    description: 'Este contenido no se puede abrir.',
-    disabled: true,
-  },
-]
 </script>
 
 <template>
   <ConfigProvider>
     <main class="min-h-screen bg-background p-8 text-foreground">
-      <div class="mx-auto flex max-w-5xl flex-col gap-6">
+      <div class="mx-auto flex max-w-3xl flex-col gap-8">
         <header>
-          <h1 class="text-2xl font-semibold">Accordion playground</h1>
-          <p class="text-sm text-muted-foreground">Ejemplos del componente Accordion.</p>
+          <h1 class="text-2xl font-semibold">FieldSet playground</h1>
+          <p class="text-sm text-muted-foreground">Ejemplos del componente FieldSet.</p>
         </header>
 
-        <section class="grid gap-6 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
-          <div class="grid gap-2">
-            <h2 class="font-semibold">Selección única y colapsable</h2>
-            <Accordion
-              v-model:value="accordionSingle"
-              :items="accordionItems"
-              collapsible
-              dir="rtl"
-              @value-change="console.log('Accordion single:', $event)"
-            />
-            <code class="text-xs text-muted-foreground">{{ accordionSingle }}</code>
-          </div>
+        <section class="grid gap-8 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+          <FieldSet
+            legend="Datos personales"
+            description="Completa la información que aparecerá en tu perfil."
+          >
+            <div class="grid gap-2">
+              <label class="text-sm font-medium" for="name">Nombre</label>
+              <Input id="name" placeholder="Nombre completo" />
+            </div>
+            <div class="grid gap-2">
+              <label class="text-sm font-medium" for="email">Correo electrónico</label>
+              <Input id="email" type="email" placeholder="correo@ejemplo.com" />
+            </div>
+          </FieldSet>
 
-          <div class="grid gap-2">
-            <h2 class="font-semibold">Selección múltiple con contenido personalizado</h2>
-            <Accordion v-model:value="accordionMultiple" :items="accordionItems" type="multiple">
-              <template #content="{ item, open }">
-                <p>
-                  {{ item.description }}
-                  <span class="font-medium">Estado: {{ open ? 'abierto' : 'cerrado' }}</span>
-                </p>
-              </template>
-            </Accordion>
-            <code class="text-xs text-muted-foreground">{{ accordionMultiple }}</code>
-          </div>
+          <FieldSet
+            legend="Preferencias"
+            legend-variant="label"
+            description="La variante label muestra una leyenda más compacta."
+          >
+            <label class="flex items-center gap-3 text-sm">
+              <input type="checkbox" class="size-4" />
+              Recibir novedades por correo
+            </label>
+            <label class="flex items-center gap-3 text-sm">
+              <input type="checkbox" class="size-4" />
+              Activar recomendaciones personalizadas
+            </label>
+          </FieldSet>
+
+          <FieldSet>
+            <template #legend>Contenido mediante slots</template>
+            <template #description>
+              La leyenda y la descripción también admiten contenido personalizado.
+            </template>
+            <p class="text-sm">Contenido principal del grupo.</p>
+          </FieldSet>
         </section>
       </div>
     </main>

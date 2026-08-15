@@ -6,10 +6,10 @@ export { default as Avatar } from './Avatar.vue'
 export const avatarVariants = cva('relative flex shrink-0 overflow-hidden ', {
   variants: {
     size: {
-      xs: 'size-6',
-      sm: 'size-8',
-      md: 'size-10',
-      lg: 'size-12',
+      xs: 'size-6 text-xs',
+      sm: 'size-8 text-sm',
+      md: 'size-10 text-base',
+      lg: 'size-12 text-lg',
     },
     shape: {
       rounded: 'rounded-full',

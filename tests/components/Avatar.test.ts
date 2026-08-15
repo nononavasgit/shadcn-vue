@@ -12,15 +12,15 @@ describe('Avatar', () => {
   describe('props', () => {
     describe('size', () => {
       it.each([
-        { input: 'xs' as const, expected: 'size-6' },
-        { input: 'sm' as const, expected: 'size-8' },
-        { input: 'md' as const, expected: 'size-10' },
-        { input: 'lg' as const, expected: 'size-12' },
-        { input: undefined, expected: 'size-10' },
+        { input: 'xs' as const, expected: ['size-6', 'text-xs'] },
+        { input: 'sm' as const, expected: ['size-8', 'text-sm'] },
+        { input: 'md' as const, expected: ['size-10', 'text-base'] },
+        { input: 'lg' as const, expected: ['size-12', 'text-lg'] },
+        { input: undefined, expected: ['size-10', 'text-base'] },
       ])('renders size=$input', ({ input, expected }) => {
         const root = mountAvatar({ props: { size: input } }).get('[data-test-avatar-root]')
 
-        expect(root.classes()).toContain(expected)
+        expect(root.classes()).toEqual(expect.arrayContaining(expected))
       })
     })
 

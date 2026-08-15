@@ -1,103 +1,54 @@
 <script setup lang="ts">
-import { computed, useAttrs } from 'vue'
-import type { AvatarImageEmits } from 'reka-ui'
+import { computed, useAttrs, type ImgHTMLAttributes } from 'vue'
 import { AvatarFallback, AvatarImage, AvatarRoot } from 'reka-ui'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
-import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import type { AvatarContext, AvatarEmits, AvatarLoadingState, AvatarProps, AvatarSlots } from '.'
+import { avatarVariants, type AvatarProps, type AvatarSlots } from '.'
+
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<AvatarProps>(), {
-  src: undefined,
-  alt: undefined,
+  size: 'md',
+  shape: 'rounded',
   icon: undefined,
   label: undefined,
-  ui: undefined,
 })
-const emit = defineEmits<AvatarEmits>()
 defineSlots<AvatarSlots>()
 
-const avatarContext = computed<AvatarContext>(() => {
-  const { ui, ...avatarProps } = props
-  void ui
-
+const attrs = useAttrs()
+type AvatarImageProps = ImgHTMLAttributes & { src: string }
+const rootProps = computed(() => {
   return {
-    props: avatarProps,
+    class: cn(avatarVariants({ size: props.size, shape: props.shape })),
   }
 })
 
-const attrs = useAttrs()
-const rootProps = computed(() => {
-  const rootUI = useUi(props.ui?.root, avatarContext.value)
+const imageProps = computed<AvatarImageProps>(() => {
   return {
     ...attrs,
-    ...rootUI,
-    as: props.as,
-    asChild: props.asChild,
-    class: cn(
-      'relative flex size-8 shrink-0 overflow-hidden rounded-full',
-      attrs.class,
-      rootUI.class,
-    ),
-    style: [attrs.style, rootUI.style],
-  }
-})
-
-const imageProps = computed(() => {
-  if (!props.src) return undefined
-  const imageUI = useUi(props.ui?.image, avatarContext.value)
-  return {
-    ...imageUI,
-    as: props.image?.as,
-    asChild: props.image?.asChild,
-    crossOrigin: props.image?.crossOrigin,
-    referrerPolicy: props.image?.referrerPolicy,
-    src: props.src,
-    alt: props.alt,
-    class: cn('aspect-square size-full', imageUI.class),
-  }
+    src: props.src ?? '',
+    class: cn('aspect-square size-full', attrs.class),
+  } as AvatarImageProps
 })
 
 const fallbackProps = computed(() => {
-  const fallbackUI = useUi(props.ui?.fallback, avatarContext.value)
   return {
-    ...fallbackUI,
-    as: props.fallback?.as,
-    asChild: props.fallback?.asChild,
+    ...attrs,
     delayMs: props.delayMs,
-    class: cn('flex size-full items-center justify-center rounded-full bg-muted', fallbackUI.class),
+    class: cn('flex size-full items-center justify-center bg-muted', attrs.class),
   }
 })
 
 const iconProps = computed(() => normalizeIconProps(props.icon))
-
-type OriginalLoadingState = AvatarImageEmits['loadingStatusChange'][0]
-
-const loadingStates: Record<OriginalLoadingState, AvatarLoadingState> = {
-  idle: false,
-  loading: true,
-  loaded: false,
-  error: false,
-}
-
-function handleLoadingStateChange(state: OriginalLoadingState) {
-  emit('loadingStateChange', loadingStates[state])
-}
 </script>
 
 <template>
-  <AvatarRoot v-bind="rootProps" data-slot="avatar">
-    <AvatarImage
-      v-if="imageProps"
-      v-bind="imageProps"
-      data-slot="avatar-image"
-      @loading-status-change="handleLoadingStateChange"
-    />
+  <AvatarRoot v-bind="rootProps" as="span" :as-child="false" data-test-avatar-root>
+    <AvatarImage v-bind="imageProps" as="img" :as-child="false" data-test-avatar-image />
 
-    <AvatarFallback v-bind="fallbackProps" data-slot="avatar-fallback">
-      <slot name="fallback" v-bind="avatarContext">
-        <Icon v-if="iconProps?.name" v-bind="iconProps" />
+    <AvatarFallback v-bind="fallbackProps" as="div" :as-child="false" data-test-avatar-fallback>
+      <slot name="fallback">
+        <Icon v-if="iconProps?.name" v-bind="iconProps" data-test-avatar-icon />
         <template v-else>{{ props.label }}</template>
       </slot>
     </AvatarFallback>

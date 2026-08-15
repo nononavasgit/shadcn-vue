@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import ConfigProvider from '@/components/provider/ConfigProvider.vue'
 import { AlertDialog } from '@/components/ui/AlertDialog'
+import { Avatar } from '@/components/ui/Avatar'
 import { Button } from '@/components/ui/Button'
+import { ref } from 'vue'
+
+const src = ref('https://i.pravatar.cc/96?img=12')
+const a = () => {
+  src.value = ''
+}
 </script>
 
 <template>
@@ -93,6 +100,76 @@ import { Button } from '@/components/ui/Button'
                 <Button label="Cerrar sesion" severity="error" />
               </template>
             </AlertDialog>
+          </div>
+        </section>
+
+        <section class="grid gap-6 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+          <header>
+            <h2 class="font-medium">Avatar</h2>
+            <p class="text-sm text-muted-foreground">
+              Muestra imagen, iniciales, iconos y fallbacks personalizados.
+            </p>
+          </header>
+
+          <div class="grid gap-6 sm:grid-cols-2">
+            <div class="flex items-center gap-4">
+              <div>
+                <p class="font-medium">Imagen</p>
+                <p class="text-sm text-muted-foreground">Avatar con imagen remota.</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <div>
+                <p class="font-medium">Iniciales</p>
+                <p class="text-sm text-muted-foreground">Fallback de texto.</p>
+              </div>
+            </div>
+
+            <button @click="a">aa</button>
+
+            <Avatar
+              size="lg"
+              :src="src"
+              alt="Ada Lovelace"
+              icon="user"
+              label="AL"
+              shape="square"
+            />
+
+            <Avatar size="md" label="AL" shape="rounded" />
+            <Avatar size="sm" icon="user" shape="rounded" class="bg-primary/50" />
+            <Avatar size="xs">
+              <template #fallback>
+                <span
+                  class="flex size-full items-center justify-center bg-primary text-sm font-medium text-primary-foreground"
+                >
+                  NV
+                </span>
+              </template>
+            </Avatar>
+            <div class="flex items-center gap-4">
+              <div>
+                <p class="font-medium">Icono</p>
+                <p class="text-sm text-muted-foreground">Fallback con icono.</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <Avatar size="lg">
+                <template #fallback>
+                  <span
+                    class="flex size-full items-center justify-center bg-primary text-sm font-medium text-primary-foreground"
+                  >
+                    NV
+                  </span>
+                </template>
+              </Avatar>
+              <div>
+                <p class="font-medium">Slot fallback</p>
+                <p class="text-sm text-muted-foreground">Contenido personalizado.</p>
+              </div>
+            </div>
           </div>
         </section>
       </div>

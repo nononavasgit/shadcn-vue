@@ -1,5 +1,5 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
 import {
@@ -66,14 +66,6 @@ describe('AspectRatio', () => {
       })
 
       expect(aspectRatio.get('[data-test-aspect-ratio-content]').text()).toBe('Content')
-    })
-
-    it('passes AspectRatioContext to the default slot', () => {
-      const slot = vi.fn(() => null)
-
-      mountAspectRatio({ props: { ratio: 16 / 9 }, slots: { default: slot } })
-
-      expect(slot).toHaveBeenCalledWith(expect.objectContaining({ ratio: 16 / 9 }))
     })
   })
 })

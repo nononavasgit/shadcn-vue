@@ -13,6 +13,7 @@ import CardPage from './components/pages/CardPage.vue'
 import FieldSetPage from './components/pages/FieldSetPage.vue'
 import IconPage from './components/pages/IconPage.vue'
 import IndexPage from './components/pages/IndexPage.vue'
+import LabelPage from './components/pages/LabelPage.vue'
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -31,5 +32,6 @@ export const router = createRouter({
     { path: '/card', component: CardPage },
     { path: '/field-set', component: FieldSetPage },
     { path: '/icon', component: IconPage },
+    { path: '/label', component: LabelPage },
   ],
 })

@@ -140,6 +140,16 @@
               Iconos Lucide con tamanos y color configurables.
             </p>
           </RouterLink>
+
+          <RouterLink
+            to="/label"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Label</h2>
+            <p class="text-sm text-muted-foreground">
+              Etiquetas accesibles para controles de formulario.
+            </p>
+          </RouterLink>
         </nav>
       </div>
     </main>

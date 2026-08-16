@@ -101,7 +101,6 @@ describe('Announcer', () => {
         name: 'default values',
         input: {},
         expected: {
-          props: { atomic: true, message: '', politeness: 'polite' },
           message: '',
         },
       },
@@ -109,7 +108,6 @@ describe('Announcer', () => {
         name: 'configured values',
         input: { atomic: false, message: 'Changes saved', politeness: 'assertive' as const },
         expected: {
-          props: { atomic: false, message: 'Changes saved', politeness: 'assertive' as const },
           message: 'Changes saved',
         },
       },

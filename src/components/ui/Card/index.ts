@@ -2,9 +2,6 @@ import type { HTMLAttributes } from 'vue'
 
 export { default as Card } from './Card.vue'
 
-export type CardLabel = string
-export type CardDescription = string
-
 export type CardFn<T> = (context: CardContext) => T
 
 export interface CardUI {
@@ -17,22 +14,18 @@ export interface CardUI {
 }
 
 export interface CardProps {
-  label?: CardLabel
-  description?: CardDescription
+  label?: string
+  description?: string
   ui?: CardUI
 }
 
 export interface CardContext {
-  label: CardProps['label']
-  description: CardProps['description']
+  ui?: CardUI
 }
 
 export function createCardContext(props: CardProps): CardContext {
-  const { label, description } = props
-
   return {
-    label,
-    description,
+    ui: props?.ui,
   }
 }
 

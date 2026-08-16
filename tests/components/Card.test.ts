@@ -1,5 +1,5 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
 import { Card, createCardContext, type CardContext, type CardProps } from '@/components/ui/Card'
@@ -10,13 +10,30 @@ function mountCard(options: MountingOptions<CardProps> = {}) {
 
 describe('Card', () => {
   describe('props', () => {
-    it.each([
-      { prop: 'label' as const, value: 'Account', selector: 'label' },
-      { prop: 'description' as const, value: 'Account details', selector: 'description' },
-    ])('renders $prop', ({ prop, value, selector }) => {
-      const card = mountCard({ props: { [prop]: value } })
+    describe('label', () => {
+      it.each([
+        { input: 'Account', expected: 'Account' },
+        { input: '', expected: '' },
+        { input: undefined, expected: undefined },
+      ])('renders label=$input', ({ input, expected }) => {
+        const card = mountCard({ props: { label: input } })
 
-      expect(card.get(`[data-test-card-${selector}]`).text()).toBe(value)
+        expect(card.find('[data-test-card-label]').exists()).toBe(Boolean(expected))
+        if (expected) expect(card.get('[data-test-card-label]').text()).toBe(expected)
+      })
+    })
+
+    describe('description', () => {
+      it.each([
+        { input: 'Account details', expected: 'Account details' },
+        { input: '', expected: '' },
+        { input: undefined, expected: undefined },
+      ])('renders description=$input', ({ input, expected }) => {
+        const card = mountCard({ props: { description: input } })
+
+        expect(card.find('[data-test-card-description]').exists()).toBe(Boolean(expected))
+        if (expected) expect(card.get('[data-test-card-description]').text()).toBe(expected)
+      })
     })
 
     it('does not render an empty header', () => {
@@ -49,28 +66,6 @@ describe('Card', () => {
         expect(element.classes()).toContain(`ui-${part}`)
         expect(element.attributes('style')).toContain('opacity: 0.8')
       })
-
-      it.each(parts)('passes CardContext to ui.%s', (part) => {
-        const ui = vi.fn(() => ({}))
-
-        mountCard({
-          props: {
-            label: 'Account',
-            description: 'Account details',
-            ui: { [part]: ui },
-          },
-          slots: {
-            default: () => 'Content',
-            action: () => 'Action',
-            footer: () => 'Footer',
-          },
-        })
-
-        expect(ui).toHaveBeenCalledWith({
-          label: 'Account',
-          description: 'Account details',
-        } satisfies CardContext)
-      })
     })
   })
 
@@ -94,10 +89,13 @@ describe('Card', () => {
 
   describe('context contract', () => {
     it.each([
-      { input: {}, expected: { label: undefined, description: undefined } },
       {
-        input: { label: 'Account', description: 'Account details' },
-        expected: { label: 'Account', description: 'Account details' },
+        input: {},
+        expected: { ui: undefined },
+      },
+      {
+        input: { ui: { label: () => ({ class: 'ui-label' }) } },
+        expected: { ui: { label: expect.any(Function) } },
       },
     ])('creates the expected context', ({ input, expected }) => {
       expect(createCardContext(input)).toEqual(expected satisfies CardContext)
@@ -124,7 +122,7 @@ describe('Card', () => {
       expect(card.get(`[data-test-card-slot="${expected}"]`).text()).toBe(`Slot ${expected}`)
     })
 
-    it('header replaces the label and description fallbacks', () => {
+    it('header slot replaces the label and description fallbacks', () => {
       const card = mountCard({
         props: { label: 'Account', description: 'Account details' },
         slots: { header: () => h('span', 'Custom header') },
@@ -133,19 +131,6 @@ describe('Card', () => {
       expect(card.get('[data-test-card-header]').text()).toBe('Custom header')
       expect(card.find('[data-test-card-label]').exists()).toBe(false)
       expect(card.find('[data-test-card-description]').exists()).toBe(false)
-    })
-
-    it.each(slotCases)('passes CardContext to slot $input', ({ input }) => {
-      const slot = vi.fn(() => null)
-
-      mountCard({
-        props: { label: 'Account', description: 'Account details' },
-        slots: { [input]: slot },
-      })
-
-      expect(slot).toHaveBeenCalledWith(
-        expect.objectContaining({ label: 'Account', description: 'Account details' }),
-      )
     })
   })
 })

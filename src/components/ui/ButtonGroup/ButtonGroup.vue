@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { cn } from '@/lib/utils'
-import {
-  buttonGroupVariants,
-  createButtonGroupContext,
-  type ButtonGroupProps,
-  type ButtonGroupSlots,
-} from '.'
+import { buttonGroupVariants, type ButtonGroupProps, type ButtonGroupSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -15,8 +10,6 @@ const props = withDefaults(defineProps<ButtonGroupProps>(), {
   size: 'md',
 })
 defineSlots<ButtonGroupSlots>()
-
-const buttonGroupContext = computed(() => createButtonGroupContext(props))
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
@@ -34,6 +27,6 @@ const rootProps = computed(() => {
 
 <template>
   <div v-bind="rootProps" data-test-button-group-root>
-    <slot v-bind="buttonGroupContext" />
+    <slot />
   </div>
 </template>

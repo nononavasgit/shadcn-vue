@@ -35,18 +35,6 @@ export interface ButtonGroupProps {
   size?: ButtonGroupSize
 }
 
-export interface ButtonGroupContext {
-  orientation: ButtonGroupOrientation
-  size: ButtonGroupSize
-}
-
-export function createButtonGroupContext(props: ButtonGroupProps): ButtonGroupContext {
-  return {
-    orientation: props.orientation ?? 'horizontal',
-    size: props.size ?? 'md',
-  }
-}
-
 export interface ButtonGroupSlots {
-  default?(props: ButtonGroupContext): unknown
+  default?(): unknown
 }

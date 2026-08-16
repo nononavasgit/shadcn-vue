@@ -62,6 +62,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/button-group"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">ButtonGroup</h2>
+            <p class="text-sm text-muted-foreground">
+              Agrupa botones relacionados en una orientacion y tamano comunes.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/badge"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

@@ -1,13 +1,8 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import {
-  ButtonGroup,
-  createButtonGroupContext,
-  type ButtonGroupContext,
-  type ButtonGroupProps,
-} from '@/components/ui/ButtonGroup'
+import { ButtonGroup, type ButtonGroupProps } from '@/components/ui/ButtonGroup'
 
 function mountButtonGroup(options: MountingOptions<ButtonGroupProps> = {}) {
   return mount(ButtonGroup, options)
@@ -68,23 +63,6 @@ describe('ButtonGroup', () => {
     })
   })
 
-  describe('context contract', () => {
-    it.each([
-      {
-        name: 'default values',
-        input: {},
-        expected: { orientation: 'horizontal', size: 'md' },
-      },
-      {
-        name: 'configured values',
-        input: { orientation: 'vertical' as const, size: 'lg' as const },
-        expected: { orientation: 'vertical', size: 'lg' },
-      },
-    ])('creates the contract with $name', ({ input, expected }) => {
-      expect(createButtonGroupContext(input)).toEqual(expected satisfies ButtonGroupContext)
-    })
-  })
-
   describe('slots', () => {
     it('renders the default slot', () => {
       const group = mountButtonGroup({
@@ -92,19 +70,6 @@ describe('ButtonGroup', () => {
       })
 
       expect(group.get('[data-test-button-group-item]').text()).toBe('Action')
-    })
-
-    it('passes ButtonGroupContext to the default slot', () => {
-      const slot = vi.fn(() => null)
-
-      mountButtonGroup({
-        props: { orientation: 'vertical', size: 'lg' },
-        slots: { default: slot },
-      })
-
-      expect(slot).toHaveBeenCalledWith(
-        expect.objectContaining({ orientation: 'vertical', size: 'lg' }),
-      )
     })
   })
 })

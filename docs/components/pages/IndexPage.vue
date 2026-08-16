@@ -10,7 +10,7 @@
           </p>
         </header>
 
-        <nav aria-label="Componentes" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <nav aria-label="Componentes" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
           <RouterLink
             to="/avatar"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
@@ -48,6 +48,16 @@
             <h2 class="font-medium">Card</h2>
             <p class="text-sm text-muted-foreground">
               Contenido estructurado con encabezado, acciones y pie.
+            </p>
+          </RouterLink>
+
+          <RouterLink
+            to="/field-set"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">FieldSet</h2>
+            <p class="text-sm text-muted-foreground">
+              Agrupacion de campos con leyenda y descripcion.
             </p>
           </RouterLink>
 

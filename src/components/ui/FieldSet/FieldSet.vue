@@ -2,12 +2,7 @@
 import { computed, useAttrs, useSlots } from 'vue'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import {
-  createFieldSetContext,
-  fieldSetLegendVariants,
-  type FieldSetProps,
-  type FieldSetSlots,
-} from '.'
+import { fieldSetLegendVariants, type FieldSetProps, type FieldSetSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -22,8 +17,6 @@ defineSlots<FieldSetSlots>()
 const attrs = useAttrs()
 const slots = useSlots()
 
-const fieldSetContext = computed(() => createFieldSetContext(props))
-
 const rootProps = computed(() => {
   return {
     ...attrs,
@@ -33,7 +26,7 @@ const rootProps = computed(() => {
 })
 
 const legendProps = computed(() => {
-  const ui = useUi(props.ui?.legend, fieldSetContext.value)
+  const ui = useUi(props.ui?.legend, undefined)
   return {
     ...ui,
     class: cn(fieldSetLegendVariants({ legendVariant: props.legendVariant }), ui.class),
@@ -42,7 +35,7 @@ const legendProps = computed(() => {
 })
 
 const descriptionProps = computed(() => {
-  const ui = useUi(props.ui?.description, fieldSetContext.value)
+  const ui = useUi(props.ui?.description, undefined)
   return {
     ...ui,
     class: cn(
@@ -54,7 +47,7 @@ const descriptionProps = computed(() => {
 })
 
 const groupProps = computed(() => {
-  const ui = useUi(props.ui?.group, fieldSetContext.value)
+  const ui = useUi(props.ui?.group, undefined)
   return {
     ...ui,
     class: cn('@container/field-group flex w-full flex-col gap-7', ui.class),
@@ -66,7 +59,7 @@ const groupProps = computed(() => {
 <template>
   <fieldset v-bind="rootProps" data-test-field-set-root>
     <legend v-if="props.legend || slots.legend" v-bind="legendProps" data-test-field-set-legend>
-      <slot name="legend" v-bind="fieldSetContext">{{ props.legend }}</slot>
+      <slot name="legend">{{ props.legend }}</slot>
     </legend>
 
     <p
@@ -74,11 +67,11 @@ const groupProps = computed(() => {
       v-bind="descriptionProps"
       data-test-field-set-description
     >
-      <slot name="description" v-bind="fieldSetContext">{{ props.description }}</slot>
+      <slot name="description">{{ props.description }}</slot>
     </p>
 
     <div v-bind="groupProps" data-test-field-set-group>
-      <slot v-bind="fieldSetContext" />
+      <slot />
     </div>
   </fieldset>
 </template>

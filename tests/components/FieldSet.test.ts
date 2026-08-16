@@ -1,13 +1,8 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import {
-  createFieldSetContext,
-  FieldSet,
-  type FieldSetContext,
-  type FieldSetProps,
-} from '@/components/ui/FieldSet'
+import { FieldSet, type FieldSetProps } from '@/components/ui/FieldSet'
 
 function mountFieldSet(options: MountingOptions<FieldSetProps> = {}) {
   return mount(FieldSet, options)
@@ -15,27 +10,39 @@ function mountFieldSet(options: MountingOptions<FieldSetProps> = {}) {
 
 describe('FieldSet', () => {
   describe('props', () => {
-    it.each([
-      { prop: 'legend' as const, value: 'Profile', selector: 'legend' },
-      { prop: 'description' as const, value: 'Contact details', selector: 'description' },
-    ])('renders $prop', ({ prop, value, selector }) => {
-      const fieldSet = mountFieldSet({ props: { [prop]: value } })
+    describe('legend', () => {
+      it.each([
+        { input: 'Profile', expected: 'Profile' },
+        { input: '', expected: undefined },
+        { input: undefined, expected: undefined },
+      ])('renders legend=$input', ({ input, expected }) => {
+        const fieldSet = mountFieldSet({ props: { legend: input } })
 
-      expect(fieldSet.get(`[data-test-field-set-${selector}]`).text()).toBe(value)
+        expect(fieldSet.find('[data-test-field-set-legend]').exists()).toBe(Boolean(expected))
+        if (expected) expect(fieldSet.get('[data-test-field-set-legend]').text()).toBe(expected)
+      })
     })
 
-    it('does not render empty optional parts', () => {
-      const fieldSet = mountFieldSet()
+    describe('description', () => {
+      it.each([
+        { input: 'Contact details', expected: 'Contact details' },
+        { input: '', expected: undefined },
+        { input: undefined, expected: undefined },
+      ])('renders description=$input', ({ input, expected }) => {
+        const fieldSet = mountFieldSet({ props: { description: input } })
 
-      expect(fieldSet.find('[data-test-field-set-legend]').exists()).toBe(false)
-      expect(fieldSet.find('[data-test-field-set-description]').exists()).toBe(false)
-      expect(fieldSet.find('[data-test-field-set-group]').exists()).toBe(true)
+        expect(fieldSet.find('[data-test-field-set-description]').exists()).toBe(Boolean(expected))
+        if (expected) {
+          expect(fieldSet.get('[data-test-field-set-description]').text()).toBe(expected)
+        }
+      })
     })
 
     describe('legendVariant', () => {
       it.each([
         { input: 'legend' as const, expected: 'text-base' },
         { input: 'label' as const, expected: 'text-sm' },
+        { input: undefined, expected: 'text-base' },
       ])('renders legendVariant=$input', ({ input, expected }) => {
         const legend = mountFieldSet({ props: { legend: 'Profile', legendVariant: input } }).get(
           '[data-test-field-set-legend]',
@@ -63,25 +70,6 @@ describe('FieldSet', () => {
         expect(element.classes()).toContain(`ui-${part}`)
         expect(element.attributes('style')).toContain('opacity: 0.8')
       })
-
-      it.each(parts)('passes FieldSetContext to ui.%s', (part) => {
-        const ui = vi.fn(() => ({}))
-
-        mountFieldSet({
-          props: {
-            legend: 'Profile',
-            description: 'Contact details',
-            legendVariant: 'label',
-            ui: { [part]: ui },
-          },
-        })
-
-        expect(ui).toHaveBeenCalledWith({
-          legend: 'Profile',
-          description: 'Contact details',
-          legendVariant: 'label',
-        } satisfies FieldSetContext)
-      })
     })
   })
 
@@ -104,35 +92,6 @@ describe('FieldSet', () => {
     })
   })
 
-  describe('context contract', () => {
-    it.each([
-      {
-        name: 'default values',
-        input: {},
-        expected: {
-          legend: undefined,
-          description: undefined,
-          legendVariant: 'legend',
-        },
-      },
-      {
-        name: 'configured values',
-        input: {
-          legend: 'Profile',
-          description: 'Contact details',
-          legendVariant: 'label' as const,
-        },
-        expected: {
-          legend: 'Profile',
-          description: 'Contact details',
-          legendVariant: 'label',
-        },
-      },
-    ])('creates the contract with $name', ({ input, expected }) => {
-      expect(createFieldSetContext(input)).toEqual(expected satisfies FieldSetContext)
-    })
-  })
-
   describe('slots', () => {
     const slotCases = ['default', 'legend', 'description'] as const
 
@@ -144,27 +103,6 @@ describe('FieldSet', () => {
       })
 
       expect(fieldSet.get(`[data-test-field-set-slot="${input}"]`).text()).toBe(`Slot ${input}`)
-    })
-
-    it.each(slotCases)('passes FieldSetContext to slot $input', (input) => {
-      const slot = vi.fn(() => null)
-
-      mountFieldSet({
-        props: {
-          legend: 'Profile',
-          description: 'Contact details',
-          legendVariant: 'label',
-        },
-        slots: { [input]: slot },
-      })
-
-      expect(slot).toHaveBeenCalledWith(
-        expect.objectContaining({
-          legend: 'Profile',
-          description: 'Contact details',
-          legendVariant: 'label',
-        }),
-      )
     })
   })
 })

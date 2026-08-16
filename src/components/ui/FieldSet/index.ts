@@ -21,7 +21,7 @@ export const fieldSetLegendVariants = cva('mb-3 font-medium', {
 export type FieldSetVariants = VariantProps<typeof fieldSetLegendVariants>
 export type FieldSetLegendVariant = NonNullable<FieldSetVariants['legendVariant']>
 
-export type FieldSetFn<T> = (context: FieldSetContext) => T
+export type FieldSetFn<T> = () => T
 
 export interface FieldSetUI {
   legend?: FieldSetFn<HTMLAttributes>
@@ -36,22 +36,8 @@ export interface FieldSetProps {
   ui?: FieldSetUI
 }
 
-export interface FieldSetContext {
-  legend: FieldSetLegend | undefined
-  description: FieldSetDescription | undefined
-  legendVariant: FieldSetLegendVariant
-}
-
-export function createFieldSetContext(props: FieldSetProps): FieldSetContext {
-  return {
-    legend: props.legend,
-    description: props.description,
-    legendVariant: props.legendVariant ?? 'legend',
-  }
-}
-
 export interface FieldSetSlots {
-  default?(props: FieldSetContext): unknown
-  legend?(props: FieldSetContext): unknown
-  description?(props: FieldSetContext): unknown
+  default?(): unknown
+  legend?(): unknown
+  description?(): unknown
 }

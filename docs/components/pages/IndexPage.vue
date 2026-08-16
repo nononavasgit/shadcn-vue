@@ -170,6 +170,16 @@
               Agrupa teclas Kbd para representar atajos completos.
             </p>
           </RouterLink>
+
+          <RouterLink
+            to="/time"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Time</h2>
+            <p class="text-sm text-muted-foreground">
+              Fechas semanticas con formato localizado y slot contextual.
+            </p>
+          </RouterLink>
         </nav>
       </div>
     </main>

@@ -190,6 +190,16 @@
               Control binario con estados, variantes e iconos.
             </p>
           </RouterLink>
+
+          <RouterLink
+            to="/textarea"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Textarea</h2>
+            <p class="text-sm text-muted-foreground">
+              Campo multilínea controlado para texto largo.
+            </p>
+          </RouterLink>
         </nav>
       </div>
     </main>

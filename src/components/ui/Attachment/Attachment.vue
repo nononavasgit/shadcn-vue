@@ -124,17 +124,6 @@ const actionsProps = computed(() => {
     ),
   }
 })
-
-const triggerProps = computed(() => {
-  const ui = useUi(props.ui?.trigger, attachmentContext.value)
-  return {
-    ...ui,
-    class: cn(
-      'contents [&>*]:absolute [&>*]:inset-0 [&>*]:z-0 [&>*]:rounded-[inherit] [&>*]:outline-none [&>*:hover]:bg-accent/50 [&>*:focus-visible]:ring-[3px] [&>*:focus-visible]:ring-ring/50',
-      ui.class,
-    ),
-  }
-})
 </script>
 
 <template>
@@ -181,15 +170,6 @@ const triggerProps = computed(() => {
       data-test-attachment-actions
     >
       <slot name="actions" v-bind="attachmentContext" />
-    </div>
-
-    <div
-      v-if="$slots.trigger"
-      v-bind="triggerProps"
-      data-slot="attachment-trigger"
-      data-test-attachment-trigger
-    >
-      <slot name="trigger" v-bind="attachmentContext" />
     </div>
   </div>
 </template>

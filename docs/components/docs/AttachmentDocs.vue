@@ -72,7 +72,7 @@ const typeRows: ApiTableRow[] = [
   },
   {
     name: 'AttachmentUI',
-    type: '{ media?; content?; label?; description?; actions?; trigger? }',
+    type: '{ media?; content?; label?; description?; actions? }',
     description: 'Funciones para personalizar los atributos de cada parte interna.',
   },
   {
@@ -161,12 +161,6 @@ const slotRows: ApiTableRow[] = [
     default: '-',
     description: 'Acciones del attachment.',
   },
-  {
-    name: 'trigger',
-    type: 'AttachmentContext',
-    default: '-',
-    description: 'Elemento interactivo que cubre el attachment.',
-  },
 ]
 
 const exposeRows: ApiTableRow[] = []
@@ -213,9 +207,6 @@ const exposeRows: ApiTableRow[] = []
               </template>
               <template #actions>
                 <Button size="xs" variant="plain" aria-label="Remove attachment">x</Button>
-              </template>
-              <template #trigger>
-                <button type="button" aria-label="Open attachment" />
               </template>
             </Attachment>
           </Playground>

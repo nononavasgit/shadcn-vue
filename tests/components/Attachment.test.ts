@@ -1,5 +1,5 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
 import {
@@ -148,7 +148,7 @@ describe('Attachment', () => {
     })
 
     describe('ui', () => {
-      const parts = ['media', 'content', 'label', 'description', 'actions', 'trigger'] as const
+      const parts = ['media', 'content', 'label', 'description', 'actions'] as const
 
       it.each(parts)('renders ui.%s attributes', (part) => {
         const attachment = mountAttachment({
@@ -161,7 +161,6 @@ describe('Attachment', () => {
           slots: {
             media: () => 'Media',
             actions: () => 'Actions',
-            trigger: () => 'Trigger',
           },
         })
         const element = attachment.get(`[data-test-attachment-${part}]`)
@@ -229,7 +228,6 @@ describe('Attachment', () => {
       { input: 'label' as const, expected: 'label', props: {} },
       { input: 'description' as const, expected: 'description', props: {} },
       { input: 'actions' as const, expected: 'actions', props: {} },
-      { input: 'trigger' as const, expected: 'trigger', props: {} },
     ]
 
     it.each(slotCases)('renders the $input slot', ({ input, expected, props }) => {

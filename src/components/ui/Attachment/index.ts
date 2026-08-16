@@ -120,7 +120,6 @@ export interface AttachmentUI {
   label?: AttachmentFn<HTMLAttributes>
   description?: AttachmentFn<HTMLAttributes>
   actions?: AttachmentFn<HTMLAttributes>
-  trigger?: AttachmentFn<HTMLAttributes>
 }
 
 export interface AttachmentProps {
@@ -149,5 +148,4 @@ export interface AttachmentSlots {
   label?(props: AttachmentContext): unknown
   description?(props: AttachmentContext): unknown
   actions?(props: AttachmentContext): unknown
-  trigger?(props: AttachmentContext): unknown
 }

@@ -24,7 +24,7 @@ const severity = ref<AlertSeverity>('success')
 const color = ref('')
 const closable = ref(true)
 const decorative = ref(false)
-const alertKey = ref(0)
+const isAlertVisible = ref(true)
 
 function parseButtonProps(value: string): NormalizeButtonProps | undefined {
   if (!value.trim()) return undefined
@@ -198,7 +198,7 @@ const exposeRows: ApiTableRow[] = []
       <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
         <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
           <Playground>
-            <Alert :key="alertKey" v-bind="playgroundProps" @close="alertKey++" />
+            <Alert v-bind="playgroundProps" />
           </Playground>
         </div>
 

@@ -150,6 +150,26 @@
               Etiquetas accesibles para controles de formulario.
             </p>
           </RouterLink>
+
+          <RouterLink
+            to="/kbd"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Kbd</h2>
+            <p class="text-sm text-muted-foreground">
+              Representacion compacta de teclas y atajos de teclado.
+            </p>
+          </RouterLink>
+
+          <RouterLink
+            to="/kbd-group"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">KbdGroup</h2>
+            <p class="text-sm text-muted-foreground">
+              Agrupa teclas Kbd para representar atajos completos.
+            </p>
+          </RouterLink>
         </nav>
       </div>
     </main>

@@ -8,6 +8,7 @@ import {
   type ButtonContext,
   type ButtonProps,
 } from '@/components/ui/Button'
+import { testIconProps, testIconSize } from '../utils/testIconProps'
 
 function mountButton(options: MountingOptions<ButtonProps> & Record<string, unknown> = {}) {
   return mount(Button, options)
@@ -94,16 +95,10 @@ describe('Button', () => {
     })
 
     describe('icon', () => {
-      it.each([
-        { input: 'save' as const, expected: 'save' },
-        { input: { name: 'save' as const }, expected: 'save' },
-        { input: undefined, expected: undefined },
-      ])('renders icon=$input as $expected', ({ input, expected }) => {
-        const button = mountButton({ props: { icon: input } })
-        const icon = button.findComponent('[data-test-button-icon]')
-
-        expect(icon.exists()).toBe(expected !== undefined)
-        if (expected !== undefined) expect(icon.props('name')).toBe(expected)
+      testIconProps({
+        text: 'passes icon props',
+        id: '[data-test-button-icon]',
+        mount: (input) => mountButton({ props: { icon: input } }),
       })
 
       it('hides the leading icon while loading', () => {
@@ -113,15 +108,10 @@ describe('Button', () => {
         expect(button.find('[data-test-button-loading-icon]').exists()).toBe(true)
       })
 
-      it.each([
-        { buttonSize: 'xs' as const, expected: 'xs' },
-        { buttonSize: 'sm' as const, expected: 'sm' },
-        { buttonSize: 'md' as const, expected: 'md' },
-        { buttonSize: 'lg' as const, expected: 'lg' },
-      ])('inherits Button size=$buttonSize', ({ buttonSize, expected }) => {
-        const button = mountButton({ props: { size: buttonSize, icon: 'save' } })
-
-        expect(button.getComponent('[data-test-button-icon]').props('size')).toBe(expected)
+      testIconSize({
+        text: 'inherits Button size to icon',
+        id: '[data-test-button-icon]',
+        mount: (size) => mountButton({ props: { size, icon: 'save' } }),
       })
 
       it('prioritizes an explicit icon size', () => {
@@ -134,16 +124,10 @@ describe('Button', () => {
     })
 
     describe('trailingIcon', () => {
-      it.each([
-        { input: 'chevronRight' as const, expected: 'chevronRight' },
-        { input: { name: 'chevronRight' as const }, expected: 'chevronRight' },
-        { input: undefined, expected: undefined },
-      ])('renders trailingIcon=$input as $expected', ({ input, expected }) => {
-        const button = mountButton({ props: { trailingIcon: input } })
-        const icon = button.findComponent('[data-test-button-trailing-icon]')
-
-        expect(icon.exists()).toBe(expected !== undefined)
-        if (expected !== undefined) expect(icon.props('name')).toBe(expected)
+      testIconProps({
+        text: 'passes trailingIcon props',
+        id: '[data-test-button-trailing-icon]',
+        mount: (input) => mountButton({ props: { trailingIcon: input } }),
       })
 
       it('keeps the trailing icon visible while loading', () => {
@@ -153,17 +137,10 @@ describe('Button', () => {
         expect(button.find('[data-test-button-loading-icon]').exists()).toBe(true)
       })
 
-      it.each([
-        { buttonSize: 'xs' as const, expected: 'xs' },
-        { buttonSize: 'sm' as const, expected: 'sm' },
-        { buttonSize: 'md' as const, expected: 'md' },
-        { buttonSize: 'lg' as const, expected: 'lg' },
-      ])('inherits Button size=$buttonSize', ({ buttonSize, expected }) => {
-        const button = mountButton({
-          props: { size: buttonSize, trailingIcon: 'chevronRight' },
-        })
-
-        expect(button.getComponent('[data-test-button-trailing-icon]').props('size')).toBe(expected)
+      testIconSize({
+        text: 'inherits Button size to trailing icon',
+        id: '[data-test-button-trailing-icon]',
+        mount: (size) => mountButton({ props: { size, trailingIcon: 'chevronRight' } }),
       })
 
       it('prioritizes an explicit trailing icon size', () => {

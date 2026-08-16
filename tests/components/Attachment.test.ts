@@ -8,6 +8,7 @@ import {
   type AttachmentContext,
   type AttachmentProps,
 } from '@/components/ui/Attachment'
+import { testIconProps } from '../utils/testIconProps'
 
 function mountAttachment(options: MountingOptions<AttachmentProps> = {}) {
   return mount(Attachment, options)
@@ -113,16 +114,10 @@ describe('Attachment', () => {
     })
 
     describe('icon', () => {
-      it.each([
-        { input: 'fileText' as const, expected: 'fileText' },
-        { input: { name: 'error' as const }, expected: 'error' },
-        { input: undefined, expected: undefined },
-      ])('renders icon=$input as $expected', ({ input, expected }) => {
-        const attachment = mountAttachment({ props: { icon: input } })
-        const icon = attachment.findComponent('[data-test-attachment-icon]')
-
-        expect(icon.exists()).toBe(expected !== undefined)
-        if (expected !== undefined) expect(icon.props('name')).toBe(expected)
+      testIconProps({
+        text: 'passes icon props',
+        id: '[data-test-attachment-icon]',
+        mount: (input) => mountAttachment({ props: { icon: input } }),
       })
 
       it.each([

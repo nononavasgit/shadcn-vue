@@ -180,6 +180,16 @@
               Fechas semanticas con formato localizado y slot contextual.
             </p>
           </RouterLink>
+
+          <RouterLink
+            to="/toggle"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Toggle</h2>
+            <p class="text-sm text-muted-foreground">
+              Control binario con estados, variantes e iconos.
+            </p>
+          </RouterLink>
         </nav>
       </div>
     </main>

@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
 import { Avatar, type AvatarProps } from '@/components/ui/Avatar'
+import { testIconProps } from '../utils/testIconProps'
 
 function mountAvatar(options: MountingOptions<AvatarProps> = {}) {
   return mount(Avatar, options)
@@ -74,16 +75,20 @@ describe('Avatar', () => {
     })
 
     describe('icon', () => {
-      it.each([
-        { input: 'user' as const, expected: { name: 'user' } },
-        {
-          input: { name: 'info' as const, size: 'sm' as const, color: '#ff0000' },
-          expected: { name: 'info', size: 'sm', color: '#ff0000' },
-        },
-      ])('renders icon=$input', ({ input, expected }) => {
-        const icon = mountAvatar({ props: { icon: input } }).getComponent('[data-test-avatar-icon]')
+      testIconProps({
+        text: 'passes icon props',
+        id: '[data-test-avatar-icon]',
+        mount: (input) => mountAvatar({ props: { icon: input } }),
+      })
 
-        expect(icon.props()).toEqual(expect.objectContaining(expected))
+      it('preserves custom icon props', () => {
+        const icon = mountAvatar({
+          props: { icon: { name: 'info', size: 'sm', color: '#ff0000' } },
+        }).getComponent('[data-test-avatar-icon]')
+
+        expect(icon.props()).toEqual(
+          expect.objectContaining({ name: 'info', size: 'sm', color: '#ff0000' }),
+        )
       })
 
       it('does not render an icon without icon', () => {

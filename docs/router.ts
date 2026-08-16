@@ -17,6 +17,7 @@ import KbdPage from './components/pages/KbdPage.vue'
 import KbdGroupPage from './components/pages/KbdGroupPage.vue'
 import LabelPage from './components/pages/LabelPage.vue'
 import TimePage from './components/pages/TimePage.vue'
+import TogglePage from './components/pages/TogglePage.vue'
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -39,5 +40,6 @@ export const router = createRouter({
     { path: '/kbd', component: KbdPage },
     { path: '/kbd-group', component: KbdGroupPage },
     { path: '/time', component: TimePage },
+    { path: '/toggle', component: TogglePage },
   ],
 })

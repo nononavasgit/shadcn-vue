@@ -9,6 +9,7 @@ import {
   type AlertProps,
 } from '@/components/ui/Alert'
 import { i18n } from '@/i18n'
+import { testIconProps } from '../utils/testIconProps'
 
 function mountAlert(options: MountingOptions<AlertProps> = {}) {
   return mount(Alert, {
@@ -75,16 +76,10 @@ describe('Alert', () => {
     })
 
     describe('icon', () => {
-      it.each([
-        { input: 'info' as const, expected: 'info' },
-        { input: { name: 'info' as const }, expected: 'info' },
-        { input: undefined, expected: undefined },
-      ])('renders icon=$input as $expected', ({ input, expected }) => {
-        const alert = mountAlert({ props: { icon: input } })
-        const icon = alert.findComponent('[data-test-alert-icon]')
-
-        expect(icon.exists()).toBe(expected !== undefined)
-        if (expected !== undefined) expect(icon.props('name')).toBe(expected)
+      testIconProps({
+        text: 'passes icon props',
+        id: '[data-test-alert-icon]',
+        mount: (input) => mountAlert({ props: { icon: input } }),
       })
     })
 

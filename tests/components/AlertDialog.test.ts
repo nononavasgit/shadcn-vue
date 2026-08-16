@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/AlertDialog'
 import { Button } from '@/components/ui/Button'
 import { i18n } from '@/i18n'
+import { testIconProps } from '../utils/testIconProps'
 
 function mountAlertDialog(options: MountingOptions<AlertDialogProps> = {}) {
   return mount(AlertDialog, {
@@ -72,25 +73,16 @@ describe('AlertDialog', () => {
     })
 
     describe('icon', () => {
-      it.each([
-        { input: 'warning' as const, expected: 'warning' },
-        { input: { name: 'error' as const }, expected: 'error' },
-      ])('passes icon=$input to Icon', async ({ input, expected }) => {
-        const alertDialog = mountAlertDialog({
-          props: { open: true, label: 'Warning', icon: input },
-        })
-        await nextTick()
-
-        expect(alertDialog.getComponent('[data-test-alert-dialog-icon]').props('name')).toBe(
-          expected,
-        )
-      })
-
-      it('does not render an icon without the prop', async () => {
-        const alertDialog = mountAlertDialog({ props: { open: true, label: 'Warning' } })
-        await nextTick()
-
-        expect(alertDialog.find('[data-test-alert-dialog-icon]').exists()).toBe(false)
+      testIconProps({
+        text: 'passes icon props',
+        id: '[data-test-alert-dialog-icon]',
+        mount: async (input) => {
+          const alertDialog = mountAlertDialog({
+            props: { open: true, label: 'Warning', icon: input },
+          })
+          await nextTick()
+          return alertDialog
+        },
       })
     })
 

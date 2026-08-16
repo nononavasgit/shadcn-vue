@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
 import { Badge, type BadgeProps } from '@/components/ui/Badge'
+import { testIconProps } from '../utils/testIconProps'
 
 function mountBadge(options: MountingOptions<BadgeProps> = {}) {
   return mount(Badge, options)
@@ -93,30 +94,18 @@ describe('Badge', () => {
     })
 
     describe('icon', () => {
-      it.each([
-        { input: 'check' as const, expected: 'check' },
-        { input: { name: 'error' as const, color: 'green' }, expected: 'error' },
-        { input: undefined, expected: undefined },
-      ])('renders icon=$input as $expected', ({ input, expected }) => {
-        const badge = mountBadge({ props: { icon: input } })
-        const icon = badge.findComponent('[data-test-badge-icon]')
-
-        expect(icon.exists()).toBe(expected !== undefined)
-        if (expected !== undefined) expect(icon.props('name')).toBe(expected)
+      testIconProps({
+        text: 'passes icon props',
+        id: '[data-test-badge-icon]',
+        mount: (input) => mountBadge({ props: { icon: input } }),
       })
     })
 
     describe('trailingIcon', () => {
-      it.each([
-        { input: 'chevronRight' as const, expected: 'chevronRight' },
-        { input: { name: 'error' as const, color: 'green' }, expected: 'error' },
-        { input: undefined, expected: undefined },
-      ])('renders trailingIcon=$input as $expected', ({ input, expected }) => {
-        const badge = mountBadge({ props: { trailingIcon: input } })
-        const icon = badge.findComponent('[data-test-badge-trailing-icon]')
-
-        expect(icon.exists()).toBe(expected !== undefined)
-        if (expected !== undefined) expect(icon.props('name')).toBe(expected)
+      testIconProps({
+        text: 'passes trailingIcon props',
+        id: '[data-test-badge-trailing-icon]',
+        mount: (input) => mountBadge({ props: { trailingIcon: input } }),
       })
     })
 

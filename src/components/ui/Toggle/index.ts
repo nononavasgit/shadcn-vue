@@ -1,5 +1,4 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { HTMLAttributes } from 'vue'
 import type { ToggleProps as RekaToggleProps } from 'reka-ui'
 import type { NormalizeIconProps } from '@/components/ui/Icon'
 
@@ -113,7 +112,7 @@ export const toggleVariants = cva('', {
     },
   ],
   defaultVariants: {
-    variant: 'plain',
+    variant: 'outline',
     severity: 'default',
     size: 'md',
     color: false,
@@ -125,14 +124,6 @@ export type ToggleVariants = VariantProps<typeof toggleVariants>
 export type ToggleValue = boolean
 export type ToggleState = 'on' | 'off'
 
-// Fn
-export type ToggleFn<T> = (context: ToggleContext) => T
-
-// UI
-export interface ToggleUI {
-  root?: ToggleFn<HTMLAttributes>
-}
-
 // Props
 export interface ToggleProps extends Pick<RekaToggleProps, 'disabled'> {
   value?: ToggleValue
@@ -143,7 +134,6 @@ export interface ToggleProps extends Pick<RekaToggleProps, 'disabled'> {
   severity?: ToggleVariants['severity']
   size?: ToggleVariants['size']
   color?: string
-  ui?: ToggleUI
 }
 
 // Emits
@@ -154,32 +144,15 @@ export interface ToggleEmits {
 
 // Context
 export interface ToggleContext {
-  label: ToggleProps['label']
-  icon: ToggleProps['icon']
-  trailingIcon: ToggleProps['trailingIcon']
-  variant: ToggleProps['variant']
-  severity: ToggleProps['severity']
-  size: ToggleProps['size']
-  color: ToggleProps['color']
-  disabled: ToggleProps['disabled']
   value: ToggleValue
   state: ToggleState
   pressed: boolean
 }
 
-export function createToggleContext(props: ToggleProps, value: ToggleValue): ToggleContext {
-  const { label, icon, trailingIcon, variant, severity, size, color, disabled } = props
+export function createToggleContext(value: ToggleValue): ToggleContext {
   const pressed = value === true
 
   return {
-    label,
-    icon,
-    trailingIcon,
-    variant,
-    severity,
-    size,
-    color,
-    disabled,
     value,
     state: pressed ? 'on' : 'off',
     pressed,

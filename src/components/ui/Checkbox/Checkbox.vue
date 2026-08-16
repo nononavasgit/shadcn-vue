@@ -29,15 +29,12 @@ watch(value, (nextValue, previousValue) => {
   if (nextValue !== previousValue) emit('valueChange', nextValue)
 })
 
-const checkboxContext = computed(() => createCheckboxContext(props, value.value))
+const checkboxContext = computed(() => createCheckboxContext(value.value, props.trueValue))
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
-  const rootUI = useUi(props.ui?.root, checkboxContext.value)
-
   return {
     ...attrs,
-    ...rootUI,
     as: 'button',
     asChild: false,
     falseValue: props.falseValue,
@@ -46,28 +43,22 @@ const rootProps = computed(() => {
       'peer size-4 shrink-0 rounded-[4px] border border-input shadow-xs transition-shadow outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:aria-invalid:ring-destructive/40',
       'focus-visible:border-primary focus-visible:ring-primary/50',
       attrs.class,
-      rootUI.class,
     ),
-    style: [attrs.style, rootUI.style],
+    style: attrs.style,
   }
 })
 
 const indicatorProps = computed(() => {
   const ui = useUi(props.ui?.indicator, checkboxContext.value)
-  return { ...ui, class: cn('grid place-content-center text-current', ui.class) }
+  return { ...ui, class: cn('grid place-content-center', ui.class) }
 })
 </script>
 
 <template>
-  <CheckboxRoot v-bind="rootProps" v-model="value" data-slot="checkbox" data-checkbox-ui="root">
-    <CheckboxIndicator
-      v-bind="indicatorProps"
-      data-slot="checkbox-indicator"
-      data-checkbox-ui="indicator"
-      data-checkbox-slot="indicator"
-    >
+  <CheckboxRoot v-bind="rootProps" v-model="value" data-test-checkbox-root>
+    <CheckboxIndicator v-bind="indicatorProps" data-test-checkbox-indicator>
       <slot v-if="$slots.indicator" name="indicator" v-bind="checkboxContext" />
-      <Icon v-else name="check" class="size-3.5" />
+      <Icon v-else name="check" class="size-3.5" data-test-checkbox-icon />
     </CheckboxIndicator>
   </CheckboxRoot>
 </template>

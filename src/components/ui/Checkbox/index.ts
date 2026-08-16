@@ -12,7 +12,6 @@ export type CheckboxFn<T> = (context: CheckboxContext) => T
 
 // UI
 export interface CheckboxUI {
-  root?: CheckboxFn<HTMLAttributes>
   indicator?: CheckboxFn<HTMLAttributes>
 }
 
@@ -27,21 +26,17 @@ export interface CheckboxProps extends Pick<
 
 // Context
 export interface CheckboxContext {
-  trueValue: CheckboxProps['trueValue']
-  falseValue: CheckboxProps['falseValue']
   value: CheckboxModelValue
   state: CheckboxState
 }
 
 export function createCheckboxContext(
-  props: CheckboxProps,
   value: CheckboxModelValue,
+  trueValue: CheckboxProps['trueValue'] = true,
 ): CheckboxContext {
   return {
-    trueValue: props.trueValue,
-    falseValue: props.falseValue,
     value,
-    state: value === 'indeterminate' ? 'indeterminate' : value === props.trueValue,
+    state: value === 'indeterminate' ? 'indeterminate' : value === trueValue,
   }
 }
 

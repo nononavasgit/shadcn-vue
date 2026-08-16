@@ -10,7 +10,7 @@
           </p>
         </header>
 
-        <nav aria-label="Componentes" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+        <nav aria-label="Componentes" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-7">
           <RouterLink
             to="/avatar"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
@@ -28,6 +28,16 @@
             <h2 class="font-medium">Announcer</h2>
             <p class="text-sm text-muted-foreground">
               Mensajes accesibles para tecnologias de asistencia.
+            </p>
+          </RouterLink>
+
+          <RouterLink
+            to="/alert-dialog"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">AlertDialog</h2>
+            <p class="text-sm text-muted-foreground">
+              Confirmaciones modales para acciones importantes.
             </p>
           </RouterLink>
 

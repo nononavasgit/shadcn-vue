@@ -12,6 +12,7 @@ import ButtonGroupPage from './components/pages/ButtonGroupPage.vue'
 import CardPage from './components/pages/CardPage.vue'
 import FieldSetPage from './components/pages/FieldSetPage.vue'
 import IconPage from './components/pages/IconPage.vue'
+import InputPage from './components/pages/InputPage.vue'
 import IndexPage from './components/pages/IndexPage.vue'
 import KbdPage from './components/pages/KbdPage.vue'
 import KbdGroupPage from './components/pages/KbdGroupPage.vue'
@@ -37,6 +38,7 @@ export const router = createRouter({
     { path: '/card', component: CardPage },
     { path: '/field-set', component: FieldSetPage },
     { path: '/icon', component: IconPage },
+    { path: '/input', component: InputPage },
     { path: '/label', component: LabelPage },
     { path: '/kbd', component: KbdPage },
     { path: '/kbd-group', component: KbdGroupPage },

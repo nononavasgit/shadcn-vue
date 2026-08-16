@@ -32,25 +32,31 @@ describe('Textarea', () => {
   })
 
   describe('emits', () => {
-    it('emits valueChange when edited', async () => {
-      const textarea = mountTextarea({ props: { value: '' } })
+    const valueChangeCases = [
+      { initial: '', next: 'Updated', expected: [['Updated']] },
+      { initial: 'Updated', next: '', expected: [['']] },
+      { initial: 'Same', next: 'Same', expected: undefined },
+    ] as const
 
-      await textarea.get('[data-test-textarea-root]').setValue('Updated')
+    it.each(valueChangeCases)(
+      'checks valueChange when editing from $initial to $next',
+      async ({ initial, next, expected }) => {
+        const textarea = mountTextarea({ props: { value: initial } })
 
-      expect(textarea.emitted('valueChange')).toEqual([['Updated']])
-    })
+        await textarea.get('[data-test-textarea-root]').setValue(next)
 
-    it.each([
-      { input: '', expected: 'First value' },
-      { input: 'First value', expected: '' },
-    ])(
-      'emits valueChange when value=$input changes externally to $expected',
-      async ({ input, expected }) => {
-        const textarea = mountTextarea({ props: { value: input } })
+        expect(textarea.emitted('valueChange')).toEqual(expected)
+      },
+    )
 
-        await textarea.setProps({ value: expected })
+    it.each(valueChangeCases)(
+      'checks valueChange when updating externally from $initial to $next',
+      async ({ initial, next, expected }) => {
+        const textarea = mountTextarea({ props: { value: initial } })
 
-        expect(textarea.emitted('valueChange')).toEqual([[expected]])
+        await textarea.setProps({ value: next })
+
+        expect(textarea.emitted('valueChange')).toEqual(expected)
       },
     )
   })

@@ -90,12 +90,14 @@ const propRows: ApiTableRow[] = [
   {
     name: 'actionButton',
     type: 'NormalizeButtonProps',
+    typeLink: '/button',
     default: 'undefined',
     description: 'Props del boton de confirmacion.',
   },
   {
     name: 'cancelButton',
     type: 'NormalizeButtonProps',
+    typeLink: '/button',
     default: 'undefined',
     description: 'Props del boton de cancelacion.',
   },

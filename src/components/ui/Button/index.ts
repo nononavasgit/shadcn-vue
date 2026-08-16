@@ -274,26 +274,12 @@ export interface ButtonProps extends Pick<PrimitiveProps, 'as' | 'asChild'> {
 
 // Context
 export interface ButtonContext {
-  variant: ButtonVariant
-  severity: ButtonSeverity
-  size: ButtonSize
-  rounded: boolean
-  square: boolean
   loading: boolean
-  color: ButtonProps['color']
 }
 
 export function createButtonContext(props: ButtonProps): ButtonContext {
-  const { variant, severity, size, rounded, square, loading, color } = props
-
   return {
-    variant: variant ?? 'solid',
-    severity: severity ?? 'primary',
-    size: size ?? 'md',
-    rounded: rounded ?? false,
-    square: square ?? false,
-    loading: loading ?? false,
-    color,
+    loading: props.loading ?? false,
   }
 }
 

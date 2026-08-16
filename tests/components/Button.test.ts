@@ -1,5 +1,5 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
 import {
@@ -163,9 +163,7 @@ describe('Button', () => {
           props: { size: buttonSize, trailingIcon: 'chevronRight' },
         })
 
-        expect(button.getComponent('[data-test-button-trailing-icon]').props('size')).toBe(
-          expected,
-        )
+        expect(button.getComponent('[data-test-button-trailing-icon]').props('size')).toBe(expected)
       })
 
       it('prioritizes an explicit trailing icon size', () => {
@@ -241,30 +239,13 @@ describe('Button', () => {
   })
 
   describe('context contract', () => {
-    it('creates the expected context', () => {
-      const context = createButtonContext({
-        as: 'a',
-        asChild: false,
-        label: 'Save',
-        variant: 'outline',
-        severity: 'success',
-        size: 'lg',
-        rounded: true,
-        square: false,
-        loading: false,
-        color: '#ff0000',
-        icon: 'save',
-        trailingIcon: 'chevronRight',
-      })
-
-      expect(context).toEqual({
-        variant: 'outline',
-        severity: 'success',
-        size: 'lg',
-        rounded: true,
-        square: false,
-        loading: false,
-        color: '#ff0000',
+    it.each([
+      { input: undefined, expected: false },
+      { input: false, expected: false },
+      { input: true, expected: true },
+    ])('creates loading=$input context', ({ input, expected }) => {
+      expect(createButtonContext({ loading: input })).toEqual({
+        loading: expected,
       } satisfies ButtonContext)
     })
   })
@@ -304,29 +285,5 @@ describe('Button', () => {
       expect(button.find('[data-test-button-icon]').exists()).toBe(false)
       expect(button.find('[data-test-button-trailing-icon]').exists()).toBe(false)
     })
-
-    it.each(['default', 'leading', 'loading', 'trailing'] as const)(
-      'passes ButtonContext to slot %s',
-      (slot) => {
-        const slotFn = vi.fn(() => null)
-
-        mountButton({
-          props: { label: 'Save', loading: slot === 'loading' },
-          slots: { [slot]: slotFn },
-        })
-
-        expect(slotFn).toHaveBeenCalledWith(
-          expect.objectContaining({
-            variant: 'solid',
-            severity: 'primary',
-            size: 'md',
-            rounded: false,
-            square: false,
-            loading: slot === 'loading',
-            color: undefined,
-          }),
-        )
-      },
-    )
   })
 })

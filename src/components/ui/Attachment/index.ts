@@ -135,24 +135,12 @@ export interface AttachmentProps {
 }
 
 export interface AttachmentContext {
-  label: AttachmentLabel | undefined
-  description: AttachmentDescription | undefined
-  icon: AttachmentProps['icon']
-  orientation: AttachmentOrientation
-  size: AttachmentSize
   state: AttachmentState
-  mediaVariant: AttachmentMediaVariant
 }
 
-export function createAttachmentContext(props: AttachmentProps): AttachmentContext {
+export function createAttachmentContext(props: AttachmentContext): AttachmentContext {
   return {
-    label: props.label,
-    description: props.description,
-    icon: props.icon,
-    orientation: props.orientation ?? 'horizontal',
-    size: props.size ?? 'md',
     state: props.state ?? 'idle',
-    mediaVariant: props.mediaVariant ?? 'icon',
   }
 }
 

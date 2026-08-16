@@ -3,6 +3,7 @@ import AvatarPage from './components/pages/AvatarPage.vue'
 import AnnouncerPage from './components/pages/AnnouncerPage.vue'
 import AlertDialogPage from './components/pages/AlertDialogPage.vue'
 import AspectRatioPage from './components/pages/AspectRatioPage.vue'
+import AttachmentPage from './components/pages/AttachmentPage.vue'
 import BadgePage from './components/pages/BadgePage.vue'
 import ButtonPage from './components/pages/ButtonPage.vue'
 import ButtonGroupPage from './components/pages/ButtonGroupPage.vue'
@@ -19,6 +20,7 @@ export const router = createRouter({
     { path: '/announcer', component: AnnouncerPage },
     { path: '/alert-dialog', component: AlertDialogPage },
     { path: '/aspect-ratio', component: AspectRatioPage },
+    { path: '/attachment', component: AttachmentPage },
     { path: '/badge', component: BadgePage },
     { path: '/button', component: ButtonPage },
     { path: '/button-group', component: ButtonGroupPage },

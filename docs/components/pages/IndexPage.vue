@@ -52,6 +52,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/attachment"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Attachment</h2>
+            <p class="text-sm text-muted-foreground">
+              Archivos con estados, multimedia y acciones opcionales.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/button"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

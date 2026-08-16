@@ -169,38 +169,6 @@ describe('Attachment', () => {
         expect(element.classes()).toContain(`ui-${part}`)
         expect(element.attributes('style')).toContain('opacity: 0.8')
       })
-
-      it.each(parts)('passes AttachmentContext to ui.%s', (part) => {
-        const ui = vi.fn(() => ({}))
-
-        mountAttachment({
-          props: {
-            label: 'report.pdf',
-            description: '2.4 MB',
-            icon: 'fileText',
-            orientation: 'vertical',
-            size: 'sm',
-            state: 'processing',
-            mediaVariant: 'image',
-            ui: { [part]: ui },
-          },
-          slots: {
-            media: () => 'Media',
-            actions: () => 'Actions',
-            trigger: () => 'Trigger',
-          },
-        })
-
-        expect(ui).toHaveBeenCalledWith({
-          label: 'report.pdf',
-          description: '2.4 MB',
-          icon: 'fileText',
-          orientation: 'vertical',
-          size: 'sm',
-          state: 'processing',
-          mediaVariant: 'image',
-        } satisfies AttachmentContext)
-      })
     })
   })
 
@@ -228,34 +196,16 @@ describe('Attachment', () => {
         name: 'default values',
         input: {},
         expected: {
-          label: undefined,
-          description: undefined,
-          icon: undefined,
-          orientation: 'horizontal',
-          size: 'md',
           state: 'idle',
-          mediaVariant: 'icon',
         },
       },
       {
         name: 'configured values',
         input: {
-          label: 'report.pdf',
-          description: '2.4 MB',
-          icon: 'fileText' as const,
-          orientation: 'vertical' as const,
-          size: 'xs' as const,
           state: 'done' as const,
-          mediaVariant: 'image' as const,
         },
         expected: {
-          label: 'report.pdf',
-          description: '2.4 MB',
-          icon: 'fileText',
-          orientation: 'vertical',
-          size: 'xs',
           state: 'done',
-          mediaVariant: 'image',
         },
       },
     ])('creates the contract with $name', ({ input, expected }) => {
@@ -292,24 +242,6 @@ describe('Attachment', () => {
 
       expect(attachment.get(`[data-test-attachment-slot="${expected}"]`).text()).toBe(
         `Slot ${expected}`,
-      )
-    })
-
-    it.each(slotCases)('passes AttachmentContext to slot $input', ({ input, props }) => {
-      const slot = vi.fn(() => null)
-
-      mountAttachment({
-        props: { label: 'report.pdf', description: '2.4 MB', ...props },
-        slots: { [input]: slot },
-      })
-
-      expect(slot).toHaveBeenCalledWith(
-        expect.objectContaining({
-          label: 'report.pdf',
-          description: '2.4 MB',
-          size: 'md',
-          mediaVariant: input === 'media' ? 'image' : 'icon',
-        }),
       )
     })
   })

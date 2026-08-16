@@ -10,7 +10,7 @@
           </p>
         </header>
 
-        <nav aria-label="Componentes" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <nav aria-label="Componentes" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <RouterLink
             to="/avatar"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
@@ -28,6 +28,16 @@
             <h2 class="font-medium">Announcer</h2>
             <p class="text-sm text-muted-foreground">
               Mensajes accesibles para tecnologias de asistencia.
+            </p>
+          </RouterLink>
+
+          <RouterLink
+            to="/aspect-ratio"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">AspectRatio</h2>
+            <p class="text-sm text-muted-foreground">
+              Contenedores con una relacion de aspecto estable.
             </p>
           </RouterLink>
 

@@ -2,12 +2,7 @@ import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import {
-  AspectRatio,
-  createAspectRatioContext,
-  type AspectRatioContext,
-  type AspectRatioProps,
-} from '@/components/ui/AspectRatio'
+import { AspectRatio, type AspectRatioProps } from '@/components/ui/AspectRatio'
 
 function mountAspectRatio(options: MountingOptions<AspectRatioProps> = {}) {
   return mount(AspectRatio, options)
@@ -45,15 +40,6 @@ describe('AspectRatio', () => {
       expect(root.attributes('aria-label')).toBe('Preview')
       expect(root.classes()).toContain('custom-ratio')
       expect(root.attributes('style')).toContain('opacity: 0.5')
-    })
-  })
-
-  describe('context contract', () => {
-    it.each([
-      { input: {}, expected: { ratio: 1 } },
-      { input: { ratio: 16 / 9 }, expected: { ratio: 16 / 9 } },
-    ])('creates the expected context', ({ input, expected }) => {
-      expect(createAspectRatioContext(input)).toEqual(expected satisfies AspectRatioContext)
     })
   })
 

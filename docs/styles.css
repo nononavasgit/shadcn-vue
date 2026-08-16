@@ -1,5 +1,6 @@
 @import '../src/assets/css/styles.css';
 @source '../src';
+@source './';
 
 html {
   scroll-behavior: smooth;

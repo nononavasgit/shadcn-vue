@@ -4,6 +4,7 @@ import { computed, ref } from 'vue'
 import { Avatar, type AvatarProps, type AvatarShape, type AvatarSize } from '@/components/ui/Avatar'
 import { ICONS } from '@/components/ui/Icon/icons'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
+import Playground from '../Playground.vue'
 
 const iconNames = Object.keys(ICONS)
 
@@ -37,6 +38,7 @@ const typeRows: ApiTableRow[] = [
   {
     name: 'NormalizeIconProps',
     type: 'IconName | IconConfig',
+    typeLink: '/icon',
     description: 'Nombre del icono o configuracion completa del icono.',
   },
 ]
@@ -69,6 +71,7 @@ const propRows: ApiTableRow[] = [
   {
     name: 'icon',
     type: 'NormalizeIconProps',
+    typeLink: '/icon',
     default: 'undefined',
     description: 'Icono mostrado cuando no hay imagen.',
   },
@@ -97,7 +100,7 @@ const exposeRows: ApiTableRow[] = []
 <template>
   <section class="grid gap-8 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
     <header class="grid gap-2">
-      <p class="font-mono text-xs uppercase tracking-wide text-muted-foreground">Component</p>
+      <p class="font-mono text-xs tracking-wide text-muted-foreground uppercase">Component</p>
       <h2 class="text-2xl font-semibold">Avatar</h2>
       <p class="max-w-2xl text-sm text-muted-foreground">
         Muestra una imagen, un icono o un texto de fallback dentro de un contenedor consistente.
@@ -107,7 +110,9 @@ const exposeRows: ApiTableRow[] = []
     <section class="grid gap-4">
       <div>
         <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">Tipos publicos usados por la API del componente.</p>
+        <p class="text-sm text-muted-foreground">
+          Tipos publicos usados por la API del componente.
+        </p>
       </div>
       <ApiTable title="Tipos" :rows="typeRows" />
     </section>
@@ -120,7 +125,9 @@ const exposeRows: ApiTableRow[] = []
 
       <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
         <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Avatar v-bind="playgroundProps" />
+          <Playground>
+            <Avatar v-bind="playgroundProps" />
+          </Playground>
         </div>
 
         <div class="grid content-start gap-4 rounded-lg border p-4">
@@ -194,7 +201,11 @@ const exposeRows: ApiTableRow[] = []
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />
-      <ApiTable title="Emits" :rows="emitRows" empty-text="Este componente no emite eventos propios." />
+      <ApiTable
+        title="Emits"
+        :rows="emitRows"
+        empty-text="Este componente no emite eventos propios."
+      />
       <ApiTable title="Slots" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
     </div>

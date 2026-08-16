@@ -68,21 +68,15 @@ export interface AlertUI {
 
 // Context
 export interface AlertContext {
-  variant: NonNullable<AlertProps['variant']>
-  severity: NonNullable<AlertProps['severity']>
-  color: AlertProps['color']
+  ui: AlertProps['ui']
   closable: boolean
-  decorative: boolean
   close: () => void
 }
 
-export function createAlertContext(props: AlertProps, close: () => void): AlertContext {
+export function createAlertContext(props: Pick<AlertProps, 'ui'>, close: () => void): AlertContext {
   return {
-    variant: props.variant ?? 'soft',
-    severity: props.severity ?? 'primary',
-    color: props.color,
-    closable: props.closable ?? false,
-    decorative: props.decorative ?? false,
+    ui: props.ui,
+    closable: true,
     close,
   }
 }

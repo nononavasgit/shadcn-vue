@@ -32,6 +32,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/alert"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Alert</h2>
+            <p class="text-sm text-muted-foreground">
+              Mensajes contextuales con severidad y cierre opcional.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/alert-dialog"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

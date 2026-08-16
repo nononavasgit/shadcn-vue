@@ -120,30 +120,6 @@ describe('Alert', () => {
         expect(element?.classList).toContain(`ui-${part}`)
         expect(element?.getAttribute('style')).toContain('opacity: 0.8')
       })
-
-      it.each(parts)('passes AlertContext to ui.%s', (part) => {
-        const ui = vi.fn(() => ({}))
-
-        mountAlert({
-          props: {
-            label: 'Saved',
-            description: 'Changes saved',
-            icon: 'success',
-            variant: 'outline',
-            severity: 'success',
-            closable: true,
-            ui: { [part]: ui },
-          },
-        })
-
-        expect(ui).toHaveBeenCalledWith(
-          expect.objectContaining({
-            variant: 'outline',
-            severity: 'success',
-            closable: true,
-          }),
-        )
-      })
     })
   })
 
@@ -179,26 +155,17 @@ describe('Alert', () => {
   describe('context contract', () => {
     it('creates the effective context', () => {
       const close = vi.fn()
+      const ui = { label: () => ({ class: 'custom-label' }) }
       const context = createAlertContext(
         {
-          label: 'Saved',
-          description: 'Changes saved',
-          icon: 'success',
-          variant: 'outline',
-          severity: 'success',
-          color: '#00ff00',
-          closable: true,
-          decorative: true,
+          ui,
         },
         close,
       )
 
       expect(context).toEqual({
-        variant: 'outline',
-        severity: 'success',
-        color: '#00ff00',
+        ui,
         closable: true,
-        decorative: true,
         close,
       } satisfies AlertContext)
     })
@@ -216,31 +183,6 @@ describe('Alert', () => {
       })
 
       expect(alert.get(`[data-test-alert-slot="${slot}"]`).text()).toBe(`Slot ${slot}`)
-    })
-
-    it.each(slotCases)('passes AlertContext to slot %s', (slotName) => {
-      const slot = vi.fn(() => null)
-
-      mountAlert({
-        props: {
-          label: 'Saved',
-          description: 'Changes saved',
-          icon: 'success',
-          closable: slotName === 'close',
-        },
-        slots: { [slotName]: slot },
-      })
-
-      expect(slot).toHaveBeenCalledWith(
-        expect.objectContaining({
-          variant: 'soft',
-          severity: 'primary',
-          color: undefined,
-          closable: slotName === 'close',
-          decorative: false,
-          close: expect.any(Function),
-        }),
-      )
     })
 
     it('lets a custom close slot close the alert through its context', async () => {

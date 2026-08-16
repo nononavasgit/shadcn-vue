@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 
 import { Avatar, type AvatarProps, type AvatarShape, type AvatarSize } from '@/components/ui/Avatar'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
 import { ICONS } from '@/components/ui/Icon/icons'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
@@ -11,14 +12,31 @@ const iconNames = Object.keys(ICONS)
 const src = ref('')
 const label = ref('AL')
 const icon = ref('')
+const iconObjectInput = ref('')
 const size = ref<AvatarSize>('md')
 const shape = ref<AvatarShape>('rounded')
 const delayMsInput = ref('')
 
+function parseIconProps(value: string): NormalizeIconProps | undefined {
+  if (!value.trim()) return undefined
+
+  try {
+    const parsed: unknown = JSON.parse(value)
+
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return parsed as NormalizeIconProps
+    }
+  } catch {
+    return undefined
+  }
+
+  return undefined
+}
+
 const playgroundProps = computed<AvatarProps>(() => ({
   src: src.value || undefined,
   label: label.value || undefined,
-  icon: icon.value || undefined,
+  icon: parseIconProps(iconObjectInput.value) ?? (icon.value || undefined),
   size: size.value,
   shape: shape.value,
   delayMs: delayMsInput.value ? Number(delayMsInput.value) : undefined,
@@ -159,6 +177,19 @@ const exposeRows: ApiTableRow[] = []
               <option value="">Sin icono</option>
               <option v-for="name in iconNames" :key="name" :value="name">{{ name }}</option>
             </select>
+          </label>
+
+          <label class="grid gap-1.5 text-sm">
+            <span class="font-medium">icon (objeto)</span>
+            <textarea
+              v-model="iconObjectInput"
+              rows="4"
+              placeholder='{
+  "name": "user",
+  "size": "md"
+}'
+              class="rounded-md border bg-background px-3 py-2 font-mono text-xs outline-none focus:ring-2 focus:ring-ring"
+            />
           </label>
 
           <label class="grid gap-1.5 text-sm">

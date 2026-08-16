@@ -2,25 +2,22 @@
 import { computed, ref } from 'vue'
 
 import {
-  Button,
-  type ButtonProps,
-  type ButtonSeverity,
-  type ButtonSize,
-  type ButtonVariant,
-} from '@/components/ui/Button'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+  Badge,
+  type BadgeProps,
+  type BadgeSeverity,
+  type BadgeSize,
+  type BadgeVariant,
+} from '@/components/ui/Badge'
 import { ICONS } from '@/components/ui/Icon/icons'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
 const iconNames = Object.keys(ICONS)
-const label = ref('Save changes')
-const variant = ref<ButtonVariant>('solid')
-const severity = ref<ButtonSeverity>('primary')
-const size = ref<ButtonSize>('md')
-const rounded = ref(false)
-const square = ref(false)
-const loading = ref(false)
+const label = ref('Status')
+const size = ref<BadgeSize>('md')
+const variant = ref<BadgeVariant>('solid')
+const severity = ref<BadgeSeverity>('primary')
 const color = ref('')
 const icon = ref('')
 const iconObjectInput = ref('')
@@ -43,14 +40,11 @@ function parseIconProps(value: string): NormalizeIconProps | undefined {
   return undefined
 }
 
-const playgroundProps = computed<ButtonProps>(() => ({
+const playgroundProps = computed<BadgeProps>(() => ({
   label: label.value || undefined,
+  size: size.value,
   variant: variant.value,
   severity: severity.value,
-  size: size.value,
-  rounded: rounded.value,
-  square: square.value,
-  loading: loading.value,
   color: color.value || undefined,
   icon: parseIconProps(iconObjectInput.value) ?? (icon.value || undefined),
   trailingIcon: parseIconProps(trailingIconObjectInput.value) ?? (trailingIcon.value || undefined),
@@ -58,54 +52,36 @@ const playgroundProps = computed<ButtonProps>(() => ({
 
 const typeRows: ApiTableRow[] = [
   {
-    name: 'ButtonVariant',
-    type: "'solid' | 'outline' | 'plain' | 'subtle' | 'soft' | 'link'",
-    description: 'Estilo visual del boton.',
+    name: 'BadgeSize',
+    type: "'sm' | 'md' | 'lg'",
+    description: 'Tamano del badge.',
   },
   {
-    name: 'ButtonSeverity',
+    name: 'BadgeVariant',
+    type: "'solid' | 'outline' | 'plain' | 'subtle' | 'soft'",
+    description: 'Variante visual.',
+  },
+  {
+    name: 'BadgeSeverity',
     type: "'primary' | 'secondary' | 'warning' | 'success' | 'error'",
-    description: 'Nivel semantico y color del boton.',
-  },
-  {
-    name: 'ButtonSize',
-    type: "'xs' | 'sm' | 'md' | 'lg'",
-    description: 'Tamano del boton.',
-  },
-  {
-    name: 'ButtonContext',
-    type: '{ loading: boolean }',
-    description: 'Contexto disponible en los slots.',
-  },
-  {
-    name: 'NormalizeButtonProps',
-    type: 'ButtonProps & HTMLAttributes',
-    description: 'Props del boton combinadas con atributos HTML y eventos.',
+    description: 'Severidad y color semantico.',
   },
 ]
 
 const propRows: ApiTableRow[] = [
-  { name: 'label', type: 'string', default: 'undefined', description: 'Texto del boton.' },
+  { name: 'label', type: 'string', default: 'undefined', description: 'Texto del badge.' },
+  { name: 'size', type: 'BadgeSize', default: "'md'", description: 'Tamano del badge.' },
   {
     name: 'variant',
-    type: 'ButtonVariant',
+    type: 'BadgeVariant',
     default: "'solid'",
     description: 'Variante visual.',
   },
   {
     name: 'severity',
-    type: 'ButtonSeverity',
+    type: 'BadgeSeverity',
     default: "'primary'",
     description: 'Severidad semantica.',
-  },
-  { name: 'size', type: 'ButtonSize', default: "'md'", description: 'Tamano del boton.' },
-  { name: 'rounded', type: 'boolean', default: 'false', description: 'Usa bordes redondeados.' },
-  { name: 'square', type: 'boolean', default: 'false', description: 'Usa una forma cuadrada.' },
-  {
-    name: 'loading',
-    type: 'boolean',
-    default: 'false',
-    description: 'Muestra el estado de carga.',
   },
   { name: 'color', type: 'string', default: 'undefined', description: 'Color CSS personalizado.' },
   {
@@ -122,36 +98,26 @@ const propRows: ApiTableRow[] = [
     default: 'undefined',
     description: 'Icono al final.',
   },
-  {
-    name: 'as',
-    type: 'AsTag | Component',
-    default: "'button'",
-    description: 'Elemento renderizado.',
-  },
-  { name: 'asChild', type: 'boolean', default: 'false', description: 'Usa el elemento del slot.' },
 ]
 
-const emitRows: ApiTableRow[] = [
-  { name: 'click', type: '[event: PointerEvent]', default: '-', description: 'Click del boton.' },
-]
+const emitRows: ApiTableRow[] = []
 
 const slotRows: ApiTableRow[] = [
-  { name: 'default', type: 'ButtonContext', default: '-', description: 'Contenido principal.' },
+  {
+    name: 'default',
+    type: 'Record<string, never>',
+    default: '-',
+    description: 'Contenido principal.',
+  },
   {
     name: 'leading',
-    type: 'ButtonContext',
+    type: 'Record<string, never>',
     default: '-',
     description: 'Contenido antes del texto.',
   },
   {
-    name: 'loading',
-    type: 'ButtonContext',
-    default: '-',
-    description: 'Contenido del estado de carga.',
-  },
-  {
     name: 'trailing',
-    type: 'ButtonContext',
+    type: 'Record<string, never>',
     default: '-',
     description: 'Contenido despues del texto.',
   },
@@ -164,9 +130,9 @@ const exposeRows: ApiTableRow[] = []
   <section class="grid gap-8 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
     <header class="grid gap-2">
       <p class="font-mono text-xs tracking-wide text-muted-foreground uppercase">Component</p>
-      <h2 class="text-2xl font-semibold">Button</h2>
+      <h2 class="text-2xl font-semibold">Badge</h2>
       <p class="max-w-2xl text-sm text-muted-foreground">
-        Accion interactiva con variantes visuales, iconos y estados de carga.
+        Etiqueta compacta para estados, categorias y metadatos.
       </p>
     </header>
 
@@ -183,13 +149,13 @@ const exposeRows: ApiTableRow[] = []
     <section class="grid gap-4">
       <div>
         <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">Prueba las variantes y estados del boton.</p>
+        <p class="text-sm text-muted-foreground">Configura el contenido y el estilo del badge.</p>
       </div>
 
       <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
         <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
           <Playground>
-            <Button v-bind="playgroundProps" />
+            <Badge v-bind="playgroundProps" />
           </Playground>
         </div>
 
@@ -204,6 +170,18 @@ const exposeRows: ApiTableRow[] = []
           </label>
 
           <label class="grid gap-1.5 text-sm">
+            <span class="font-medium">size</span>
+            <select
+              v-model="size"
+              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="sm">sm</option>
+              <option value="md">md</option>
+              <option value="lg">lg</option>
+            </select>
+          </label>
+
+          <label class="grid gap-1.5 text-sm">
             <span class="font-medium">variant</span>
             <select
               v-model="variant"
@@ -214,7 +192,6 @@ const exposeRows: ApiTableRow[] = []
               <option value="plain">plain</option>
               <option value="subtle">subtle</option>
               <option value="soft">soft</option>
-              <option value="link">link</option>
             </select>
           </label>
 
@@ -229,19 +206,6 @@ const exposeRows: ApiTableRow[] = []
               <option value="warning">warning</option>
               <option value="success">success</option>
               <option value="error">error</option>
-            </select>
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">size</span>
-            <select
-              v-model="size"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="xs">xs</option>
-              <option value="sm">sm</option>
-              <option value="md">md</option>
-              <option value="lg">lg</option>
             </select>
           </label>
 
@@ -301,26 +265,17 @@ const exposeRows: ApiTableRow[] = []
               class="h-9 w-full rounded-md border bg-background p-1"
             />
           </label>
-
-          <label class="flex items-center gap-2 text-sm">
-            <input v-model="rounded" type="checkbox" class="size-4 rounded border-input" />
-            <span class="font-medium">rounded</span>
-          </label>
-          <label class="flex items-center gap-2 text-sm">
-            <input v-model="square" type="checkbox" class="size-4 rounded border-input" />
-            <span class="font-medium">square</span>
-          </label>
-          <label class="flex items-center gap-2 text-sm">
-            <input v-model="loading" type="checkbox" class="size-4 rounded border-input" />
-            <span class="font-medium">loading</span>
-          </label>
         </div>
       </div>
     </section>
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />
-      <ApiTable title="Emits" :rows="emitRows" />
+      <ApiTable
+        title="Emits"
+        :rows="emitRows"
+        empty-text="Este componente no emite eventos propios."
+      />
       <ApiTable title="Slots" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
     </div>

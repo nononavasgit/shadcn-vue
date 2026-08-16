@@ -1,13 +1,8 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import {
-  Badge,
-  createBadgeContext,
-  type BadgeContext,
-  type BadgeProps,
-} from '@/components/ui/Badge'
+import { Badge, type BadgeProps } from '@/components/ui/Badge'
 
 function mountBadge(options: MountingOptions<BadgeProps> = {}) {
   return mount(Badge, options)
@@ -157,49 +152,6 @@ describe('Badge', () => {
         expect(badge.getComponent('[data-test-badge-trailing-icon]').props('size')).toBe('md')
       })
     })
-
-    describe('ui', () => {
-      it('renders ui.root attributes', () => {
-        const root = mountBadge({
-          props: {
-            ui: {
-              root: () => ({
-                class: 'ui-root',
-                style: 'opacity: 0.8',
-                'data-test-badge-ui': 'root',
-              }),
-            },
-          },
-        }).get('[data-test-badge-ui="root"]')
-
-        expect(root.classes()).toContain('ui-root')
-        expect(root.attributes('style')).toContain('opacity: 0.8')
-      })
-
-      it('passes BadgeContext to ui.root', () => {
-        const root = vi.fn(() => ({}))
-
-        mountBadge({
-          props: {
-            label: 'Status',
-            size: 'lg',
-            variant: 'outline',
-            severity: 'success',
-            color: '#ff0000',
-            icon: 'check',
-            trailingIcon: 'chevronRight',
-            ui: { root },
-          },
-        })
-
-        expect(root).toHaveBeenCalledWith({
-          size: 'lg',
-          variant: 'outline',
-          severity: 'success',
-          color: '#ff0000',
-        } satisfies BadgeContext)
-      })
-    })
   })
 
   describe('attrs', () => {
@@ -220,41 +172,6 @@ describe('Badge', () => {
 
       expect(root.classes()).toContain('custom-badge')
       expect(root.attributes('style')).toContain('opacity: 0.5')
-    })
-  })
-
-  describe('context contract', () => {
-    it.each([
-      {
-        name: 'default values',
-        input: {},
-        expected: {
-          size: 'md',
-          variant: 'solid',
-          severity: 'primary',
-          color: undefined,
-        },
-      },
-      {
-        name: 'configured values',
-        input: {
-          label: 'Status',
-          size: 'lg' as const,
-          variant: 'outline' as const,
-          severity: 'success' as const,
-          color: '#ff0000',
-          icon: 'check' as const,
-          trailingIcon: 'chevronRight' as const,
-        },
-        expected: {
-          size: 'lg',
-          variant: 'outline',
-          severity: 'success',
-          color: '#ff0000',
-        },
-      },
-    ])('creates the contract with $name', ({ input, expected }) => {
-      expect(createBadgeContext(input)).toEqual(expected satisfies BadgeContext)
     })
   })
 
@@ -287,31 +204,6 @@ describe('Badge', () => {
 
       expect(badge.findComponent('[data-test-badge-icon]').exists()).toBe(false)
       expect(badge.findComponent('[data-test-badge-trailing-icon]').exists()).toBe(false)
-    })
-
-    it.each(slotCases)('passes BadgeContext to slot $input', ({ input }) => {
-      const slot = vi.fn(() => null)
-
-      mountBadge({
-        props: {
-          label: 'Status',
-          size: 'lg',
-          variant: 'outline',
-          severity: 'success',
-          icon: 'check',
-          trailingIcon: 'chevronRight',
-        },
-        slots: { [input]: slot },
-      })
-
-      const expected = {
-        size: 'lg',
-        variant: 'outline',
-        severity: 'success',
-        color: undefined,
-      } satisfies BadgeContext
-
-      expect(slot).toHaveBeenCalledWith(expect.objectContaining(expected))
     })
   })
 })

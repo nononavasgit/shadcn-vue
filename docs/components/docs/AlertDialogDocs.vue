@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 
 import { AlertDialog, type AlertDialogProps } from '@/components/ui/AlertDialog'
 import type { NormalizeButtonProps } from '@/components/ui/Button'
+import type { NormalizeIconProps } from '@/components/ui/Icon'
 import { ICONS } from '@/components/ui/Icon/icons'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
@@ -12,6 +13,7 @@ const open = ref(false)
 const label = ref('Delete project?')
 const description = ref('This action cannot be undone.')
 const icon = ref('warning')
+const iconObjectInput = ref('')
 const actionButtonInput = ref(`{
   "label": "Delete",
   "severity": "error"
@@ -37,10 +39,26 @@ function parseButtonProps(value: string): NormalizeButtonProps | undefined {
   return undefined
 }
 
+function parseIconProps(value: string): NormalizeIconProps | undefined {
+  if (!value.trim()) return undefined
+
+  try {
+    const parsed: unknown = JSON.parse(value)
+
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return parsed as NormalizeIconProps
+    }
+  } catch {
+    return undefined
+  }
+
+  return undefined
+}
+
 const playgroundProps = computed<AlertDialogProps>(() => ({
   label: label.value || undefined,
   description: description.value || undefined,
-  icon: icon.value || undefined,
+  icon: parseIconProps(iconObjectInput.value) ?? (icon.value || undefined),
   actionButton: parseButtonProps(actionButtonInput.value),
   cancelButton: parseButtonProps(cancelButtonInput.value),
   unmountOnHide: unmountOnHide.value,
@@ -268,6 +286,19 @@ const exposeRows: ApiTableRow[] = [
               <option value="">Sin icono</option>
               <option v-for="name in iconNames" :key="name" :value="name">{{ name }}</option>
             </select>
+          </label>
+
+          <label class="grid gap-1.5 text-sm">
+            <span class="font-medium">icon (objeto)</span>
+            <textarea
+              v-model="iconObjectInput"
+              rows="4"
+              placeholder='{
+  "name": "warning",
+  "size": "lg"
+}'
+              class="rounded-md border bg-background px-3 py-2 font-mono text-xs outline-none focus:ring-2 focus:ring-ring"
+            />
           </label>
 
           <label class="grid gap-1.5 text-sm">

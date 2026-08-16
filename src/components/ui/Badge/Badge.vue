@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
-import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
-import { badgeVariants, createBadgeContext, type BadgeProps, type BadgeSlots } from '.'
+import { badgeVariants, type BadgeProps, type BadgeSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -16,11 +15,8 @@ const props = withDefaults(defineProps<BadgeProps>(), {
   color: undefined,
   icon: undefined,
   trailingIcon: undefined,
-  ui: undefined,
 })
 defineSlots<BadgeSlots>()
-
-const badgeContext = computed(() => createBadgeContext(props))
 
 const attrs = useAttrs()
 const { colorStyle } = useColor(
@@ -35,12 +31,10 @@ const rootProps = computed(() => {
     color: Boolean(props.color),
   })
 
-  const rootUI = useUi(props.ui?.root, badgeContext.value)
   return {
     ...attrs,
-    ...rootUI,
-    class: cn(calculatedVariants, attrs.class, rootUI.class),
-    style: [colorStyle.value, attrs.style, rootUI.style],
+    class: cn(calculatedVariants, attrs.class),
+    style: [colorStyle.value, attrs.style],
   }
 })
 
@@ -58,13 +52,13 @@ const trailingIconProps = computed(() => {
 
 <template>
   <span v-bind="rootProps" data-test-badge-root>
-    <slot name="leading" v-bind="badgeContext">
+    <slot name="leading">
       <Icon v-if="iconProps?.name" v-bind="iconProps" data-test-badge-icon />
     </slot>
 
-    <slot v-bind="badgeContext">{{ props.label }}</slot>
+    <slot>{{ props.label }}</slot>
 
-    <slot name="trailing" v-bind="badgeContext">
+    <slot name="trailing">
       <Icon
         v-if="trailingIconProps?.name"
         v-bind="trailingIconProps"

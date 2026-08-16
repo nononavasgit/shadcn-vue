@@ -1,5 +1,4 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { HTMLAttributes } from 'vue'
 import type { NormalizeIconProps } from '@/components/ui/Icon'
 
 export { default as Badge } from './Badge.vue'
@@ -199,12 +198,6 @@ export type BadgeSize = NonNullable<BadgeVariants['size']>
 export type BadgeVariant = NonNullable<BadgeVariants['variant']>
 export type BadgeSeverity = NonNullable<BadgeVariants['severity']>
 
-export type BadgeFn<T> = (context: BadgeContext) => T
-
-export interface BadgeUI {
-  root?: BadgeFn<HTMLAttributes>
-}
-
 export interface BadgeProps {
   label?: string
   size?: BadgeSize
@@ -213,27 +206,10 @@ export interface BadgeProps {
   color?: string
   icon?: NormalizeIconProps
   trailingIcon?: NormalizeIconProps
-  ui?: BadgeUI
-}
-
-export interface BadgeContext {
-  size: BadgeSize
-  variant: BadgeVariant
-  severity: BadgeSeverity
-  color: BadgeProps['color']
-}
-
-export function createBadgeContext(props: BadgeProps): BadgeContext {
-  return {
-    size: props.size ?? 'md',
-    variant: props.variant ?? 'solid',
-    severity: props.severity ?? 'primary',
-    color: props.color,
-  }
 }
 
 export interface BadgeSlots {
-  default?(props: BadgeContext): unknown
-  leading?(props: BadgeContext): unknown
-  trailing?(props: BadgeContext): unknown
+  default?(): unknown
+  leading?(): unknown
+  trailing?(): unknown
 }

@@ -12,13 +12,12 @@ import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type {
   AccordionEmits,
-  AccordionContext,
   AccordionItemContext,
   AccordionProps,
   AccordionSlots,
   AccordionValue,
 } from '.'
-import { createAccordionContext, createAccordionItemContext } from '.'
+import { createAccordionItemContext } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -42,28 +41,20 @@ watch(model, (nextValue, previousValue) => {
   if (nextValue !== previousValue) emit('valueChange', nextValue)
 })
 
-const accordionContext = computed<AccordionContext>(() =>
-  createAccordionContext(props, model.value),
-)
-
 const rootProps = computed(() => {
-  const normalizedRootUI = useUi(props.ui?.root, accordionContext.value)
   const { dir: rootDirection, ...rootAttrs } = attrs
-  const { dir: rootUIDirection, ...rootUI } = normalizedRootUI
   void rootDirection
-  void rootUIDirection
 
   return {
     ...rootAttrs,
-    ...rootUI,
     type: props.type,
     collapsible: props.collapsible,
     disabled: props.disabled,
     unmountOnHide: props.unmountOnHide,
     as: 'div' as const,
     asChild: false,
-    class: cn(attrs.class, rootUI.class),
-    style: [attrs.style, rootUI.style],
+    class: cn(attrs.class),
+    style: attrs.style,
   }
 })
 

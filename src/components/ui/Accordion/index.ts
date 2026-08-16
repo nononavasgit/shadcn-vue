@@ -40,7 +40,6 @@ export type AccordionItemFn<T> = (context: AccordionItemContext) => T
 
 // UI
 export interface AccordionUI {
-  root?: AccordionFn<HTMLAttributes>
   item?: AccordionItemFn<HTMLAttributes>
   trigger?: AccordionItemFn<HTMLAttributes>
   content?: AccordionItemFn<HTMLAttributes>
@@ -49,28 +48,16 @@ export interface AccordionUI {
 // Context
 export interface AccordionContext {
   value: AccordionValue
-  type: AccordionType
-  collapsible: boolean
-  disabled: boolean
-  unmountOnHide: boolean
 }
 
-export function createAccordionContext(
-  props: AccordionProps,
-  value: AccordionValue,
-): AccordionContext {
-  return {
-    value,
-    type: props.type ?? 'single',
-    collapsible: props.collapsible ?? false,
-    disabled: props.disabled ?? false,
-    unmountOnHide: props.unmountOnHide ?? true,
-  }
+export function createAccordionContext(value: AccordionValue): AccordionContext {
+  return { value }
 }
 
 export interface AccordionItemContext {
   item: AccordionItem
   index: number
+  value: AccordionValue
   open: boolean
   first: boolean
   last: boolean
@@ -85,6 +72,7 @@ export function createAccordionItemContext(
   return {
     item,
     index,
+    value,
     open: Array.isArray(value) ? value.includes(item.value) : value === item.value,
     first: index === 0,
     last: index === itemCount - 1,

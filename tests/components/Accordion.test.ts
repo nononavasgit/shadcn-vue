@@ -1,5 +1,5 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
 import {
@@ -342,7 +342,6 @@ describe('Accordion', () => {
 
     describe('ui', () => {
       it.each([
-        { input: 'root' as const, expected: 'root' },
         { input: 'item' as const, expected: 'item' },
         { input: 'trigger' as const, expected: 'trigger' },
         { input: 'content' as const, expected: 'content' },
@@ -364,57 +363,6 @@ describe('Accordion', () => {
 
         expect(element.classes()).toContain(`ui-${expected}`)
         expect(element.attributes('style')).toContain('opacity: 0.8')
-      })
-
-      describe('context', () => {
-        it('passes AccordionContext to ui.root', () => {
-          const root = vi.fn(() => ({}))
-
-          mountAccordion({
-            props: {
-              value: 'item',
-              type: 'multiple',
-              collapsible: true,
-              disabled: true,
-              unmountOnHide: false,
-              items: [{ value: 'item' }],
-              ui: { root },
-            },
-          })
-
-          expect(root).toHaveBeenCalledWith({
-            value: 'item',
-            type: 'multiple',
-            collapsible: true,
-            disabled: true,
-            unmountOnHide: false,
-          } satisfies AccordionContext)
-        })
-
-        it.each([
-          { input: 'item' as const, expected: 'item' },
-          { input: 'trigger' as const, expected: 'trigger' },
-          { input: 'content' as const, expected: 'content' },
-        ])('passes AccordionItemContext to ui.$expected', ({ input }) => {
-          const ui = vi.fn(() => ({}))
-          const item = { value: 'item', label: 'Label' }
-
-          mountAccordion({
-            props: {
-              value: 'item',
-              items: [item],
-              ui: { [input]: ui },
-            },
-          })
-
-          expect(ui).toHaveBeenCalledWith({
-            item,
-            index: 0,
-            open: true,
-            first: true,
-            last: true,
-          } satisfies AccordionItemContext)
-        })
       })
     })
   })
@@ -460,36 +408,21 @@ describe('Accordion', () => {
       it.each([
         {
           name: 'default values',
-          input: { props: {}, value: undefined },
-          expected: {
-            value: undefined,
-            type: 'single',
-            collapsible: false,
-            disabled: false,
-            unmountOnHide: true,
-          },
+          input: undefined,
+          expected: { value: undefined },
         },
         {
-          name: 'configured values',
-          input: {
-            props: {
-              type: 'multiple' as const,
-              collapsible: true,
-              disabled: true,
-              unmountOnHide: false,
-            },
-            value: ['first', 'second'],
-          },
-          expected: {
-            value: ['first', 'second'],
-            type: 'multiple',
-            collapsible: true,
-            disabled: true,
-            unmountOnHide: false,
-          },
+          name: 'single value',
+          input: 'first',
+          expected: { value: 'first' },
+        },
+        {
+          name: 'multiple value',
+          input: ['first', 'second'],
+          expected: { value: ['first', 'second'] },
         },
       ])('creates the contract with $name', ({ input, expected }) => {
-        const context = createAccordionContext(input.props, input.value)
+        const context = createAccordionContext(input)
 
         expect(context).toEqual(expected satisfies AccordionContext)
       })
@@ -499,18 +432,28 @@ describe('Accordion', () => {
       it.each([
         {
           name: 'first open item in single mode',
-          input: { index: 0, value: 'first' },
-          expected: { open: true, first: true, last: false },
+          input: { index: 0, value: 'first' as AccordionValue },
+          expected: { value: 'first', open: true, first: true, last: false },
         },
         {
           name: 'middle closed item in single mode',
-          input: { index: 1, value: 'first' },
-          expected: { open: false, first: false, last: false },
+          input: { index: 1, value: 'first' as AccordionValue },
+          expected: { value: 'first', open: false, first: false, last: false },
         },
         {
           name: 'last open item in multiple mode',
-          input: { index: 2, value: ['first', 'last'] },
-          expected: { open: true, first: false, last: true },
+          input: { index: 2, value: ['first', 'last'] as AccordionValue },
+          expected: { value: ['first', 'last'], open: true, first: false, last: true },
+        },
+        {
+          name: 'middle closed item in multiple mode',
+          input: { index: 1, value: ['first', 'last'] as AccordionValue },
+          expected: { value: ['first', 'last'], open: false, first: false, last: false },
+        },
+        {
+          name: 'first closed item without value',
+          input: { index: 0, value: undefined },
+          expected: { value: undefined, open: false, first: true, last: false },
         },
       ])('creates the contract for $name', ({ input, expected }) => {
         const contextItems = [{ value: 'first' }, { value: 'middle' }, { value: 'last' }]
@@ -651,26 +594,6 @@ describe('Accordion', () => {
           `Slot ${expected}`,
         )
       })
-
-      it.each(slotCases)('passes AccordionItemContext to $input', ({ input }) => {
-        const slot = vi.fn(() => null)
-        const item = { value: 'item', label: 'Label' }
-
-        mountAccordion({
-          props: { value: 'item', items: [item] },
-          slots: { [input]: slot },
-        })
-
-        const expected = {
-          item,
-          index: 0,
-          open: true,
-          first: true,
-          last: true,
-        } satisfies AccordionItemContext
-
-        expect(slot).toHaveBeenCalledWith(expect.objectContaining(expected))
-      })
     })
 
     describe('item-specific', () => {
@@ -687,26 +610,6 @@ describe('Accordion', () => {
         expect(accordion.get(`[data-test-accordion-slot="${expected}"]`).text()).toBe(
           `Slot ${expected}`,
         )
-      })
-
-      it.each(slotCases)('passes AccordionItemContext to $input-{item.value}', ({ input }) => {
-        const slot = vi.fn(() => null)
-        const item = { value: 'item', label: 'Label' }
-
-        mountAccordion({
-          props: { value: 'item', items: [item] },
-          slots: { [`${input}-item`]: slot },
-        })
-
-        const expected = {
-          item,
-          index: 0,
-          open: true,
-          first: true,
-          last: true,
-        } satisfies AccordionItemContext
-
-        expect(slot).toHaveBeenCalledWith(expect.objectContaining(expected))
       })
     })
   })

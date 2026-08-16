@@ -12,6 +12,16 @@
 
         <nav aria-label="Componentes" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <RouterLink
+            to="/accordion"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Accordion</h2>
+            <p class="text-sm text-muted-foreground">
+              Secciones expandibles en modo single o multiple.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/avatar"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

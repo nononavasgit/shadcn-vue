@@ -9,51 +9,33 @@ import {
 } from 'reka-ui'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import type { ScrollAreaContext, ScrollAreaProps, ScrollAreaSlots } from '.'
+import type { ScrollAreaProps, ScrollAreaSlots } from '.'
+import { scrollAreaDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
 
 defineSlots<ScrollAreaSlots>()
 
-const props = withDefaults(defineProps<ScrollAreaProps>(), {
-  type: 'hover',
-  dir: undefined,
-  scrollHideDelay: 600,
-  orientation: 'vertical',
-  forceMount: false,
-  as: 'div',
-  asChild: false,
-  ui: undefined,
-})
-
-const scrollAreaContext = computed<ScrollAreaContext>(() => {
-  const { ui, ...scrollAreaProps } = props
-  void ui
-
-  return {
-    props: scrollAreaProps,
-  }
-})
+const props = withDefaults(defineProps<ScrollAreaProps>(), scrollAreaDefaults)
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
-  const rootUI = useUi(props.ui?.root, scrollAreaContext.value)
+  const { as: _as, asChild: _asChild, dir: _dir, ...rootAttrs } = attrs
+  void _as
+  void _asChild
+  void _dir
 
   return {
-    ...attrs,
-    ...rootUI,
+    ...rootAttrs,
     type: props.type,
-    dir: props.dir,
     scrollHideDelay: props.scrollHideDelay,
-    as: props.as,
-    asChild: props.asChild,
-    class: cn('relative', attrs.class, rootUI.class),
-    style: [attrs.style, rootUI.style],
+    class: cn('relative', attrs.class),
+    style: attrs.style,
   }
 })
 
 const viewportProps = computed(() => {
-  const viewportUI = useUi(props.ui?.viewport, scrollAreaContext.value)
+  const viewportUI = useUi(props.ui?.viewport, undefined)
 
   return {
     ...viewportUI,
@@ -65,7 +47,7 @@ const viewportProps = computed(() => {
 })
 
 const verticalScrollbarProps = computed(() => {
-  const verticalScrollbarUI = useUi(props.ui?.verticalScrollbar, scrollAreaContext.value)
+  const verticalScrollbarUI = useUi(props.ui?.verticalScrollbar, undefined)
 
   return {
     ...verticalScrollbarUI,
@@ -79,7 +61,7 @@ const verticalScrollbarProps = computed(() => {
 })
 
 const thumbVerticalProps = computed(() => {
-  const thumbVerticalUI = useUi(props.ui?.thumbVertical, scrollAreaContext.value)
+  const thumbVerticalUI = useUi(props.ui?.thumbVertical, undefined)
 
   return {
     ...thumbVerticalUI,
@@ -88,7 +70,7 @@ const thumbVerticalProps = computed(() => {
 })
 
 const horizontalScrollbarProps = computed(() => {
-  const horizontalScrollbarUI = useUi(props.ui?.horizontalScrollbar, scrollAreaContext.value)
+  const horizontalScrollbarUI = useUi(props.ui?.horizontalScrollbar, undefined)
 
   return {
     ...horizontalScrollbarUI,
@@ -102,7 +84,7 @@ const horizontalScrollbarProps = computed(() => {
 })
 
 const thumbHorizontalProps = computed(() => {
-  const thumbHorizontalUI = useUi(props.ui?.thumbHorizontal, scrollAreaContext.value)
+  const thumbHorizontalUI = useUi(props.ui?.thumbHorizontal, undefined)
 
   return {
     ...thumbHorizontalUI,
@@ -111,7 +93,7 @@ const thumbHorizontalProps = computed(() => {
 })
 
 const cornerProps = computed(() => {
-  const cornerUI = useUi(props.ui?.corner, scrollAreaContext.value)
+  const cornerUI = useUi(props.ui?.corner, undefined)
 
   return {
     ...cornerUI,
@@ -121,31 +103,46 @@ const cornerProps = computed(() => {
 </script>
 
 <template>
-  <ScrollAreaRoot v-bind="rootProps" data-slot="scroll-area">
-    <ScrollAreaViewport v-bind="viewportProps" data-slot="scroll-area-viewport">
-      <slot v-bind="scrollAreaContext" />
+  <ScrollAreaRoot v-bind="rootProps" data-slot="scroll-area" data-test-scroll-area-root>
+    <ScrollAreaViewport
+      v-bind="viewportProps"
+      data-slot="scroll-area-viewport"
+      data-test-scroll-area-viewport
+    >
+      <slot />
     </ScrollAreaViewport>
 
     <ScrollAreaScrollbar
       v-if="props.orientation === 'vertical' || props.orientation === 'both'"
       v-bind="verticalScrollbarProps"
       data-slot="scroll-area-scrollbar"
+      data-test-scroll-area-vertical-scrollbar
     >
-      <ScrollAreaThumb v-bind="thumbVerticalProps" data-slot="scroll-area-thumb" />
+      <ScrollAreaThumb
+        v-bind="thumbVerticalProps"
+        data-slot="scroll-area-thumb"
+        data-test-scroll-area-vertical-thumb
+      />
     </ScrollAreaScrollbar>
 
     <ScrollAreaScrollbar
       v-if="props.orientation === 'horizontal' || props.orientation === 'both'"
       v-bind="horizontalScrollbarProps"
       data-slot="scroll-area-scrollbar"
+      data-test-scroll-area-horizontal-scrollbar
     >
-      <ScrollAreaThumb v-bind="thumbHorizontalProps" data-slot="scroll-area-thumb" />
+      <ScrollAreaThumb
+        v-bind="thumbHorizontalProps"
+        data-slot="scroll-area-thumb"
+        data-test-scroll-area-horizontal-thumb
+      />
     </ScrollAreaScrollbar>
 
     <ScrollAreaCorner
       v-if="props.orientation === 'both'"
       v-bind="cornerProps"
       data-slot="scroll-area-corner"
+      data-test-scroll-area-corner
     />
   </ScrollAreaRoot>
 </template>

@@ -5,10 +5,9 @@ export { default as ScrollArea } from './ScrollArea.vue'
 
 export type ScrollAreaOrientation = ScrollAreaScrollbarProps['orientation'] | 'both'
 
-export type ScrollAreaFn<T> = (context: ScrollAreaContext) => T
+export type ScrollAreaFn<T> = () => T
 
 export interface ScrollAreaUI {
-  root?: ScrollAreaFn<HTMLAttributes>
   viewport?: ScrollAreaFn<HTMLAttributes>
   verticalScrollbar?: ScrollAreaFn<HTMLAttributes>
   horizontalScrollbar?: ScrollAreaFn<HTMLAttributes>
@@ -17,19 +16,12 @@ export interface ScrollAreaUI {
   corner?: ScrollAreaFn<HTMLAttributes>
 }
 
-export interface ScrollAreaProps extends Pick<
-  ScrollAreaRootProps,
-  'as' | 'asChild' | 'type' | 'dir' | 'scrollHideDelay'
-> {
+export interface ScrollAreaProps extends Pick<ScrollAreaRootProps, 'type' | 'scrollHideDelay'> {
   orientation?: ScrollAreaOrientation
   forceMount?: ScrollAreaScrollbarProps['forceMount']
   ui?: ScrollAreaUI
 }
 
-export interface ScrollAreaContext {
-  props: Omit<ScrollAreaProps, 'ui'>
-}
-
 export interface ScrollAreaSlots {
-  default?(props: ScrollAreaContext): unknown
+  default?(): unknown
 }

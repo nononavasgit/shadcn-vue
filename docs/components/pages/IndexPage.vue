@@ -192,6 +192,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/scroll-area"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">ScrollArea</h2>
+            <p class="text-sm text-muted-foreground">
+              Contenedor de desplazamiento con orientación configurable.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/kbd"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

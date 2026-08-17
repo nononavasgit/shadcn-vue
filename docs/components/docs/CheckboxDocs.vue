@@ -80,12 +80,6 @@ const emitRows: ApiTableRow[] = [
     default: '-',
     description: 'Actualiza el valor controlado mediante v-model:value.',
   },
-  {
-    name: 'valueChange',
-    type: '[value: CheckboxModelValue]',
-    default: '-',
-    description: 'Se emite cuando cambia el valor del checkbox.',
-  },
 ]
 
 const slotRows: ApiTableRow[] = [
@@ -121,9 +115,7 @@ const exposeRows: ApiTableRow[] = []
     <section class="grid gap-4">
       <div>
         <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">
-          Cambia el estado del checkbox.
-        </p>
+        <p class="text-sm text-muted-foreground">Cambia el estado del checkbox.</p>
       </div>
 
       <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">

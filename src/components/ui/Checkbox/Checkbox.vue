@@ -19,15 +19,27 @@ const props = withDefaults(defineProps<CheckboxProps>(), {
   ui: undefined,
 })
 defineSlots<CheckboxSlots>()
-const emit = defineEmits<{ valueChange: [value: CheckboxModelValue] }>()
 
 const value = defineModel<CheckboxModelValue>('value', {
   default: false,
 })
 
-watch(value, (nextValue, previousValue) => {
-  if (nextValue !== previousValue) emit('valueChange', nextValue)
-})
+const validateValue = (val: CheckboxModelValue) => {
+  const isValid = [props.trueValue, props.falseValue, 'indeterminate'].includes(val)
+  if (!isValid) return props.falseValue
+
+  return val
+}
+
+watch(
+  value,
+  () => {
+    value.value = validateValue(value.value)
+  },
+  {
+    immediate: true,
+  },
+)
 
 const checkboxContext = computed(() => createCheckboxContext(value.value, props.trueValue))
 

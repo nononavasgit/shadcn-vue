@@ -1,6 +1,7 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
+import { CheckboxRoot } from 'reka-ui'
 
 import {
   Checkbox,
@@ -18,44 +19,33 @@ describe('Checkbox', () => {
   describe('props', () => {
     describe('value', () => {
       it.each([
-        { input: true, expected: true },
-        { input: false, expected: false },
-        { input: 'indeterminate' as const, expected: 'indeterminate' },
-        { input: undefined, expected: false },
-      ])('passes value=$input as modelValue=$expected', ({ input, expected }) => {
-        const root = mountCheckbox({ props: { value: input } }).getComponent(
-          '[data-test-checkbox-root]',
+        { input: true, trueValue: true, falseValue: false, expected: true },
+        { input: false, trueValue: true, falseValue: false, expected: false },
+        {
+          input: 'indeterminate' as const,
+          trueValue: true,
+          falseValue: false,
+          expected: 'indeterminate' as const,
+        },
+        { input: undefined, trueValue: true, falseValue: false, expected: false },
+        { input: 'yes', trueValue: 'yes', falseValue: 'no', expected: 'yes' },
+        { input: 'no', trueValue: 'yes', falseValue: 'no', expected: 'no' },
+        {
+          input: 'indeterminate' as const,
+          trueValue: 'yes',
+          falseValue: 'no',
+          expected: 'indeterminate' as const,
+        },
+        { input: 'invalid', trueValue: 'yes', falseValue: 'no', expected: 'no' },
+      ] as const)('passes value=$input as modelValue=$expected', (inputCase) => {
+        const { input, trueValue, falseValue, expected } = inputCase
+        const root = mountCheckbox({ props: { value: input, trueValue, falseValue } }).getComponent(
+          CheckboxRoot,
         )
 
-        expect(root.vm.$parent?.$props.modelValue).toBe(expected)
-      })
-    })
-
-    describe('trueValue', () => {
-      it.each([
-        { input: 'yes', expected: 'yes' },
-        { input: 1, expected: 1 },
-        { input: undefined, expected: true },
-      ])('passes trueValue=$input as $expected', ({ input, expected }) => {
-        const root = mountCheckbox({ props: { trueValue: input } }).getComponent(
-          '[data-test-checkbox-root]',
-        )
-
-        expect(root.vm.$parent?.$props.trueValue).toBe(expected)
-      })
-    })
-
-    describe('falseValue', () => {
-      it.each([
-        { input: 'no', expected: 'no' },
-        { input: 0, expected: 0 },
-        { input: undefined, expected: false },
-      ])('passes falseValue=$input as $expected', ({ input, expected }) => {
-        const root = mountCheckbox({ props: { falseValue: input } }).getComponent(
-          '[data-test-checkbox-root]',
-        )
-
-        expect(root.vm.$parent?.$props.falseValue).toBe(expected)
+        expect(root.props('modelValue')).toBe(expected)
+        expect(root.props('trueValue')).toBe(trueValue)
+        expect(root.props('falseValue')).toBe(falseValue)
       })
     })
 
@@ -83,15 +73,15 @@ describe('Checkbox', () => {
 
   describe('root configuration', () => {
     it('always passes as=button', () => {
-      const root = mountCheckbox().getComponent('[data-test-checkbox-root]')
+      const root = mountCheckbox().getComponent(CheckboxRoot)
 
-      expect(root.vm.$parent?.$props.as).toBe('button')
+      expect(root.props('as')).toBe('button')
     })
 
     it('always passes asChild=false', () => {
-      const root = mountCheckbox().getComponent('[data-test-checkbox-root]')
+      const root = mountCheckbox().getComponent(CheckboxRoot)
 
-      expect(root.vm.$parent?.$props.asChild).toBe(false)
+      expect(root.props('asChild')).toBe(false)
     })
   })
 
@@ -100,34 +90,6 @@ describe('Checkbox', () => {
       text: 'forwards arbitrary attrs, class and style to root',
       id: '[data-test-checkbox-root]',
       mount: (attrs) => mountCheckbox({ attrs }),
-    })
-  })
-
-  describe('emits', () => {
-    const valueChangeCases = [
-      { initial: false, next: true, expected: [[true]] },
-      { initial: true, next: false, expected: [[false]] },
-      { initial: 'indeterminate' as const, next: true, expected: [[true]] },
-      { initial: false, next: false, expected: undefined },
-    ] as const
-
-    it.each(valueChangeCases)(
-      'emits valueChange when updating externally from $initial to $next',
-      async ({ initial, next, expected }) => {
-        const checkbox = mountCheckbox({ props: { value: initial } })
-
-        await checkbox.setProps({ value: next })
-
-        expect(checkbox.emitted('valueChange')).toEqual(expected)
-      },
-    )
-
-    it('emits valueChange when clicking an unchecked checkbox', async () => {
-      const checkbox = mountCheckbox({ props: { value: false } })
-
-      await checkbox.get('[data-test-checkbox-root]').trigger('click')
-
-      expect(checkbox.emitted('valueChange')).toEqual([[true]])
     })
   })
 

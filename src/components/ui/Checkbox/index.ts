@@ -43,7 +43,6 @@ export function createCheckboxContext(
 // Emits
 export interface CheckboxEmits {
   'update:value': [value: CheckboxModelValue]
-  valueChange: [value: CheckboxModelValue]
 }
 
 // Slots

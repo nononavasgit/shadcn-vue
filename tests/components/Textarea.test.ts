@@ -13,7 +13,6 @@ describe('Textarea', () => {
     describe('value', () => {
       it.each([
         { input: 'Description', expected: 'Description' },
-        { input: 42, expected: '42' },
         { input: undefined, expected: '' },
       ])('renders value=$input as "$expected"', ({ input, expected }) => {
         const root = mountTextarea({ props: { value: input } }).get('[data-test-textarea-root]')
@@ -31,33 +30,4 @@ describe('Textarea', () => {
     })
   })
 
-  describe('emits', () => {
-    const valueChangeCases = [
-      { initial: '', next: 'Updated', expected: [['Updated']] },
-      { initial: 'Updated', next: '', expected: [['']] },
-      { initial: 'Same', next: 'Same', expected: undefined },
-    ] as const
-
-    it.each(valueChangeCases)(
-      'checks valueChange when editing from $initial to $next',
-      async ({ initial, next, expected }) => {
-        const textarea = mountTextarea({ props: { value: initial } })
-
-        await textarea.get('[data-test-textarea-root]').setValue(next)
-
-        expect(textarea.emitted('valueChange')).toEqual(expected)
-      },
-    )
-
-    it.each(valueChangeCases)(
-      'checks valueChange when updating externally from $initial to $next',
-      async ({ initial, next, expected }) => {
-        const textarea = mountTextarea({ props: { value: initial } })
-
-        await textarea.setProps({ value: next })
-
-        expect(textarea.emitted('valueChange')).toEqual(expected)
-      },
-    )
-  })
 })

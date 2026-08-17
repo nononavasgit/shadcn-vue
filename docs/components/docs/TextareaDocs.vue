@@ -10,7 +10,7 @@ const value = ref<TextareaValue>('Una nota editable desde el playground.')
 const typeRows: ApiTableRow[] = [
   {
     name: 'TextareaValue',
-    type: 'string | number',
+    type: 'string',
     description: 'Valor controlado del textarea.',
   },
 ]
@@ -30,12 +30,6 @@ const emitRows: ApiTableRow[] = [
     type: '[value: TextareaValue]',
     default: '-',
     description: 'Actualiza el valor controlado mediante v-model:value.',
-  },
-  {
-    name: 'valueChange',
-    type: '[value: TextareaValue]',
-    default: '-',
-    description: 'Se emite cuando cambia el valor.',
   },
 ]
 
@@ -66,7 +60,9 @@ const exposeRows: ApiTableRow[] = []
     <section class="grid gap-4">
       <div>
         <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">Edita el valor y observa el evento valueChange.</p>
+        <p class="text-sm text-muted-foreground">
+          Edita el valor mediante el modelo controlado del componente.
+        </p>
       </div>
 
       <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">

@@ -6,12 +6,17 @@ import type { TextareaProps, TextareaValue } from '.'
 defineOptions({ inheritAttrs: false })
 
 defineProps<TextareaProps>()
-const emit = defineEmits<{ valueChange: [value: TextareaValue] }>()
 const value = defineModel<TextareaValue>('value', { default: '' })
 
-watch(value, (nextValue, previousValue) => {
-  if (nextValue !== previousValue) emit('valueChange', nextValue)
-})
+watch(
+  value,
+  () => {
+    if (typeof value.value !== 'string') value.value = ''
+  },
+  {
+    immediate: true,
+  },
+)
 
 const attrs = useAttrs()
 const rootProps = computed(() => {

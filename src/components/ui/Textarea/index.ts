@@ -1,6 +1,6 @@
 export { default as Textarea } from './Textarea.vue'
 
-export type TextareaValue = string | number
+export type TextareaValue = string
 
 // Props
 export interface TextareaProps {
@@ -10,5 +10,4 @@ export interface TextareaProps {
 // Emits
 export interface TextareaEmits {
   'update:value': [value: TextareaValue]
-  valueChange: [value: TextareaValue]
 }

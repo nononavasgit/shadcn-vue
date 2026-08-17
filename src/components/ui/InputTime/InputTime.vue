@@ -3,14 +3,11 @@ import { computed, useAttrs } from 'vue'
 import { Input } from '@/components/ui/Input'
 import { cn } from '@/lib/utils'
 import type { InputTimeProps, InputTimeValue } from '.'
+import { inputTimeDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<InputTimeProps>(), {
-  showClock: true,
-  ui: undefined,
-})
-const emit = defineEmits<{ valueChange: [value: InputTimeValue] }>()
+const props = withDefaults(defineProps<InputTimeProps>(), inputTimeDefaults)
 
 const attrs = useAttrs()
 const value = defineModel<InputTimeValue>('value', { default: '' })
@@ -31,10 +28,5 @@ const inputProps = computed(() => {
 </script>
 
 <template>
-  <Input
-    v-bind="inputProps"
-    v-model:value="value"
-    type="time"
-    @value-change="emit('valueChange', $event)"
-  />
+  <Input v-bind="inputProps" v-model:value="value" type="time" />
 </template>

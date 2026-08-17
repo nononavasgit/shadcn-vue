@@ -14,6 +14,7 @@ import CheckboxPage from './components/pages/CheckboxPage.vue'
 import FieldSetPage from './components/pages/FieldSetPage.vue'
 import IconPage from './components/pages/IconPage.vue'
 import InputPage from './components/pages/InputPage.vue'
+import InputTimePage from './components/pages/InputTimePage.vue'
 import IndexPage from './components/pages/IndexPage.vue'
 import KbdPage from './components/pages/KbdPage.vue'
 import KbdGroupPage from './components/pages/KbdGroupPage.vue'
@@ -46,6 +47,7 @@ export const router = createRouter({
     { path: '/field-set', component: FieldSetPage },
     { path: '/icon', component: IconPage },
     { path: '/input', component: InputPage },
+    { path: '/input-time', component: InputTimePage },
     { path: '/label', component: LabelPage },
     { path: '/link', component: LinkPage },
     { path: '/loading', component: LoadingPage },

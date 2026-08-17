@@ -12,7 +12,6 @@ export interface InputProps {
 // Emits
 export interface InputEmits {
   'update:value': [value: InputValue]
-  valueChange: [value: InputValue]
 }
 
 // Normalize

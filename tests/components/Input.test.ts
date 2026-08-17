@@ -30,34 +30,4 @@ describe('Input', () => {
       mount: (attrs) => mountInput({ attrs }),
     })
   })
-
-  describe('emits', () => {
-    const valueChangeCases = [
-      { initial: '', next: 'Updated', expected: [['Updated']] },
-      { initial: 'Updated', next: '', expected: [['']] },
-      { initial: 'Same', next: 'Same', expected: undefined },
-    ] as const
-
-    it.each(valueChangeCases)(
-      'check valueChange when editing from $initial to $next',
-      async ({ initial, next, expected }) => {
-        const input = mountInput({ props: { value: initial } })
-
-        await input.get('[data-test-input-root]').setValue(next)
-
-        expect(input.emitted('valueChange')).toEqual(expected)
-      },
-    )
-
-    it.each(valueChangeCases)(
-      'check valueChange when updating externally from $initial to $next',
-      async ({ initial, next, expected }) => {
-        const input = mountInput({ props: { value: initial } })
-
-        await input.setProps({ value: next })
-
-        expect(input.emitted('valueChange')).toEqual(expected)
-      },
-    )
-  })
 })

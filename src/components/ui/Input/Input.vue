@@ -6,13 +6,17 @@ import type { InputProps, InputValue } from '.'
 defineOptions({ inheritAttrs: false })
 
 defineProps<InputProps>()
-const emit = defineEmits<{ valueChange: [value: InputValue] }>()
-
 const value = defineModel<InputValue>('value', { default: '' })
 
-watch(value, (nextValue, previousValue) => {
-  if (nextValue !== previousValue) emit('valueChange', nextValue)
-})
+watch(
+  value,
+  () => {
+    if (typeof value.value !== 'string') value.value = ''
+  },
+  {
+    immediate: true,
+  },
+)
 
 const attrs = useAttrs()
 const rootProps = computed(() => {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs, useSlots } from 'vue'
 import { Icon, normalizeIconProps } from '@/components/ui/Icon'
-import { Link, normalizeLinkProps } from '@/components/ui/Link'
+import { Link } from '@/components/ui/Link'
 import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -153,8 +153,9 @@ function getLinkProps(context: BreadcrumbItemContext) {
   const item = context.item
   return {
     ...ui,
-    ...normalizeLinkProps({ to: item.to!, label: item.label, icon: item.icon }),
     to: item.to!,
+    label: item.label,
+    icon: item.icon,
     'aria-disabled': item.disabled || undefined,
     class: cn(
       'h-auto gap-1 p-0 text-sm font-normal transition-colors hover:text-muted-foreground',

@@ -18,6 +18,7 @@ import IndexPage from './components/pages/IndexPage.vue'
 import KbdPage from './components/pages/KbdPage.vue'
 import KbdGroupPage from './components/pages/KbdGroupPage.vue'
 import LabelPage from './components/pages/LabelPage.vue'
+import LinkPage from './components/pages/LinkPage.vue'
 import LoadingPage from './components/pages/LoadingPage.vue'
 import ScrollAreaPage from './components/pages/ScrollAreaPage.vue'
 import SwitchPage from './components/pages/SwitchPage.vue'
@@ -46,6 +47,7 @@ export const router = createRouter({
     { path: '/icon', component: IconPage },
     { path: '/input', component: InputPage },
     { path: '/label', component: LabelPage },
+    { path: '/link', component: LinkPage },
     { path: '/loading', component: LoadingPage },
     { path: '/scroll-area', component: ScrollAreaPage },
     { path: '/kbd', component: KbdPage },

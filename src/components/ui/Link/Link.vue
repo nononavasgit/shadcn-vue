@@ -2,16 +2,12 @@
 import { computed, mergeProps, useAttrs, useSlots } from 'vue'
 import { RouterLink } from 'vue-router'
 import { Button } from '@/components/ui/Button'
-import { useUi } from '@/composables/useUi'
-import type { LinkContext, LinkEmits, LinkProps, LinkSlots } from '.'
+import type { LinkEmits, LinkProps, LinkSlots } from '.'
+import { linkDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<LinkProps>(), {
-  variant: 'link',
-  replace: false,
-  ui: undefined,
-})
+const props = withDefaults(defineProps<LinkProps>(), linkDefaults)
 const emit = defineEmits<LinkEmits>()
 defineSlots<LinkSlots>()
 
@@ -19,35 +15,23 @@ const attrs = useAttrs()
 const slots = useSlots()
 const slotNames = Object.keys(slots) as (keyof LinkSlots)[]
 
-const linkContext = computed<LinkContext>(() => {
-  const { ui, ...linkProps } = props
-  void ui
-
-  return {
-    props: linkProps,
-  }
-})
-
 const isExternal = computed(
   () => typeof props.to === 'string' && /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(props.to),
 )
 const externalHref = computed(() => (typeof props.to === 'string' ? props.to : undefined))
-const rootProps = computed(() => {
-  const rootUI = useUi(props.ui?.root, linkContext.value)
+const buttonProps = computed(() => {
+  const { to, replace, ...propsForButton } = props
+  void to
+  void replace
 
+  return propsForButton
+})
+const rootProps = computed(() => {
   return mergeProps(attrs, {
+    ...buttonProps.value,
     as: 'a' as const,
-    label: props.label,
-    variant: props.variant,
-    severity: props.severity,
-    size: props.size,
-    rounded: props.rounded,
-    square: props.square,
-    loading: props.loading,
-    color: props.color,
-    icon: props.icon,
-    trailingIcon: props.trailingIcon,
-    ui: { root: rootUI },
+    loading: false,
+    'data-test-link-root': '',
   })
 })
 
@@ -62,14 +46,14 @@ function handleClick(event: PointerEvent, navigate?: Navigate) {
 <template>
   <Button v-if="isExternal" v-bind="rootProps" :href="externalHref" @click="emit('click', $event)">
     <template v-for="slotName in slotNames" #[slotName]>
-      <slot :name="slotName" v-bind="linkContext" />
+      <slot :name="slotName" />
     </template>
   </Button>
 
   <RouterLink v-else v-slot="{ href, navigate }" :to="props.to" :replace="props.replace" custom>
     <Button v-bind="rootProps" :href="href" @click="handleClick($event, navigate)">
       <template v-for="slotName in slotNames" #[slotName]>
-        <slot :name="slotName" v-bind="linkContext" />
+        <slot :name="slotName" />
       </template>
     </Button>
   </RouterLink>

@@ -13,32 +13,38 @@ const props = withDefaults(defineProps<SwitchProps>(), {
   ui: undefined,
 })
 defineSlots<SwitchSlots>()
-const emit = defineEmits<{ valueChange: [value: SwitchValue] }>()
-
 const value = defineModel<SwitchValue>('value', { default: false })
 
-watch(value, (nextValue, previousValue) => {
-  if (nextValue !== previousValue) emit('valueChange', nextValue)
-})
+const validateValue = (val: SwitchValue) => {
+  const isValid = [props.trueValue, props.falseValue].includes(val)
+  if (!isValid) return props.falseValue
 
-const switchContext = computed(() => createSwitchContext(props, value.value))
+  return val
+}
+
+watch(
+  value,
+  () => {
+    value.value = validateValue(value.value)
+  },
+  {
+    immediate: true,
+  },
+)
+const switchContext = computed(() => createSwitchContext({ value: value.value, props }))
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
-  const rootUI = useUi(props.ui?.root, switchContext.value)
-
   return {
     ...attrs,
-    ...rootUI,
     trueValue: props.trueValue,
     falseValue: props.falseValue,
     class: cn(
       'peer inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input dark:data-[state=unchecked]:bg-input/80',
       'focus-visible:border-primary focus-visible:ring-primary/50',
       attrs.class,
-      rootUI.class,
     ),
-    style: [attrs.style, rootUI.style],
+    style: attrs.style,
   }
 })
 
@@ -57,8 +63,8 @@ const thumbProps = computed(() => {
 </script>
 
 <template>
-  <SwitchRoot v-bind="rootProps" v-model="value" data-switch-ui="root">
-    <SwitchThumb v-bind="thumbProps" data-switch-ui="thumb" data-switch-slot="thumb">
+  <SwitchRoot v-bind="rootProps" v-model="value" data-test-switch-root>
+    <SwitchThumb v-bind="thumbProps" data-test-switch-thumb>
       <slot name="thumb" v-bind="switchContext" />
     </SwitchThumb>
   </SwitchRoot>

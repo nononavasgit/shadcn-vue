@@ -132,6 +132,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/switch"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Switch</h2>
+            <p class="text-sm text-muted-foreground">
+              Control binario con valores personalizados y thumb configurable.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/field-set"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

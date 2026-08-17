@@ -18,6 +18,7 @@ import IndexPage from './components/pages/IndexPage.vue'
 import KbdPage from './components/pages/KbdPage.vue'
 import KbdGroupPage from './components/pages/KbdGroupPage.vue'
 import LabelPage from './components/pages/LabelPage.vue'
+import SwitchPage from './components/pages/SwitchPage.vue'
 import TimePage from './components/pages/TimePage.vue'
 import TogglePage from './components/pages/TogglePage.vue'
 import TextareaPage from './components/pages/TextareaPage.vue'
@@ -44,6 +45,7 @@ export const router = createRouter({
     { path: '/label', component: LabelPage },
     { path: '/kbd', component: KbdPage },
     { path: '/kbd-group', component: KbdGroupPage },
+    { path: '/switch', component: SwitchPage },
     { path: '/time', component: TimePage },
     { path: '/toggle', component: TogglePage },
     { path: '/textarea', component: TextareaPage },

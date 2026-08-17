@@ -121,29 +121,6 @@ Los componentes finales ofrecen varios niveles de personalización:
 Si una aplicación necesita una implementación completamente distinta, puede crear su propio
 componente utilizando las primitivas públicas.
 
-## TimeField
-
-`TimeField` permite editar una hora mediante segmentos accesibles y admite localización, ciclos de
-12 o 24 horas, segundos, límites y estados de formulario.
-
-```vue
-<script setup lang="ts">
-import { shallowRef } from 'vue'
-import { TimeField } from '@nononavas/shadcn-vue/components/ui/TimeField'
-import { useDates } from '@nononavas/shadcn-vue/composables'
-
-const { createTime } = useDates()
-const time = shallowRef(createTime(9, 30))
-</script>
-
-<template>
-  <TimeField v-model:value="time" :hour-cycle="24" granularity="minute" />
-</template>
-```
-
-La prop `ui` expone las partes `root` y `segment`; el slot `segment` recibe el segmento, su índice,
-el valor completo y el estado de validación.
-
 ## Actualización
 
 Actualiza la librería mediante npm:

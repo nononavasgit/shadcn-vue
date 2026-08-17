@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 
 import { Tooltip, type TooltipProps } from '@/components/ui/Tooltip'
+import { tooltipDefaults } from '@/components/ui/Tooltip/defaults'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
@@ -9,7 +10,7 @@ const playgroundLabel = ref('Información adicional')
 const playgroundSide = ref<TooltipProps['side']>('top')
 const playgroundAlign = ref<TooltipProps['align']>('center')
 const playgroundOpen = ref(false)
-const playgroundWithArrow = ref(true)
+const playgroundWithArrow = ref(tooltipDefaults.withArrow)
 
 const playgroundProps = computed<TooltipProps>(() => ({
   label: playgroundLabel.value,
@@ -42,7 +43,7 @@ const propRows: ApiTableRow[] = [
   {
     name: 'withArrow',
     type: 'boolean',
-    default: 'true',
+    default: String(tooltipDefaults.withArrow),
     description: 'Muestra la flecha del tooltip.',
   },
   {
@@ -54,7 +55,7 @@ const propRows: ApiTableRow[] = [
   {
     name: 'delayDuration',
     type: 'number',
-    default: '0',
+    default: String(tooltipDefaults.delayDuration),
     description: 'Tiempo de espera antes de abrir el tooltip.',
   },
   {
@@ -66,31 +67,31 @@ const propRows: ApiTableRow[] = [
   {
     name: 'disableClosingTrigger',
     type: 'boolean',
-    default: 'false',
+    default: String(tooltipDefaults.disableClosingTrigger),
     description: 'Evita que hacer clic en el trigger cierre el contenido.',
   },
   {
     name: 'disabled',
     type: 'boolean',
-    default: 'false',
+    default: String(tooltipDefaults.disabled),
     description: 'Deshabilita la interacción del tooltip.',
   },
   {
     name: 'ignoreNonKeyboardFocus',
     type: 'boolean',
-    default: 'false',
+    default: String(tooltipDefaults.ignoreNonKeyboardFocus),
     description: 'Evita abrir el tooltip cuando el foco no procede del teclado.',
   },
   {
     name: 'align',
     type: "'start' | 'center' | 'end'",
-    default: "'center'",
+    default: `'${tooltipDefaults.align}'`,
     description: 'Alineación del contenido respecto al trigger.',
   },
   {
     name: 'alignOffset',
     type: 'number',
-    default: '0',
+    default: String(tooltipDefaults.alignOffset),
     description: 'Desplazamiento de la alineación en píxeles.',
   },
   {
@@ -102,13 +103,13 @@ const propRows: ApiTableRow[] = [
   {
     name: 'arrowPadding',
     type: 'number',
-    default: '0',
+    default: String(tooltipDefaults.arrowPadding),
     description: 'Separación de la flecha respecto a los bordes del contenido.',
   },
   {
     name: 'avoidCollisions',
     type: 'boolean',
-    default: 'true',
+    default: String(tooltipDefaults.avoidCollisions),
     description: 'Evita que el contenido desborde los límites visibles.',
   },
   {
@@ -120,49 +121,49 @@ const propRows: ApiTableRow[] = [
   {
     name: 'collisionPadding',
     type: 'number | Partial<Record<Side, number>>',
-    default: '0',
+    default: String(tooltipDefaults.collisionPadding),
     description: 'Separación respecto al límite de colisión.',
   },
   {
     name: 'forceMount',
     type: 'boolean',
-    default: 'false',
+    default: String(tooltipDefaults.forceMount),
     description: 'Mantiene montado el contenido aunque el tooltip esté cerrado.',
   },
   {
     name: 'hideWhenDetached',
     type: 'boolean',
-    default: 'false',
+    default: String(tooltipDefaults.hideWhenDetached),
     description: 'Oculta el contenido cuando el trigger queda completamente oculto.',
   },
   {
     name: 'positionStrategy',
     type: "'absolute' | 'fixed'",
-    default: "'fixed'",
+    default: `'${tooltipDefaults.positionStrategy}'`,
     description: 'Estrategia CSS usada para posicionar el contenido.',
   },
   {
     name: 'side',
     type: "'top' | 'right' | 'bottom' | 'left'",
-    default: "'top'",
+    default: `'${tooltipDefaults.side}'`,
     description: 'Lado preferido del trigger donde aparece el tooltip.',
   },
   {
     name: 'sideOffset',
     type: 'number',
-    default: '2',
+    default: String(tooltipDefaults.sideOffset),
     description: 'Distancia del contenido respecto al trigger en píxeles.',
   },
   {
     name: 'sticky',
     type: "'partial' | 'always'",
-    default: "'partial'",
+    default: `'${tooltipDefaults.sticky}'`,
     description: 'Comportamiento del contenido respecto al eje de alineación.',
   },
   {
     name: 'updatePositionStrategy',
     type: "'optimized' | 'always'",
-    default: "'optimized'",
+    default: `'${tooltipDefaults.updatePositionStrategy}'`,
     description: 'Estrategia para actualizar la posición durante el movimiento.',
   },
   {
@@ -180,13 +181,13 @@ const propRows: ApiTableRow[] = [
   {
     name: 'arrowWidth',
     type: 'number',
-    default: '10',
+    default: String(tooltipDefaults.arrowWidth),
     description: 'Ancho de la flecha en píxeles.',
   },
   {
     name: 'arrowHeight',
     type: 'number',
-    default: '5',
+    default: String(tooltipDefaults.arrowHeight),
     description: 'Alto de la flecha en píxeles.',
   },
   {

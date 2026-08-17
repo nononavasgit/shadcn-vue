@@ -92,16 +92,6 @@ export interface TooltipContext {
   close: () => void
 }
 
-export function createTooltipContext(
-  open: TooltipProps['open'],
-  close: () => void,
-): TooltipContext {
-  return {
-    open: open ?? false,
-    close,
-  }
-}
-
 // Emits
 export interface TooltipEmits {
   'update:open': [value: TooltipProps['open']]

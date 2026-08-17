@@ -1,12 +1,7 @@
-import { h } from 'vue'
+import { h, nextTick } from 'vue'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { mount, type ComponentMountingOptions } from '@vue/test-utils'
-import {
-  createTooltipContext,
-  Tooltip,
-  type TooltipContext,
-  type TooltipProps,
-} from '@/components/ui/Tooltip'
+import { Tooltip, type TooltipContext, type TooltipProps } from '@/components/ui/Tooltip'
 import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from 'reka-ui'
 
 vi.stubGlobal(
@@ -96,7 +91,7 @@ describe('Tooltip', () => {
       it.each([
         { input: true, expected: true },
         { input: false, expected: false },
-        { input: undefined, expected: undefined },
+        { input: undefined, expected: false },
       ])(
         'passes disableClosingTrigger=$input to TooltipRoot as $expected',
         ({ input, expected }) => {
@@ -111,7 +106,7 @@ describe('Tooltip', () => {
       it.each([
         { input: true, expected: true },
         { input: false, expected: false },
-        { input: undefined, expected: undefined },
+        { input: undefined, expected: false },
       ])('passes disabled=$input to TooltipRoot as $expected', ({ input, expected }) => {
         const wrapper = mountWithProp('disabled', input)
 
@@ -123,7 +118,7 @@ describe('Tooltip', () => {
       it.each([
         { input: true, expected: true },
         { input: false, expected: false },
-        { input: undefined, expected: undefined },
+        { input: undefined, expected: false },
       ])(
         'passes ignoreNonKeyboardFocus=$input to TooltipRoot as $expected',
         ({ input, expected }) => {
@@ -188,21 +183,27 @@ describe('Tooltip', () => {
 
     describe('content props', () => {
       describe('align', () => {
-        it.each(['start', 'center', 'end', undefined])(
-          'passes align=$input to TooltipContent',
-          (input) => {
-            const wrapper = mountWithContentProp('align', input)
+        it.each([
+          { input: 'start', expected: 'start' },
+          { input: 'center', expected: 'center' },
+          { input: 'end', expected: 'end' },
+          { input: undefined, expected: 'center' },
+        ])('passes align=$input to TooltipContent as $expected', ({ input, expected }) => {
+          const wrapper = mountWithContentProp('align', input)
 
-            expect(wrapper.getComponent(TooltipContent).props('align')).toBe(input)
-          },
-        )
+          expect(wrapper.getComponent(TooltipContent).props('align')).toBe(expected)
+        })
       })
 
       describe('alignOffset', () => {
-        it.each([0, 8, undefined])('passes alignOffset=$input to TooltipContent', (input) => {
+        it.each([
+          { input: 0, expected: 0 },
+          { input: 8, expected: 8 },
+          { input: undefined, expected: 0 },
+        ])('passes alignOffset=$input to TooltipContent as $expected', ({ input, expected }) => {
           const wrapper = mountWithContentProp('alignOffset', input)
 
-          expect(wrapper.getComponent(TooltipContent).props('alignOffset')).toBe(input)
+          expect(wrapper.getComponent(TooltipContent).props('alignOffset')).toBe(expected)
         })
       })
 
@@ -218,20 +219,28 @@ describe('Tooltip', () => {
       })
 
       describe('arrowPadding', () => {
-        it.each([0, 4, undefined])('passes arrowPadding=$input to TooltipContent', (input) => {
+        it.each([
+          { input: 0, expected: 0 },
+          { input: 4, expected: 4 },
+          { input: undefined, expected: 0 },
+        ])('passes arrowPadding=$input to TooltipContent as $expected', ({ input, expected }) => {
           const wrapper = mountWithContentProp('arrowPadding', input)
 
-          expect(wrapper.getComponent(TooltipContent).props('arrowPadding')).toBe(input)
+          expect(wrapper.getComponent(TooltipContent).props('arrowPadding')).toBe(expected)
         })
       })
 
       describe('avoidCollisions', () => {
-        it.each([true, false, undefined])(
-          'passes avoidCollisions=$input to TooltipContent',
-          (input) => {
+        it.each([
+          { input: true, expected: true },
+          { input: false, expected: false },
+          { input: undefined, expected: true },
+        ])(
+          'passes avoidCollisions=$input to TooltipContent as $expected',
+          ({ input, expected }) => {
             const wrapper = mountWithContentProp('avoidCollisions', input)
 
-            expect(wrapper.getComponent(TooltipContent).props('avoidCollisions')).toBe(input)
+            expect(wrapper.getComponent(TooltipContent).props('avoidCollisions')).toBe(expected)
           },
         )
       })
@@ -252,55 +261,75 @@ describe('Tooltip', () => {
       describe('collisionPadding', () => {
         const padding = { top: 2, left: 4 }
 
-        it.each([0, 6, padding, undefined])(
-          'passes collisionPadding=$input to TooltipContent',
-          (input) => {
+        it.each([
+          { input: 0, expected: 0 },
+          { input: 6, expected: 6 },
+          { input: padding, expected: padding },
+          { input: undefined, expected: 0 },
+        ])(
+          'passes collisionPadding=$input to TooltipContent as $expected',
+          ({ input, expected }) => {
             const wrapper = mountWithContentProp('collisionPadding', input)
 
-            expect(wrapper.getComponent(TooltipContent).props('collisionPadding')).toEqual(input)
+            expect(wrapper.getComponent(TooltipContent).props('collisionPadding')).toEqual(expected)
           },
         )
       })
 
       describe('forceMount', () => {
-        it.each([true, false, undefined])('passes forceMount=$input to TooltipContent', (input) => {
+        it.each([
+          { input: true, expected: true },
+          { input: false, expected: false },
+          { input: undefined, expected: false },
+        ])('passes forceMount=$input to TooltipContent as $expected', ({ input, expected }) => {
           const wrapper = mountWithContentProp('forceMount', input)
 
-          expect(wrapper.getComponent(TooltipContent).props('forceMount')).toBe(input)
+          expect(wrapper.getComponent(TooltipContent).props('forceMount')).toBe(expected)
         })
       })
 
       describe('hideWhenDetached', () => {
-        it.each([true, false, undefined])(
-          'passes hideWhenDetached=$input to TooltipContent',
-          (input) => {
+        it.each([
+          { input: true, expected: true },
+          { input: false, expected: false },
+          { input: undefined, expected: false },
+        ])(
+          'passes hideWhenDetached=$input to TooltipContent as $expected',
+          ({ input, expected }) => {
             const wrapper = mountWithContentProp('hideWhenDetached', input)
 
-            expect(wrapper.getComponent(TooltipContent).props('hideWhenDetached')).toBe(input)
+            expect(wrapper.getComponent(TooltipContent).props('hideWhenDetached')).toBe(expected)
           },
         )
       })
 
       describe('positionStrategy', () => {
-        it.each(['absolute', 'fixed', undefined])(
-          'passes positionStrategy=$input to TooltipContent',
-          (input) => {
+        it.each([
+          { input: 'absolute', expected: 'absolute' },
+          { input: 'fixed', expected: 'fixed' },
+          { input: undefined, expected: 'fixed' },
+        ])(
+          'passes positionStrategy=$input to TooltipContent as $expected',
+          ({ input, expected }) => {
             const wrapper = mountWithContentProp('positionStrategy', input)
 
-            expect(wrapper.getComponent(TooltipContent).props('positionStrategy')).toBe(input)
+            expect(wrapper.getComponent(TooltipContent).props('positionStrategy')).toBe(expected)
           },
         )
       })
 
       describe('side', () => {
-        it.each(['top', 'right', 'bottom', 'left', undefined])(
-          'passes side=$input to TooltipContent',
-          (input) => {
-            const wrapper = mountWithContentProp('side', input)
+        it.each([
+          { input: 'top', expected: 'top' },
+          { input: 'right', expected: 'right' },
+          { input: 'bottom', expected: 'bottom' },
+          { input: 'left', expected: 'left' },
+          { input: undefined, expected: 'top' },
+        ])('passes side=$input to TooltipContent as $expected', ({ input, expected }) => {
+          const wrapper = mountWithContentProp('side', input)
 
-            expect(wrapper.getComponent(TooltipContent).props('side')).toBe(input)
-          },
-        )
+          expect(wrapper.getComponent(TooltipContent).props('side')).toBe(expected)
+        })
       })
 
       describe('sideOffset', () => {
@@ -316,23 +345,30 @@ describe('Tooltip', () => {
       })
 
       describe('sticky', () => {
-        it.each(['partial', 'always', undefined])(
-          'passes sticky=$input to TooltipContent',
-          (input) => {
-            const wrapper = mountWithContentProp('sticky', input)
+        it.each([
+          { input: 'partial', expected: 'partial' },
+          { input: 'always', expected: 'always' },
+          { input: undefined, expected: 'partial' },
+        ])('passes sticky=$input to TooltipContent as $expected', ({ input, expected }) => {
+          const wrapper = mountWithContentProp('sticky', input)
 
-            expect(wrapper.getComponent(TooltipContent).props('sticky')).toBe(input)
-          },
-        )
+          expect(wrapper.getComponent(TooltipContent).props('sticky')).toBe(expected)
+        })
       })
 
       describe('updatePositionStrategy', () => {
-        it.each(['optimized', 'always', undefined])(
-          'passes updatePositionStrategy=$input to TooltipContent',
-          (input) => {
+        it.each([
+          { input: 'optimized', expected: 'optimized' },
+          { input: 'always', expected: 'always' },
+          { input: undefined, expected: 'optimized' },
+        ])(
+          'passes updatePositionStrategy=$input to TooltipContent as $expected',
+          ({ input, expected }) => {
             const wrapper = mountWithContentProp('updatePositionStrategy', input)
 
-            expect(wrapper.getComponent(TooltipContent).props('updatePositionStrategy')).toBe(input)
+            expect(wrapper.getComponent(TooltipContent).props('updatePositionStrategy')).toBe(
+              expected,
+            )
           },
         )
       })
@@ -404,15 +440,31 @@ describe('Tooltip', () => {
 
   describe('context contract', () => {
     it.each([
-      { name: 'default values', open: undefined, expected: false },
-      { name: 'configured values', open: true, expected: true },
-    ])('creates the contract with $name', ({ open, expected }) => {
-      const close = vi.fn()
+      { name: 'default values', input: undefined, expected: false },
+      { name: 'closed', input: false, expected: false },
+      { name: 'open', input: true, expected: true },
+    ])('passes the contract with $name', async ({ input, expected }) => {
+      let context: TooltipContext | undefined
 
-      expect(createTooltipContext(open, close)).toEqual({
+      const wrapper = mountTooltip({
+        props: { open: input, forceMount: true },
+        slots: {
+          default: (slotContext: TooltipContext) => {
+            context = slotContext
+            return h('button', 'Trigger')
+          },
+        },
+      })
+
+      expect(context).toEqual({
         open: expected,
-        close,
-      } satisfies TooltipContext)
+        close: expect.any(Function),
+      })
+
+      context?.close()
+      await nextTick()
+
+      expect(wrapper.getComponent(TooltipRoot).props('open')).toBe(false)
     })
   })
 

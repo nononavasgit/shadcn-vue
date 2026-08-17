@@ -10,18 +10,14 @@ import {
 } from 'reka-ui'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import { createTooltipContext, type TooltipEmits, type TooltipProps, type TooltipSlots } from '.'
+import type { TooltipContext, TooltipEmits, TooltipProps, TooltipSlots } from '.'
+import { tooltipDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
 
 defineSlots<TooltipSlots>()
 
-const props = withDefaults(defineProps<TooltipProps>(), {
-  delayDuration: 0,
-  withArrow: true,
-  sideOffset: 2,
-  ui: undefined,
-})
+const props = withDefaults(defineProps<TooltipProps>(), tooltipDefaults)
 defineEmits<TooltipEmits>()
 
 const attrs = useAttrs()
@@ -29,6 +25,10 @@ const open = defineModel<boolean>('open', { default: false })
 
 function close() {
   open.value = false
+}
+
+function createTooltipContext(open: boolean, close: () => void): TooltipContext {
+  return { open, close }
 }
 
 const tooltipContext = computed(() => createTooltipContext(open.value, close))

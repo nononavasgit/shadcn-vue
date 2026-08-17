@@ -10,7 +10,7 @@ import {
 } from 'reka-ui'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import type { TooltipContext, TooltipEmits, TooltipProps, TooltipSlots } from '.'
+import { createTooltipContext, type TooltipEmits, type TooltipProps, type TooltipSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -18,9 +18,8 @@ defineSlots<TooltipSlots>()
 
 const props = withDefaults(defineProps<TooltipProps>(), {
   delayDuration: 0,
-  trigger: undefined,
-  content: undefined,
-  arrow: undefined,
+  withArrow: true,
+  sideOffset: 2,
   ui: undefined,
 })
 defineEmits<TooltipEmits>()
@@ -32,16 +31,7 @@ function close() {
   open.value = false
 }
 
-const tooltipContext = computed<TooltipContext>(() => {
-  const { ui, ...tooltipProps } = props
-  void ui
-
-  return {
-    props: tooltipProps,
-    open: open.value,
-    close,
-  }
-})
+const tooltipContext = computed(() => createTooltipContext(open.value, close))
 
 const rootProps = computed(() => {
   const rootUI = useUi(props.ui?.root, tooltipContext.value)
@@ -63,9 +53,8 @@ const triggerProps = computed(() => {
   const triggerUI = useUi(props.ui?.trigger, tooltipContext.value)
 
   return {
-    as: props.trigger?.as,
-    asChild: props.trigger?.asChild ?? true,
-    reference: props.trigger?.reference,
+    reference: props.triggerReference,
+    asChild: true,
     ...triggerUI,
     class: cn(triggerUI.class),
     style: triggerUI.style,
@@ -77,24 +66,22 @@ const contentProps = computed(() => {
 
   return {
     ...contentUI,
-    as: props.content?.as,
-    asChild: props.content?.asChild,
-    align: props.content?.align,
-    alignOffset: props.content?.alignOffset,
-    ariaLabel: props.content?.ariaLabel,
-    arrowPadding: props.content?.arrowPadding,
-    avoidCollisions: props.content?.avoidCollisions,
-    collisionBoundary: props.content?.collisionBoundary,
-    collisionPadding: props.content?.collisionPadding,
-    forceMount: props.content?.forceMount,
-    hideWhenDetached: props.content?.hideWhenDetached,
-    positionStrategy: props.content?.positionStrategy,
-    side: props.content?.side,
-    sideOffset: props.content?.sideOffset ?? 2,
-    sticky: props.content?.sticky,
-    updatePositionStrategy: props.content?.updatePositionStrategy,
-    onEscapeKeyDown: props.content?.onEscapeKeyDown,
-    onPointerDownOutside: props.content?.onPointerDownOutside,
+    align: props.align,
+    alignOffset: props.alignOffset,
+    ariaLabel: props.ariaLabel,
+    arrowPadding: props.arrowPadding,
+    avoidCollisions: props.avoidCollisions,
+    collisionBoundary: props.collisionBoundary,
+    collisionPadding: props.collisionPadding,
+    forceMount: props.forceMount,
+    hideWhenDetached: props.hideWhenDetached,
+    positionStrategy: props.positionStrategy,
+    side: props.side,
+    sideOffset: props.sideOffset,
+    sticky: props.sticky,
+    updatePositionStrategy: props.updatePositionStrategy,
+    onEscapeKeyDown: props.onEscapeKeyDown,
+    onPointerDownOutside: props.onPointerDownOutside,
     class: cn(
       'data-[state=closed]:animate-out data-[state=delayed-open]:animate-in data-[state=instant-open]:animate-in data-[state=closed]:fade-out-0 data-[state=delayed-open]:fade-in-0 data-[state=instant-open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=delayed-open]:zoom-in-95 data-[state=instant-open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-fit origin-(--reka-tooltip-content-transform-origin) rounded-md bg-foreground px-3 py-1.5 text-xs text-balance text-background border border-zinc-200 bg-white text-zinc-950 shadow-md',
       contentUI.class,
@@ -107,10 +94,8 @@ const arrowProps = computed(() => {
   const ui = useUi(props.ui?.arrow, tooltipContext.value)
   return {
     ...ui,
-    as: props.arrow?.as,
-    asChild: props.arrow?.asChild,
-    width: props.arrow?.width,
-    height: props.arrow?.height,
+    width: props.arrowWidth,
+    height: props.arrowHeight,
     class: cn(ui.class),
     style: ui.style,
   }
@@ -119,17 +104,15 @@ const arrowProps = computed(() => {
 
 <template>
   <TooltipProvider>
-    <TooltipRoot v-bind="rootProps" v-model:open="open" data-slot="tooltip">
-      <TooltipTrigger v-bind="triggerProps" data-slot="tooltip-trigger">
+    <TooltipRoot v-bind="rootProps" v-model:open="open" data-slot="tooltip" data-test-tooltip-root>
+      <TooltipTrigger v-bind="triggerProps" data-slot="tooltip-trigger" data-test-tooltip-trigger>
         <slot v-bind="tooltipContext" />
       </TooltipTrigger>
 
       <TooltipPortal>
-        <TooltipContent v-bind="contentProps" data-slot="tooltip-content">
+        <TooltipContent v-bind="contentProps" data-slot="tooltip-content" data-test-tooltip-content>
           <slot name="content" v-bind="tooltipContext">{{ props.label }}</slot>
-          <slot name="arrow" v-bind="tooltipContext">
-            <TooltipArrow v-bind="arrowProps" data-slot="tooltip-arrow" />
-          </slot>
+          <TooltipArrow v-if="props.withArrow" v-bind="arrowProps" data-test-tooltip-arrow />
         </TooltipContent>
       </TooltipPortal>
     </TooltipRoot>

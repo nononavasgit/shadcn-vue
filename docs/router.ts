@@ -22,6 +22,7 @@ import SwitchPage from './components/pages/SwitchPage.vue'
 import TimePage from './components/pages/TimePage.vue'
 import TogglePage from './components/pages/TogglePage.vue'
 import TextareaPage from './components/pages/TextareaPage.vue'
+import TooltipPage from './components/pages/TooltipPage.vue'
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -49,5 +50,6 @@ export const router = createRouter({
     { path: '/time', component: TimePage },
     { path: '/toggle', component: TogglePage },
     { path: '/textarea', component: TextareaPage },
+    { path: '/tooltip', component: TooltipPage },
   ],
 })

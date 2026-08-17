@@ -230,6 +230,16 @@
               Campo multilínea controlado para texto largo.
             </p>
           </RouterLink>
+
+          <RouterLink
+            to="/tooltip"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Tooltip</h2>
+            <p class="text-sm text-muted-foreground">
+              Mensajes contextuales con posicionamiento y contenido personalizable.
+            </p>
+          </RouterLink>
         </nav>
       </div>
     </main>

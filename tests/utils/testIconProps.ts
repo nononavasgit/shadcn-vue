@@ -5,6 +5,7 @@ import type { IconName, IconSize, NormalizeIconProps } from '@/components/ui/Ico
 interface TestIconPropsOptions {
   text: string
   id: string
+  default?: IconName
   mount: (input: NormalizeIconProps | undefined) => VueWrapper | Promise<VueWrapper>
 }
 
@@ -14,11 +15,11 @@ interface TestIconSizeOptions {
   mount: (input: IconSize | undefined) => VueWrapper | Promise<VueWrapper>
 }
 
-export function testIconProps({ text, id, mount }: TestIconPropsOptions) {
+export function testIconProps({ text, id, default: defaultIcon, mount }: TestIconPropsOptions) {
   it.each([
     { input: 'check' as IconName, expected: 'check' as IconName },
     { input: { name: 'save' as IconName }, expected: 'save' as IconName },
-    { input: undefined, expected: undefined },
+    { input: undefined, expected: defaultIcon },
   ])(`${text} input=$input`, async ({ input, expected }) => {
     const icon = (await mount(input)).findComponent(id)
 

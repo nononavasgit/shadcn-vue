@@ -182,6 +182,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/loading"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Loading</h2>
+            <p class="text-sm text-muted-foreground">
+              Indicador de carga con contenido y slots personalizables.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/kbd"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

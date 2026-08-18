@@ -222,6 +222,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/popover"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Popover</h2>
+            <p class="text-sm text-muted-foreground">
+              Contenido contextual con posicionamiento configurable.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/link"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

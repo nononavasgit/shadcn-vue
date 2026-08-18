@@ -3,22 +3,16 @@ import type {
   PopoverArrowProps as RekaPopoverArrowProps,
   PopoverContentEmits as RekaPopoverContentEmits,
   PopoverContentProps as RekaPopoverContentProps,
-  PopoverPortalProps as RekaPopoverPortalProps,
   PopoverRootEmits as RekaPopoverRootEmits,
   PopoverRootProps as RekaPopoverRootProps,
-  PopoverTriggerProps as RekaPopoverTriggerProps,
 } from 'reka-ui'
-import type { EmitsAsProps } from '@/types/emits'
 
 export { default as Popover } from './Popover.vue'
 
 // Props Reka
 export type PopoverRootProps = Pick<RekaPopoverRootProps, 'modal'>
-export type PopoverTriggerProps = Pick<RekaPopoverTriggerProps, 'as' | 'asChild'>
 export type PopoverContentProps = Pick<
   RekaPopoverContentProps,
-  | 'as'
-  | 'asChild'
   | 'align'
   | 'alignFlip'
   | 'alignOffset'
@@ -26,7 +20,6 @@ export type PopoverContentProps = Pick<
   | 'avoidCollisions'
   | 'collisionBoundary'
   | 'collisionPadding'
-  | 'dir'
   | 'disableOutsidePointerEvents'
   | 'disableUpdateOnLayoutShift'
   | 'forceMount'
@@ -39,49 +32,40 @@ export type PopoverContentProps = Pick<
   | 'sideOffset'
   | 'sticky'
   | 'updatePositionStrategy'
-> &
-  EmitsAsProps<RekaPopoverContentEmits>
-
-export type PopoverPortalProps = Pick<
-  RekaPopoverPortalProps,
-  'defer' | 'disabled' | 'to' | 'forceMount'
 >
-export type PopoverArrowProps = Pick<
-  RekaPopoverArrowProps,
-  'as' | 'asChild' | 'width' | 'height' | 'rounded'
->
+export type PopoverArrowProps = Pick<RekaPopoverArrowProps, 'width' | 'height' | 'rounded'>
 
 // Fn
 export type PopoverFn<T> = (context: PopoverContext) => T
 
 // UI
 export interface PopoverUI {
-  root?: PopoverFn<HTMLAttributes>
-  trigger?: PopoverFn<HTMLAttributes>
   content?: PopoverFn<HTMLAttributes>
   arrow?: PopoverFn<HTMLAttributes>
 }
 
 // Props
-export interface PopoverProps extends PopoverRootProps {
+export interface PopoverProps extends PopoverRootProps, PopoverContentProps {
   open?: boolean
-  trigger?: PopoverTriggerProps
-  content?: PopoverContentProps
-  portal?: PopoverPortalProps
-  arrow?: PopoverArrowProps
   showArrow?: boolean
+  arrowWidth?: PopoverArrowProps['width']
+  arrowHeight?: PopoverArrowProps['height']
+  arrowRounded?: PopoverArrowProps['rounded']
   ui?: PopoverUI
 }
 
 // Context
 export interface PopoverContext {
-  props: Omit<PopoverProps, 'ui'>
   open: boolean
   close: () => void
 }
 
 // Emits
-export type PopoverEmits = RekaPopoverRootEmits
+export type PopoverEmits = RekaPopoverRootEmits &
+  RekaPopoverContentEmits & {
+    show: []
+    close: []
+  }
 
 // Slots
 export interface PopoverSlots {

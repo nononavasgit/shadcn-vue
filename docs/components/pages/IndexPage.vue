@@ -142,6 +142,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/empty"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Empty</h2>
+            <p class="text-sm text-muted-foreground">
+              Estados vacíos con contenido y acciones opcionales.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/switch"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

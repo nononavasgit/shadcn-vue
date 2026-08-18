@@ -2,10 +2,9 @@ import type { HTMLAttributes } from 'vue'
 
 export { default as Empty } from './Empty.vue'
 
-export type EmptyFn<T> = (context: EmptyContext) => T
+export type EmptyFn<T> = () => T
 
 export interface EmptyUI {
-  root?: EmptyFn<HTMLAttributes>
   header?: EmptyFn<HTMLAttributes>
   media?: EmptyFn<HTMLAttributes>
   label?: EmptyFn<HTMLAttributes>
@@ -20,25 +19,9 @@ export interface EmptyProps {
   ui?: EmptyUI
 }
 
-export interface EmptyContext {
-  label: EmptyProps['label']
-  description: EmptyProps['description']
-  mediaVariant: EmptyProps['mediaVariant']
-}
-
-export function createEmptyContext(props: EmptyProps): EmptyContext {
-  const { label, description, mediaVariant } = props
-
-  return {
-    label,
-    description,
-    mediaVariant,
-  }
-}
-
 export interface EmptySlots {
-  default?(props: EmptyContext): unknown
-  media?(props: EmptyContext): unknown
-  label?(props: EmptyContext): unknown
-  description?(props: EmptyContext): unknown
+  default?(): unknown
+  media?(): unknown
+  label?(): unknown
+  description?(): unknown
 }

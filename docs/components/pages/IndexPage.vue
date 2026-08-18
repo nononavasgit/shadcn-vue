@@ -232,6 +232,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/separator"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Separator</h2>
+            <p class="text-sm text-muted-foreground">
+              Divide contenido horizontal o verticalmente.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/kbd"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

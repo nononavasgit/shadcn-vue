@@ -122,6 +122,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/breadcrumb"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Breadcrumb</h2>
+            <p class="text-sm text-muted-foreground">
+              Rutas de navegación con enlaces, elipsis, iconos y slots.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/checkbox"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

@@ -7,6 +7,7 @@ import AlertDialogPage from './components/pages/AlertDialogPage.vue'
 import AspectRatioPage from './components/pages/AspectRatioPage.vue'
 import AttachmentPage from './components/pages/AttachmentPage.vue'
 import BadgePage from './components/pages/BadgePage.vue'
+import BreadcrumbPage from './components/pages/BreadcrumbPage.vue'
 import ButtonPage from './components/pages/ButtonPage.vue'
 import ButtonGroupPage from './components/pages/ButtonGroupPage.vue'
 import CardPage from './components/pages/CardPage.vue'
@@ -47,6 +48,7 @@ export const router = createRouter({
     { path: '/aspect-ratio', component: AspectRatioPage },
     { path: '/attachment', component: AttachmentPage },
     { path: '/badge', component: BadgePage },
+    { path: '/breadcrumb', component: BreadcrumbPage },
     { path: '/button', component: ButtonPage },
     { path: '/button-group', component: ButtonGroupPage },
     { path: '/card', component: CardPage },

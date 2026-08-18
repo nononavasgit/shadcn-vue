@@ -32,13 +32,14 @@ function mountLink(options: MountingOptions<LinkProps> & Record<string, unknown>
 describe('Link', () => {
   describe('router props', () => {
     it.each([
-      { input: '/docs', expected: '/docs' },
-      { input: 'https://example.com/docs', expected: 'https://example.com/docs' },
-    ])('renders destination=$input', ({ input, expected }) => {
-      const root = mountLink({ props: { to: input } }).get('[data-test-link-root]')
+      { input: '/docs', tag: 'a', expected: '/docs' },
+      { input: 'https://example.com/docs', tag: 'a', expected: 'https://example.com/docs' },
+      { input: undefined, tag: 'div', expected: undefined },
+    ])('renders the correct element and destination for to=$input', ({ input, tag, expected }) => {
+      const link = mountLink({ props: { to: input } }).get('[data-test-link-root]')
 
-      expect(root.element.tagName.toLowerCase()).toBe('a')
-      expect(root.attributes('href')).toBe(expected)
+      expect(link.element.tagName.toLowerCase()).toBe(tag)
+      expect(link.attributes('href')).toBe(expected)
     })
 
     it('renders RouteLocationRaw objects', () => {

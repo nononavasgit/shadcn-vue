@@ -18,6 +18,7 @@ const slotNames = Object.keys(slots) as (keyof LinkSlots)[]
 const isExternal = computed(
   () => typeof props.to === 'string' && /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(props.to),
 )
+const isRouterLink = computed(() => props.to !== undefined && !isExternal.value)
 const externalHref = computed(() => (typeof props.to === 'string' ? props.to : undefined))
 const buttonProps = computed(() => {
   const { to, replace, ...propsForButton } = props
@@ -29,7 +30,7 @@ const buttonProps = computed(() => {
 const rootProps = computed(() => {
   return mergeProps(attrs, {
     ...buttonProps.value,
-    as: 'a' as const,
+    as: props.to === undefined ? 'div' : ('a' as const),
     loading: false,
     'data-test-link-root': '',
   })
@@ -44,13 +45,18 @@ function handleClick(event: PointerEvent, navigate?: Navigate) {
 </script>
 
 <template>
-  <Button v-if="isExternal" v-bind="rootProps" :href="externalHref" @click="emit('click', $event)">
+  <Button
+    v-if="!isRouterLink"
+    v-bind="rootProps"
+    :href="externalHref"
+    @click="emit('click', $event)"
+  >
     <template v-for="slotName in slotNames" #[slotName]>
       <slot :name="slotName" />
     </template>
   </Button>
 
-  <RouterLink v-else v-slot="{ href, navigate }" :to="props.to" :replace="props.replace" custom>
+  <RouterLink v-else v-slot="{ href, navigate }" :to="props.to!" :replace="props.replace" custom>
     <Button v-bind="rootProps" :href="href" @click="handleClick($event, navigate)">
       <template v-for="slotName in slotNames" #[slotName]>
         <slot :name="slotName" />

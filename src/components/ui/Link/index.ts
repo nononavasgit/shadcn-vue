@@ -6,7 +6,7 @@ export { default as Link } from './Link.vue'
 
 // Props
 export type LinkProps = Omit<ButtonProps, 'as' | 'asChild' | 'loading'> &
-  Pick<RouterLinkProps, 'to' | 'replace'>
+  Partial<Pick<RouterLinkProps, 'to' | 'replace'>>
 
 export type LinkVariant = NonNullable<ButtonProps['variant']>
 export type LinkSeverity = NonNullable<ButtonProps['severity']>

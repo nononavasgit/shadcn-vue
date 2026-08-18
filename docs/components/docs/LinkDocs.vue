@@ -59,8 +59,8 @@ const propRows: ApiTableRow[] = [
   {
     name: 'to',
     type: 'RouteLocationRaw | string',
-    default: '-',
-    description: 'Destino interno de Vue Router o URL externa.',
+    default: 'undefined',
+    description: 'Destino interno de Vue Router o URL externa. Si falta, se renderiza un div.',
   },
   {
     name: 'replace',

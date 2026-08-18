@@ -1,16 +1,12 @@
 import type { HTMLAttributes } from 'vue'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
 import type { LinkProps } from '@/components/ui/Link'
 
 export { default as Breadcrumb } from './Breadcrumb.vue'
 
 // Item
 export interface BreadcrumbItem {
-  id: string | number
-  label?: string
-  to?: LinkProps['to']
-  icon?: NormalizeIconProps
-  disabled?: boolean
+  value: string | number
+  link: LinkProps
 }
 
 // Props
@@ -23,12 +19,11 @@ export interface BreadcrumbProps {
 }
 
 // Fn
-export type BreadcrumbFn<T> = (context: BreadcrumbContext) => T
+export type BreadcrumbFn<T> = () => T
 export type BreadcrumbItemFn<T> = (context: BreadcrumbItemContext) => T
 
 // UI
 export interface BreadcrumbUI {
-  root?: BreadcrumbFn<HTMLAttributes>
   list?: BreadcrumbFn<HTMLAttributes>
   ellipsisContainer?: BreadcrumbFn<HTMLAttributes>
   separatorContainer?: BreadcrumbFn<HTMLAttributes>
@@ -39,11 +34,7 @@ export interface BreadcrumbUI {
 }
 
 // Context
-export interface BreadcrumbContext {
-  props: Omit<BreadcrumbProps, 'ui'>
-}
-
-export interface BreadcrumbItemContext extends BreadcrumbContext {
+export interface BreadcrumbItemContext {
   item: BreadcrumbItem
   index: number
   first: boolean
@@ -52,15 +43,14 @@ export interface BreadcrumbItemContext extends BreadcrumbContext {
   ellipsis: boolean
 }
 
-export interface BreadcrumbEllipsisContext extends BreadcrumbContext {
+export interface BreadcrumbEllipsisContext {
   items: BreadcrumbItem[]
 }
 
 // Slots
 export type BreadcrumbSlots = {
-  default?(props: BreadcrumbContext): unknown
   ellipsis?(props: BreadcrumbEllipsisContext): unknown
-  separator?(props: BreadcrumbContext): unknown
+  separator?(): unknown
   item?(props: BreadcrumbItemContext): unknown
   icon?(props: BreadcrumbItemContext): unknown
 } & {

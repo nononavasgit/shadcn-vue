@@ -1,6 +1,5 @@
 import type { HTMLAttributes, SVGAttributes } from 'vue'
 import type {
-  ProgressEmits,
   ProgressIndicatorProps,
   ProgressRootProps,
   ProgressValue,
@@ -38,7 +37,10 @@ export interface ProgressCircularContext {
   dashOffset: number
 }
 
-export type ProgressCircularEmits = ProgressEmits
+export interface ProgressCircularEmits {
+  'update:value': [value: ProgressValue]
+  valueChange: [value: ProgressValue]
+}
 
 export interface ProgressCircularSlots {
   svg?(props: ProgressCircularContext): unknown

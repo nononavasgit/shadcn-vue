@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, useAttrs, useSlots, watch } from 'vue'
+import { computed, useAttrs, useSlots } from 'vue'
 import { ProgressIndicator, ProgressRoot } from 'reka-ui'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import type { ProgressContext, ProgressProps, ProgressSlots, ProgressValue } from '.'
+import { progressDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
 
@@ -12,22 +13,8 @@ defineSlots<ProgressSlots>()
 
 const attrs = useAttrs()
 const slots = useSlots()
-const props = withDefaults(defineProps<ProgressProps>(), {
-  max: 100,
-  getValueLabel: undefined,
-  getValueText: undefined,
-  label: undefined,
-  color: undefined,
-  trackColor: undefined,
-  indicator: undefined,
-  ui: undefined,
-})
-const emit = defineEmits<{ valueChange: [value: ProgressValue] }>()
+const props = withDefaults(defineProps<ProgressProps>(), progressDefaults)
 const value = defineModel<ProgressValue>('value', { default: 0 })
-
-watch(value, (nextValue, previousValue) => {
-  if (nextValue !== previousValue) emit('valueChange', nextValue)
-})
 
 const { colorStyle } = useColor(
   computed(() => props.color),
@@ -45,11 +32,7 @@ const percentage = computed(() => {
 })
 
 const progressContext = computed<ProgressContext>(() => {
-  const { ui, ...progressProps } = props
-  void ui
-
   return {
-    props: progressProps,
     value: value.value,
     max: props.max,
     percentage: percentage.value,
@@ -57,26 +40,20 @@ const progressContext = computed<ProgressContext>(() => {
 })
 
 const rootProps = computed(() => {
-  const rootUI = useUi(props.ui?.root, progressContext.value)
-
   return {
     ...attrs,
-    ...rootUI,
-    as: props.as,
-    asChild: props.asChild,
     max: props.max,
     getValueLabel: props.getValueLabel,
     getValueText: props.getValueText,
-    'aria-label': rootUI['aria-label'] ?? attrs['aria-label'],
-    'aria-valuetext': rootUI['aria-valuetext'] ?? attrs['aria-valuetext'] ?? props.label,
+    'aria-label': attrs['aria-label'],
+    'aria-valuetext': attrs['aria-valuetext'] ?? props.label,
     class: cn(
       'relative h-2 w-full overflow-hidden rounded-full bg-primary/20',
       (props.label || slots.label) && 'h-4',
       props.trackColor ? 'bg-(--progress-track-color)' : props.color && 'bg-(--progress-color)/20',
       attrs.class,
-      rootUI.class,
     ),
-    style: [colorStyle.value, trackColorStyle.value, attrs.style, rootUI.style],
+    style: [colorStyle.value, trackColorStyle.value, attrs.style],
   }
 })
 
@@ -85,8 +62,6 @@ const indicatorProps = computed(() => {
 
   return {
     ...indicatorUI,
-    as: props.indicator?.as,
-    asChild: props.indicator?.asChild,
     class: cn(
       'h-full w-full flex-1 bg-primary transition-all',
       props.color && 'bg-(--progress-color)',
@@ -111,12 +86,21 @@ const labelProps = computed(() => {
 </script>
 
 <template>
-  <ProgressRoot v-bind="rootProps" v-model="value" data-slot="progress">
+  <ProgressRoot v-bind="rootProps" v-model="value" data-slot="progress" data-test-progress-root>
     <slot name="indicator" v-bind="progressContext">
-      <ProgressIndicator v-bind="indicatorProps" data-slot="progress-indicator" />
+      <ProgressIndicator
+        v-bind="indicatorProps"
+        data-slot="progress-indicator"
+        data-test-progress-indicator
+      />
     </slot>
 
-    <span v-if="props.label || $slots.label" v-bind="labelProps">
+    <span
+      v-if="props.label || $slots.label"
+      v-bind="labelProps"
+      data-slot="progress-label"
+      data-test-progress-label
+    >
       <slot name="label" v-bind="progressContext">{{ props.label }}</slot>
     </span>
   </ProgressRoot>

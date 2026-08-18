@@ -232,6 +232,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/progress"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Progress</h2>
+            <p class="text-sm text-muted-foreground">
+              Barra de progreso determinada e indeterminada con slots y colores.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/link"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

@@ -24,6 +24,7 @@ import LabelPage from './components/pages/LabelPage.vue'
 import LinkPage from './components/pages/LinkPage.vue'
 import LoadingPage from './components/pages/LoadingPage.vue'
 import PopoverPage from './components/pages/PopoverPage.vue'
+import ProgressPage from './components/pages/ProgressPage.vue'
 import ScrollAreaPage from './components/pages/ScrollAreaPage.vue'
 import SeparatorPage from './components/pages/SeparatorPage.vue'
 import SliderPage from './components/pages/SliderPage.vue'
@@ -59,6 +60,7 @@ export const router = createRouter({
     { path: '/link', component: LinkPage },
     { path: '/loading', component: LoadingPage },
     { path: '/popover', component: PopoverPage },
+    { path: '/progress', component: ProgressPage },
     { path: '/scroll-area', component: ScrollAreaPage },
     { path: '/separator', component: SeparatorPage },
     { path: '/slider', component: SliderPage },

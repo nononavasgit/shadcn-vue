@@ -60,7 +60,8 @@ Crear `describe('<prop>')` para cada prop. Cubrir todos los valores declarados p
 - Para una prop propia de la librería, comprobar el comportamiento correcto: texto renderizado, clases, estilos, estado ARIA, visibilidad, elemento, valores derivados o interacción.
 - Para una prop de Reka UI, comprobar que el wrapper pasa el valor normalizado al componente Reka subyacente correcto. Inspeccionar las props del hijo cuando el DOM no demuestre el paso. Incluir la normalización por defecto y las actualizaciones importantes.
 - Para props con comportamiento dependiente, usar una matriz que combine las props relevantes y probar cada rama, incluidos los estados `disabled`, `loading` y controlado cuando existan.
-- Para props de objeto o función como `ui`, probar cada clave y argumento de callback/contexto relevante. Confirmar que el valor se aplica al elemento interno previsto.
+- Para props de objeto o función como `ui`, probar cada clave sobre su nodo correspondiente usando `testAttrs`. Cada llamada debe comprobar `id`, atributos ARIA, clases y estilos; no limitarse a comprobar que se invocó el resolver.
+- No comprobar la prop `slotProps` ni inspeccionar sus valores o efectos.
 
 No considerar cobertura el simple hecho de montar el componente con una prop. Comprobar lo que el usuario del componente puede observar o lo que el wrapper debe pasar a Reka.
 

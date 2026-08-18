@@ -16,30 +16,22 @@ export type ProgressIndicatorProps = Pick<RekaProgressIndicatorProps, 'as' | 'as
 export type ProgressFn<T> = (context: ProgressContext) => T
 
 export interface ProgressUI {
-  root?: ProgressFn<HTMLAttributes>
   indicator?: ProgressFn<HTMLAttributes>
   label?: ProgressFn<HTMLAttributes>
 }
 
-export interface ProgressProps extends ProgressRootProps {
+export interface ProgressProps extends Omit<ProgressRootProps, 'as' | 'asChild'> {
   value?: ProgressValue
   label?: string
   color?: string
   trackColor?: string
-  indicator?: ProgressIndicatorProps
   ui?: ProgressUI
 }
 
 export interface ProgressContext {
-  props: Omit<ProgressProps, 'ui'>
   value: ProgressValue
   max: number
   percentage: number
-}
-
-export interface ProgressEmits {
-  'update:value': [value: ProgressValue]
-  valueChange: [value: ProgressValue]
 }
 
 export interface ProgressSlots {

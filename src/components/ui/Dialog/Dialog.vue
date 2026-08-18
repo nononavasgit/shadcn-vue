@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useAttrs, useSlots, watch } from 'vue'
+import { computed, ref, useAttrs, useSlots, watch } from 'vue'
 import {
   DialogClose,
   DialogContent,
@@ -15,36 +15,19 @@ import { Separator } from '@/components/ui/Separator'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
-import {
-  normalizeDialogCloseProps,
-  normalizeDialogContentProps,
-  normalizeDialogRootProps,
-  normalizeDialogTriggerProps,
-} from '.'
 import type { DialogContext, DialogEmits, DialogProps, DialogSlots } from '.'
+import { dialogDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
 
 defineSlots<DialogSlots>()
 const emit = defineEmits<DialogEmits>()
 
-const props = withDefaults(defineProps<DialogProps>(), {
-  modal: true,
-  block: false,
-  unmountOnHide: true,
-  label: undefined,
-  description: undefined,
-  icon: undefined,
-  closeIcon: 'x',
-  showCloseButton: true,
-  trigger: undefined,
-  content: undefined,
-  close: undefined,
-  ui: undefined,
-})
+const props = withDefaults(defineProps<DialogProps>(), dialogDefaults)
 
 const slots = useSlots()
 const attrs = useAttrs()
+const portalTarget = ref<HTMLElement>()
 const modelOpen = defineModel<boolean>('open', { default: false })
 const { t } = useI18n()
 
@@ -66,38 +49,21 @@ function close() {
   if (!props.block) open.value = false
 }
 
-const dialogContext = computed<DialogContext>(() => {
-  const { ui, ...dialogProps } = props
-  void ui
-
-  return {
-    props: dialogProps,
-    open: open.value,
-    close,
-  }
-})
+const dialogContext = computed<DialogContext>(() => ({
+  open: open.value,
+  close,
+}))
 
 const rootProps = computed(() => {
-  const rootUI = useUi(props.ui?.root, dialogContext.value)
-
   return {
-    ...attrs,
-    ...rootUI,
-    ...normalizeDialogRootProps(props),
-    class: cn(attrs.class, rootUI.class),
-    style: [attrs.style, rootUI.style],
+    modal: props.modal,
+    unmountOnHide: props.unmountOnHide,
   }
 })
 
 const triggerProps = computed(() => {
-  const triggerUI = useUi(props.ui?.trigger, dialogContext.value)
-
   return {
     asChild: true,
-    ...normalizeDialogTriggerProps(props.trigger),
-    ...triggerUI,
-    class: cn(triggerUI.class),
-    style: triggerUI.style,
   }
 })
 
@@ -121,8 +87,15 @@ const contentProps = computed(() => {
   void contentDirection
 
   return {
-    disableOutsidePointerEvents: props.modal,
-    ...normalizeDialogContentProps(props.content),
+    forceMount: props.forceMount,
+    disableOutsidePointerEvents: props.disableOutsidePointerEvents ?? props.modal,
+    onOpenAutoFocus: (event: DialogEmits['openAutoFocus'][0]) => emit('openAutoFocus', event),
+    onCloseAutoFocus: (event: DialogEmits['closeAutoFocus'][0]) => emit('closeAutoFocus', event),
+    onEscapeKeyDown: (event: DialogEmits['escapeKeyDown'][0]) => emit('escapeKeyDown', event),
+    onPointerDownOutside: (event: DialogEmits['pointerDownOutside'][0]) =>
+      emit('pointerDownOutside', event),
+    onFocusOutside: (event: DialogEmits['focusOutside'][0]) => emit('focusOutside', event),
+    onInteractOutside: (event: DialogEmits['interactOutside'][0]) => emit('interactOutside', event),
     ...contentUI,
     class: cn(
       'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 pointer-events-auto fixed top-1/2 left-1/2 z-50 grid max-h-[90dvh] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 grid-rows-[auto_minmax(0,1fr)_auto] gap-4 overflow-hidden rounded-lg border bg-background p-6 shadow-lg duration-200 sm:max-w-lg',
@@ -180,7 +153,6 @@ const footerProps = computed(() => {
 const closeProps = computed(() => {
   const ui = useUi(props.ui?.close, dialogContext.value)
   return {
-    ...normalizeDialogCloseProps(props.close),
     ...ui,
     'aria-label': ui['aria-label'] ?? t('close'),
     class: cn(
@@ -196,63 +168,66 @@ const closeIcon = computed(() => normalizeIconProps(props.closeIcon))
 </script>
 
 <template>
-  <DialogRoot v-bind="rootProps" v-model:open="open" data-slot="dialog">
-    <DialogTrigger v-bind="triggerProps" data-slot="dialog-trigger">
-      <slot v-bind="dialogContext" />
-    </DialogTrigger>
+  <div class="contents">
+    <DialogRoot v-bind="rootProps" v-model:open="open" data-test-dialog-root>
+      <DialogTrigger v-bind="triggerProps" data-test-dialog-trigger>
+        <slot v-bind="dialogContext" />
+      </DialogTrigger>
 
-    <DialogPortal>
-      <DialogOverlay v-bind="overlayProps" data-slot="dialog-overlay" />
-      <DialogContent v-bind="contentProps" data-slot="dialog-content">
-        <template v-if="props.showCloseButton && !props.block">
-          <slot name="close" v-bind="dialogContext">
-            <DialogClose v-bind="closeProps" data-slot="dialog-close">
-              <slot name="closeIcon" v-bind="dialogContext">
-                <Icon v-if="closeIcon?.name" v-bind="closeIcon" />
-              </slot>
-            </DialogClose>
-          </slot>
-        </template>
+      <DialogPortal :to="portalTarget">
+        <DialogOverlay v-bind="overlayProps" data-test-dialog-overlay />
+        <DialogContent v-bind="contentProps" data-test-dialog-content>
+          <template v-if="props.showCloseButton && !props.block">
+            <slot name="close" v-bind="dialogContext">
+              <DialogClose v-bind="closeProps" data-test-dialog-close>
+                <slot name="closeIcon" v-bind="dialogContext">
+                  <Icon v-if="closeIcon?.name" v-bind="closeIcon" data-test-dialog-close-icon />
+                </slot>
+              </DialogClose>
+            </slot>
+          </template>
 
-        <div
-          v-if="
-            props.label || props.description || slots.header || slots.label || slots.description
-          "
-          v-bind="headerProps"
-          data-slot="dialog-header"
-        >
-          <slot name="header" v-bind="dialogContext">
-            <DialogTitle
-              v-if="props.label || slots.label"
-              v-bind="labelProps"
-              data-slot="dialog-label"
-            >
-              <Icon v-if="icon?.name" v-bind="icon" :name="icon.name" />
-              <slot name="label" v-bind="dialogContext">{{ props.label }}</slot>
-            </DialogTitle>
+          <div
+            v-if="
+              props.label || props.description || slots.header || slots.label || slots.description
+            "
+            v-bind="headerProps"
+            data-test-dialog-header
+          >
+            <slot name="header" v-bind="dialogContext">
+              <DialogTitle
+                v-if="props.label || slots.label"
+                v-bind="labelProps"
+                data-test-dialog-label
+              >
+                <Icon v-if="icon?.name" v-bind="icon" :name="icon.name" data-test-dialog-icon />
+                <slot name="label" v-bind="dialogContext">{{ props.label }}</slot>
+              </DialogTitle>
 
-            <DialogDescription
-              v-if="props.description || slots.description"
-              v-bind="descriptionProps"
-              data-slot="dialog-description"
-            >
-              <slot name="description" v-bind="dialogContext">{{ props.description }}</slot>
-            </DialogDescription>
-          </slot>
-        </div>
+              <DialogDescription
+                v-if="props.description || slots.description"
+                v-bind="descriptionProps"
+                data-test-dialog-description
+              >
+                <slot name="description" v-bind="dialogContext">{{ props.description }}</slot>
+              </DialogDescription>
+            </slot>
+          </div>
 
-        <Separator />
+          <Separator />
 
-        <div v-if="slots.content" v-bind="bodyProps" data-slot="dialog-body">
-          <slot name="content" v-bind="dialogContext" />
-        </div>
+          <div v-if="slots.content" v-bind="bodyProps" data-test-dialog-body>
+            <slot name="content" v-bind="dialogContext" />
+          </div>
 
-        <Separator v-if="slots.footer" />
+          <Separator v-if="slots.footer" />
 
-        <div v-if="slots.footer" v-bind="footerProps" data-slot="dialog-footer">
-          <slot name="footer" v-bind="dialogContext" />
-        </div>
-      </DialogContent>
-    </DialogPortal>
-  </DialogRoot>
+          <div v-if="slots.footer" v-bind="footerProps" data-test-dialog-footer>
+            <slot name="footer" v-bind="dialogContext" />
+          </div>
+        </DialogContent>
+      </DialogPortal>
+    </DialogRoot>
+    <div ref="portalTarget" data-test-dialog-portal-target />
+  </div>
 </template>

@@ -132,6 +132,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/dialog"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Dialog</h2>
+            <p class="text-sm text-muted-foreground">
+              Dialogos modales con props planas y contenido personalizable.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/switch"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

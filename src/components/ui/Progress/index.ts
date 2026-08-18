@@ -1,17 +1,13 @@
 import type { HTMLAttributes } from 'vue'
-import type {
-  ProgressIndicatorProps as RekaProgressIndicatorProps,
-  ProgressRootProps as RekaProgressRootProps,
-} from 'reka-ui'
+import type { ProgressRootProps as RekaProgressRootProps } from 'reka-ui'
 
 export { default as Progress } from './Progress.vue'
 
 export type ProgressValue = number | null
 export type ProgressRootProps = Pick<
   RekaProgressRootProps,
-  'as' | 'asChild' | 'max' | 'getValueLabel' | 'getValueText'
+  'max' | 'getValueLabel' | 'getValueText'
 >
-export type ProgressIndicatorProps = Pick<RekaProgressIndicatorProps, 'as' | 'asChild'>
 
 export type ProgressFn<T> = (context: ProgressContext) => T
 
@@ -20,7 +16,7 @@ export interface ProgressUI {
   label?: ProgressFn<HTMLAttributes>
 }
 
-export interface ProgressProps extends Omit<ProgressRootProps, 'as' | 'asChild'> {
+export interface ProgressProps extends ProgressRootProps {
   value?: ProgressValue
   label?: string
   color?: string
@@ -35,6 +31,5 @@ export interface ProgressContext {
 }
 
 export interface ProgressSlots {
-  indicator?(props: ProgressContext): unknown
   label?(props: ProgressContext): unknown
 }

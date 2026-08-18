@@ -1,35 +1,35 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 
-import { Progress, type ProgressProps } from '@/components/ui/Progress'
-import { progressDefaults } from '@/components/ui/Progress/defaults'
+import { ProgressCircular, type ProgressCircularProps } from '@/components/ui/ProgressCircular'
+import { progressCircularDefaults } from '@/components/ui/ProgressCircular/defaults'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
 const playgroundValue = ref<number | null>(40)
-const playgroundMax = ref(progressDefaults.max)
-const playgroundLabel = ref('')
+const playgroundMax = ref(progressCircularDefaults.max)
+const playgroundSize = ref<number | string>(progressCircularDefaults.size)
+const playgroundThickness = ref(progressCircularDefaults.thickness)
 const playgroundColor = ref('#3b82f6')
-const playgroundTrackColor = ref('')
 const playgroundIndeterminate = ref(false)
 
-const playgroundProps = computed<Omit<ProgressProps, 'value'>>(() => ({
+const playgroundProps = computed<Omit<ProgressCircularProps, 'value'>>(() => ({
   max: playgroundMax.value,
-  label: playgroundLabel.value || undefined,
+  size: playgroundSize.value,
+  thickness: playgroundThickness.value,
   color: playgroundColor.value || undefined,
-  trackColor: playgroundTrackColor.value || undefined,
 }))
 
 const typeRows: ApiTableRow[] = [
   {
-    name: 'ProgressContext',
+    name: 'ProgressCircularContext',
     type: '{ value; max; percentage }',
-    description: 'Contexto disponible en los slots y resolvers de UI.',
+    description: 'Contexto disponible en el slot label y los resolvers de UI.',
   },
   {
-    name: 'ProgressUI',
-    type: '{ indicator?; label? }',
-    description: 'Resolvers para personalizar el indicador y la etiqueta.',
+    name: 'ProgressCircularUI',
+    type: '{ svg?; track?; indicator?; label? }',
+    description: 'Resolvers para personalizar cada nodo interno del progreso circular.',
   },
 ]
 
@@ -38,19 +38,20 @@ const propRows: ApiTableRow[] = [
     name: 'value',
     type: 'number | null',
     default: '0',
-    description: 'Valor controlado mediante v-model:value.',
+    description:
+      'Valor controlado mediante v-model:value; null representa un estado indeterminado.',
   },
   {
     name: 'max',
     type: 'number',
-    default: String(progressDefaults.max),
+    default: String(progressCircularDefaults.max),
     description: 'Valor máximo utilizado para calcular el porcentaje.',
   },
   {
     name: 'label',
     type: 'string',
     default: 'undefined',
-    description: 'Etiqueta visible sobre la barra y valor alternativo para aria-valuetext.',
+    description: 'Etiqueta visible en el centro del progreso.',
   },
   {
     name: 'color',
@@ -63,6 +64,18 @@ const propRows: ApiTableRow[] = [
     type: 'string',
     default: 'undefined',
     description: 'Color del track mediante una variable CSS.',
+  },
+  {
+    name: 'size',
+    type: 'number | string',
+    default: String(progressCircularDefaults.size),
+    description: 'Tamaño del contenedor circular; los números se convierten a píxeles.',
+  },
+  {
+    name: 'thickness',
+    type: 'number',
+    default: String(progressCircularDefaults.thickness),
+    description: 'Grosor del track y del indicador SVG.',
   },
   {
     name: 'getValueLabel',
@@ -78,9 +91,9 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: 'ProgressUI',
+    type: 'ProgressCircularUI',
     default: 'undefined',
-    description: 'Personalización dinámica de indicator y label.',
+    description: 'Personalización dinámica de svg, track, indicator y label.',
   },
 ]
 
@@ -96,9 +109,9 @@ const emitRows: ApiTableRow[] = [
 const slotRows: ApiTableRow[] = [
   {
     name: 'label',
-    type: 'ProgressContext',
+    type: 'ProgressCircularContext',
     default: 'label',
-    description: 'Personaliza la etiqueta visible y recibe el contexto del progreso.',
+    description: 'Personaliza la etiqueta central y recibe el contexto del progreso.',
   },
 ]
 
@@ -109,9 +122,9 @@ const exposeRows: ApiTableRow[] = []
   <section class="grid gap-8 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
     <header class="grid gap-2">
       <p class="font-mono text-xs tracking-wide text-muted-foreground uppercase">Component</p>
-      <h2 class="text-2xl font-semibold">Progress</h2>
+      <h2 class="text-2xl font-semibold">ProgressCircular</h2>
       <p class="max-w-2xl text-sm text-muted-foreground">
-        Barra de progreso accesible con valores controlados, estado indeterminado, colores y slots.
+        Progreso circular accesible con valores controlados, estado indeterminado, colores y slots.
       </p>
     </header>
 
@@ -127,15 +140,15 @@ const exposeRows: ApiTableRow[] = []
       <div>
         <h3 class="text-lg font-medium">Playground</h3>
         <p class="text-sm text-muted-foreground">
-          Ajusta el valor, el máximo, la etiqueta y los colores del progreso.
+          Ajusta el valor, el máximo, el tamaño, el grosor y el color.
         </p>
       </div>
 
       <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
+        <div class="grid min-h-64 place-items-center rounded-lg border bg-muted/20 p-8">
           <Playground>
-            <div class="grid w-full max-w-md gap-4">
-              <Progress
+            <div class="grid justify-items-center gap-4">
+              <ProgressCircular
                 :value="playgroundIndeterminate ? null : playgroundValue"
                 v-bind="playgroundProps"
               />
@@ -173,11 +186,22 @@ const exposeRows: ApiTableRow[] = []
           </label>
 
           <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">label</span>
+            <span class="font-medium">size</span>
             <input
-              v-model="playgroundLabel"
-              type="text"
-              placeholder="Opcional"
+              v-model.number="playgroundSize"
+              type="number"
+              min="16"
+              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+            />
+          </label>
+
+          <label class="grid gap-1.5 text-sm">
+            <span class="font-medium">thickness</span>
+            <input
+              v-model.number="playgroundThickness"
+              type="number"
+              min="1"
+              max="40"
               class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
             />
           </label>
@@ -188,16 +212,6 @@ const exposeRows: ApiTableRow[] = []
               v-model="playgroundColor"
               type="text"
               placeholder="#3b82f6"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">trackColor</span>
-            <input
-              v-model="playgroundTrackColor"
-              type="text"
-              placeholder="Opcional"
               class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
             />
           </label>

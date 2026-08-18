@@ -87,13 +87,11 @@ const labelProps = computed(() => {
 
 <template>
   <ProgressRoot v-bind="rootProps" v-model="value" data-slot="progress" data-test-progress-root>
-    <slot name="indicator" v-bind="progressContext">
-      <ProgressIndicator
-        v-bind="indicatorProps"
-        data-slot="progress-indicator"
-        data-test-progress-indicator
-      />
-    </slot>
+    <ProgressIndicator
+      v-bind="indicatorProps"
+      data-slot="progress-indicator"
+      data-test-progress-indicator
+    />
 
     <span
       v-if="props.label || $slots.label"

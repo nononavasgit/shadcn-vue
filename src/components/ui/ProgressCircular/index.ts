@@ -1,16 +1,11 @@
 import type { HTMLAttributes, SVGAttributes } from 'vue'
-import type {
-  ProgressIndicatorProps,
-  ProgressRootProps,
-  ProgressValue,
-} from '@/components/ui/Progress'
+import type { ProgressRootProps, ProgressValue } from '@/components/ui/Progress'
 
 export { default as ProgressCircular } from './ProgressCircular.vue'
 
 export type ProgressCircularFn<T> = (context: ProgressCircularContext) => T
 
 export interface ProgressCircularUI {
-  root?: ProgressCircularFn<HTMLAttributes>
   svg?: ProgressCircularFn<SVGAttributes>
   track?: ProgressCircularFn<SVGAttributes>
   indicator?: ProgressCircularFn<SVGAttributes>
@@ -23,28 +18,15 @@ export interface ProgressCircularProps extends ProgressRootProps {
   trackColor?: string
   size?: number | string
   thickness?: number
-  indicator?: ProgressIndicatorProps
   ui?: ProgressCircularUI
 }
 
 export interface ProgressCircularContext {
-  props: Omit<ProgressCircularProps, 'ui'>
   value: ProgressValue
   max: number
   percentage: number
-  radius: number
-  circumference: number
-  dashOffset: number
-}
-
-export interface ProgressCircularEmits {
-  'update:value': [value: ProgressValue]
-  valueChange: [value: ProgressValue]
 }
 
 export interface ProgressCircularSlots {
-  svg?(props: ProgressCircularContext): unknown
-  track?(props: ProgressCircularContext): unknown
-  indicator?(props: ProgressCircularContext): unknown
   label?(props: ProgressCircularContext): unknown
 }

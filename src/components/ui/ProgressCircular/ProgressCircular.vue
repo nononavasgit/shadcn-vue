@@ -1,34 +1,19 @@
 <script setup lang="ts">
-import { computed, useAttrs, useSlots, watch } from 'vue'
+import { computed, useAttrs, useSlots } from 'vue'
 import { ProgressRoot, ProgressIndicator } from 'reka-ui'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import type { ProgressCircularContext, ProgressCircularProps, ProgressCircularSlots } from '.'
 import type { ProgressValue } from '@/components/ui/Progress'
+import { progressCircularDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
 
 defineSlots<ProgressCircularSlots>()
 
-const props = withDefaults(defineProps<ProgressCircularProps>(), {
-  max: 100,
-  getValueLabel: undefined,
-  getValueText: undefined,
-  label: undefined,
-  color: undefined,
-  trackColor: undefined,
-  size: 80,
-  thickness: 8,
-  indicator: undefined,
-  ui: undefined,
-})
-const emit = defineEmits<{ valueChange: [value: ProgressValue] }>()
+const props = withDefaults(defineProps<ProgressCircularProps>(), progressCircularDefaults)
 const value = defineModel<ProgressValue>('value', { default: 0 })
-
-watch(value, (nextValue, previousValue) => {
-  if (nextValue !== previousValue) emit('valueChange', nextValue)
-})
 
 const attrs = useAttrs()
 const slots = useSlots()
@@ -54,44 +39,30 @@ const dashOffset = computed(() => circumference.value * (1 - percentage.value / 
 const cssSize = computed(() => (typeof props.size === 'number' ? `${props.size}px` : props.size))
 
 const progressCircularContext = computed<ProgressCircularContext>(() => {
-  const { ui, ...progressCircularProps } = props
-  void ui
-
   return {
-    props: progressCircularProps,
     value: value.value,
     max: props.max,
     percentage: percentage.value,
-    radius: radius.value,
-    circumference: circumference.value,
-    dashOffset: dashOffset.value,
   }
 })
 
 const rootProps = computed(() => {
-  const rootUI = useUi(props.ui?.root, progressCircularContext.value)
-
   return {
     ...attrs,
-    ...rootUI,
-    as: props.as,
-    asChild: props.asChild,
     max: props.max,
     getValueLabel: props.getValueLabel,
     getValueText: props.getValueText,
-    'aria-label': rootUI['aria-label'] ?? attrs['aria-label'],
-    'aria-valuetext': rootUI['aria-valuetext'] ?? attrs['aria-valuetext'] ?? props.label,
+    'aria-label': attrs['aria-label'],
+    'aria-valuetext': attrs['aria-valuetext'] ?? props.label,
     class: cn(
       'relative inline-grid shrink-0 place-items-center overflow-visible bg-transparent',
       attrs.class,
-      rootUI.class,
     ),
     style: [
       { width: cssSize.value, height: cssSize.value },
       colorStyle.value,
       trackColorStyle.value,
       attrs.style,
-      rootUI.style,
     ],
   }
 })
@@ -124,11 +95,6 @@ const trackProps = computed(() => {
     ),
   }
 })
-
-const indicatorProps = computed(() => ({
-  as: props.indicator?.as,
-  asChild: true,
-}))
 
 const indicatorCircleProps = computed(() => {
   const indicatorUI = useUi(props.ui?.indicator, progressCircularContext.value)
@@ -166,22 +132,35 @@ const labelProps = computed(() => {
 </script>
 
 <template>
-  <ProgressRoot v-bind="rootProps" v-model="value" data-slot="progress-circular">
-    <slot name="svg" v-bind="progressCircularContext">
-      <svg v-bind="svgProps" data-slot="progress-circular-svg" viewBox="0 0 100 100">
-        <slot name="track" v-bind="progressCircularContext">
-          <circle v-bind="trackProps" data-slot="progress-circular-track" />
-        </slot>
+  <ProgressRoot
+    v-bind="rootProps"
+    v-model="value"
+    data-slot="progress-circular"
+    data-test-progress-circular-root
+  >
+    <svg
+      v-bind="svgProps"
+      data-slot="progress-circular-svg"
+      data-test-progress-circular-svg
+      viewBox="0 0 100 100"
+    >
+      <circle
+        v-bind="trackProps"
+        data-slot="progress-circular-track"
+        data-test-progress-circular-track
+      />
 
-        <slot name="indicator" v-bind="progressCircularContext">
-          <ProgressIndicator v-bind="indicatorProps" data-slot="progress-circular-indicator">
-            <circle v-bind="indicatorCircleProps" />
-          </ProgressIndicator>
-        </slot>
-      </svg>
-    </slot>
+      <ProgressIndicator as-child data-slot="progress-circular-indicator">
+        <circle v-bind="indicatorCircleProps" data-test-progress-circular-indicator />
+      </ProgressIndicator>
+    </svg>
 
-    <span v-if="props.label || slots.label" v-bind="labelProps">
+    <span
+      v-if="props.label || slots.label"
+      v-bind="labelProps"
+      data-slot="progress-circular-label"
+      data-test-progress-circular-label
+    >
       <slot name="label" v-bind="progressCircularContext">{{ props.label }}</slot>
     </span>
   </ProgressRoot>

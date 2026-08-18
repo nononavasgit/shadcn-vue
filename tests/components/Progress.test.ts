@@ -163,9 +163,9 @@ describe('Progress', () => {
 
   describe('emits', () => {
     describe('update:value', () => {
-      it.each([{input: 0}, {input:  25}, {input: null}] as ProgressValue[])(
+      it.each([{ input: 0 }, { input: 25 }, { input: null }] as ProgressValue[])(
         'forwards ProgressRoot value=$input',
-        async ({input}) => {
+        async ({ input }) => {
           const wrapper = mountProgress({ props: { value: 10 } })
 
           await wrapper.getComponent(ProgressRoot).vm.$emit('update:modelValue', input)
@@ -187,11 +187,14 @@ describe('Progress', () => {
       let context: ProgressContext | undefined
 
       mountProgress({
-        props: { value, max },
-        slots: {
-          indicator: (slotContext: ProgressContext) => {
-            context = slotContext
-            return h('span', 'Indicator')
+        props: {
+          value,
+          max,
+          ui: {
+            indicator: (uiContext: ProgressContext) => {
+              context = uiContext
+              return {}
+            },
           },
         },
       })
@@ -201,18 +204,6 @@ describe('Progress', () => {
   })
 
   describe('slots', () => {
-    it('renders the indicator slot', () => {
-      const wrapper = mountProgress({
-        slots: {
-          indicator: () =>
-            h('span', { 'data-test-progress-slot': 'indicator' }, 'Custom indicator'),
-        },
-      })
-
-      expect(wrapper.get('[data-test-progress-slot="indicator"]').text()).toBe('Custom indicator')
-      expect(wrapper.find('[data-test-progress-indicator]').exists()).toBe(false)
-    })
-
     it('renders the label slot', () => {
       const wrapper = mountProgress({
         props: { label: 'Fallback', value: 40 },

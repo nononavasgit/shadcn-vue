@@ -176,7 +176,7 @@ const exposeRows: ApiTableRow[] = []
         :rows="emitRows"
         empty-text="Este componente no emite eventos propios."
       />
-      <ApiTable title="Slots" :rows="slotRows" />
+      <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
     </div>
   </section>

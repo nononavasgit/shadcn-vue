@@ -95,6 +95,8 @@ const exposeRows: ApiTableRow[] = []
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable
         title="Slots"
+        type-label="slotProps"
+        :show-default="false"
         :rows="slotRows"
         empty-text="Este componente no define slots propios."
       />

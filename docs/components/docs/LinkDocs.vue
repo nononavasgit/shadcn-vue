@@ -28,8 +28,8 @@ const playgroundProps = computed(() => ({
   rounded: rounded.value,
   square: square.value,
   color: color.value || undefined,
-  icon: icon.value || undefined,
-  trailingIcon: trailingIcon.value || undefined,
+  icon: icon.value ? { name: icon.value } : undefined,
+  trailingIcon: trailingIcon.value ? { name: trailingIcon.value } : undefined,
 }))
 
 const typeRows: ApiTableRow[] = [
@@ -87,14 +87,14 @@ const propRows: ApiTableRow[] = [
   { name: 'color', type: 'string', default: 'undefined', description: 'Color CSS personalizado.' },
   {
     name: 'icon',
-    type: 'NormalizeIconProps',
+    type: 'IconConfig',
     typeLink: '/icon',
     default: 'undefined',
     description: 'Icono al inicio.',
   },
   {
     name: 'trailingIcon',
-    type: 'NormalizeIconProps',
+    type: 'IconConfig',
     typeLink: '/icon',
     default: 'undefined',
     description: 'Icono al final.',

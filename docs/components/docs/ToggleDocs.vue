@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 
 import { Toggle, type ToggleProps, type ToggleValue } from '@/components/ui/Toggle'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 import { ICONS } from '@/components/ui/Icon/icons'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
@@ -24,14 +24,14 @@ const iconObjectInput = ref('')
 const trailingIcon = ref('')
 const trailingIconObjectInput = ref('')
 
-function parseIconProps(input: string): NormalizeIconProps | undefined {
+function parseIconProps(input: string): IconConfig | undefined {
   if (!input.trim()) return undefined
 
   try {
     const parsed: unknown = JSON.parse(input)
 
     if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return parsed as NormalizeIconProps
+      return parsed as IconConfig
     }
   } catch {
     return undefined
@@ -48,8 +48,10 @@ const playgroundProps = computed<ToggleProps>(() => ({
   size: size.value,
   disabled: disabled.value,
   color: color.value || undefined,
-  icon: parseIconProps(iconObjectInput.value) ?? (icon.value || undefined),
-  trailingIcon: parseIconProps(trailingIconObjectInput.value) ?? (trailingIcon.value || undefined),
+  icon: parseIconProps(iconObjectInput.value) ?? (icon.value ? { name: icon.value } : undefined),
+  trailingIcon:
+    parseIconProps(trailingIconObjectInput.value) ??
+    (trailingIcon.value ? { name: trailingIcon.value } : undefined),
 }))
 
 const typeRows: ApiTableRow[] = [
@@ -69,8 +71,8 @@ const typeRows: ApiTableRow[] = [
     description: 'Contexto expuesto por los slots.',
   },
   {
-    name: 'NormalizeIconProps',
-    type: 'string | { name: IconName; ... }',
+    name: 'IconConfig',
+    type: 'IconProps & HTMLAttributes',
     typeLink: '/icon',
     description: 'Formato normalizado para los iconos del toggle.',
   },
@@ -81,14 +83,14 @@ const propRows: ApiTableRow[] = [
   { name: 'label', type: 'string', default: 'undefined', description: 'Texto del toggle.' },
   {
     name: 'icon',
-    type: 'NormalizeIconProps',
+    type: 'IconConfig',
     typeLink: '/icon',
     default: 'undefined',
     description: 'Icono al inicio cuando no se usa el slot leading.',
   },
   {
     name: 'trailingIcon',
-    type: 'NormalizeIconProps',
+    type: 'IconConfig',
     typeLink: '/icon',
     default: 'undefined',
     description: 'Icono al final cuando no se usa el slot trailing.',

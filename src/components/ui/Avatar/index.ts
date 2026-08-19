@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Avatar } from './Avatar.vue'
 
@@ -31,7 +31,7 @@ export interface AvatarProps {
   size?: AvatarSize
   shape?: AvatarShape
   delayMs?: number
-  icon?: NormalizeIconProps
+  icon?: IconConfig
   label?: string
 }
 

@@ -2,16 +2,9 @@
 import { computed, useAttrs } from 'vue'
 import { Primitive } from 'reka-ui'
 import { Icon } from '@/components/ui/Icon'
-import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
-import {
-  buttonVariants,
-  createButtonContext,
-  type ButtonEmits,
-  type ButtonProps,
-  type ButtonSlots,
-} from '.'
+import { buttonVariants, type ButtonEmits, type ButtonProps, type ButtonSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -24,6 +17,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   size: 'md',
   rounded: false,
   square: false,
+  raised: false,
   loading: false,
   color: undefined,
   icon: undefined,
@@ -31,8 +25,6 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 })
 const emit = defineEmits<ButtonEmits>()
 defineSlots<ButtonSlots>()
-
-const buttonContext = computed(() => createButtonContext(props))
 
 const attrs = useAttrs()
 const { colorStyle } = useColor(
@@ -48,6 +40,7 @@ const calculatedVariants = computed(() => {
     size: props.size,
     rounded: props.rounded,
     square: props.square,
+    raised: props.raised,
     color: Boolean(props.color),
   })
 
@@ -76,13 +69,13 @@ const rootProps = computed(() => {
 })
 
 const iconProps = computed(() => {
-  const icon = useNormalizeIconProps(props.icon)
+  const icon = props.icon
 
   return { ...icon, size: icon?.size ?? props.size }
 })
 
 const trailingIconProps = computed(() => {
-  const icon = useNormalizeIconProps(props.trailingIcon)
+  const icon = props.trailingIcon
 
   return { ...icon, size: icon?.size ?? props.size }
 })
@@ -108,22 +101,22 @@ function handleClick(event: PointerEvent) {
 
 <template>
   <Primitive v-bind="rootProps" data-button-ui="root" data-test-button-root @click="handleClick">
-    <slot v-if="props.asChild" v-bind="buttonContext" />
+    <slot v-if="props.asChild" />
     <template v-else>
       <template v-if="props.loading">
-        <slot name="loading" v-bind="buttonContext">
+        <slot name="loading">
           <Icon v-bind="loadingIconProps" data-test-button-loading-icon />
         </slot>
       </template>
       <template v-else>
-        <slot name="leading" v-bind="buttonContext">
+        <slot name="leading">
           <Icon v-if="iconProps.name" v-bind="iconProps" data-test-button-icon />
         </slot>
       </template>
 
-      <slot v-bind="buttonContext">{{ props.label }}</slot>
+      <slot>{{ props.label }}</slot>
 
-      <slot name="trailing" v-bind="buttonContext">
+      <slot name="trailing">
         <Icon
           v-if="trailingIconProps.name"
           v-bind="trailingIconProps"

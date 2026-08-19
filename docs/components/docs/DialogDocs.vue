@@ -20,7 +20,7 @@ const showCloseButton = ref(dialogDefaults.showCloseButton)
 const playgroundProps = computed<DialogProps>(() => ({
   label: label.value || undefined,
   description: description.value || undefined,
-  icon: icon.value || undefined,
+  icon: icon.value ? { name: icon.value } : undefined,
   modal: modal.value,
   forceMount: forceMount.value,
   disableOutsidePointerEvents: disableOutsidePointerEvents.value,
@@ -86,14 +86,14 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'icon',
-    type: 'NormalizeIconProps',
+    type: 'IconConfig',
     typeLink: '/icon',
     default: 'undefined',
     description: 'Icono mostrado junto al titulo.',
   },
   {
     name: 'closeIcon',
-    type: 'NormalizeIconProps',
+    type: 'IconConfig',
     typeLink: '/icon',
     default: "'x'",
     description: 'Icono del boton de cierre.',

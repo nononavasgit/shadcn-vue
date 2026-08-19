@@ -1,12 +1,12 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { expect, it } from 'vitest'
-import type { IconName, IconSize, NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig, IconName, IconSize } from '@/components/ui/Icon'
 
 interface TestIconPropsOptions {
   text: string
   id: string
   default?: IconName
-  mount: (input: NormalizeIconProps | undefined) => VueWrapper | Promise<VueWrapper>
+  mount: (input: IconConfig | undefined) => VueWrapper | Promise<VueWrapper>
 }
 
 interface TestIconSizeOptions {
@@ -18,23 +18,33 @@ interface TestIconSizeOptions {
 
 export function testIconProps({ text, id, default: defaultIcon, mount }: TestIconPropsOptions) {
   it.each([
-    { input: 'check' as IconName },
-    { input: { name: 'save' as IconName } },
+    { input: { name: 'check' as IconName } },
+    {
+      input: {
+        name: 'save' as IconName,
+        color: '#ff0000',
+        id: 'custom-icon',
+        class: 'custom-icon',
+        'aria-label': 'Save',
+      },
+    },
     { input: undefined },
   ])(`${text} input=$input`, async ({ input }) => {
     const icon = (await mount(input)).findComponent(id)
     const expectedProps = getExpectedIconProps(input, defaultIcon)
 
     expect(icon.exists()).toBe(expectedProps !== undefined)
-    if (expectedProps !== undefined) expect(icon.props()).toMatchObject(expectedProps)
+    if (expectedProps !== undefined) {
+      expect(icon.props()).toMatchObject(expectedProps)
+
+      if (input?.id) expect(icon.attributes('id')).toBe(input.id)
+      if (input?.class) expect(icon.classes()).toContain(input.class)
+      if (input?.['aria-label']) expect(icon.attributes('aria-label')).toBe(input['aria-label'])
+    }
   })
 }
 
-function getExpectedIconProps(
-  input: NormalizeIconProps | undefined,
-  defaultIcon: IconName | undefined,
-) {
-  if (typeof input === 'string') return { name: input }
+function getExpectedIconProps(input: IconConfig | undefined, defaultIcon: IconName | undefined) {
   if (input) {
     return {
       name: input.name,

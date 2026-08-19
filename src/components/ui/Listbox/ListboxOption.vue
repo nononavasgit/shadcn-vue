@@ -5,7 +5,6 @@ import {
   ListboxItemIndicator as RekaListboxItemIndicator,
 } from 'reka-ui'
 import { Icon } from '@/components/ui/Icon'
-import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { IconProps } from '@/components/ui/Icon'
@@ -42,7 +41,7 @@ const indicatorProps = computed(() => {
   return { ...ui, class: cn('ml-auto flex size-4 items-center justify-center', ui.class) }
 })
 
-const iconProps = computed<IconProps>(() => useNormalizeIconProps(props.context.item.icon)!)
+const iconProps = computed<IconProps>(() => props.context.item.icon!)
 
 const key = computed(() => props.context.item.id ?? String(props.context.item.value))
 const itemSlot = computed(() => `item-${key.value}` as `item-${string}`)

@@ -8,7 +8,7 @@ import {
   type ButtonSize,
   type ButtonVariant,
 } from '@/components/ui/Button'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 import { ICONS } from '@/components/ui/Icon/icons'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
@@ -20,6 +20,7 @@ const severity = ref<ButtonSeverity>('primary')
 const size = ref<ButtonSize>('md')
 const rounded = ref(false)
 const square = ref(false)
+const raised = ref(false)
 const loading = ref(false)
 const color = ref('')
 const icon = ref('')
@@ -27,14 +28,14 @@ const iconObjectInput = ref('')
 const trailingIcon = ref('')
 const trailingIconObjectInput = ref('')
 
-function parseIconProps(value: string): NormalizeIconProps | undefined {
+function parseIconProps(value: string): IconConfig | undefined {
   if (!value.trim()) return undefined
 
   try {
     const parsed: unknown = JSON.parse(value)
 
     if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return parsed as NormalizeIconProps
+      return parsed as IconConfig
     }
   } catch {
     return undefined
@@ -50,10 +51,13 @@ const playgroundProps = computed<ButtonProps>(() => ({
   size: size.value,
   rounded: rounded.value,
   square: square.value,
+  raised: raised.value,
   loading: loading.value,
   color: color.value || undefined,
-  icon: parseIconProps(iconObjectInput.value) ?? (icon.value || undefined),
-  trailingIcon: parseIconProps(trailingIconObjectInput.value) ?? (trailingIcon.value || undefined),
+  icon: parseIconProps(iconObjectInput.value) ?? (icon.value ? { name: icon.value } : undefined),
+  trailingIcon:
+    parseIconProps(trailingIconObjectInput.value) ??
+    (trailingIcon.value ? { name: trailingIcon.value } : undefined),
 }))
 
 const typeRows: ApiTableRow[] = [
@@ -71,11 +75,6 @@ const typeRows: ApiTableRow[] = [
     name: 'ButtonSize',
     type: "'xs' | 'sm' | 'md' | 'lg'",
     description: 'Tamano del boton.',
-  },
-  {
-    name: 'ButtonContext',
-    type: '{ loading: boolean }',
-    description: 'Contexto disponible en los slots.',
   },
   {
     name: 'NormalizeButtonProps',
@@ -101,6 +100,7 @@ const propRows: ApiTableRow[] = [
   { name: 'size', type: 'ButtonSize', default: "'md'", description: 'Tamano del boton.' },
   { name: 'rounded', type: 'boolean', default: 'false', description: 'Usa bordes redondeados.' },
   { name: 'square', type: 'boolean', default: 'false', description: 'Usa una forma cuadrada.' },
+  { name: 'raised', type: 'boolean', default: 'false', description: 'Aplica sombreado.' },
   {
     name: 'loading',
     type: 'boolean',
@@ -110,14 +110,14 @@ const propRows: ApiTableRow[] = [
   { name: 'color', type: 'string', default: 'undefined', description: 'Color CSS personalizado.' },
   {
     name: 'icon',
-    type: 'NormalizeIconProps',
+    type: 'IconConfig',
     typeLink: '/icon',
     default: 'undefined',
     description: 'Icono al inicio.',
   },
   {
     name: 'trailingIcon',
-    type: 'NormalizeIconProps',
+    type: 'IconConfig',
     typeLink: '/icon',
     default: 'undefined',
     description: 'Icono al final.',
@@ -136,22 +136,22 @@ const emitRows: ApiTableRow[] = [
 ]
 
 const slotRows: ApiTableRow[] = [
-  { name: 'default', type: 'ButtonContext', default: '-', description: 'Contenido principal.' },
+  { name: 'default', type: '-', default: '-', description: 'Contenido principal.' },
   {
     name: 'leading',
-    type: 'ButtonContext',
+    type: '-',
     default: '-',
     description: 'Contenido antes del texto.',
   },
   {
     name: 'loading',
-    type: 'ButtonContext',
+    type: '-',
     default: '-',
     description: 'Contenido del estado de carga.',
   },
   {
     name: 'trailing',
-    type: 'ButtonContext',
+    type: '-',
     default: '-',
     description: 'Contenido despues del texto.',
   },
@@ -309,6 +309,10 @@ const exposeRows: ApiTableRow[] = []
           <label class="flex items-center gap-2 text-sm">
             <input v-model="square" type="checkbox" class="size-4 rounded border-input" />
             <span class="font-medium">square</span>
+          </label>
+          <label class="flex items-center gap-2 text-sm">
+            <input v-model="raised" type="checkbox" class="size-4 rounded border-input" />
+            <span class="font-medium">raised</span>
           </label>
           <label class="flex items-center gap-2 text-sm">
             <input v-model="loading" type="checkbox" class="size-4 rounded border-input" />

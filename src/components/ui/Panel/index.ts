@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
 import type { CollapsibleEmits } from '@/components/ui/Collapsible'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Panel } from './Panel.vue'
 
@@ -45,7 +45,7 @@ export interface PanelProps {
   severity?: PanelVariants['severity']
   color?: string
   label?: string
-  icon?: NormalizeIconProps
+  icon?: IconConfig
   collapsible?: boolean
   ui?: PanelUI
 }

@@ -103,7 +103,7 @@ describe('Toggle', () => {
       testIconSize({
         text: 'passes Toggle size to icon',
         id: '[data-test-toggle-icon]',
-        mount: (size) => mountToggle({ props: { size, icon: 'check' } }),
+        mount: (size) => mountToggle({ props: { size, icon: { name: 'check' } } }),
       })
     })
 
@@ -117,7 +117,7 @@ describe('Toggle', () => {
       testIconSize({
         text: 'passes Toggle size to trailing icon',
         id: '[data-test-toggle-trailing-icon]',
-        mount: (size) => mountToggle({ props: { size, trailingIcon: 'check' } }),
+        mount: (size) => mountToggle({ props: { size, trailingIcon: { name: 'check' } } }),
       })
     })
 
@@ -208,7 +208,7 @@ describe('Toggle', () => {
 
     it('leading and trailing slots replace their fallback icons', () => {
       const toggle = mountToggle({
-        props: { icon: 'check', trailingIcon: 'chevronRight' },
+        props: { icon: { name: 'check' }, trailingIcon: { name: 'chevronRight' } },
         slots: {
           leading: () => h('span', 'Leading'),
           trailing: () => h('span', 'Trailing'),

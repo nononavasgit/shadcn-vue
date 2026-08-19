@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Timeline } from './Timeline.vue'
 
@@ -215,7 +215,7 @@ export interface TimelineItem {
   value: TimelineValue
   label?: string
   description?: string
-  icon?: NormalizeIconProps
+  icon?: IconConfig
 }
 
 // Props

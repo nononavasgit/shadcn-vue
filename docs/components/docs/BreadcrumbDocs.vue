@@ -57,14 +57,14 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ellipsisIcon',
-    type: 'NormalizeIconProps',
-    default: String(breadcrumbDefaults.ellipsisIcon),
+    type: 'IconConfig',
+    default: `{ name: '${breadcrumbDefaults.ellipsisIcon.name}' }`,
     description: 'Icono usado para representar el rango oculto.',
   },
   {
     name: 'separatorIcon',
-    type: 'NormalizeIconProps',
-    default: String(breadcrumbDefaults.separatorIcon),
+    type: 'IconConfig',
+    default: `{ name: '${breadcrumbDefaults.separatorIcon.name}' }`,
     description: 'Icono mostrado entre los items.',
   },
   {

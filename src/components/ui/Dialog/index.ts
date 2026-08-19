@@ -5,7 +5,7 @@ import type {
   DialogRootEmits as RekaDialogRootEmits,
   DialogRootProps as RekaDialogRootProps,
 } from 'reka-ui'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Dialog } from './Dialog.vue'
 
@@ -39,8 +39,8 @@ export interface DialogProps extends DialogRootProps {
   block?: boolean
   label?: string
   description?: string
-  icon?: NormalizeIconProps
-  closeIcon?: NormalizeIconProps
+  icon?: IconConfig
+  closeIcon?: IconConfig
   showCloseButton?: boolean
   ui?: DialogUI
 }

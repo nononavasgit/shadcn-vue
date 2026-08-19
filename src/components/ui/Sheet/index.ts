@@ -8,7 +8,7 @@ import type {
   DialogRootProps as RekaDialogRootProps,
   DialogTriggerProps as RekaDialogTriggerProps,
 } from 'reka-ui'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 import type { EmitsAsProps } from '@/types/emits'
 
 export { default as Sheet } from './Sheet.vue'
@@ -69,8 +69,8 @@ export interface SheetProps extends SheetRootProps {
   block?: boolean
   label?: string
   description?: string
-  icon?: NormalizeIconProps
-  closeIcon?: NormalizeIconProps
+  icon?: IconConfig
+  closeIcon?: IconConfig
   showCloseButton?: boolean
   trigger?: SheetTriggerProps
   content?: SheetContentProps

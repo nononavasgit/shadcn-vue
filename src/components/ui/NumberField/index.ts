@@ -4,7 +4,7 @@ import type {
   NumberFieldIncrementProps as RekaNumberFieldIncrementProps,
   NumberFieldRootProps as RekaNumberFieldRootProps,
 } from 'reka-ui'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as NumberField } from './NumberField.vue'
 
@@ -47,8 +47,8 @@ export interface NumberFieldProps extends NumberFieldRootProps {
   showIncrement?: boolean
   decrement?: NumberFieldDecrementProps
   increment?: NumberFieldIncrementProps
-  decrementIcon?: NormalizeIconProps
-  incrementIcon?: NormalizeIconProps
+  decrementIcon?: IconConfig
+  incrementIcon?: IconConfig
   ui?: NumberFieldUI
 }
 

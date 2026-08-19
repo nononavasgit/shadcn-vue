@@ -9,7 +9,7 @@ import type {
   StepperTitleProps as RekaStepperTitleProps,
   StepperTriggerProps as RekaStepperTriggerProps,
 } from 'reka-ui'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Stepper } from './Stepper.vue'
 
@@ -88,7 +88,7 @@ export interface StepperStep extends StepperItemProps {
   key?: string | number
   label?: string
   description?: string
-  icon?: NormalizeIconProps
+  icon?: IconConfig
   content?: string
   trigger?: StepperTriggerProps
   indicator?: StepperIndicatorProps

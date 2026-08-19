@@ -2,12 +2,7 @@ import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import {
-  Button,
-  createButtonContext,
-  type ButtonContext,
-  type ButtonProps,
-} from '@/components/ui/Button'
+import { Button, type ButtonProps } from '@/components/ui/Button'
 import { testIconProps, testIconSize } from '../utils/testIconProps'
 
 function mountButton(options: MountingOptions<ButtonProps> & Record<string, unknown> = {}) {
@@ -52,6 +47,18 @@ describe('Button', () => {
         const root = mountButton({ props: { variant: input } }).get('[data-test-button-root]')
 
         expect(root.classes()).toEqual(expect.arrayContaining(expected))
+      })
+    })
+
+    describe('raised', () => {
+      it.each([
+        { input: true, expected: true },
+        { input: false, expected: false },
+        { input: undefined, expected: false },
+      ])('renders raised=$input as shadow=$expected', ({ input, expected }) => {
+        const root = mountButton({ props: { raised: input } }).get('[data-test-button-root]')
+
+        expect(root.classes().includes('shadow-sm')).toBe(expected)
       })
     })
 
@@ -102,7 +109,7 @@ describe('Button', () => {
       })
 
       it('hides the leading icon while loading', () => {
-        const button = mountButton({ props: { icon: 'save', loading: true } })
+        const button = mountButton({ props: { icon: { name: 'save' }, loading: true } })
 
         expect(button.find('[data-test-button-icon]').exists()).toBe(false)
         expect(button.find('[data-test-button-loading-icon]').exists()).toBe(true)
@@ -111,7 +118,7 @@ describe('Button', () => {
       testIconSize({
         text: 'inherits Button size to icon',
         id: '[data-test-button-icon]',
-        mount: (size) => mountButton({ props: { size, icon: 'save' } }),
+        mount: (size) => mountButton({ props: { size, icon: { name: 'save' } } }),
       })
 
       it('prioritizes an explicit icon size', () => {
@@ -131,7 +138,9 @@ describe('Button', () => {
       })
 
       it('keeps the trailing icon visible while loading', () => {
-        const button = mountButton({ props: { trailingIcon: 'chevronRight', loading: true } })
+        const button = mountButton({
+          props: { trailingIcon: { name: 'chevronRight' }, loading: true },
+        })
 
         expect(button.find('[data-test-button-trailing-icon]').exists()).toBe(true)
         expect(button.find('[data-test-button-loading-icon]').exists()).toBe(true)
@@ -140,7 +149,7 @@ describe('Button', () => {
       testIconSize({
         text: 'inherits Button size to trailing icon',
         id: '[data-test-button-trailing-icon]',
-        mount: (size) => mountButton({ props: { size, trailingIcon: 'chevronRight' } }),
+        mount: (size) => mountButton({ props: { size, trailingIcon: { name: 'chevronRight' } } }),
       })
 
       it('prioritizes an explicit trailing icon size', () => {
@@ -215,18 +224,6 @@ describe('Button', () => {
     })
   })
 
-  describe('context contract', () => {
-    it.each([
-      { input: undefined, expected: false },
-      { input: false, expected: false },
-      { input: true, expected: true },
-    ])('creates loading=$input context', ({ input, expected }) => {
-      expect(createButtonContext({ loading: input })).toEqual({
-        loading: expected,
-      } satisfies ButtonContext)
-    })
-  })
-
   describe('slots', () => {
     it('renders a custom loading slot instead of the spinner', () => {
       const button = mountButton({
@@ -252,7 +249,7 @@ describe('Button', () => {
 
     it('slots replace their icon fallbacks', () => {
       const button = mountButton({
-        props: { icon: 'save', trailingIcon: 'chevronRight' },
+        props: { icon: { name: 'save' }, trailingIcon: { name: 'chevronRight' } },
         slots: {
           leading: () => h('span', 'Leading'),
           trailing: () => h('span', 'Trailing'),

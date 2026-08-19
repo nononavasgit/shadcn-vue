@@ -17,7 +17,7 @@ const items = [
     value: 'first',
     label: 'First',
     description: 'First description',
-    icon: 'info',
+    icon: { name: 'info' },
     unmountOnHide: true,
   },
   {
@@ -131,12 +131,12 @@ describe('Accordion', () => {
       it.each([
         {
           name: 'configured open icon',
-          input: { value: 'item', open: 'check' as const, close: 'x' as const },
+          input: { value: 'item', open: { name: 'check' }, close: { name: 'x' } },
           expected: 'check',
         },
         {
           name: 'configured closed icon',
-          input: { value: undefined, open: 'check' as const, close: 'x' as const },
+          input: { value: undefined, open: { name: 'check' }, close: { name: 'x' } },
           expected: 'x',
         },
         {
@@ -169,8 +169,8 @@ describe('Accordion', () => {
           props: {
             value: 'first',
             items: [{ value: 'first' }, { value: 'second' }],
-            iconDropDownOpen: 'check',
-            iconDropDownClose: 'x',
+            iconDropDownOpen: { name: 'check' },
+            iconDropDownClose: { name: 'x' },
           },
         })
 
@@ -319,7 +319,7 @@ describe('Accordion', () => {
 
       describe('icon', () => {
         it.each([
-          { input: 'info' as const, expected: 'info' },
+          { input: { name: 'info' as const }, expected: 'info' },
           { input: { name: 'error' as const, color: 'green' }, expected: 'error' },
           { input: undefined, expected: undefined },
         ])('renders item icon=$input as $expected', ({ input, expected }) => {

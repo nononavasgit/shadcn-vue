@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { ToggleProps as RekaToggleProps } from 'reka-ui'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Toggle } from './Toggle.vue'
 
@@ -128,8 +128,8 @@ export type ToggleState = 'on' | 'off'
 export interface ToggleProps extends Pick<RekaToggleProps, 'disabled'> {
   value?: ToggleValue
   label?: string
-  icon?: NormalizeIconProps
-  trailingIcon?: NormalizeIconProps
+  icon?: IconConfig
+  trailingIcon?: IconConfig
   variant?: ToggleVariants['variant']
   severity?: ToggleVariants['severity']
   size?: ToggleVariants['size']

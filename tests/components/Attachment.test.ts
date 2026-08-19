@@ -73,7 +73,7 @@ describe('Attachment', () => {
         const attachment = mountAttachment({
           props: {
             size: input,
-            icon: 'fileText',
+            icon: { name: 'fileText' },
             label: 'report.pdf',
             description: '2.4 MB',
           },
@@ -126,7 +126,7 @@ describe('Attachment', () => {
         { attachmentSize: 'xs' as const, expected: 'xs' },
       ])('maps Attachment size=$attachmentSize to icon size', ({ attachmentSize, expected }) => {
         const icon = mountAttachment({
-          props: { size: attachmentSize, icon: 'fileText' },
+          props: { size: attachmentSize, icon: { name: 'fileText' } },
         }).getComponent('[data-test-attachment-icon]')
 
         expect(icon.props('size')).toBe(expected)
@@ -210,7 +210,7 @@ describe('Attachment', () => {
   describe('slots', () => {
     it('does not use the media slot for icon', () => {
       const attachment = mountAttachment({
-        props: { icon: 'fileText' },
+        props: { icon: { name: 'fileText' } },
         slots: { media: () => h('span', { 'data-test-image-slot': '' }, 'Image') },
       })
 

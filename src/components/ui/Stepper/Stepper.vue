@@ -10,7 +10,6 @@ import {
   StepperTrigger,
 } from 'reka-ui'
 import { Icon } from '@/components/ui/Icon'
-import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
@@ -330,7 +329,7 @@ function getKey(context: StepperItemContext) {
 }
 
 function getIconProps(context: StepperItemContext) {
-  return useNormalizeIconProps(context.item.icon)
+  return context.item.icon
 }
 
 const stepContexts = computed(() => props.steps.map(getStepContext))

@@ -17,7 +17,7 @@ import { Link } from '@/components/ui/Link'
           <h3 class="font-medium">Enlace interno</h3>
           <p class="text-sm text-muted-foreground">Navega usando Vue Router.</p>
         </div>
-        <Link to="/button" label="Ir a Button" icon="arrowRight" />
+        <Link to="/button" label="Ir a Button" :icon="{ name: 'chevronRight' }" />
       </div>
 
       <div class="grid gap-3 rounded-lg border p-4">
@@ -25,7 +25,11 @@ import { Link } from '@/components/ui/Link'
           <h3 class="font-medium">Enlace externo</h3>
           <p class="text-sm text-muted-foreground">Las URLs externas se renderizan como anclas.</p>
         </div>
-        <Link to="https://example.com" label="Abrir example.com" trailing-icon="externalLink" />
+        <Link
+          to="https://example.com"
+          label="Abrir example.com"
+          :trailing-icon="{ name: 'chevronRight' }"
+        />
       </div>
 
       <div class="grid gap-3 rounded-lg border p-4">

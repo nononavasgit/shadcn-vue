@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from 'vue'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Loading } from './Loading.vue'
 
@@ -15,7 +15,7 @@ export interface LoadingUI {
 // Props
 export interface LoadingProps {
   loading?: boolean
-  icon?: NormalizeIconProps
+  icon?: IconConfig
   ui?: LoadingUI
 }
 

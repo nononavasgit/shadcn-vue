@@ -8,7 +8,7 @@ import {
   type AccordionType,
   type AccordionValue,
 } from '@/components/ui/Accordion'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 import { ICONS } from '@/components/ui/Icon/icons'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
@@ -29,19 +29,19 @@ const defaultItems: AccordionItem[] = [
     value: 'first',
     label: 'What is this component for?',
     description: 'Accordion organizes related content into expandable sections.',
-    icon: 'info',
+    icon: { name: 'info' },
   },
   {
     value: 'second',
     label: 'Can I open multiple sections?',
     description: 'Use the multiple type to keep more than one section open.',
-    icon: 'search',
+    icon: { name: 'search' },
   },
   {
     value: 'third',
     label: 'Can an item be disabled?',
     description: 'Each item can be disabled independently from the root.',
-    icon: 'check',
+    icon: { name: 'check' },
     disabled: true,
   },
 ]
@@ -59,14 +59,14 @@ function parseItems(value: string): AccordionItem[] {
   return defaultItems
 }
 
-function parseIconProps(value: string): NormalizeIconProps | undefined {
+function parseIconProps(value: string): IconConfig | undefined {
   if (!value.trim()) return undefined
 
   try {
     const parsed: unknown = JSON.parse(value)
 
     if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return parsed as NormalizeIconProps
+      return parsed as IconConfig
     }
   } catch {
     return undefined
@@ -87,9 +87,11 @@ const playgroundProps = computed<AccordionProps>(() => ({
   items: parseItems(itemsInput.value),
   value: value.value,
   iconDropDownOpen:
-    parseIconProps(iconDropDownOpenObjectInput.value) ?? (iconDropDownOpen.value || undefined),
+    parseIconProps(iconDropDownOpenObjectInput.value) ??
+    (iconDropDownOpen.value ? { name: iconDropDownOpen.value } : undefined),
   iconDropDownClose:
-    parseIconProps(iconDropDownCloseObjectInput.value) ?? (iconDropDownClose.value || undefined),
+    parseIconProps(iconDropDownCloseObjectInput.value) ??
+    (iconDropDownClose.value ? { name: iconDropDownClose.value } : undefined),
 }))
 
 const typeRows: ApiTableRow[] = [
@@ -105,7 +107,7 @@ const typeRows: ApiTableRow[] = [
   },
   {
     name: 'AccordionItem',
-    type: '{ value: string; label?: string; description?: string; icon?: NormalizeIconProps; disabled?: boolean; unmountOnHide?: boolean }',
+    type: '{ value: string; label?: string; description?: string; icon?: IconConfig; disabled?: boolean; unmountOnHide?: boolean }',
     description: 'Configuracion de cada item del acordeon.',
   },
   {
@@ -164,14 +166,14 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'iconDropDownOpen',
-    type: 'NormalizeIconProps',
+    type: 'IconConfig',
     typeLink: '/icon',
     default: "'chevronUp'",
     description: 'Icono del item abierto.',
   },
   {
     name: 'iconDropDownClose',
-    type: 'NormalizeIconProps',
+    type: 'IconConfig',
     typeLink: '/icon',
     default: "'chevronDown'",
     description: 'Icono del item cerrado.',

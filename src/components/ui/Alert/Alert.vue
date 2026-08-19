@@ -2,7 +2,6 @@
 import { computed, ref, useAttrs, useSlots } from 'vue'
 import { Button } from '@/components/ui/Button'
 import { Icon } from '@/components/ui/Icon'
-import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
@@ -64,7 +63,7 @@ const rootProps = computed(() => {
   }
 })
 
-const iconProps = computed(() => useNormalizeIconProps(props.icon))
+const iconProps = computed(() => props.icon)
 
 const labelProps = computed(() => {
   const ui = useUi(props.ui?.label, alertContext.value)
@@ -98,7 +97,7 @@ const closeButtonProps = computed(() => {
     variant: button?.variant ?? props.variant,
     severity: button?.severity ?? props.severity,
     color: button?.color ?? props.color,
-    icon: button?.icon ?? ('x' as const),
+    icon: button?.icon ?? { name: 'x' },
   }
 })
 

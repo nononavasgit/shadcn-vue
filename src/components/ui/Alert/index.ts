@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
 import type { NormalizeButtonProps } from '@/components/ui/Button'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Alert } from './Alert.vue'
 
@@ -49,7 +49,7 @@ export type AlertFn<T> = (context: AlertContext) => T
 export interface AlertProps {
   label?: string
   description?: string
-  icon?: NormalizeIconProps
+  icon?: IconConfig
   closeButton?: NormalizeButtonProps
   variant?: AlertVariant
   severity?: AlertSeverity

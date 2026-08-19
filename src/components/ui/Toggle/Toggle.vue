@@ -2,7 +2,6 @@
 import { computed, useAttrs, watch } from 'vue'
 import { Toggle } from 'reka-ui'
 import { Icon } from '@/components/ui/Icon'
-import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import {
@@ -62,12 +61,12 @@ const rootProps = computed(() => {
 })
 
 const iconProps = computed(() => {
-  const icon = useNormalizeIconProps(props.icon)
+  const icon = props.icon
 
   return { ...icon, size: icon?.size ?? props.size }
 })
 const trailingIconProps = computed(() => {
-  const icon = useNormalizeIconProps(props.trailingIcon)
+  const icon = props.trailingIcon
 
   return { ...icon, size: icon?.size ?? props.size }
 })

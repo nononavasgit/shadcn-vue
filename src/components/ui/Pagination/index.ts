@@ -4,7 +4,7 @@ import type {
   PaginationRootProps as RekaPaginationRootProps,
 } from 'reka-ui'
 import type { ButtonProps } from '@/components/ui/Button'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Pagination } from './Pagination.vue'
 
@@ -25,11 +25,11 @@ export interface PaginationProps extends PaginationRootProps {
   severity?: ButtonProps['severity']
   activeColor?: ButtonProps['color']
   activeVariant?: ButtonProps['variant']
-  firstIcon?: NormalizeIconProps
-  previousIcon?: NormalizeIconProps
-  nextIcon?: NormalizeIconProps
-  lastIcon?: NormalizeIconProps
-  ellipsisIcon?: NormalizeIconProps
+  firstIcon?: IconConfig
+  previousIcon?: IconConfig
+  nextIcon?: IconConfig
+  lastIcon?: IconConfig
+  ellipsisIcon?: IconConfig
   ui?: PaginationUI
 }
 

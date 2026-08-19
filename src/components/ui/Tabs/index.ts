@@ -6,7 +6,7 @@ import type {
   TabsRootProps as RekaTabsRootProps,
   TabsTriggerProps as RekaTabsTriggerProps,
 } from 'reka-ui'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Tabs } from './Tabs.vue'
 
@@ -90,8 +90,8 @@ export interface TabItem {
   value: TabsValue
   label?: string
   content?: string
-  icon?: NormalizeIconProps
-  trailingIcon?: NormalizeIconProps
+  icon?: IconConfig
+  trailingIcon?: IconConfig
   disabled?: boolean
   forceMount?: boolean
   trigger?: TabsTriggerProps

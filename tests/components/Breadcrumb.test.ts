@@ -18,7 +18,7 @@ import { testLinkProps } from '../utils/testLinkProps'
 const items: BreadcrumbItem[] = [
   { value: 'home', link: { label: 'Home', to: '/' } },
   { value: 'library', link: { label: 'Library', to: '/library' } },
-  { value: 'current', link: { label: 'Current', icon: 'check' } },
+  { value: 'current', link: { label: 'Current', icon: { name: 'check' } } },
 ]
 
 function createTestRouter() {

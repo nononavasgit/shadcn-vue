@@ -11,7 +11,6 @@ import {
   PaginationRoot,
 } from 'reka-ui'
 import { Button } from '@/components/ui/Button'
-import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -41,11 +40,11 @@ const props = withDefaults(defineProps<PaginationProps>(), {
   severity: 'primary',
   activeColor: undefined,
   activeVariant: 'solid',
-  firstIcon: 'chevronsLeft',
-  previousIcon: 'chevronLeft',
-  nextIcon: 'chevronRight',
-  lastIcon: 'chevronsRight',
-  ellipsisIcon: 'moreHorizontal',
+  firstIcon: { name: 'chevronsLeft' },
+  previousIcon: { name: 'chevronLeft' },
+  nextIcon: { name: 'chevronRight' },
+  lastIcon: { name: 'chevronsRight' },
+  ellipsisIcon: { name: 'moreHorizontal' },
   ui: undefined,
 })
 const emit = defineEmits<PaginationEmits>()
@@ -156,11 +155,11 @@ const lastProps = computed(() => {
   }
 })
 
-const firstIconProps = computed(() => useNormalizeIconProps(props.firstIcon))
-const previousIconProps = computed(() => useNormalizeIconProps(props.previousIcon))
-const nextIconProps = computed(() => useNormalizeIconProps(props.nextIcon))
-const lastIconProps = computed(() => useNormalizeIconProps(props.lastIcon))
-const ellipsisIconProps = computed(() => useNormalizeIconProps(props.ellipsisIcon))
+const firstIconProps = computed(() => props.firstIcon)
+const previousIconProps = computed(() => props.previousIcon)
+const nextIconProps = computed(() => props.nextIcon)
+const lastIconProps = computed(() => props.lastIcon)
+const ellipsisIconProps = computed(() => props.ellipsisIcon)
 
 function getItemContexts(items: PaginationGeneratedItem[]): PaginationItemContext[] {
   return items.map((item, index) => ({

@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 
 import { AlertDialog, type AlertDialogProps } from '@/components/ui/AlertDialog'
 import type { NormalizeButtonProps } from '@/components/ui/Button'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 import { ICONS } from '@/components/ui/Icon/icons'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
@@ -39,14 +39,14 @@ function parseButtonProps(value: string): NormalizeButtonProps | undefined {
   return undefined
 }
 
-function parseIconProps(value: string): NormalizeIconProps | undefined {
+function parseIconProps(value: string): IconConfig | undefined {
   if (!value.trim()) return undefined
 
   try {
     const parsed: unknown = JSON.parse(value)
 
     if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return parsed as NormalizeIconProps
+      return parsed as IconConfig
     }
   } catch {
     return undefined
@@ -58,7 +58,7 @@ function parseIconProps(value: string): NormalizeIconProps | undefined {
 const playgroundProps = computed<AlertDialogProps>(() => ({
   label: label.value || undefined,
   description: description.value || undefined,
-  icon: parseIconProps(iconObjectInput.value) ?? (icon.value || undefined),
+  icon: parseIconProps(iconObjectInput.value) ?? (icon.value ? { name: icon.value } : undefined),
   actionButton: parseButtonProps(actionButtonInput.value),
   cancelButton: parseButtonProps(cancelButtonInput.value),
   unmountOnHide: unmountOnHide.value,
@@ -100,7 +100,7 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'icon',
-    type: 'NormalizeIconProps',
+    type: 'IconConfig',
     typeLink: '/icon',
     default: 'undefined',
     description: 'Icono mostrado junto al titulo.',

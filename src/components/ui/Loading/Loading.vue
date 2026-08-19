@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { Icon } from '@/components/ui/Icon'
-import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
@@ -39,8 +38,8 @@ const loadingProps = computed(() => {
 })
 
 const iconProps = computed(() => ({
-  ...useNormalizeIconProps(props.icon),
-  class: 'animate-spin',
+  ...props.icon,
+  class: cn(props.icon?.class, 'animate-spin'),
 }))
 
 const contentProps = computed(() => {

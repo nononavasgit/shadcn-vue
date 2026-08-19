@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from 'vue'
 import type { ListboxRootProps as RekaListboxRootProps } from 'reka-ui'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 import type { NormalizeInputProps } from '@/components/ui/Input'
 
 export { default as Listbox } from './Listbox.vue'
@@ -26,7 +26,7 @@ export interface ListboxItem {
   id?: string | number
   value: ListboxValue
   label: string
-  icon?: NormalizeIconProps
+  icon?: IconConfig
   disabled?: boolean
 }
 

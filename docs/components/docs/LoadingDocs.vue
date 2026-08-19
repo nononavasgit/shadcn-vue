@@ -12,7 +12,7 @@ const content = ref('Contenido listo')
 
 const playgroundProps = computed<LoadingProps>(() => ({
   loading: loading.value,
-  icon: icon.value || undefined,
+  icon: icon.value ? { name: icon.value } : undefined,
 }))
 
 const typeRows: ApiTableRow[] = [
@@ -37,9 +37,9 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'icon',
-    type: 'NormalizeIconProps',
+    type: 'IconConfig',
     typeLink: '/icon',
-    default: `'${loadingDefaults.icon}'`,
+    default: `{ name: '${loadingDefaults.icon.name}' }`,
     description: 'Icono mostrado durante la carga.',
   },
   {

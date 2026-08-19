@@ -7,7 +7,6 @@ import {
   NumberFieldRoot,
 } from 'reka-ui'
 import { Icon } from '@/components/ui/Icon'
-import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -37,8 +36,8 @@ const props = withDefaults(defineProps<NumberFieldProps>(), {
   showIncrement: true,
   decrement: undefined,
   increment: undefined,
-  decrementIcon: 'minus',
-  incrementIcon: 'plus',
+  decrementIcon: { name: 'minus' },
+  incrementIcon: { name: 'plus' },
   ui: undefined,
 })
 const emit = defineEmits<{ valueChange: [value: NumberFieldValue] }>()
@@ -159,8 +158,8 @@ const incrementProps = computed(() => {
   }
 })
 
-const decrementIconProps = computed(() => ({ ...useNormalizeIconProps(props.decrementIcon) }))
-const incrementIconProps = computed(() => ({ ...useNormalizeIconProps(props.incrementIcon) }))
+const decrementIconProps = computed(() => ({ ...props.decrementIcon }))
+const incrementIconProps = computed(() => ({ ...props.incrementIcon }))
 </script>
 
 <template>

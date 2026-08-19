@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs, watch } from 'vue'
 import { Icon } from '@/components/ui/Icon'
-import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useColor } from '@/composables'
 import { cn } from '@/lib/utils'
 import type {
@@ -216,7 +215,7 @@ function getKeyItem(context: TimelineItemContext) {
 const itemContexts = computed(() => timelineItems.value.map(getItemContext))
 
 function getIconProps(context: TimelineItemContext) {
-  return useNormalizeIconProps(context.item?.icon)
+  return context.item?.icon
 }
 </script>
 

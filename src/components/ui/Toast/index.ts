@@ -6,7 +6,7 @@ import type {
 } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 import type { NormalizeButtonProps } from '@/components/ui/Button'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Toast } from './Toast.vue'
 
@@ -28,7 +28,7 @@ export interface ToastProps extends ToastRootProps {
   open?: boolean
   label?: string
   description?: string
-  icon?: NormalizeIconProps
+  icon?: IconConfig
   actionButton?: NormalizeButtonProps
   closeButton?: NormalizeButtonProps
   closable?: boolean

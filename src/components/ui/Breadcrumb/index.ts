@@ -1,5 +1,6 @@
 import type { HTMLAttributes } from 'vue'
 import type { LinkProps } from '@/components/ui/Link'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Breadcrumb } from './Breadcrumb.vue'
 
@@ -13,8 +14,8 @@ export interface BreadcrumbItem {
 export interface BreadcrumbProps {
   items?: BreadcrumbItem[]
   ellipsisIndex?: [start: number, end: number]
-  ellipsisIcon?: NormalizeIconProps
-  separatorIcon?: NormalizeIconProps
+  ellipsisIcon?: IconConfig
+  separatorIcon?: IconConfig
   ui?: BreadcrumbUI
 }
 

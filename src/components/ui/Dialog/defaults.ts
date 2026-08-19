@@ -5,7 +5,7 @@ export const dialogDefaults = {
   label: undefined,
   description: undefined,
   icon: undefined,
-  closeIcon: 'x',
+  closeIcon: { name: 'x' },
   showCloseButton: true,
   ui: undefined,
 }

@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 import type { PrimitiveProps } from 'reka-ui'
 import type { EmitsAsProps } from '@/types/emits'
 
@@ -36,6 +36,10 @@ export const buttonVariants = cva('', {
     },
     square: {
       true: '',
+      false: '',
+    },
+    raised: {
+      true: 'shadow-sm',
       false: '',
     },
     color: {
@@ -248,6 +252,7 @@ export const buttonVariants = cva('', {
     size: 'md',
     rounded: false,
     square: false,
+    raised: false,
     color: false,
   },
 })
@@ -266,21 +271,11 @@ export interface ButtonProps extends Pick<PrimitiveProps, 'as' | 'asChild'> {
   size?: ButtonSize
   rounded?: ButtonVariants['rounded'] | boolean
   square?: ButtonVariants['square'] | boolean
+  raised?: ButtonVariants['raised'] | boolean
   loading?: boolean
   color?: string
-  icon?: NormalizeIconProps
-  trailingIcon?: NormalizeIconProps
-}
-
-// Context
-export interface ButtonContext {
-  loading: boolean
-}
-
-export function createButtonContext(props: ButtonProps): ButtonContext {
-  return {
-    loading: props.loading ?? false,
-  }
+  icon?: IconConfig
+  trailingIcon?: IconConfig
 }
 
 // Emits
@@ -290,10 +285,10 @@ export interface ButtonEmits {
 
 // Slots
 export interface ButtonSlots {
-  default?(props: ButtonContext): unknown
-  leading?(props: ButtonContext): unknown
-  loading?(props: ButtonContext): unknown
-  trailing?(props: ButtonContext): unknown
+  default?(): unknown
+  leading?(): unknown
+  loading?(): unknown
+  trailing?(): unknown
 }
 
 export type NormalizeButtonProps = ButtonProps & EmitsAsProps<ButtonEmits> & HTMLAttributes

@@ -119,8 +119,8 @@ describe('Badge', () => {
         const badge = mountBadge({
           props: {
             size: input,
-            icon: 'check',
-            trailingIcon: 'chevronRight',
+            icon: { name: 'check' },
+            trailingIcon: { name: 'chevronRight' },
           },
         })
 
@@ -173,7 +173,7 @@ describe('Badge', () => {
 
     it.each(slotCases)('renders the $input slot', ({ input, expected }) => {
       const badge = mountBadge({
-        props: { label: 'Label', icon: 'check', trailingIcon: 'chevronRight' },
+        props: { label: 'Label', icon: { name: 'check' }, trailingIcon: { name: 'chevronRight' } },
         slots: {
           [input]: () => h('span', { 'data-test-badge-slot': expected }, `Slot ${expected}`),
         },
@@ -184,7 +184,7 @@ describe('Badge', () => {
 
     it('leading and trailing slots replace their fallback icons', () => {
       const badge = mountBadge({
-        props: { icon: 'check', trailingIcon: 'chevronRight' },
+        props: { icon: { name: 'check' }, trailingIcon: { name: 'chevronRight' } },
         slots: {
           leading: () => h('span', 'Leading'),
           trailing: () => h('span', 'Trailing'),

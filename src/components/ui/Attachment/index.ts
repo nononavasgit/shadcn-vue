@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Attachment } from './Attachment.vue'
 
@@ -125,7 +125,7 @@ export interface AttachmentUI {
 export interface AttachmentProps {
   label?: AttachmentLabel
   description?: AttachmentDescription
-  icon?: NormalizeIconProps
+  icon?: IconConfig
   orientation?: AttachmentOrientation
   size?: AttachmentSize
   state?: AttachmentState

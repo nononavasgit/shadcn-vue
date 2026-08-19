@@ -8,7 +8,6 @@ import {
   AccordionTrigger,
 } from 'reka-ui'
 import { Icon } from '@/components/ui/Icon'
-import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type {
@@ -28,8 +27,8 @@ const props = withDefaults(defineProps<AccordionProps>(), {
   disabled: false,
   unmountOnHide: true,
   items: () => [],
-  iconDropDownOpen: 'chevronUp',
-  iconDropDownClose: 'chevronDown',
+  iconDropDownOpen: { name: 'chevronUp' },
+  iconDropDownClose: { name: 'chevronDown' },
   ui: undefined,
 })
 defineSlots<AccordionSlots>()
@@ -116,11 +115,11 @@ function getSlots(context: AccordionItemContext) {
 const itemContexts = computed(() => props.items.map(getItemContext))
 
 function getIconProps(context: AccordionItemContext) {
-  return useNormalizeIconProps(context.item.icon)
+  return context.item.icon
 }
 
 function getIconDropdownProps(context: AccordionItemContext) {
-  return useNormalizeIconProps(context.open ? props.iconDropDownOpen : props.iconDropDownClose)
+  return context.open ? props.iconDropDownOpen : props.iconDropDownClose
 }
 </script>
 

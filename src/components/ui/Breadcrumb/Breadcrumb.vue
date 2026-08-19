@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs, useSlots } from 'vue'
 import { Icon } from '@/components/ui/Icon'
-import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { Link } from '@/components/ui/Link'
 import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
@@ -77,8 +76,8 @@ const separatorContainerProps = computed(() => {
   return { role: 'presentation', 'aria-hidden': true, ...ui }
 })
 
-const ellipsisIconProps = computed(() => useNormalizeIconProps(props.ellipsisIcon))
-const separatorIconProps = computed(() => useNormalizeIconProps(props.separatorIcon))
+const ellipsisIconProps = computed(() => props.ellipsisIcon)
+const separatorIconProps = computed(() => props.separatorIcon)
 
 function getItemContext(item: BreadcrumbItem, index: number): BreadcrumbItemContext | undefined {
   const [start, end] = ellipsisRange.value

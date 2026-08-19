@@ -4,7 +4,7 @@ import type {
   ToggleGroupItemProps as RekaToggleGroupItemProps,
   ToggleGroupRootProps as RekaToggleGroupRootProps,
 } from 'reka-ui'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 import type { ToggleVariants } from '@/components/ui/Toggle'
 import type { EmitsAsProps } from '@/types/emits'
 
@@ -59,8 +59,8 @@ export type ToggleGroupSize = NonNullable<ToggleVariants['size']>
 // Item
 export interface ToggleGroupItem extends ToggleGroupItemProps {
   label?: string
-  icon?: NormalizeIconProps
-  trailingIcon?: NormalizeIconProps
+  icon?: IconConfig
+  trailingIcon?: IconConfig
 }
 
 // Props

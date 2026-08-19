@@ -137,7 +137,7 @@ const alertProps = computed(() => {
     label: t('fileUploadLimitTitle'),
     severity: 'error' as const,
     variant: 'soft' as const,
-    icon: 'error' as const,
+    icon: { name: 'error' as const },
     closable: true,
   }
 })

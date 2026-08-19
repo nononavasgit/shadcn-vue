@@ -33,4 +33,3 @@ export interface IconProps {
 // Normalize
 
 export type IconConfig = IconProps & HTMLAttributes
-export type NormalizeIconProps = IconName | IconConfig

@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 
 import { Avatar, type AvatarProps, type AvatarShape, type AvatarSize } from '@/components/ui/Avatar'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 import { ICONS } from '@/components/ui/Icon/icons'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
@@ -17,14 +17,14 @@ const size = ref<AvatarSize>('md')
 const shape = ref<AvatarShape>('rounded')
 const delayMsInput = ref('')
 
-function parseIconProps(value: string): NormalizeIconProps | undefined {
+function parseIconProps(value: string): IconConfig | undefined {
   if (!value.trim()) return undefined
 
   try {
     const parsed: unknown = JSON.parse(value)
 
     if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return parsed as NormalizeIconProps
+      return parsed as IconConfig
     }
   } catch {
     return undefined
@@ -36,7 +36,7 @@ function parseIconProps(value: string): NormalizeIconProps | undefined {
 const playgroundProps = computed<AvatarProps>(() => ({
   src: src.value || undefined,
   label: label.value || undefined,
-  icon: parseIconProps(iconObjectInput.value) ?? (icon.value || undefined),
+  icon: parseIconProps(iconObjectInput.value) ?? (icon.value ? { name: icon.value } : undefined),
   size: size.value,
   shape: shape.value,
   delayMs: delayMsInput.value ? Number(delayMsInput.value) : undefined,
@@ -54,8 +54,8 @@ const typeRows: ApiTableRow[] = [
     description: 'Forma del contenedor del avatar.',
   },
   {
-    name: 'NormalizeIconProps',
-    type: 'IconName | IconConfig',
+    name: 'IconConfig',
+    type: 'IconProps & HTMLAttributes',
     typeLink: '/icon',
     description: 'Nombre del icono o configuracion completa del icono.',
   },
@@ -88,7 +88,7 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'icon',
-    type: 'NormalizeIconProps',
+    type: 'IconConfig',
     typeLink: '/icon',
     default: 'undefined',
     description: 'Icono mostrado cuando no hay imagen.',

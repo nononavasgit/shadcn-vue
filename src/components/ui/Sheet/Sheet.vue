@@ -11,7 +11,6 @@ import {
   DialogTrigger,
 } from 'reka-ui'
 import { Icon } from '@/components/ui/Icon'
-import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -30,7 +29,7 @@ const props = withDefaults(defineProps<SheetProps>(), {
   label: undefined,
   description: undefined,
   icon: undefined,
-  closeIcon: 'x',
+  closeIcon: { name: 'x' },
   showCloseButton: true,
   trigger: undefined,
   content: undefined,
@@ -204,8 +203,8 @@ const closeProps = computed(() => {
   }
 })
 
-const icon = computed(() => useNormalizeIconProps(props.icon))
-const closeIcon = computed(() => useNormalizeIconProps(props.closeIcon))
+const icon = computed(() => props.icon)
+const closeIcon = computed(() => props.closeIcon)
 </script>
 
 <template>

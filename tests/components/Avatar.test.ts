@@ -126,12 +126,12 @@ describe('Avatar', () => {
     it.each([
       { input: { src: undefined, label: undefined, icon: undefined }, expected: 'fallback' },
       { input: { src: undefined, label: 'AL', icon: undefined }, expected: 'fallback' },
-      { input: { src: undefined, label: undefined, icon: 'user' }, expected: 'fallback' },
-      { input: { src: undefined, label: 'AL', icon: 'user' }, expected: 'fallback' },
+      { input: { src: undefined, label: undefined, icon: { name: 'user' } }, expected: 'fallback' },
+      { input: { src: undefined, label: 'AL', icon: { name: 'user' } }, expected: 'fallback' },
       { input: { src: 'avatar.png', label: undefined, icon: undefined }, expected: 'image' },
       { input: { src: 'avatar.png', label: 'AL', icon: undefined }, expected: 'image' },
-      { input: { src: 'avatar.png', label: undefined, icon: 'user' }, expected: 'image' },
-      { input: { src: 'avatar.png', label: 'AL', icon: 'user' }, expected: 'image' },
+      { input: { src: 'avatar.png', label: undefined, icon: { name: 'user' } }, expected: 'image' },
+      { input: { src: 'avatar.png', label: 'AL', icon: { name: 'user' } }, expected: 'image' },
     ] as const)('forwards attrs to Avatar$expected for $input', ({ input, expected }) => {
       const avatar = mountAvatar({
         props: input,

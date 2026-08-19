@@ -5,7 +5,7 @@ import type {
 } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
 import type { NormalizeButtonProps } from '@/components/ui/Button'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as AlertDialog } from './AlertDialog.vue'
 
@@ -23,7 +23,7 @@ export interface AlertDialogProps extends AlertDialogRootProps, AlertDialogConte
   open?: boolean
   label?: string
   description?: string
-  icon?: NormalizeIconProps
+  icon?: IconConfig
   actionButton?: NormalizeButtonProps
   cancelButton?: NormalizeButtonProps
   ui?: AlertDialogUI

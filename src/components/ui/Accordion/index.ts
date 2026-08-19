@@ -3,7 +3,7 @@ import type {
   AccordionRootProps as RekaAccordionRootProps,
 } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
-import type { NormalizeIconProps } from '@/components/ui/Icon'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Accordion } from './Accordion.vue'
 
@@ -22,15 +22,15 @@ export type AccordionItemProps = Pick<
 export interface AccordionItem extends AccordionItemProps {
   label?: string
   description?: string
-  icon?: NormalizeIconProps
+  icon?: IconConfig
 }
 
 // Props
 export interface AccordionProps extends AccordionRootProps {
   value?: AccordionValue
   items?: AccordionItem[]
-  iconDropDownOpen?: NormalizeIconProps
-  iconDropDownClose?: NormalizeIconProps
+  iconDropDownOpen?: IconConfig
+  iconDropDownClose?: IconConfig
   ui?: AccordionUI
 }
 

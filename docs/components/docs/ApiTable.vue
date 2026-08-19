@@ -15,9 +15,13 @@ withDefaults(
     title: string
     rows: ApiTableRow[]
     emptyText?: string
+    typeLabel?: string
+    showDefault?: boolean
   }>(),
   {
     emptyText: 'No hay elementos definidos.',
+    typeLabel: 'Tipo',
+    showDefault: true,
   },
 )
 </script>
@@ -33,8 +37,8 @@ withDefaults(
         <thead class="bg-muted/40 text-xs tracking-wide text-muted-foreground uppercase">
           <tr>
             <th class="px-4 py-3 font-medium">Nombre</th>
-            <th class="px-4 py-3 font-medium">Tipo</th>
-            <th class="px-4 py-3 font-medium">Por defecto</th>
+            <th class="px-4 py-3 font-medium">{{ typeLabel }}</th>
+            <th v-if="showDefault" class="px-4 py-3 font-medium">Por defecto</th>
             <th class="px-4 py-3 font-medium">Descripcion</th>
           </tr>
         </thead>
@@ -54,7 +58,7 @@ withDefaults(
               </RouterLink>
               <code v-else class="rounded bg-muted px-1.5 py-0.5 text-xs">{{ row.type }}</code>
             </td>
-            <td class="px-4 py-3 text-muted-foreground">
+            <td v-if="showDefault" class="px-4 py-3 text-muted-foreground">
               <code v-if="row.default" class="text-xs">{{ row.default }}</code>
               <span v-else>-</span>
             </td>
@@ -64,7 +68,7 @@ withDefaults(
 
         <tbody v-else>
           <tr>
-            <td colspan="4" class="px-4 py-6 text-center text-muted-foreground">
+            <td :colspan="showDefault ? 4 : 3" class="px-4 py-6 text-center text-muted-foreground">
               {{ emptyText }}
             </td>
           </tr>

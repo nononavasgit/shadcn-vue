@@ -8,20 +8,16 @@ import {
   type BadgeSize,
   type BadgeVariant,
 } from '@/components/ui/Badge'
-import { ICONS } from '@/components/ui/Icon/icons'
 import type { IconConfig } from '@/components/ui/Icon'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
-const iconNames = Object.keys(ICONS)
 const label = ref('Status')
 const size = ref<BadgeSize>('md')
 const variant = ref<BadgeVariant>('solid')
 const severity = ref<BadgeSeverity>('primary')
 const color = ref('')
-const icon = ref('')
 const iconObjectInput = ref('')
-const trailingIcon = ref('')
 const trailingIconObjectInput = ref('')
 
 function parseIconProps(value: string): IconConfig | undefined {
@@ -46,10 +42,8 @@ const playgroundProps = computed<BadgeProps>(() => ({
   variant: variant.value,
   severity: severity.value,
   color: color.value || undefined,
-  icon: parseIconProps(iconObjectInput.value) ?? (icon.value ? { name: icon.value } : undefined),
-  trailingIcon:
-    parseIconProps(trailingIconObjectInput.value) ??
-    (trailingIcon.value ? { name: trailingIcon.value } : undefined),
+  icon: parseIconProps(iconObjectInput.value),
+  trailingIcon: parseIconProps(trailingIconObjectInput.value),
 }))
 
 const typeRows: ApiTableRow[] = [
@@ -107,20 +101,17 @@ const emitRows: ApiTableRow[] = []
 const slotRows: ApiTableRow[] = [
   {
     name: 'default',
-    type: 'Record<string, never>',
-    default: '-',
+    type: '-',
     description: 'Contenido principal.',
   },
   {
     name: 'leading',
-    type: 'Record<string, never>',
-    default: '-',
+    type: '-',
     description: 'Contenido antes del texto.',
   },
   {
     name: 'trailing',
-    type: 'Record<string, never>',
-    default: '-',
+    type: '-',
     description: 'Contenido despues del texto.',
   },
 ]
@@ -212,17 +203,6 @@ const exposeRows: ApiTableRow[] = []
           </label>
 
           <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">icon</span>
-            <select
-              v-model="icon"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Sin icono</option>
-              <option v-for="name in iconNames" :key="name" :value="name">{{ name }}</option>
-            </select>
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
             <span class="font-medium">icon (objeto)</span>
             <textarea
               v-model="iconObjectInput"
@@ -233,17 +213,6 @@ const exposeRows: ApiTableRow[] = []
 }'
               class="rounded-md border bg-background px-3 py-2 font-mono text-xs outline-none focus:ring-2 focus:ring-ring"
             />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">trailingIcon</span>
-            <select
-              v-model="trailingIcon"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Sin icono</option>
-              <option v-for="name in iconNames" :key="name" :value="name">{{ name }}</option>
-            </select>
           </label>
 
           <label class="grid gap-1.5 text-sm">
@@ -278,7 +247,7 @@ const exposeRows: ApiTableRow[] = []
         :rows="emitRows"
         empty-text="Este componente no emite eventos propios."
       />
-      <ApiTable title="Slots" :rows="slotRows" />
+      <ApiTable title="Slots" :rows="slotRows" type-label="slotProps" :show-default="false" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
     </div>
   </section>

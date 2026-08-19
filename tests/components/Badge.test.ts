@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
 import { Badge, type BadgeProps } from '@/components/ui/Badge'
-import { testIconProps } from '../utils/testIconProps'
+import { testAttrs } from '../utils/testAttrs'
+import { testIconProps, testIconSize } from '../utils/testIconProps'
 
 function mountBadge(options: MountingOptions<BadgeProps> = {}) {
   return mount(Badge, options)
@@ -99,6 +100,20 @@ describe('Badge', () => {
         id: '[data-test-badge-icon]',
         mount: (input) => mountBadge({ props: { icon: input } }),
       })
+
+      testIconSize({
+        text: 'inherits Badge size to icon',
+        id: '[data-test-badge-icon]',
+        mount: (size) => mountBadge({ props: { size, icon: { name: 'check' } } }),
+      })
+
+      it('prioritizes explicit icon size over Badge size', () => {
+        const badge = mountBadge({
+          props: { size: 'lg', icon: { name: 'check', size: 'sm' } },
+        })
+
+        expect(badge.getComponent('[data-test-badge-icon]').props('size')).toBe('sm')
+      })
     })
 
     describe('trailingIcon', () => {
@@ -107,92 +122,68 @@ describe('Badge', () => {
         id: '[data-test-badge-trailing-icon]',
         mount: (input) => mountBadge({ props: { trailingIcon: input } }),
       })
-    })
 
-    describe('icon size (icon/trailingIcon)', () => {
-      it.each([
-        { input: 'sm' as const, expected: 'sm' },
-        { input: 'md' as const, expected: 'md' },
-        { input: 'lg' as const, expected: 'lg' },
-        { input: undefined, expected: 'md' },
-      ])('passes Badge size=$input to icons as $expected', ({ input, expected }) => {
-        const badge = mountBadge({
-          props: {
-            size: input,
-            icon: { name: 'check' },
-            trailingIcon: { name: 'chevronRight' },
-          },
-        })
-
-        expect(badge.getComponent('[data-test-badge-icon]').props('size')).toBe(expected)
-        expect(badge.getComponent('[data-test-badge-trailing-icon]').props('size')).toBe(expected)
+      testIconSize({
+        text: 'inherits Badge size to trailing icon',
+        id: '[data-test-badge-trailing-icon]',
+        mount: (size) => mountBadge({ props: { size, trailingIcon: { name: 'chevronRight' } } }),
       })
 
-      it('prioritizes icon sizes over Badge size', () => {
+      it('prioritizes explicit trailing icon size over Badge size', () => {
         const badge = mountBadge({
-          props: {
-            size: 'lg',
-            icon: { name: 'check', size: 'sm' },
-            trailingIcon: { name: 'chevronRight', size: 'md' },
-          },
+          props: { size: 'lg', trailingIcon: { name: 'chevronRight', size: 'sm' } },
         })
 
-        expect(badge.getComponent('[data-test-badge-icon]').props('size')).toBe('sm')
-        expect(badge.getComponent('[data-test-badge-trailing-icon]').props('size')).toBe('md')
+        expect(badge.getComponent('[data-test-badge-trailing-icon]').props('size')).toBe('sm')
       })
     })
   })
 
   describe('attrs', () => {
-    it('forwards arbitrary attrs to root', () => {
-      const root = mountBadge({
-        attrs: { id: 'status', 'aria-label': 'Status', 'data-testid': 'badge' },
-      }).get('[data-test-badge-root]')
-
-      expect(root.attributes('id')).toBe('status')
-      expect(root.attributes('aria-label')).toBe('Status')
-      expect(root.attributes('data-testid')).toBe('badge')
-    })
-
-    it('forwards class and style to root', () => {
-      const root = mountBadge({
-        attrs: { class: 'custom-badge', style: 'opacity: 0.5' },
-      }).get('[data-test-badge-root]')
-
-      expect(root.classes()).toContain('custom-badge')
-      expect(root.attributes('style')).toContain('opacity: 0.5')
+    testAttrs({
+      text: 'forwards arbitrary attrs, class and style to root',
+      id: '[data-test-badge-root]',
+      mount: (attrs) => mountBadge({ attrs }),
     })
   })
 
   describe('slots', () => {
-    const slotCases = [
-      { input: 'default' as const, expected: 'default' },
-      { input: 'leading' as const, expected: 'leading' },
-      { input: 'trailing' as const, expected: 'trailing' },
-    ]
+    describe('default', () => {
+      it('renders the default slot and hides the label fallback', () => {
+        const badge = mountBadge({
+          props: { label: 'Label fallback' },
+          slots: { default: () => h('span', { 'data-test-badge-slot': 'default' }, 'Default') },
+        })
 
-    it.each(slotCases)('renders the $input slot', ({ input, expected }) => {
-      const badge = mountBadge({
-        props: { label: 'Label', icon: { name: 'check' }, trailingIcon: { name: 'chevronRight' } },
-        slots: {
-          [input]: () => h('span', { 'data-test-badge-slot': expected }, `Slot ${expected}`),
-        },
+        expect(badge.get('[data-test-badge-slot="default"]').text()).toBe('Default')
+        expect(badge.get('[data-test-badge-root]').text()).not.toContain('Label fallback')
       })
-
-      expect(badge.get(`[data-test-badge-slot="${expected}"]`).text()).toBe(`Slot ${expected}`)
     })
 
-    it('leading and trailing slots replace their fallback icons', () => {
-      const badge = mountBadge({
-        props: { icon: { name: 'check' }, trailingIcon: { name: 'chevronRight' } },
-        slots: {
-          leading: () => h('span', 'Leading'),
-          trailing: () => h('span', 'Trailing'),
-        },
-      })
+    describe('leading', () => {
+      it('renders the leading slot and hides the icon fallback', () => {
+        const badge = mountBadge({
+          props: { icon: { name: 'check' } },
+          slots: { leading: () => h('span', { 'data-test-badge-slot': 'leading' }, 'Leading') },
+        })
 
-      expect(badge.findComponent('[data-test-badge-icon]').exists()).toBe(false)
-      expect(badge.findComponent('[data-test-badge-trailing-icon]').exists()).toBe(false)
+        expect(badge.get('[data-test-badge-slot="leading"]').text()).toBe('Leading')
+        expect(badge.find('[data-test-badge-icon]').exists()).toBe(false)
+      })
+    })
+
+    describe('trailing', () => {
+      it('renders the trailing slot and hides the icon fallback', () => {
+        const badge = mountBadge({
+          props: { trailingIcon: { name: 'chevronRight' } },
+          slots: {
+            trailing: () => h('span', { 'data-test-badge-slot': 'trailing' }, 'Trailing'),
+          },
+        })
+
+        expect(badge.get('[data-test-badge-slot="trailing"]').text()).toBe('Trailing')
+        expect(badge.find('[data-test-badge-trailing-icon]').exists()).toBe(false)
+      })
     })
   })
 })

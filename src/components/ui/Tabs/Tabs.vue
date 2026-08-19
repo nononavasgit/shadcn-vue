@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, useAttrs, watch } from 'vue'
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
-import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { Icon } from '@/components/ui/Icon'
+import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { tabsVariants } from '.'
@@ -146,11 +147,11 @@ function getContentProps(context: TabsItemContext) {
 }
 
 function getIconProps(context: TabsItemContext): IconProps {
-  return normalizeIconProps(context.tab.icon)!
+  return useNormalizeIconProps(context.tab.icon)!
 }
 
 function getTrailingIconProps(context: TabsItemContext): IconProps {
-  return normalizeIconProps(context.tab.trailingIcon)!
+  return useNormalizeIconProps(context.tab.trailingIcon)!
 }
 
 function getSlotNames(context: TabsItemContext) {

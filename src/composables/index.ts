@@ -1,4 +1,5 @@
 export { getContrastColor, useColor } from './useColor'
+export { useNormalizeIconProps } from './useNormalizeIconProps'
 export { setLocale } from '@/i18n'
 export * from './useDates'
 export * from './useFilter'

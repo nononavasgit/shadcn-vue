@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, useAttrs, type ImgHTMLAttributes } from 'vue'
 import { AvatarFallback, AvatarImage, AvatarRoot } from 'reka-ui'
-import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { Icon } from '@/components/ui/Icon'
+import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { cn } from '@/lib/utils'
 import { avatarVariants, type AvatarProps, type AvatarSlots } from '.'
 
@@ -39,7 +40,7 @@ const fallbackProps = computed(() => {
   }
 })
 
-const iconProps = computed(() => normalizeIconProps(props.icon))
+const iconProps = computed(() => useNormalizeIconProps(props.icon))
 </script>
 
 <template>

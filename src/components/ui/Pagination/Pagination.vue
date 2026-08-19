@@ -11,7 +11,7 @@ import {
   PaginationRoot,
 } from 'reka-ui'
 import { Button } from '@/components/ui/Button'
-import { normalizeIconProps } from '@/components/ui/Icon'
+import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -156,11 +156,11 @@ const lastProps = computed(() => {
   }
 })
 
-const firstIconProps = computed(() => normalizeIconProps(props.firstIcon))
-const previousIconProps = computed(() => normalizeIconProps(props.previousIcon))
-const nextIconProps = computed(() => normalizeIconProps(props.nextIcon))
-const lastIconProps = computed(() => normalizeIconProps(props.lastIcon))
-const ellipsisIconProps = computed(() => normalizeIconProps(props.ellipsisIcon))
+const firstIconProps = computed(() => useNormalizeIconProps(props.firstIcon))
+const previousIconProps = computed(() => useNormalizeIconProps(props.previousIcon))
+const nextIconProps = computed(() => useNormalizeIconProps(props.nextIcon))
+const lastIconProps = computed(() => useNormalizeIconProps(props.lastIcon))
+const ellipsisIconProps = computed(() => useNormalizeIconProps(props.ellipsisIcon))
 
 function getItemContexts(items: PaginationGeneratedItem[]): PaginationItemContext[] {
   return items.map((item, index) => ({

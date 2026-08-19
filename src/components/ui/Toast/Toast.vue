@@ -11,7 +11,8 @@ import {
   ToastViewport,
 } from 'reka-ui'
 import { Button } from '@/components/ui/Button'
-import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { Icon } from '@/components/ui/Icon'
+import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -82,7 +83,7 @@ const rootProps = computed(() => {
   }
 })
 
-const iconProps = computed(() => normalizeIconProps(props.icon))
+const iconProps = computed(() => useNormalizeIconProps(props.icon))
 
 const iconContainerProps = computed(() => {
   const ui = useUi(props.ui?.iconContainer, toastContext.value)

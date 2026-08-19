@@ -1,6 +1,6 @@
 import type { IconName } from './icons.ts'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { toValue, type HTMLAttributes } from 'vue'
+import type { HTMLAttributes } from 'vue'
 
 export { default as Icon } from './Icon.vue'
 export type { IconName } from './icons.ts'
@@ -34,11 +34,3 @@ export interface IconProps {
 
 export type IconConfig = IconProps & HTMLAttributes
 export type NormalizeIconProps = IconName | IconConfig
-
-export function normalizeIconProps(source: NormalizeIconProps | undefined): IconConfig | undefined {
-  const res = toValue(source)
-
-  if (!res) return undefined
-  if (typeof res === 'string') return { name: res }
-  return res
-}

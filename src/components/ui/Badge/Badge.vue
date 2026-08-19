@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
-import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { Icon } from '@/components/ui/Icon'
+import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
 import { badgeVariants, type BadgeProps, type BadgeSlots } from '.'
@@ -39,12 +40,12 @@ const rootProps = computed(() => {
 })
 
 const iconProps = computed(() => {
-  const icon = normalizeIconProps(props.icon)
+  const icon = useNormalizeIconProps(props.icon)
 
   return { ...icon, size: icon?.size ?? props.size }
 })
 const trailingIconProps = computed(() => {
-  const icon = normalizeIconProps(props.trailingIcon)
+  const icon = useNormalizeIconProps(props.trailingIcon)
 
   return { ...icon, size: icon?.size ?? props.size }
 })

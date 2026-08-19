@@ -2,7 +2,8 @@
 import { computed, useAttrs, watch } from 'vue'
 import type { CSSProperties } from 'vue'
 import { ToggleGroupItem, ToggleGroupRoot } from 'reka-ui'
-import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { Icon } from '@/components/ui/Icon'
+import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { toggleGroupVariants } from '@/components/ui/ToggleGroup'
 import { toggleVariants } from '@/components/ui/Toggle'
 import { useColor } from '@/composables'
@@ -142,11 +143,11 @@ function getLabelProps(context: ToggleGroupItemContext) {
 }
 
 function getIconProps(context: ToggleGroupItemContext): IconProps {
-  return normalizeIconProps(context.item.icon)!
+  return useNormalizeIconProps(context.item.icon)!
 }
 
 function getTrailingIconProps(context: ToggleGroupItemContext): IconProps {
-  return normalizeIconProps(context.item.trailingIcon)!
+  return useNormalizeIconProps(context.item.trailingIcon)!
 }
 
 function getSlotNames(context: ToggleGroupItemContext) {

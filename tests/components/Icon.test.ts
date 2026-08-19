@@ -1,7 +1,8 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
-import { Icon, normalizeIconProps, type IconProps } from '@/components/ui/Icon'
+import { Icon, type IconProps } from '@/components/ui/Icon'
+import { testAttrs } from '../utils/testAttrs'
 
 function mountIcon(options: MountingOptions<IconProps> = {}) {
   return mount(Icon, { props: { name: 'check' }, ...options })
@@ -53,54 +54,10 @@ describe('Icon', () => {
   })
 
   describe('attrs', () => {
-    it('forwards arbitrary attrs to root', () => {
-      const root = mountIcon({
-        attrs: { id: 'status', role: 'img', 'aria-label': 'Status', 'data-testid': 'icon' },
-      }).get('[data-test-icon-root]')
-
-      expect(root.attributes('id')).toBe('status')
-      expect(root.attributes('role')).toBe('img')
-      expect(root.attributes('aria-label')).toBe('Status')
-      expect(root.attributes('data-testid')).toBe('icon')
-    })
-
-    it('forwards class and style to root', () => {
-      const root = mountIcon({
-        attrs: { class: 'custom-icon', style: 'opacity: 0.5' },
-      }).get('[data-test-icon-root]')
-
-      expect(root.classes()).toContain('custom-icon')
-      expect(root.attributes('style')).toContain('opacity: 0.5')
-    })
-  })
-
-  describe('normalizeIconProps contract', () => {
-    const onClick = vi.fn()
-
-    it.each([
-      { input: 'check' as const, expected: { name: 'check' } },
-      {
-        input: {
-          name: 'error' as const,
-          size: 'sm' as const,
-          color: '#ff0000',
-          class: 'custom-icon',
-          'aria-label': 'Error',
-          onClick,
-        },
-        expected: {
-          name: 'error',
-          size: 'sm',
-          color: '#ff0000',
-          class: 'custom-icon',
-          'aria-label': 'Error',
-          onClick,
-        },
-      },
-      { input: undefined, expected: undefined },
-      { input: '', expected: undefined },
-    ])('normalizes $input', ({ input, expected }) => {
-      expect(normalizeIconProps(input)).toEqual(expected)
+    testAttrs({
+      text: 'forwards attrs, class and style to root',
+      id: '[data-test-icon-root]',
+      mount: (attrs) => mountIcon({ attrs }),
     })
   })
 })

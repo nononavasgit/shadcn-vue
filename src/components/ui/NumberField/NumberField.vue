@@ -6,7 +6,8 @@ import {
   NumberFieldInput,
   NumberFieldRoot,
 } from 'reka-ui'
-import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { Icon } from '@/components/ui/Icon'
+import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -158,8 +159,8 @@ const incrementProps = computed(() => {
   }
 })
 
-const decrementIconProps = computed(() => ({ ...normalizeIconProps(props.decrementIcon) }))
-const incrementIconProps = computed(() => ({ ...normalizeIconProps(props.incrementIcon) }))
+const decrementIconProps = computed(() => ({ ...useNormalizeIconProps(props.decrementIcon) }))
+const incrementIconProps = computed(() => ({ ...useNormalizeIconProps(props.incrementIcon) }))
 </script>
 
 <template>

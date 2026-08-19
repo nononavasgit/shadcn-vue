@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs, useSlots } from 'vue'
-import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { Icon } from '@/components/ui/Icon'
+import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import {
@@ -70,7 +71,7 @@ const mediaProps = computed(() => {
 })
 
 const mediaIconProps = computed(() => {
-  const icon = normalizeIconProps(props.icon)
+  const icon = useNormalizeIconProps(props.icon)
   const size = props.size
 
   if (props.state === 'uploading') {

@@ -10,7 +10,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from 'reka-ui'
-import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { Icon } from '@/components/ui/Icon'
+import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
@@ -203,8 +204,8 @@ const closeProps = computed(() => {
   }
 })
 
-const icon = computed(() => normalizeIconProps(props.icon))
-const closeIcon = computed(() => normalizeIconProps(props.closeIcon))
+const icon = computed(() => useNormalizeIconProps(props.icon))
+const closeIcon = computed(() => useNormalizeIconProps(props.closeIcon))
 </script>
 
 <template>

@@ -2,7 +2,8 @@
 import { computed, useAttrs, watch } from 'vue'
 import { Button } from '@/components/ui/Button'
 import { Collapsible } from '@/components/ui/Collapsible'
-import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { Icon } from '@/components/ui/Icon'
+import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useColor } from '@/composables'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
@@ -86,7 +87,7 @@ const triggerProps = computed(() => ({
   ),
 }))
 
-const iconProps = computed(() => ({ ...normalizeIconProps(props.icon) }))
+const iconProps = computed(() => ({ ...useNormalizeIconProps(props.icon) }))
 
 const labelProps = computed(() => {
   const labelUI = useUi(props.ui?.label, panelContext.value)

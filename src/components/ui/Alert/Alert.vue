@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, useAttrs, useSlots } from 'vue'
 import { Button } from '@/components/ui/Button'
-import { Icon, normalizeIconProps } from '@/components/ui/Icon'
+import { Icon } from '@/components/ui/Icon'
+import { useNormalizeIconProps } from '@/composables/useNormalizeIconProps'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useColor } from '@/composables'
@@ -63,7 +64,7 @@ const rootProps = computed(() => {
   }
 })
 
-const iconProps = computed(() => normalizeIconProps(props.icon))
+const iconProps = computed(() => useNormalizeIconProps(props.icon))
 
 const labelProps = computed(() => {
   const ui = useUi(props.ui?.label, alertContext.value)

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { CheckIcon, SearchIcon } from '@lucide/vue'
 import { ref } from 'vue'
 
 import { Input } from '@/components/ui/Input'
@@ -52,6 +53,23 @@ const emailValue = ref('')
           disabled
           aria-label="Contenido deshabilitado"
         />
+      </div>
+
+      <div class="grid gap-3 rounded-lg border p-4">
+        <div>
+          <h3 class="font-medium">Slots leading y trailing</h3>
+          <p class="text-sm text-muted-foreground">
+            Añade iconos u otro contenido alrededor del control.
+          </p>
+        </div>
+        <Input placeholder="Buscar componentes" aria-label="Buscar componentes">
+          <template #leading>
+            <SearchIcon />
+          </template>
+          <template #trailing>
+            <CheckIcon class="text-primary" />
+          </template>
+        </Input>
       </div>
     </div>
   </section>

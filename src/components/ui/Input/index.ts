@@ -14,5 +14,11 @@ export interface InputEmits {
   'update:value': [value: InputValue]
 }
 
+// Slots
+export interface InputSlots {
+  leading?(): unknown
+  trailing?(): unknown
+}
+
 // Normalize
 export type NormalizeInputProps = InputProps & EmitsAsProps<InputEmits>

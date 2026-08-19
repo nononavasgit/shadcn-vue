@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
 import { Button, type ButtonProps } from '@/components/ui/Button'
+import { testAttrs } from '../utils/testAttrs'
 import { testIconProps, testIconSize } from '../utils/testIconProps'
 
 function mountButton(options: MountingOptions<ButtonProps> & Record<string, unknown> = {}) {
@@ -164,100 +165,111 @@ describe('Button', () => {
       })
     })
 
-    it('applies a custom color', () => {
-      const root = mountButton({ props: { color: '#ff0000' } }).get('[data-test-button-root]')
+    describe('color', () => {
+      it('applies a custom color', () => {
+        const root = mountButton({ props: { color: '#ff0000' } }).get('[data-test-button-root]')
 
-      expect(root.attributes('style')).toContain('--button-color: #ff0000')
-      expect(root.attributes('style')).toContain('--button-color-foreground: #09090b')
-      expect(root.classes()).toContain('bg-(--button-color)')
+        expect(root.attributes('style')).toContain('--button-color: #ff0000')
+        expect(root.attributes('style')).toContain('--button-color-foreground: #09090b')
+        expect(root.classes()).toContain('bg-(--button-color)')
+      })
     })
 
-    it('renders the configured element with as', () => {
-      const root = mountButton({ props: { as: 'a', label: 'Open', href: '/docs' } }).get(
-        '[data-test-button-root]',
-      )
+    describe('as', () => {
+      it('renders the configured element', () => {
+        const root = mountButton({ props: { as: 'a', label: 'Open', href: '/docs' } }).get(
+          '[data-test-button-root]',
+        )
 
-      expect(root.element.tagName.toLowerCase()).toBe('a')
-      expect(root.attributes('href')).toBe('/docs')
+        expect(root.element.tagName.toLowerCase()).toBe('a')
+        expect(root.attributes('href')).toBe('/docs')
+      })
     })
   })
 
   describe('attrs', () => {
-    it('forwards arbitrary attrs, class and style to root', () => {
-      const root = mountButton({
-        attrs: {
-          id: 'save',
-          type: 'submit',
-          class: 'custom-button',
-          style: 'opacity: 0.5',
-        },
-      }).get('[data-test-button-root]')
-
-      expect(root.attributes('id')).toBe('save')
-      expect(root.attributes('type')).toBe('submit')
-      expect(root.classes()).toContain('custom-button')
-      expect(root.attributes('style')).toContain('opacity: 0.5')
+    testAttrs({
+      text: 'forwards arbitrary attrs, class and style to root',
+      id: '[data-test-button-root]',
+      mount: (attrs) => mountButton({ attrs }),
     })
   })
 
   describe('emits', () => {
-    it('emits click for an enabled button', async () => {
-      const button = mountButton({ props: { label: 'Save' } })
-
-      await button.get('[data-test-button-root]').trigger('click')
-
-      expect(button.emitted('click')).toHaveLength(1)
-    })
-
     it.each([
-      { loading: true, ariaDisabled: undefined },
-      { loading: false, ariaDisabled: 'true' },
-    ])('does not emit click when disabled by state', async ({ loading, ariaDisabled }) => {
-      const button = mountButton({
-        props: { loading },
-        attrs: ariaDisabled ? { 'aria-disabled': ariaDisabled } : undefined,
-      })
+      { loading: false, ariaDisabled: false, expected: 1 },
+      { loading: true, ariaDisabled: undefined, expected: 0 },
+      { loading: false, ariaDisabled: true, expected: 0 },
+    ])(
+      'emits click=$expected for loading=$loading ariaDisabled=$ariaDisabled',
+      async ({ loading, ariaDisabled, expected }) => {
+        const button = mountButton({
+          props: { loading },
+          attrs: { 'aria-disabled': ariaDisabled },
+        })
 
-      await button.get('[data-test-button-root]').trigger('click')
+        await button.get('[data-test-button-root]').trigger('click')
 
-      expect(button.emitted('click')).toBeUndefined()
-    })
+        expect(button.emitted('click')?.length ?? 0).toBe(expected)
+      },
+    )
   })
 
   describe('slots', () => {
-    it('renders a custom loading slot instead of the spinner', () => {
-      const button = mountButton({
-        props: { loading: true },
-        slots: { loading: () => h('span', { 'data-test-loading-slot': '' }, 'Loading') },
-      })
-
-      expect(button.get('[data-test-loading-slot]').text()).toBe('Loading')
-      expect(button.find('[data-test-button-loading-icon]').exists()).toBe(false)
-    })
-
-    it.each(['default', 'leading', 'loading', 'trailing'] as const)(
-      'renders the %s slot',
-      (slot) => {
+    describe('default', () => {
+      it('renders the default slot and hides the label fallback', () => {
         const button = mountButton({
-          props: { loading: slot === 'loading' },
-          slots: { [slot]: () => h('span', { 'data-test-button-slot': slot }, `Slot ${slot}`) },
+          props: { label: 'Label fallback' },
+          slots: { default: () => h('span', { 'data-test-button-slot': 'default' }, 'Default') },
         })
 
-        expect(button.get('[data-test-button-root]').text()).toContain(`Slot ${slot}`)
-      },
-    )
-
-    it('slots replace their icon fallbacks', () => {
-      const button = mountButton({
-        props: { icon: { name: 'save' }, trailingIcon: { name: 'chevronRight' } },
-        slots: {
-          leading: () => h('span', 'Leading'),
-          trailing: () => h('span', 'Trailing'),
-        },
+        expect(button.get('[data-test-button-slot="default"]').text()).toBe('Default')
+        expect(button.get('[data-test-button-root]').text()).not.toContain('Label fallback')
       })
+    })
 
-      expect(button.find('[data-test-button-icon]').exists()).toBe(false)
-      expect(button.find('[data-test-button-trailing-icon]').exists()).toBe(false)
+    describe('leading', () => {
+      it('renders the leading slot and hides the icon fallback', () => {
+        const button = mountButton({
+          props: { icon: { name: 'save' } },
+          slots: {
+            leading: () => h('span', { 'data-test-button-slot': 'leading' }, 'Leading'),
+          },
+        })
+
+        expect(button.get('[data-test-button-slot="leading"]').text()).toBe('Leading')
+        expect(button.find('[data-test-button-icon]').exists()).toBe(false)
+      })
+    })
+
+    describe('loading', () => {
+      it('renders the loading slot and hides the leading slot', () => {
+        const button = mountButton({
+          props: { loading: true },
+          slots: {
+            leading: () => h('span', { 'data-test-button-slot': 'leading' }, 'Leading'),
+            loading: () => h('span', { 'data-test-button-slot': 'loading' }, 'Loading'),
+          },
+        })
+
+        expect(button.get('[data-test-button-slot="loading"]').text()).toBe('Loading')
+        expect(button.find('[data-test-button-slot="leading"]').exists()).toBe(false)
+        expect(button.find('[data-test-button-loading-icon]').exists()).toBe(false)
+      })
+    })
+
+    describe('trailing', () => {
+      it('renders the trailing slot and hides the icon fallback', () => {
+        const button = mountButton({
+          props: { trailingIcon: { name: 'chevronRight' } },
+          slots: {
+            trailing: () => h('span', { 'data-test-button-slot': 'trailing' }, 'Trailing'),
+          },
+        })
+
+        expect(button.get('[data-test-button-slot="trailing"]').text()).toBe('Trailing')
+        expect(button.find('[data-test-button-trailing-icon]').exists()).toBe(false)
+      })
     })
   })
 })

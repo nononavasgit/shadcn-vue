@@ -9,11 +9,9 @@ import {
   type ButtonVariant,
 } from '@/components/ui/Button'
 import type { IconConfig } from '@/components/ui/Icon'
-import { ICONS } from '@/components/ui/Icon/icons'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
-const iconNames = Object.keys(ICONS)
 const label = ref('Save changes')
 const variant = ref<ButtonVariant>('solid')
 const severity = ref<ButtonSeverity>('primary')
@@ -23,9 +21,7 @@ const square = ref(false)
 const raised = ref(false)
 const loading = ref(false)
 const color = ref('')
-const icon = ref('')
 const iconObjectInput = ref('')
-const trailingIcon = ref('')
 const trailingIconObjectInput = ref('')
 
 function parseIconProps(value: string): IconConfig | undefined {
@@ -54,10 +50,8 @@ const playgroundProps = computed<ButtonProps>(() => ({
   raised: raised.value,
   loading: loading.value,
   color: color.value || undefined,
-  icon: parseIconProps(iconObjectInput.value) ?? (icon.value ? { name: icon.value } : undefined),
-  trailingIcon:
-    parseIconProps(trailingIconObjectInput.value) ??
-    (trailingIcon.value ? { name: trailingIcon.value } : undefined),
+  icon: parseIconProps(iconObjectInput.value),
+  trailingIcon: parseIconProps(trailingIconObjectInput.value),
 }))
 
 const typeRows: ApiTableRow[] = [
@@ -246,17 +240,6 @@ const exposeRows: ApiTableRow[] = []
           </label>
 
           <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">icon</span>
-            <select
-              v-model="icon"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Sin icono</option>
-              <option v-for="name in iconNames" :key="name" :value="name">{{ name }}</option>
-            </select>
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
             <span class="font-medium">icon (objeto)</span>
             <textarea
               v-model="iconObjectInput"
@@ -267,17 +250,6 @@ const exposeRows: ApiTableRow[] = []
 }'
               class="rounded-md border bg-background px-3 py-2 font-mono text-xs outline-none focus:ring-2 focus:ring-ring"
             />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">trailingIcon</span>
-            <select
-              v-model="trailingIcon"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Sin icono</option>
-              <option v-for="name in iconNames" :key="name" :value="name">{{ name }}</option>
-            </select>
           </label>
 
           <label class="grid gap-1.5 text-sm">

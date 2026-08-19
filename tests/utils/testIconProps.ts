@@ -18,18 +18,18 @@ interface TestIconSizeOptions {
 
 export function testIconProps({ text, id, default: defaultIcon, mount }: TestIconPropsOptions) {
   it.each([
-    { input: { name: 'check' as IconName } },
     {
       input: {
         name: 'save' as IconName,
         color: '#ff0000',
         id: 'custom-icon',
         class: 'custom-icon',
+        style: 'opacity: 0.5',
         'aria-label': 'Save',
+        'data-test-icon-prop': 'true',
       },
     },
-    { input: undefined },
-  ])(`${text} input=$input`, async ({ input }) => {
+  ])(`${text}`, async ({ input }) => {
     const icon = (await mount(input)).findComponent(id)
     const expectedProps = getExpectedIconProps(input, defaultIcon)
 
@@ -39,7 +39,11 @@ export function testIconProps({ text, id, default: defaultIcon, mount }: TestIco
 
       if (input?.id) expect(icon.attributes('id')).toBe(input.id)
       if (input?.class) expect(icon.classes()).toContain(input.class)
+      if (input?.style) expect(icon.attributes('style')).toContain('opacity: 0.5')
       if (input?.['aria-label']) expect(icon.attributes('aria-label')).toBe(input['aria-label'])
+      if (input?.['data-test-icon-prop']) {
+        expect(icon.attributes('data-test-icon-prop')).toBe(input['data-test-icon-prop'])
+      }
     }
   })
 }

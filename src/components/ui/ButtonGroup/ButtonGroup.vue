@@ -2,13 +2,11 @@
 import { computed, useAttrs } from 'vue'
 import { cn } from '@/lib/utils'
 import { buttonGroupVariants, type ButtonGroupProps, type ButtonGroupSlots } from '.'
+import { buttonGroupDefaults } from './default'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<ButtonGroupProps>(), {
-  orientation: 'horizontal',
-  size: 'md',
-})
+const props = withDefaults(defineProps<ButtonGroupProps>(), buttonGroupDefaults)
 defineSlots<ButtonGroupSlots>()
 
 const attrs = useAttrs()

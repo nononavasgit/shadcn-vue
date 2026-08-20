@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
 import { ButtonGroup, type ButtonGroupProps } from '@/components/ui/ButtonGroup'
+import { testAttrs } from '../utils/testAttrs'
 
 function mountButtonGroup(options: MountingOptions<ButtonGroupProps> = {}) {
   return mount(ButtonGroup, options)
@@ -14,6 +15,7 @@ describe('ButtonGroup', () => {
       it.each([
         { input: 'horizontal' as const, expected: ['flex-row', 'rounded-l-none', 'border-l-0'] },
         { input: 'vertical' as const, expected: ['flex-col', 'rounded-t-none', 'border-t-0'] },
+        { input: undefined, expected: ['flex-row', 'rounded-l-none', 'border-l-0'] },
       ])('renders orientation=$input', ({ input, expected }) => {
         const root = mountButtonGroup({ props: { orientation: input } }).get(
           '[data-test-button-group-root]',
@@ -31,6 +33,7 @@ describe('ButtonGroup', () => {
         { input: 'sm' as const, expected: ['h-8', 'px-3', 'text-sm'] },
         { input: 'md' as const, expected: ['h-9', 'px-4', 'text-base'] },
         { input: 'lg' as const, expected: ['h-10', 'px-6', 'text-lg'] },
+        { input: undefined, expected: ['h-9', 'px-4', 'text-base'] },
       ])('renders size=$input', ({ input, expected }) => {
         const classes = mountButtonGroup({ props: { size: input } })
           .get('[data-test-button-group-root]')
@@ -45,21 +48,16 @@ describe('ButtonGroup', () => {
   })
 
   describe('attrs', () => {
-    it('forwards arbitrary attrs, class and style to root', () => {
-      const root = mountButtonGroup({
-        attrs: {
-          id: 'pagination',
-          'aria-label': 'Pagination',
-          class: 'custom-group',
-          style: 'opacity: 0.5',
-        },
-      }).get('[data-test-button-group-root]')
+    testAttrs({
+      text: 'forwards arbitrary attrs, class and style to root',
+      id: '[data-test-button-group-root]',
+      mount: (attrs) => mountButtonGroup({ attrs }),
+    })
 
-      expect(root.attributes('id')).toBe('pagination')
-      expect(root.attributes('aria-label')).toBe('Pagination')
-      expect(root.attributes('role')).toBe('group')
-      expect(root.classes()).toContain('custom-group')
-      expect(root.attributes('style')).toContain('opacity: 0.5')
+    it('renders the group role on root', () => {
+      expect(mountButtonGroup().get('[data-test-button-group-root]').attributes('role')).toBe(
+        'group',
+      )
     })
   })
 

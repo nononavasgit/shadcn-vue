@@ -19,29 +19,16 @@ const playgroundProps = computed<ButtonGroupProps>(() => ({
   size: size.value,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'ButtonGroupOrientation',
-    type: "'horizontal' | 'vertical'",
-    description: 'Direccion en la que se organizan los botones.',
-  },
-  {
-    name: 'ButtonGroupSize',
-    type: "'xs' | 'sm' | 'md' | 'lg'",
-    description: 'Tamano aplicado a los botones del grupo.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'orientation',
-    type: 'ButtonGroupOrientation',
+    type: "'horizontal' | 'vertical'",
     default: "'horizontal'",
     description: 'Direccion del grupo de botones.',
   },
   {
     name: 'size',
-    type: 'ButtonGroupSize',
+    type: "'xs' | 'sm' | 'md' | 'lg'",
     default: "'md'",
     description: 'Tamano de los botones del grupo.',
   },
@@ -52,7 +39,7 @@ const emitRows: ApiTableRow[] = []
 const slotRows: ApiTableRow[] = [
   {
     name: 'default',
-    type: 'Record<string, never>',
+    type: '-',
     default: '-',
     description: 'Botones y contenido que forman el grupo.',
   },
@@ -70,16 +57,6 @@ const exposeRows: ApiTableRow[] = []
         Agrupa botones relacionados y ajusta sus bordes, espaciado y tamano de forma consistente.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>

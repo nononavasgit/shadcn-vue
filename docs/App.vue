@@ -3,10 +3,12 @@ import { RouterView } from 'vue-router'
 
 const passed = {
   alert: true,
+  alertDialog: true,
   avatar: true,
   announcer: true,
-  aspectRadio: true,
+  aspectRatio: true,
   button: true,
+  buttonGroup: true,
   badge: true,
   card: true,
   icon: true,

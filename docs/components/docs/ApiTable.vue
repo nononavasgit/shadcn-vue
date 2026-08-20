@@ -13,6 +13,7 @@ export interface ApiTableRow {
 withDefaults(
   defineProps<{
     title: string
+    id?: string
     rows: ApiTableRow[]
     emptyText?: string
     typeLabel?: string
@@ -27,7 +28,7 @@ withDefaults(
 </script>
 
 <template>
-  <section class="overflow-hidden rounded-lg border bg-card text-card-foreground">
+  <section :id="id" class="overflow-hidden rounded-lg border bg-card text-card-foreground">
     <header class="border-b px-4 py-3">
       <h3 class="font-medium">{{ title }}</h3>
     </header>
@@ -49,7 +50,14 @@ withDefaults(
               {{ row.name }}<span v-if="row.required" class="text-destructive"> *</span>
             </td>
             <td class="px-4 py-3">
-              <RouterLink v-if="row.typeLink" :to="row.typeLink">
+              <a v-if="row.typeLink?.startsWith('#')" :href="row.typeLink">
+                <code
+                  class="rounded bg-muted px-1.5 py-0.5 text-xs text-primary underline-offset-4 hover:underline"
+                >
+                  {{ row.type }}
+                </code>
+              </a>
+              <RouterLink v-else-if="row.typeLink" :to="row.typeLink">
                 <code
                   class="rounded bg-muted px-1.5 py-0.5 text-xs text-primary underline-offset-4 hover:underline"
                 >

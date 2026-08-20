@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 
 import { Card, type CardProps } from '@/components/ui/Card'
+import { cardDefaults } from '@/components/ui/Card/defaults'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
@@ -16,14 +17,9 @@ const playgroundProps = computed<CardProps>(() => ({
 const typeRows: ApiTableRow[] = [
   {
     name: 'CardUI',
-    type: '{ header?: CardFn<HTMLAttributes>; label?: CardFn<HTMLAttributes>; description?: CardFn<HTMLAttributes>; action?: CardFn<HTMLAttributes>; content?: CardFn<HTMLAttributes>; footer?: CardFn<HTMLAttributes> }',
+    type: '{ header?: () => HTMLAttributes; label?: () => HTMLAttributes; description?: () => HTMLAttributes; action?: () => HTMLAttributes; content?: () => HTMLAttributes; footer?: () => HTMLAttributes }',
     description:
       'Funciones que devuelven atributos HTML para header, label, description, action, content y footer.',
-  },
-  {
-    name: 'CardContext',
-    type: '{ ui: CardUI | undefined }',
-    description: 'Contexto expuesto a los slots de la tarjeta.',
   },
 ]
 
@@ -31,19 +27,19 @@ const propRows: ApiTableRow[] = [
   {
     name: 'label',
     type: 'string',
-    default: 'undefined',
+    default: String(cardDefaults.label),
     description: 'Titulo de la tarjeta.',
   },
   {
     name: 'description',
     type: 'string',
-    default: 'undefined',
+    default: String(cardDefaults.description),
     description: 'Descripcion secundaria de la tarjeta.',
   },
   {
     name: 'ui',
     type: 'CardUI',
-    default: 'undefined',
+    default: String(cardDefaults.ui),
     description: 'Atributos personalizados para las partes internas.',
   },
 ]
@@ -51,30 +47,26 @@ const propRows: ApiTableRow[] = [
 const emitRows: ApiTableRow[] = []
 
 const slotRows: ApiTableRow[] = [
-  { name: 'default', type: 'CardContext', default: '-', description: 'Contenido principal.' },
+  { name: 'default', type: '-', description: 'Contenido principal.' },
   {
     name: 'header',
-    type: 'CardContext',
-    default: '-',
+    type: '-',
     description: 'Reemplaza el encabezado completo.',
   },
-  { name: 'label', type: 'CardContext', default: '-', description: 'Personaliza el titulo.' },
+  { name: 'label', type: '-', description: 'Personaliza el titulo.' },
   {
     name: 'description',
-    type: 'CardContext',
-    default: '-',
+    type: '-',
     description: 'Personaliza la descripcion.',
   },
   {
     name: 'action',
-    type: 'CardContext',
-    default: '-',
+    type: '-',
     description: 'Accion alineada en el encabezado.',
   },
   {
     name: 'footer',
-    type: 'CardContext',
-    default: '-',
+    type: '-',
     description: 'Contenido del pie de tarjeta.',
   },
 ]

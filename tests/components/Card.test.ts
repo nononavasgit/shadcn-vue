@@ -2,7 +2,8 @@ import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import { Card, createCardContext, type CardContext, type CardProps } from '@/components/ui/Card'
+import { Card, type CardProps } from '@/components/ui/Card'
+import { testAttrs } from '../utils/testAttrs'
 
 function mountCard(options: MountingOptions<CardProps> = {}) {
   return mount(Card, options)
@@ -70,67 +71,81 @@ describe('Card', () => {
   })
 
   describe('attrs', () => {
-    it('forwards arbitrary attrs, class and style to root', () => {
-      const root = mountCard({
-        attrs: {
-          id: 'account',
-          'aria-label': 'Account',
-          class: 'custom-card',
-          style: 'opacity: 0.5',
-        },
-      }).get('[data-test-card-root]')
-
-      expect(root.attributes('id')).toBe('account')
-      expect(root.attributes('aria-label')).toBe('Account')
-      expect(root.classes()).toContain('custom-card')
-      expect(root.attributes('style')).toContain('opacity: 0.5')
-    })
-  })
-
-  describe('context contract', () => {
-    it.each([
-      {
-        input: {},
-        expected: { ui: undefined },
-      },
-      {
-        input: { ui: { label: () => ({ class: 'ui-label' }) } },
-        expected: { ui: { label: expect.any(Function) } },
-      },
-    ])('creates the expected context', ({ input, expected }) => {
-      expect(createCardContext(input)).toEqual(expected satisfies CardContext)
+    testAttrs({
+      text: 'forwards arbitrary attrs, class and style to root',
+      id: '[data-test-card-root]',
+      mount: (attrs) => mountCard({ attrs }),
     })
   })
 
   describe('slots', () => {
-    const slotCases = [
-      { input: 'default' as const, expected: 'content' },
-      { input: 'header' as const, expected: 'header' },
-      { input: 'label' as const, expected: 'label' },
-      { input: 'description' as const, expected: 'description' },
-      { input: 'action' as const, expected: 'action' },
-      { input: 'footer' as const, expected: 'footer' },
-    ]
+    describe('default', () => {
+      it('renders the default slot', () => {
+        const card = mountCard({
+          slots: { default: () => h('span', { 'data-test-card-slot': 'default' }, 'Default') },
+        })
 
-    it.each(slotCases)('renders the $input slot', ({ input, expected }) => {
-      const card = mountCard({
-        slots: {
-          [input]: () => h('span', { 'data-test-card-slot': expected }, `Slot ${expected}`),
-        },
+        expect(card.get('[data-test-card-slot="default"]').text()).toBe('Default')
       })
-
-      expect(card.get(`[data-test-card-slot="${expected}"]`).text()).toBe(`Slot ${expected}`)
     })
 
-    it('header slot replaces the label and description fallbacks', () => {
-      const card = mountCard({
-        props: { label: 'Account', description: 'Account details' },
-        slots: { header: () => h('span', 'Custom header') },
-      })
+    describe('header', () => {
+      it('renders the header slot and hides label and description fallbacks', () => {
+        const card = mountCard({
+          props: { label: 'Account', description: 'Account details' },
+          slots: { header: () => h('span', { 'data-test-card-slot': 'header' }, 'Header') },
+        })
 
-      expect(card.get('[data-test-card-header]').text()).toBe('Custom header')
-      expect(card.find('[data-test-card-label]').exists()).toBe(false)
-      expect(card.find('[data-test-card-description]').exists()).toBe(false)
+        expect(card.get('[data-test-card-slot="header"]').text()).toBe('Header')
+        expect(card.find('[data-test-card-label]').exists()).toBe(false)
+        expect(card.find('[data-test-card-description]').exists()).toBe(false)
+      })
+    })
+
+    describe('label', () => {
+      it('renders the label slot and hides the label fallback', () => {
+        const card = mountCard({
+          props: { label: 'Label fallback' },
+          slots: { label: () => h('span', { 'data-test-card-slot': 'label' }, 'Label') },
+        })
+
+        expect(card.get('[data-test-card-slot="label"]').text()).toBe('Label')
+        expect(card.get('[data-test-card-root]').text()).not.toContain('Label fallback')
+      })
+    })
+
+    describe('description', () => {
+      it('renders the description slot and hides the description fallback', () => {
+        const card = mountCard({
+          props: { description: 'Description fallback' },
+          slots: {
+            description: () => h('span', { 'data-test-card-slot': 'description' }, 'Description'),
+          },
+        })
+
+        expect(card.get('[data-test-card-slot="description"]').text()).toBe('Description')
+        expect(card.get('[data-test-card-root]').text()).not.toContain('Description fallback')
+      })
+    })
+
+    describe('action', () => {
+      it('renders the action slot', () => {
+        const card = mountCard({
+          slots: { action: () => h('span', { 'data-test-card-slot': 'action' }, 'Action') },
+        })
+
+        expect(card.get('[data-test-card-slot="action"]').text()).toBe('Action')
+      })
+    })
+
+    describe('footer', () => {
+      it('renders the footer slot', () => {
+        const card = mountCard({
+          slots: { footer: () => h('span', { 'data-test-card-slot': 'footer' }, 'Footer') },
+        })
+
+        expect(card.get('[data-test-card-slot="footer"]').text()).toBe('Footer')
+      })
     })
   })
 })

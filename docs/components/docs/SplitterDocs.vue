@@ -46,33 +46,11 @@ const playgroundLayoutText = computed(() =>
     : 'Calculando…',
 )
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'SplitterDirection',
-    type: "'horizontal' | 'vertical'",
-    description: 'Orientación del grupo de paneles.',
-  },
-  {
-    name: 'SplitterItem',
-    type: '{ slot?; id?; collapsedSize?; collapsible?; defaultSize?; maxSize?; minSize?; order?; sizeUnit?; class; style }',
-    description: 'Configuración individual de cada panel.',
-  },
-  {
-    name: 'SplitterItemContext',
-    type: '{ layout; item; index; first; last; nextItem? }',
-    description: 'Contexto que reciben los slots de panel y handle.',
-  },
-  {
-    name: 'SplitterUI',
-    type: '{ panel?; resizeHandle? }',
-    description: 'Resolvers para personalizar paneles y handles.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'items',
     type: 'SplitterItem[]',
+    typeLink: '#splitter-item',
     default: '[]',
     description: 'Paneles que renderiza el Splitter en el orden indicado.',
   },
@@ -132,7 +110,7 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: 'SplitterUI',
+    type: '{ panel?; resizeHandle? }',
     default: 'undefined',
     description: 'Atributos, clases y estilos para paneles y handles.',
   },
@@ -217,6 +195,7 @@ const contextRows: ApiTableRow[] = [
   {
     name: 'item',
     type: 'SplitterItem',
+    typeLink: '#splitter-item',
     default: '-',
     description: 'Item asociado al panel o handle.',
   },
@@ -241,6 +220,7 @@ const contextRows: ApiTableRow[] = [
   {
     name: 'nextItem',
     type: 'SplitterItem | undefined',
+    typeLink: '#splitter-item',
     default: 'undefined',
     description: 'Siguiente item del grupo, cuando existe.',
   },
@@ -273,24 +253,28 @@ const slotRows: ApiTableRow[] = [
   {
     name: 'default',
     type: 'SplitterItemContext',
+    typeLink: '#splitter-item-context',
     default: 'Panel sin slot',
     description: 'Contenido del panel cuyo item no define slot.',
   },
   {
     name: 'handle',
     type: 'SplitterItemContext',
+    typeLink: '#splitter-item-context',
     default: 'Handle sin slot',
     description: 'Contenido del handle cuyo item no define slot.',
   },
   {
     name: 'panel-{slot}',
     type: 'SplitterItemContext',
+    typeLink: '#splitter-item-context',
     default: '-',
     description: 'Contenido del panel identificado por el slot del item.',
   },
   {
     name: 'handle-{slot}',
     type: 'SplitterItemContext',
+    typeLink: '#splitter-item-context',
     default: '-',
     description: 'Contenido del handle asociado al slot del item.',
   },
@@ -309,14 +293,6 @@ const exposeRows: ApiTableRow[] = []
         contenido personalizado mediante slots.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">Tipos públicos usados por la API.</p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -412,23 +388,13 @@ const exposeRows: ApiTableRow[] = []
       </div>
     </section>
 
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Contexto de los slots</h3>
-        <p class="text-sm text-muted-foreground">
-          Los slots reciben el layout, el item actual, su posición y el siguiente item cuando
-          existe.
-        </p>
-      </div>
-      <ApiTable title="SplitterItemContext" :rows="contextRows" />
-    </section>
-
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />
-      <ApiTable title="Props de SplitterItem" :rows="itemRows" />
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="splitter-item" title="SplitterItem" :rows="itemRows" />
+      <ApiTable id="splitter-item-context" title="SplitterItemContext" :rows="contextRows" />
     </div>
   </section>
 </template>

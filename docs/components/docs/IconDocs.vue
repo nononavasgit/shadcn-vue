@@ -33,11 +33,6 @@ const typeRows: ApiTableRow[] = [
     type: 'IconProps & HTMLAttributes',
     description: 'Configuracion completa del icono y atributos HTML.',
   },
-  {
-    name: 'IconConfig',
-    type: 'IconProps & HTMLAttributes',
-    description: 'Props del icono y atributos HTML adicionales.',
-  },
 ]
 
 const propRows: ApiTableRow[] = [

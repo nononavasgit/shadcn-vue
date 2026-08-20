@@ -4,7 +4,6 @@ import { describe, expect, it } from 'vitest'
 import { Separator as RekaSeparator } from 'reka-ui'
 
 import { Separator, type SeparatorProps } from '@/components/ui/Separator'
-import { separatorDefaults } from '@/components/ui/Separator/defaults'
 import { testAttrs } from '../utils/testAttrs'
 
 function mountSeparator(options: MountingOptions<SeparatorProps> = {}) {
@@ -21,7 +20,7 @@ describe('Separator', () => {
       it.each([
         { input: 'horizontal', expected: 'horizontal' },
         { input: 'vertical', expected: 'vertical' },
-        { input: undefined, expected: separatorDefaults.orientation },
+        { input: undefined, expected: 'horizontal' },
       ])('passes orientation=$input to Reka Separator as $expected', ({ input, expected }) => {
         const wrapper = mountWithProp('orientation', input)
 
@@ -33,7 +32,7 @@ describe('Separator', () => {
       it.each([
         { input: true, expected: true },
         { input: false, expected: false },
-        { input: undefined, expected: separatorDefaults.decorative },
+        { input: undefined, expected: true },
       ])('passes decorative=$input to Reka Separator as $expected', ({ input, expected }) => {
         const wrapper = mountWithProp('decorative', input)
 

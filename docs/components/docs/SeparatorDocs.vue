@@ -16,14 +16,6 @@ const playgroundProps = computed<SeparatorProps>(() => ({
   decorative: playgroundDecorative.value,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'SeparatorRootProps',
-    type: "{ orientation?: 'horizontal' | 'vertical'; decorative?: boolean }",
-    description: 'Props heredadas del separador de Reka UI.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'orientation',
@@ -62,14 +54,6 @@ const exposeRows: ApiTableRow[] = []
         Divide visual y semánticamente grupos de contenido relacionados.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">Tipos públicos usados por la API.</p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>

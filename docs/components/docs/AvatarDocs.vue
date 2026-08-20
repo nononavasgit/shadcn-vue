@@ -3,15 +3,11 @@ import { computed, ref } from 'vue'
 
 import { Avatar, type AvatarProps, type AvatarShape, type AvatarSize } from '@/components/ui/Avatar'
 import type { IconConfig } from '@/components/ui/Icon'
-import { ICONS } from '@/components/ui/Icon/icons'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
-const iconNames = Object.keys(ICONS)
-
 const src = ref('')
 const label = ref('AL')
-const icon = ref('')
 const iconObjectInput = ref('')
 const size = ref<AvatarSize>('md')
 const shape = ref<AvatarShape>('rounded')
@@ -36,30 +32,11 @@ function parseIconProps(value: string): IconConfig | undefined {
 const playgroundProps = computed<AvatarProps>(() => ({
   src: src.value || undefined,
   label: label.value || undefined,
-  icon: parseIconProps(iconObjectInput.value) ?? (icon.value ? { name: icon.value } : undefined),
+  icon: parseIconProps(iconObjectInput.value),
   size: size.value,
   shape: shape.value,
   delayMs: delayMsInput.value ? Number(delayMsInput.value) : undefined,
 }))
-
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'AvatarSize',
-    type: "'xs' | 'sm' | 'md' | 'lg'",
-    description: 'Escala visual disponible para el avatar.',
-  },
-  {
-    name: 'AvatarShape',
-    type: "'rounded' | 'square'",
-    description: 'Forma del contenedor del avatar.',
-  },
-  {
-    name: 'IconConfig',
-    type: 'IconProps & HTMLAttributes',
-    typeLink: '/icon',
-    description: 'Nombre del icono o configuracion completa del icono.',
-  },
-]
 
 const propRows: ApiTableRow[] = [
   {
@@ -70,13 +47,13 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'size',
-    type: 'AvatarSize',
+    type: "'xs' | 'sm' | 'md' | 'lg'",
     default: "'md'",
     description: 'Tamano visual del avatar.',
   },
   {
     name: 'shape',
-    type: 'AvatarShape',
+    type: "'rounded' | 'square'",
     default: "'rounded'",
     description: 'Forma del contenedor.',
   },
@@ -89,9 +66,9 @@ const propRows: ApiTableRow[] = [
   {
     name: 'icon',
     type: 'IconConfig',
-    typeLink: '/icon',
+    typeLink: '/icon#icon-config',
     default: 'undefined',
-    description: 'Icono mostrado cuando no hay imagen.',
+    description: 'Objeto de configuracion del icono mostrado cuando no hay imagen.',
   },
   {
     name: 'label',
@@ -124,16 +101,6 @@ const exposeRows: ApiTableRow[] = []
         Muestra una imagen, un icono o un texto de fallback dentro de un contenedor consistente.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -170,17 +137,6 @@ const exposeRows: ApiTableRow[] = []
 
           <label class="grid gap-1.5 text-sm">
             <span class="font-medium">icon</span>
-            <select
-              v-model="icon"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Sin icono</option>
-              <option v-for="name in iconNames" :key="name" :value="name">{{ name }}</option>
-            </select>
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">icon (objeto)</span>
             <textarea
               v-model="iconObjectInput"
               rows="4"

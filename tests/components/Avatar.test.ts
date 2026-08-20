@@ -3,7 +3,8 @@ import { describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
 import { Avatar, type AvatarProps } from '@/components/ui/Avatar'
-import { testIconProps } from '../utils/testIconProps'
+import { testAttrs } from '../utils/testAttrs'
+import { testIconProps, testIconSize } from '../utils/testIconProps'
 
 function mountAvatar(options: MountingOptions<AvatarProps> = {}) {
   return mount(Avatar, options)
@@ -76,23 +77,16 @@ describe('Avatar', () => {
 
     describe('icon', () => {
       testIconProps({
-        text: 'passes icon props',
+        text: 'passes icon object props',
         id: '[data-test-avatar-icon]',
         mount: (input) => mountAvatar({ props: { icon: input } }),
       })
 
-      it('preserves custom icon props', () => {
-        const icon = mountAvatar({
-          props: { icon: { name: 'info', size: 'sm', color: '#ff0000' } },
-        }).getComponent('[data-test-avatar-icon]')
-
-        expect(icon.props()).toEqual(
-          expect.objectContaining({ name: 'info', size: 'sm', color: '#ff0000' }),
-        )
-      })
-
-      it('does not render an icon without icon', () => {
-        expect(mountAvatar().find('[data-test-avatar-icon]').exists()).toBe(false)
+      testIconSize({
+        text: 'passes icon size',
+        id: '[data-test-avatar-icon]',
+        input: 'sm',
+        mount: (size) => mountAvatar({ props: { icon: { name: 'info', size } } }),
       })
     })
   })
@@ -123,29 +117,16 @@ describe('Avatar', () => {
   })
 
   describe('attrs', () => {
-    it.each([
-      { input: { src: undefined, label: undefined, icon: undefined }, expected: 'fallback' },
-      { input: { src: undefined, label: 'AL', icon: undefined }, expected: 'fallback' },
-      { input: { src: undefined, label: undefined, icon: { name: 'user' } }, expected: 'fallback' },
-      { input: { src: undefined, label: 'AL', icon: { name: 'user' } }, expected: 'fallback' },
-      { input: { src: 'avatar.png', label: undefined, icon: undefined }, expected: 'image' },
-      { input: { src: 'avatar.png', label: 'AL', icon: undefined }, expected: 'image' },
-      { input: { src: 'avatar.png', label: undefined, icon: { name: 'user' } }, expected: 'image' },
-      { input: { src: 'avatar.png', label: 'AL', icon: { name: 'user' } }, expected: 'image' },
-    ] as const)('forwards attrs to Avatar$expected for $input', ({ input, expected }) => {
-      const avatar = mountAvatar({
-        props: input,
-        attrs: {
-          id: 'avatar-part',
-          class: 'custom-part',
-          style: 'opacity: 0.5',
-        },
-      })
-      const part = avatar.get(`[data-test-avatar-${expected}]`)
+    testAttrs({
+      text: 'forwards attrs to AvatarImage',
+      id: '[data-test-avatar-image]',
+      mount: (attrs) => mountAvatar({ props: { src: 'avatar.png' }, attrs }),
+    })
 
-      expect(part.attributes('id')).toBe('avatar-part')
-      expect(part.classes()).toContain('custom-part')
-      expect(part.attributes('style')).toContain('opacity: 0.5')
+    testAttrs({
+      text: 'forwards attrs to AvatarFallback',
+      id: '[data-test-avatar-fallback]',
+      mount: (attrs) => mountAvatar({ props: { label: 'AL' }, attrs }),
     })
   })
 

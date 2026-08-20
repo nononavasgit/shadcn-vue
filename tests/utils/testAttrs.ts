@@ -5,7 +5,7 @@ interface TestAttrsOptions {
   text: string
   id: string
   assertId?: boolean
-  mount: (attrs: Record<string, string>) => VueWrapper
+  mount: (attrs: Record<string, string>) => VueWrapper | Promise<VueWrapper>
 }
 
 const attrs = {
@@ -21,8 +21,8 @@ export function testAttrs({
   assertId = true,
   mount,
 }: TestAttrsOptions) {
-  it(text, () => {
-    const root = mount(attrs).get(id)
+  it(text, async () => {
+    const root = (await mount(attrs)).get(id)
 
     if (assertId) {
       expect(root.attributes('id')).toBe(attrs.id)

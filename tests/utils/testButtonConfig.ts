@@ -1,7 +1,7 @@
 import type { VueWrapper } from '@vue/test-utils'
 import { expect, it, vi } from 'vitest'
 
-import type { NormalizeButtonProps } from '@/components/ui/Button'
+import { Button, type NormalizeButtonProps } from '@/components/ui/Button'
 
 interface TestButtonConfigOptions {
   text: string
@@ -20,7 +20,12 @@ export function testButtonConfig({ text, id, mount }: TestButtonConfigOptions) {
       style: 'opacity: 0.5',
     }
 
-    const button = (await mount(input)).findComponent(id)
+    const wrapper = await mount(input)
+    const button = wrapper
+      .findAllComponents(Button)
+      .find((component) => component.attributes('id') === input.id)
+
+    if (!button) throw new Error(`Expected Button ${id}`)
 
     expect(button.exists()).toBe(true)
     expect(button.props('label')).toBe(input.label)

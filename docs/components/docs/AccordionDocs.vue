@@ -9,36 +9,35 @@ import {
   type AccordionValue,
 } from '@/components/ui/Accordion'
 import type { IconConfig } from '@/components/ui/Icon'
-import { ICONS } from '@/components/ui/Icon/icons'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
-const iconNames = Object.keys(ICONS)
 const type = ref<AccordionType>('single')
 const collapsible = ref(true)
 const disabled = ref(false)
 const unmountOnHide = ref(true)
 const value = ref<AccordionValue>('first')
-const iconDropDownOpen = ref('chevronUp')
 const iconDropDownOpenObjectInput = ref('')
-const iconDropDownClose = ref('chevronDown')
 const iconDropDownCloseObjectInput = ref('')
 
 const defaultItems: AccordionItem[] = [
   {
     value: 'first',
+    slot: 'first',
     label: 'What is this component for?',
     description: 'Accordion organizes related content into expandable sections.',
     icon: { name: 'info' },
   },
   {
     value: 'second',
+    slot: 'second',
     label: 'Can I open multiple sections?',
     description: 'Use the multiple type to keep more than one section open.',
     icon: { name: 'search' },
   },
   {
     value: 'third',
+    slot: 'third',
     label: 'Can an item be disabled?',
     description: 'Each item can be disabled independently from the root.',
     icon: { name: 'check' },
@@ -86,57 +85,66 @@ const playgroundProps = computed<AccordionProps>(() => ({
   unmountOnHide: unmountOnHide.value,
   items: parseItems(itemsInput.value),
   value: value.value,
-  iconDropDownOpen:
-    parseIconProps(iconDropDownOpenObjectInput.value) ??
-    (iconDropDownOpen.value ? { name: iconDropDownOpen.value } : undefined),
-  iconDropDownClose:
-    parseIconProps(iconDropDownCloseObjectInput.value) ??
-    (iconDropDownClose.value ? { name: iconDropDownClose.value } : undefined),
+  iconDropDownOpen: parseIconProps(iconDropDownOpenObjectInput.value),
+  iconDropDownClose: parseIconProps(iconDropDownCloseObjectInput.value),
 }))
 
-const typeRows: ApiTableRow[] = [
+const itemRows: ApiTableRow[] = [
   {
-    name: 'AccordionType',
-    type: "'single' | 'multiple'",
-    description: 'Define si se puede abrir una o varias secciones.',
+    name: 'value',
+    type: 'string',
+    default: '-',
+    description: 'Identificador unico del item.',
   },
   {
-    name: 'AccordionValue',
-    type: 'string | string[] | undefined',
-    description: 'Valor o valores de los items abiertos.',
+    name: 'slot',
+    type: 'string',
+    default: 'undefined',
+    description: 'Clave para resolver los slots especificos del item.',
   },
   {
-    name: 'AccordionItem',
-    type: '{ value: string; label?: string; description?: string; icon?: IconConfig; disabled?: boolean; unmountOnHide?: boolean }',
-    description: 'Configuracion de cada item del acordeon.',
+    name: 'label',
+    type: 'string',
+    default: 'undefined',
+    description: 'Texto del trigger.',
   },
   {
-    name: 'AccordionUI',
-    type: '{ item?; trigger?; content? }',
-    description: 'Funciones para personalizar los atributos de las partes internas.',
+    name: 'description',
+    type: 'string',
+    default: 'undefined',
+    description: 'Contenido mostrado al abrir el item.',
   },
   {
-    name: 'AccordionContext',
-    type: '{ value: AccordionValue }',
-    description: 'Contexto del acordeon disponible para la personalizacion de raiz.',
+    name: 'icon',
+    type: 'IconConfig',
+    typeLink: '/icon#icon-config',
+    default: 'undefined',
+    description: 'Icono mostrado junto al label.',
   },
   {
-    name: 'AccordionItemContext',
-    type: '{ item; index; value; open; first; last }',
-    description: 'Contexto disponible en cada item y sus slots.',
+    name: 'disabled',
+    type: 'boolean',
+    default: 'undefined',
+    description: 'Desactiva el item individualmente.',
+  },
+  {
+    name: 'unmountOnHide',
+    type: 'boolean',
+    default: 'undefined',
+    description: 'Controla si desmonta el contenido cerrado.',
   },
 ]
 
 const propRows: ApiTableRow[] = [
   {
     name: 'type',
-    type: 'AccordionType',
+    type: "'single' | 'multiple'",
     default: "'single'",
     description: 'Modo de apertura del acordeon.',
   },
   {
     name: 'value',
-    type: 'AccordionValue',
+    type: 'string | string[] | undefined',
     default: 'undefined',
     description: 'Item o items abiertos actualmente.',
   },
@@ -161,26 +169,36 @@ const propRows: ApiTableRow[] = [
   {
     name: 'items',
     type: 'AccordionItem[]',
+    typeLink: '#accordion-item',
     default: '[]',
     description: 'Items que renderiza el acordeon.',
   },
   {
     name: 'iconDropDownOpen',
     type: 'IconConfig',
-    typeLink: '/icon',
+    typeLink: '/icon#icon-config',
     default: "'chevronUp'",
     description: 'Icono del item abierto.',
   },
   {
     name: 'iconDropDownClose',
     type: 'IconConfig',
-    typeLink: '/icon',
+    typeLink: '/icon#icon-config',
     default: "'chevronDown'",
     description: 'Icono del item cerrado.',
   },
   {
     name: 'ui',
-    type: 'AccordionUI',
+    type: '{ item?: (context: AccordionItemContext) => HTMLAttributes; trigger?: (context: AccordionItemContext) => HTMLAttributes; content?: (context: AccordionItemContext) => HTMLAttributes }',
+    typeParts: [
+      { text: '{ item?: (context: ' },
+      { text: 'AccordionItemContext', link: '#accordion-item-context' },
+      { text: ') => HTMLAttributes; trigger?: (context: ' },
+      { text: 'AccordionItemContext', link: '#accordion-item-context' },
+      { text: ') => HTMLAttributes; content?: (context: ' },
+      { text: 'AccordionItemContext', link: '#accordion-item-context' },
+      { text: ') => HTMLAttributes }' },
+    ],
     default: 'undefined',
     description: 'Atributos personalizados para item, trigger y content.',
   },
@@ -193,58 +211,88 @@ const emitRows: ApiTableRow[] = [
     default: '-',
     description: 'Actualiza el valor de los items abiertos.',
   },
-  {
-    name: 'valueChange',
-    type: '[value: AccordionValue]',
-    default: '-',
-    description: 'Notifica un cambio de valor.',
-  },
 ]
 
 const slotRows: ApiTableRow[] = [
-  { name: 'trigger', type: 'AccordionItemContext', default: '-', description: 'Trigger global.' },
-  { name: 'icon', type: 'AccordionItemContext', default: '-', description: 'Icono del item.' },
-  { name: 'label', type: 'AccordionItemContext', default: '-', description: 'Label del item.' },
+  {
+    name: 'trigger',
+    type: 'AccordionItemContext',
+    typeLink: '#accordion-item-context',
+    default: '-',
+    description: 'Trigger global.',
+  },
+  {
+    name: 'leading',
+    type: 'AccordionItemContext',
+    typeLink: '#accordion-item-context',
+    default: '-',
+    description: 'Icono del item.',
+  },
+  {
+    name: 'label',
+    type: 'AccordionItemContext',
+    typeLink: '#accordion-item-context',
+    default: '-',
+    description: 'Label del item.',
+  },
   {
     name: 'iconDropdown',
     type: 'AccordionItemContext',
+    typeLink: '#accordion-item-context',
     default: '-',
     description: 'Icono que indica el estado del item.',
   },
-  { name: 'content', type: 'AccordionItemContext', default: '-', description: 'Contenido global.' },
   {
-    name: 'trigger-{value}',
+    name: 'content',
     type: 'AccordionItemContext',
+    typeLink: '#accordion-item-context',
+    default: '-',
+    description: 'Contenido global.',
+  },
+  {
+    name: 'trigger-{slot}',
+    type: 'AccordionItemContext',
+    typeLink: '#accordion-item-context',
     default: '-',
     description: 'Trigger especifico de un item.',
   },
   {
-    name: 'icon-{value}',
+    name: 'label-{slot}',
     type: 'AccordionItemContext',
-    default: '-',
-    description: 'Icono especifico de un item.',
-  },
-  {
-    name: 'label-{value}',
-    type: 'AccordionItemContext',
+    typeLink: '#accordion-item-context',
     default: '-',
     description: 'Label especifico de un item.',
   },
   {
-    name: 'iconDropdown-{value}',
+    name: 'leading-{slot}',
     type: 'AccordionItemContext',
+    typeLink: '#accordion-item-context',
     default: '-',
-    description: 'Icono de estado especifico de un item.',
+    description: 'Icono especifico de un item.',
   },
   {
-    name: 'content-{value}',
+    name: 'content-{slot}',
     type: 'AccordionItemContext',
+    typeLink: '#accordion-item-context',
     default: '-',
     description: 'Contenido especifico de un item.',
   },
 ]
 
 const exposeRows: ApiTableRow[] = []
+
+const contextRows: ApiTableRow[] = [
+  {
+    name: 'item',
+    type: 'AccordionItem',
+    typeLink: '#accordion-item',
+    description: 'Configuracion del item actual.',
+  },
+  { name: 'index', type: 'number', description: 'Posicion del item.' },
+  { name: 'open', type: 'boolean', description: 'Indica si el item esta abierto.' },
+  { name: 'first', type: 'boolean', description: 'Indica si es el primer item.' },
+  { name: 'last', type: 'boolean', description: 'Indica si es el ultimo item.' },
+]
 </script>
 
 <template>
@@ -256,16 +304,6 @@ const exposeRows: ApiTableRow[] = []
         Organiza contenido relacionado en secciones expandibles con soporte single y multiple.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -304,17 +342,6 @@ const exposeRows: ApiTableRow[] = []
           </label>
 
           <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">iconDropDownOpen</span>
-            <select
-              v-model="iconDropDownOpen"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Sin icono</option>
-              <option v-for="name in iconNames" :key="name" :value="name">{{ name }}</option>
-            </select>
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
             <span class="font-medium">iconDropDownOpen (objeto)</span>
             <textarea
               v-model="iconDropDownOpenObjectInput"
@@ -325,17 +352,6 @@ const exposeRows: ApiTableRow[] = []
 }'
               class="rounded-md border bg-background px-3 py-2 font-mono text-xs outline-none focus:ring-2 focus:ring-ring"
             />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">iconDropDownClose</span>
-            <select
-              v-model="iconDropDownClose"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Sin icono</option>
-              <option v-for="name in iconNames" :key="name" :value="name">{{ name }}</option>
-            </select>
           </label>
 
           <label class="grid gap-1.5 text-sm">
@@ -374,6 +390,8 @@ const exposeRows: ApiTableRow[] = []
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="accordion-item" title="AccordionItem" :rows="itemRows" />
+      <ApiTable id="accordion-item-context" title="AccordionItemContext" :rows="contextRows" />
     </div>
   </section>
 </template>

@@ -20,6 +20,7 @@ export type AccordionItemProps = Pick<
   'value' | 'disabled' | 'unmountOnHide'
 >
 export interface AccordionItem extends AccordionItemProps {
+  slot?: string
   label?: string
   description?: string
   icon?: IconConfig
@@ -35,7 +36,6 @@ export interface AccordionProps extends AccordionRootProps {
 }
 
 // Fn
-export type AccordionFn<T> = (context: AccordionContext) => T
 export type AccordionItemFn<T> = (context: AccordionItemContext) => T
 
 // UI
@@ -45,19 +45,9 @@ export interface AccordionUI {
   content?: AccordionItemFn<HTMLAttributes>
 }
 
-// Context
-export interface AccordionContext {
-  value: AccordionValue
-}
-
-export function createAccordionContext(value: AccordionValue): AccordionContext {
-  return { value }
-}
-
 export interface AccordionItemContext {
   item: AccordionItem
   index: number
-  value: AccordionValue
   open: boolean
   first: boolean
   last: boolean
@@ -72,7 +62,6 @@ export function createAccordionItemContext(
   return {
     item,
     index,
-    value,
     open: Array.isArray(value) ? value.includes(item.value) : value === item.value,
     first: index === 0,
     last: index === itemCount - 1,
@@ -82,20 +71,18 @@ export function createAccordionItemContext(
 // Emits
 export interface AccordionEmits {
   'update:value': [value: AccordionValue]
-  valueChange: [value: AccordionValue]
 }
 
 // Slots
 export type AccordionSlots = {
   trigger?(props: AccordionItemContext): unknown
-  content?(props: AccordionItemContext): unknown
-  icon?(props: AccordionItemContext): unknown
+  leading?(props: AccordionItemContext): unknown
   label?(props: AccordionItemContext): unknown
+  content?(props: AccordionItemContext): unknown
   iconDropdown?(props: AccordionItemContext): unknown
 } & {
   [name: `trigger-${string}`]: ((props: AccordionItemContext) => unknown) | undefined
-  [name: `icon-${string}`]: ((props: AccordionItemContext) => unknown) | undefined
+  [name: `leading-${string}`]: ((props: AccordionItemContext) => unknown) | undefined
   [name: `label-${string}`]: ((props: AccordionItemContext) => unknown) | undefined
-  [name: `iconDropdown-${string}`]: ((props: AccordionItemContext) => unknown) | undefined
   [name: `content-${string}`]: ((props: AccordionItemContext) => unknown) | undefined
 }

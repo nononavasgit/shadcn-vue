@@ -2,6 +2,7 @@
 import { RouterView } from 'vue-router'
 
 const passed = {
+  accordion: true,
   alert: true,
   alertDialog: true,
   avatar: true,

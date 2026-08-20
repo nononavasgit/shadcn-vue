@@ -4,13 +4,13 @@ import { h } from 'vue'
 
 import {
   Accordion,
-  createAccordionContext,
   createAccordionItemContext,
-  type AccordionContext,
   type AccordionItemContext,
   type AccordionProps,
   type AccordionValue,
 } from '@/components/ui/Accordion'
+import { testAttrs } from '../utils/testAttrs'
+import { testIconProps } from '../utils/testIconProps'
 
 const items = [
   {
@@ -127,62 +127,55 @@ describe('Accordion', () => {
       })
     })
 
-    describe('iconDropDownOpen / iconDropDownClose', () => {
+    describe('value', () => {
       it.each([
-        {
-          name: 'configured open icon',
-          input: { value: 'item', open: { name: 'check' }, close: { name: 'x' } },
-          expected: 'check',
-        },
-        {
-          name: 'configured closed icon',
-          input: { value: undefined, open: { name: 'check' }, close: { name: 'x' } },
-          expected: 'x',
-        },
-        {
-          name: 'default open icon',
-          input: { value: 'item', open: undefined, close: undefined },
-          expected: 'chevronUp',
-        },
-        {
-          name: 'default closed icon',
-          input: { value: undefined, open: undefined, close: undefined },
-          expected: 'chevronDown',
-        },
-      ])('renders $name as $expected', ({ input, expected }) => {
+        { input: 'item' as AccordionValue, expected: 'item' },
+        { input: ['first', 'second'] as AccordionValue, expected: ['first', 'second'] },
+        { input: undefined, expected: undefined },
+      ])('passes value=$input to root', ({ input, expected }) => {
         const accordion = mountAccordion({
           props: {
-            value: input.value,
-            items: [{ value: 'item' }],
-            iconDropDownOpen: input.open,
-            iconDropDownClose: input.close,
-          },
-        })
-
-        expect(
-          accordion.getComponent('[data-test-accordion-icon-dropdown="item"]').props('name'),
-        ).toBe(expected)
-      })
-
-      it('updates dropdown icon when value changes externally', async () => {
-        const accordion = mountAccordion({
-          props: {
-            value: 'first',
+            value: input,
+            type: Array.isArray(input) ? 'multiple' : 'single',
             items: [{ value: 'first' }, { value: 'second' }],
-            iconDropDownOpen: { name: 'check' },
-            iconDropDownClose: { name: 'x' },
           },
         })
 
-        await accordion.setProps({ value: 'second' })
+        expect(accordion.getComponent('[data-test-accordion-root]').props('modelValue')).toEqual(
+          expected,
+        )
+      })
+    })
 
-        expect(
-          accordion.getComponent('[data-test-accordion-icon-dropdown="first"]').props('name'),
-        ).toBe('x')
+    describe('iconDropDownOpen', () => {
+      testIconProps({
+        text: 'passes iconDropDownOpen props',
+        id: '[data-test-accordion-icon-dropdown="item"]',
+        default: 'chevronUp',
+        mount: (input) =>
+          mountAccordion({
+            props: {
+              value: 'item',
+              items: [{ value: 'item' }],
+              iconDropDownOpen: input,
+            },
+          }),
+      })
+    })
 
-        expect(
-          accordion.getComponent('[data-test-accordion-icon-dropdown="second"]').props('name'),
-        ).toBe('check')
+    describe('iconDropDownClose', () => {
+      testIconProps({
+        text: 'passes iconDropDownClose props',
+        id: '[data-test-accordion-icon-dropdown="item"]',
+        default: 'chevronDown',
+        mount: (input) =>
+          mountAccordion({
+            props: {
+              value: undefined,
+              items: [{ value: 'item' }],
+              iconDropDownClose: input,
+            },
+          }),
       })
     })
 
@@ -318,142 +311,101 @@ describe('Accordion', () => {
       })
 
       describe('icon', () => {
-        it.each([
-          { input: { name: 'info' as const }, expected: 'info' },
-          { input: { name: 'error' as const, color: 'green' }, expected: 'error' },
-          { input: undefined, expected: undefined },
-        ])('renders item icon=$input as $expected', ({ input, expected }) => {
-          const accordion = mountAccordion({
-            props: {
-              items: [{ value: 'item', icon: input }],
-            },
-          })
-          const icon = accordion.findComponent('[data-test-accordion-icon="item"]')
-
-          if (expected === undefined) {
-            expect(icon.exists()).toBe(false)
-            return
-          }
-
-          expect(icon.props('name')).toBe(expected)
+        testIconProps({
+          text: 'passes item.icon props',
+          id: '[data-test-accordion-icon="item"]',
+          mount: (input) =>
+            mountAccordion({
+              props: {
+                items: [{ value: 'item', icon: input }],
+              },
+            }),
         })
       })
     })
 
     describe('ui', () => {
-      it.each([
-        { input: 'item' as const, expected: 'item' },
-        { input: 'trigger' as const, expected: 'trigger' },
-        { input: 'content' as const, expected: 'content' },
-      ])('renders ui.$input attributes on $expected', ({ input, expected }) => {
-        const accordion = mountAccordion({
-          props: {
-            value: 'item',
-            items: [{ value: 'item' }],
-            ui: {
-              [input]: () => ({
-                class: `ui-${input}`,
-                style: 'opacity: 0.8',
-                'data-test-accordion-ui': input,
-              }),
-            },
-          },
+      describe('item', () => {
+        testAttrs({
+          text: 'renders ui.item attributes',
+          id: '[data-test-accordion-item="item"]',
+          mount: (attrs) =>
+            mountAccordion({
+              props: {
+                items: [{ value: 'item' }],
+                ui: { item: () => attrs },
+              },
+            }),
         })
-        const element = accordion.get(`[data-test-accordion-ui="${expected}"]`)
+      })
 
-        expect(element.classes()).toContain(`ui-${expected}`)
-        expect(element.attributes('style')).toContain('opacity: 0.8')
+      describe('trigger', () => {
+        testAttrs({
+          text: 'renders ui.trigger attributes',
+          id: '[data-test-accordion-trigger="item"]',
+          mount: (attrs) =>
+            mountAccordion({
+              props: {
+                items: [{ value: 'item' }],
+                ui: { trigger: () => attrs },
+              },
+            }),
+        })
+      })
+
+      describe('content', () => {
+        testAttrs({
+          text: 'renders ui.content attributes',
+          id: '[data-test-accordion-content="item"]',
+          assertId: false,
+          mount: (attrs) =>
+            mountAccordion({
+              props: {
+                value: 'item',
+                items: [{ value: 'item' }],
+                ui: { content: () => attrs },
+              },
+            }),
+        })
       })
     })
   })
 
   describe('attrs', () => {
-    it('forwards arbitrary attrs to root', () => {
-      const accordion = mountAccordion({
-        attrs: {
-          id: 'questions',
-          'aria-label': 'Questions',
-          'data-testid': 'accordion',
-        },
-      })
-
-      expect(accordion.attributes('id')).toBe('questions')
-      expect(accordion.attributes('aria-label')).toBe('Questions')
-      expect(accordion.attributes('data-testid')).toBe('accordion')
-    })
-
-    it('forwards class to root', () => {
-      const accordion = mountAccordion({
-        attrs: {
-          class: 'custom-accordion',
-        },
-      })
-
-      expect(accordion.classes()).toContain('custom-accordion')
-    })
-
-    it('forwards style to root', () => {
-      const accordion = mountAccordion({
-        attrs: {
-          style: 'opacity: 0.5',
-        },
-      })
-
-      expect(accordion.attributes('style')).toContain('opacity: 0.5')
+    testAttrs({
+      text: 'forwards arbitrary attrs, class and style to root',
+      id: '[data-test-accordion-root]',
+      mount: (attrs) => mountAccordion({ attrs }),
     })
   })
 
   describe('context contract', () => {
-    describe('AccordionContext', () => {
-      it.each([
-        {
-          name: 'default values',
-          input: undefined,
-          expected: { value: undefined },
-        },
-        {
-          name: 'single value',
-          input: 'first',
-          expected: { value: 'first' },
-        },
-        {
-          name: 'multiple value',
-          input: ['first', 'second'],
-          expected: { value: ['first', 'second'] },
-        },
-      ])('creates the contract with $name', ({ input, expected }) => {
-        const context = createAccordionContext(input)
-
-        expect(context).toEqual(expected satisfies AccordionContext)
-      })
-    })
-
     describe('AccordionItemContext', () => {
       it.each([
         {
           name: 'first open item in single mode',
           input: { index: 0, value: 'first' as AccordionValue },
-          expected: { value: 'first', open: true, first: true, last: false },
+          expected: { open: true, first: true, last: false },
         },
         {
           name: 'middle closed item in single mode',
           input: { index: 1, value: 'first' as AccordionValue },
-          expected: { value: 'first', open: false, first: false, last: false },
+          expected: { open: false, first: false, last: false },
         },
         {
           name: 'last open item in multiple mode',
           input: { index: 2, value: ['first', 'last'] as AccordionValue },
-          expected: { value: ['first', 'last'], open: true, first: false, last: true },
+          expected: { open: true, first: false, last: true },
         },
         {
           name: 'middle closed item in multiple mode',
           input: { index: 1, value: ['first', 'last'] as AccordionValue },
-          expected: { value: ['first', 'last'], open: false, first: false, last: false },
+          expected: { open: false, first: false, last: false },
         },
         {
           name: 'first closed item without value',
           input: { index: 0, value: undefined },
-          expected: { value: undefined, open: false, first: true, last: false },
+          expected: { open: false, first: true, last: false },
         },
       ])('creates the contract for $name', ({ input, expected }) => {
         const contextItems = [{ value: 'first' }, { value: 'middle' }, { value: 'last' }]
@@ -511,73 +463,21 @@ describe('Accordion', () => {
       })
     })
 
-    describe('valueChange', () => {
-      it.each([
-        {
-          name: 'single value',
-          input: { type: 'single' as const, value: undefined },
-          expected: 'first',
-        },
-        {
-          name: 'multiple value',
-          input: { type: 'multiple' as const, value: [] as string[] },
-          expected: ['first'],
-        },
-      ])('emits when user changes $name', async ({ input, expected }) => {
-        const accordion = mountAccordion({
-          props: {
-            type: input.type,
-            value: input.value,
-            items: [{ value: 'first' }],
-          },
-        })
-
-        await accordion.get('[data-test-accordion-trigger="first"]').trigger('click')
-
-        expect(accordion.emitted('valueChange')).toEqual([[expected]])
-      })
-
-      it.each([
-        { input: { initial: 'first', type: 'single', next: 'second' }, expected: 'second' },
-        {
-          input: { initial: ['first'], type: 'multiple', next: ['first', 'second'] },
-          expected: ['first', 'second'],
-        },
-      ])('emits $expected after an external change', async ({ input, expected }) => {
-        const accordion = mount(Accordion, {
-          props: {
-            items: [{ value: 'first' }, { value: 'second' }],
-            value: input.initial,
-            type: input.type,
-          },
-        })
-
-        await accordion.setProps({ value: input.next })
-
-        expect(accordion.emitted('valueChange')).toEqual([[expected]])
-      })
-
-      it('does not emit when value stays the same', async () => {
-        const accordion = mount(Accordion, {
-          props: {
-            items: [{ value: 'first' }],
-            value: 'first',
-          },
-        })
-
-        await accordion.setProps({ value: 'first' })
-
-        expect(accordion.emitted('valueChange')).toBeUndefined()
-      })
-    })
   })
 
   describe('slots', () => {
     const slotCases = [
       { input: 'trigger' as const, expected: 'trigger' },
-      { input: 'icon' as const, expected: 'icon' },
+      { input: 'leading' as const, expected: 'leading' },
       { input: 'label' as const, expected: 'label' },
       { input: 'iconDropdown' as const, expected: 'iconDropdown' },
+      { input: 'content' as const, expected: 'content' },
+    ]
+
+    const itemSlotCases = [
+      { input: 'trigger' as const, expected: 'trigger' },
+      { input: 'leading' as const, expected: 'leading' },
+      { input: 'label' as const, expected: 'label' },
       { input: 'content' as const, expected: 'content' },
     ]
 
@@ -597,10 +497,10 @@ describe('Accordion', () => {
     })
 
     describe('item-specific', () => {
-      it.each(slotCases)('renders the $input-{item.value} slot', ({ input, expected }) => {
-        const slotName = `${input}-item`
+      it.each(itemSlotCases)('renders the $input-{item.slot} slot', ({ input, expected }) => {
+        const slotName = `${input}-custom`
         const accordion = mountAccordion({
-          props: { value: 'item', items: [{ value: 'item' }] },
+          props: { value: 'item', items: [{ value: 'item', slot: 'custom' }] },
           slots: {
             [slotName]: () =>
               h('span', { 'data-test-accordion-slot': expected }, `Slot ${expected}`),

@@ -6,7 +6,8 @@ const passed = {
   badge: true,
   card: true,
   icon: true,
-  separator: true
+  separator: true,
+  splitter: true
 }
 </script>
 

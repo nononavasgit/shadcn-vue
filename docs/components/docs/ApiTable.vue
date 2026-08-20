@@ -5,6 +5,10 @@ export interface ApiTableRow {
   name: string
   type: string
   typeLink?: string
+  typeParts?: Array<{
+    text: string
+    link?: string
+  }>
   default?: string
   description: string
   required?: boolean
@@ -64,7 +68,28 @@ withDefaults(
                   {{ row.type }}
                 </code>
               </RouterLink>
-              <code v-else class="rounded bg-muted px-1.5 py-0.5 text-xs">{{ row.type }}</code>
+              <code v-else class="rounded bg-muted px-1.5 py-0.5 text-xs">
+                <template v-if="row.typeParts">
+                  <template v-for="(part, index) in row.typeParts" :key="`${row.name}-${index}`">
+                    <a
+                      v-if="part.link?.startsWith('#')"
+                      :href="part.link"
+                      class="text-primary underline-offset-4 hover:underline"
+                    >
+                      {{ part.text }}
+                    </a>
+                    <RouterLink
+                      v-else-if="part.link"
+                      :to="part.link"
+                      class="text-primary underline-offset-4 hover:underline"
+                    >
+                      {{ part.text }}
+                    </RouterLink>
+                    <template v-else>{{ part.text }}</template>
+                  </template>
+                </template>
+                <template v-else>{{ row.type }}</template>
+              </code>
             </td>
             <td v-if="showDefault" class="px-4 py-3 text-muted-foreground">
               <code v-if="row.default" class="text-xs">{{ row.default }}</code>

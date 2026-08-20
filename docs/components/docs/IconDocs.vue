@@ -17,20 +17,14 @@ const playgroundProps = computed<IconProps>(() => ({
   color: color.value,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'IconName',
-    type: 'keyof typeof ICONS',
-    description: 'Nombres de iconos disponibles en la libreria.',
-  },
-  {
-    name: 'IconSize',
-    type: "'xs' | 'sm' | 'md' | 'lg'",
-    description: 'Escala visual del icono.',
-  },
+const iconConfigRows: ApiTableRow[] = [
   {
     name: 'IconConfig',
     type: 'IconProps & HTMLAttributes',
+    typeParts: [
+      { text: 'IconProps', link: '#icon-props' },
+      { text: ' & HTMLAttributes' },
+    ],
     description: 'Configuracion completa del icono y atributos HTML.',
   },
 ]
@@ -38,13 +32,13 @@ const typeRows: ApiTableRow[] = [
 const propRows: ApiTableRow[] = [
   {
     name: 'name',
-    type: 'IconName',
+    type: 'keyof typeof ICONS',
     required: true,
     description: 'Nombre del icono que se va a renderizar.',
   },
   {
     name: 'size',
-    type: 'IconSize',
+    type: "'xs' | 'sm' | 'md' | 'lg'",
     default: "'md'",
     description: 'Tamano visual del icono.',
   },
@@ -70,16 +64,6 @@ const exposeRows: ApiTableRow[] = []
         Renderiza un icono Lucide con una API compacta y consistente.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -133,7 +117,7 @@ const exposeRows: ApiTableRow[] = []
     </section>
 
     <div class="grid gap-4">
-      <ApiTable title="Props" :rows="propRows" />
+      <ApiTable id="icon-props" title="Props" :rows="propRows" />
       <ApiTable
         title="Emits"
         :rows="emitRows"
@@ -147,6 +131,7 @@ const exposeRows: ApiTableRow[] = []
         empty-text="Este componente no define slots."
       />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="icon-config" title="IconConfig" :rows="iconConfigRows" />
     </div>
   </section>
 </template>

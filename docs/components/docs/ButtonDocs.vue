@@ -54,26 +54,17 @@ const playgroundProps = computed<ButtonProps>(() => ({
   trailingIcon: parseIconProps(trailingIconObjectInput.value),
 }))
 
-const typeRows: ApiTableRow[] = [
+const buttonConfigRows: ApiTableRow[] = [
   {
-    name: 'ButtonVariant',
-    type: "'solid' | 'outline' | 'plain' | 'subtle' | 'soft' | 'link'",
-    description: 'Estilo visual del boton.',
-  },
-  {
-    name: 'ButtonSeverity',
-    type: "'primary' | 'secondary' | 'warning' | 'success' | 'error'",
-    description: 'Nivel semantico y color del boton.',
-  },
-  {
-    name: 'ButtonSize',
-    type: "'xs' | 'sm' | 'md' | 'lg'",
-    description: 'Tamano del boton.',
-  },
-  {
-    name: 'NormalizeButtonProps',
-    type: 'ButtonProps & HTMLAttributes',
-    description: 'Props del boton combinadas con atributos HTML y eventos.',
+    name: 'ButtonConfig',
+    type: 'ButtonProps & ButtonEmits & HTMLAttributes & HTMLEvents',
+    typeParts: [
+      { text: 'ButtonProps', link: '#button-props' },
+      { text: ' & ' },
+      { text: 'ButtonEmits', link: '#button-emits' },
+      { text: ' & HTMLAttributes & HTMLEvents' },
+    ],
+    description: 'Configuracion completa del boton y sus atributos y eventos HTML.',
   },
 ]
 
@@ -81,17 +72,22 @@ const propRows: ApiTableRow[] = [
   { name: 'label', type: 'string', default: 'undefined', description: 'Texto del boton.' },
   {
     name: 'variant',
-    type: 'ButtonVariant',
+    type: "'solid' | 'outline' | 'plain' | 'subtle' | 'soft' | 'link'",
     default: "'solid'",
     description: 'Variante visual.',
   },
   {
     name: 'severity',
-    type: 'ButtonSeverity',
+    type: "'primary' | 'secondary' | 'warning' | 'success' | 'error'",
     default: "'primary'",
     description: 'Severidad semantica.',
   },
-  { name: 'size', type: 'ButtonSize', default: "'md'", description: 'Tamano del boton.' },
+  {
+    name: 'size',
+    type: "'xs' | 'sm' | 'md' | 'lg'",
+    default: "'md'",
+    description: 'Tamano del boton.',
+  },
   { name: 'rounded', type: 'boolean', default: 'false', description: 'Usa bordes redondeados.' },
   { name: 'square', type: 'boolean', default: 'false', description: 'Usa una forma cuadrada.' },
   { name: 'raised', type: 'boolean', default: 'false', description: 'Aplica sombreado.' },
@@ -105,14 +101,14 @@ const propRows: ApiTableRow[] = [
   {
     name: 'icon',
     type: 'IconConfig',
-    typeLink: '/icon',
+    typeLink: '/icon#icon-config',
     default: 'undefined',
     description: 'Icono al inicio.',
   },
   {
     name: 'trailingIcon',
     type: 'IconConfig',
-    typeLink: '/icon',
+    typeLink: '/icon#icon-config',
     default: 'undefined',
     description: 'Icono al final.',
   },
@@ -163,16 +159,6 @@ const exposeRows: ApiTableRow[] = []
         Accion interactiva con variantes visuales, iconos y estados de carga.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -295,10 +281,11 @@ const exposeRows: ApiTableRow[] = []
     </section>
 
     <div class="grid gap-4">
-      <ApiTable title="Props" :rows="propRows" />
-      <ApiTable title="Emits" :rows="emitRows" />
+      <ApiTable id="button-props" title="Props" :rows="propRows" />
+      <ApiTable id="button-emits" title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="button-config" title="ButtonConfig" :rows="buttonConfigRows" />
     </div>
   </section>
 </template>

@@ -14,15 +14,6 @@ const playgroundProps = computed<CardProps>(() => ({
   description: description.value || undefined,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'CardUI',
-    type: '{ header?: () => HTMLAttributes; label?: () => HTMLAttributes; description?: () => HTMLAttributes; action?: () => HTMLAttributes; content?: () => HTMLAttributes; footer?: () => HTMLAttributes }',
-    description:
-      'Funciones que devuelven atributos HTML para header, label, description, action, content y footer.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'label',
@@ -38,9 +29,9 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: 'CardUI',
+    type: '{ header?: () => HTMLAttributes; label?: () => HTMLAttributes; description?: () => HTMLAttributes; action?: () => HTMLAttributes; content?: () => HTMLAttributes; footer?: () => HTMLAttributes }',
     default: String(cardDefaults.ui),
-    description: 'Atributos personalizados para las partes internas.',
+    description: 'Funciones que devuelven atributos HTML para los elementos internos.',
   },
 ]
 
@@ -83,16 +74,6 @@ const exposeRows: ApiTableRow[] = []
         Contenedor compuesto para agrupar contenido, acciones y un pie de tarjeta.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>

@@ -46,36 +46,23 @@ const playgroundProps = computed<BadgeProps>(() => ({
   trailingIcon: parseIconProps(trailingIconObjectInput.value),
 }))
 
-const typeRows: ApiTableRow[] = [
+const propRows: ApiTableRow[] = [
+  { name: 'label', type: 'string', default: 'undefined', description: 'Texto del badge.' },
   {
-    name: 'BadgeSize',
+    name: 'size',
     type: "'sm' | 'md' | 'lg'",
+    default: "'md'",
     description: 'Tamano del badge.',
   },
   {
-    name: 'BadgeVariant',
-    type: "'solid' | 'outline' | 'plain' | 'subtle' | 'soft'",
-    description: 'Variante visual.',
-  },
-  {
-    name: 'BadgeSeverity',
-    type: "'primary' | 'secondary' | 'warning' | 'success' | 'error'",
-    description: 'Severidad y color semantico.',
-  },
-]
-
-const propRows: ApiTableRow[] = [
-  { name: 'label', type: 'string', default: 'undefined', description: 'Texto del badge.' },
-  { name: 'size', type: 'BadgeSize', default: "'md'", description: 'Tamano del badge.' },
-  {
     name: 'variant',
-    type: 'BadgeVariant',
+    type: "'solid' | 'outline' | 'plain' | 'subtle' | 'soft'",
     default: "'solid'",
     description: 'Variante visual.',
   },
   {
     name: 'severity',
-    type: 'BadgeSeverity',
+    type: "'primary' | 'secondary' | 'warning' | 'success' | 'error'",
     default: "'primary'",
     description: 'Severidad semantica.',
   },
@@ -128,16 +115,6 @@ const exposeRows: ApiTableRow[] = []
         Etiqueta compacta para estados, categorias y metadatos.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>

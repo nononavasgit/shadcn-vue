@@ -110,9 +110,16 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: '{ panel?; resizeHandle? }',
+    type: '{ panel?: (context: SplitterItemContext) => HTMLAttributes; resizeHandle?: (context: SplitterItemContext) => HTMLAttributes }',
+    typeParts: [
+      { text: '{ panel?: (context: ' },
+      { text: 'SplitterItemContext', link: '#splitter-item-context' },
+      { text: ') => HTMLAttributes; resizeHandle?: (context: ' },
+      { text: 'SplitterItemContext', link: '#splitter-item-context' },
+      { text: ') => HTMLAttributes }' },
+    ],
     default: 'undefined',
-    description: 'Atributos, clases y estilos para paneles y handles.',
+    description: 'Funciones que devuelven atributos HTML para los paneles y handles internos.',
   },
 ]
 

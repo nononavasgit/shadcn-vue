@@ -16,7 +16,7 @@ export type AlertDialogContentProps = Pick<
 >
 
 // Fn
-export type AlertDialogFn<T> = (context: AlertDialogContext) => T
+export type AlertDialogFn<T> = () => T
 
 // Props
 export interface AlertDialogProps extends AlertDialogRootProps, AlertDialogContentProps {
@@ -31,7 +31,7 @@ export interface AlertDialogProps extends AlertDialogRootProps, AlertDialogConte
 
 // Expose
 export interface AlertDialogExpose {
-  /** Closes the alert dialog through the exposed component API or slot context. */
+  /** Closes the alert dialog through the exposed component API. */
   close: () => void
 }
 
@@ -47,25 +47,6 @@ export interface AlertDialogUI {
   footer?: AlertDialogFn<HTMLAttributes>
 }
 
-// Context
-export interface AlertDialogContext {
-  ui: AlertDialogProps['ui']
-  open: boolean
-  close: () => void
-}
-
-export function createAlertDialogContext(
-  props: Pick<AlertDialogProps, 'ui'>,
-  open: AlertDialogProps['open'],
-  close: () => void,
-): AlertDialogContext {
-  return {
-    ui: props.ui,
-    open: open ?? false,
-    close,
-  }
-}
-
 // Emits
 export type AlertDialogEmits = RekaAlertDialogEmits & {
   action: [event: PointerEvent]
@@ -74,12 +55,12 @@ export type AlertDialogEmits = RekaAlertDialogEmits & {
 
 // Slots
 export interface AlertDialogSlots {
-  default?(props: AlertDialogContext): unknown
-  content?(props: AlertDialogContext): unknown
-  header?(props: AlertDialogContext): unknown
-  label?(props: AlertDialogContext): unknown
-  description?(props: AlertDialogContext): unknown
-  footer?(props: AlertDialogContext): unknown
-  action?(props: AlertDialogContext): unknown
-  cancel?(props: AlertDialogContext): unknown
+  default?(): unknown
+  content?(): unknown
+  header?(): unknown
+  label?(): unknown
+  description?(): unknown
+  footer?(): unknown
+  action?(props: { close: () => void }): unknown
+  cancel?(props: { close: () => void }): unknown
 }

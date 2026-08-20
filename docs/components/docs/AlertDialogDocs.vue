@@ -4,15 +4,12 @@ import { computed, ref } from 'vue'
 import { AlertDialog, type AlertDialogProps } from '@/components/ui/AlertDialog'
 import type { NormalizeButtonProps } from '@/components/ui/Button'
 import type { IconConfig } from '@/components/ui/Icon'
-import { ICONS } from '@/components/ui/Icon/icons'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
-const iconNames = Object.keys(ICONS)
 const open = ref(false)
 const label = ref('Delete project?')
 const description = ref('This action cannot be undone.')
-const icon = ref('warning')
 const iconObjectInput = ref('')
 const actionButtonInput = ref(`{
   "label": "Delete",
@@ -58,26 +55,13 @@ function parseIconProps(value: string): IconConfig | undefined {
 const playgroundProps = computed<AlertDialogProps>(() => ({
   label: label.value || undefined,
   description: description.value || undefined,
-  icon: parseIconProps(iconObjectInput.value) ?? (icon.value ? { name: icon.value } : undefined),
+  icon: parseIconProps(iconObjectInput.value),
   actionButton: parseButtonProps(actionButtonInput.value),
   cancelButton: parseButtonProps(cancelButtonInput.value),
   unmountOnHide: unmountOnHide.value,
   forceMount: forceMount.value,
   disableOutsidePointerEvents: disableOutsidePointerEvents.value,
 }))
-
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'AlertDialogUI',
-    type: '{ trigger?; overlay?; content?; header?; label?; description?; body?; footer? }',
-    description: 'Funciones de atributos para cada parte del dialogo.',
-  },
-  {
-    name: 'AlertDialogContext',
-    type: '{ ui; open: boolean; close: () => void }',
-    description: 'Contexto compartido por slots y funciones de ui.',
-  },
-]
 
 const propRows: ApiTableRow[] = [
   {
@@ -101,21 +85,21 @@ const propRows: ApiTableRow[] = [
   {
     name: 'icon',
     type: 'IconConfig',
-    typeLink: '/icon',
+    typeLink: '/icon#icon-config',
     default: 'undefined',
     description: 'Icono mostrado junto al titulo.',
   },
   {
     name: 'actionButton',
-    type: 'NormalizeButtonProps',
-    typeLink: '/button',
+    type: 'ButtonConfig',
+    typeLink: '/button#button-config',
     default: 'undefined',
     description: 'Props del boton de confirmacion.',
   },
   {
     name: 'cancelButton',
-    type: 'NormalizeButtonProps',
-    typeLink: '/button',
+    type: 'ButtonConfig',
+    typeLink: '/button#button-config',
     default: 'undefined',
     description: 'Props del boton de cancelacion.',
   },
@@ -139,7 +123,7 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: 'AlertDialogUI',
+    type: '{ trigger?: () => HTMLAttributes; overlay?: () => HTMLAttributes; content?: () => HTMLAttributes; header?: () => HTMLAttributes; label?: () => HTMLAttributes; description?: () => HTMLAttributes; body?: () => HTMLAttributes; footer?: () => HTMLAttributes }',
     default: 'undefined',
     description: 'Atributos personalizados para las partes internas.',
   },
@@ -163,46 +147,46 @@ const emitRows: ApiTableRow[] = [
 const slotRows: ApiTableRow[] = [
   {
     name: 'default',
-    type: 'AlertDialogContext',
+    type: '-',
     default: '-',
     description: 'Trigger del dialogo.',
   },
   {
     name: 'content',
-    type: 'AlertDialogContext',
+    type: '-',
     default: '-',
     description: 'Contenido principal.',
   },
   {
     name: 'header',
-    type: 'AlertDialogContext',
+    type: '-',
     default: '-',
     description: 'Reemplaza el encabezado.',
   },
   {
     name: 'label',
-    type: 'AlertDialogContext',
+    type: '-',
     default: '-',
     description: 'Personaliza el titulo.',
   },
   {
     name: 'description',
-    type: 'AlertDialogContext',
+    type: '-',
     default: '-',
     description: 'Personaliza la descripcion.',
   },
-  { name: 'footer', type: 'AlertDialogContext', default: '-', description: 'Reemplaza el pie.' },
+  { name: 'footer', type: '-', default: '-', description: 'Reemplaza el pie.' },
   {
     name: 'action',
-    type: 'AlertDialogContext',
+    type: '{ close: () => void }',
     default: '-',
-    description: 'Personaliza la accion.',
+    description: 'Personaliza la accion y recibe la funcion para cerrar el dialogo.',
   },
   {
     name: 'cancel',
-    type: 'AlertDialogContext',
+    type: '{ close: () => void }',
     default: '-',
-    description: 'Personaliza la cancelacion.',
+    description: 'Personaliza la cancelacion y recibe la funcion para cerrar el dialogo.',
   },
 ]
 
@@ -220,16 +204,6 @@ const exposeRows: ApiTableRow[] = [
         Dialogo modal para confirmar acciones que requieren una decision explicita.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -275,17 +249,6 @@ const exposeRows: ApiTableRow[] = [
               type="text"
               class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
             />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">icon</span>
-            <select
-              v-model="icon"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Sin icono</option>
-              <option v-for="name in iconNames" :key="name" :value="name">{{ name }}</option>
-            </select>
           </label>
 
           <label class="grid gap-1.5 text-sm">

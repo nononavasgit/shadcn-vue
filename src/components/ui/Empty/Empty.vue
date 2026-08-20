@@ -2,7 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import { emptyDefaults } from './defaults'
+import { emptyDefaults } from './default'
 import type { EmptyProps, EmptySlots } from '.'
 
 defineOptions({ inheritAttrs: false })

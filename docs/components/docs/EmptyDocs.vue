@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 
 import { Empty, type EmptyProps } from '@/components/ui/Empty'
-import { emptyDefaults } from '@/components/ui/Empty/defaults'
+import { emptyDefaults } from '@/components/ui/Empty/default'
 import { Icon } from '@/components/ui/Icon'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
@@ -18,14 +18,6 @@ const playgroundProps = computed<EmptyProps>(() => ({
   description: playgroundDescription.value || undefined,
   mediaVariant: playgroundMediaVariant.value,
 }))
-
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'EmptyUI',
-    type: '{ header?; media?; label?; description?; content? }',
-    description: 'Resolvers para personalizar los atributos de las partes internas.',
-  },
-]
 
 const propRows: ApiTableRow[] = [
   {
@@ -48,7 +40,7 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: 'EmptyUI',
+    type: '{ header?: () => HTMLAttributes; media?: () => HTMLAttributes; label?: () => HTMLAttributes; description?: () => HTMLAttributes; content?: () => HTMLAttributes }',
     default: 'undefined',
     description: 'Atributos personalizados para header, media, label, description y content.',
   },
@@ -95,18 +87,6 @@ const exposeRows: ApiTableRow[] = []
         Estado vacío compuesto con título, descripción, contenido y media opcionales.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">Tipos públicos usados por la API.</p>
-      </div>
-      <ApiTable
-        title="Tipos"
-        :rows="typeRows"
-        empty-text="Este componente no define tipos adicionales."
-      />
-    </section>
 
     <section class="grid gap-4">
       <div>

@@ -30,6 +30,7 @@ import ProgressCircularPage from './components/pages/ProgressCircularPage.vue'
 import ScrollAreaPage from './components/pages/ScrollAreaPage.vue'
 import SeparatorPage from './components/pages/SeparatorPage.vue'
 import SliderPage from './components/pages/SliderPage.vue'
+import SplitterPage from './components/pages/SplitterPage.vue'
 import SwitchPage from './components/pages/SwitchPage.vue'
 import TimePage from './components/pages/TimePage.vue'
 import TogglePage from './components/pages/TogglePage.vue'
@@ -68,6 +69,7 @@ export const router = createRouter({
     { path: '/scroll-area', component: ScrollAreaPage },
     { path: '/separator', component: SeparatorPage },
     { path: '/slider', component: SliderPage },
+    { path: '/splitter', component: SplitterPage },
     { path: '/kbd', component: KbdPage },
     { path: '/kbd-group', component: KbdGroupPage },
     { path: '/switch', component: SwitchPage },

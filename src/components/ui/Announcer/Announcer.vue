@@ -2,8 +2,6 @@
 import { computed, useAttrs, useSlots } from 'vue'
 import { cn } from '@/lib/utils'
 import {
-  createAnnouncerContext,
-  type AnnouncerContext,
   type AnnouncerProps,
   type AnnouncerSlots,
 } from '.'
@@ -20,10 +18,6 @@ defineSlots<AnnouncerSlots>()
 const attrs = useAttrs()
 const slots = useSlots()
 const hasDefaultSlot = computed(() => Boolean(slots.default))
-
-const announcerContext = computed<AnnouncerContext>(() => {
-  return createAnnouncerContext(props)
-})
 
 const ariaLive = computed(() => props.politeness)
 const role = computed(() => {
@@ -45,6 +39,6 @@ const rootProps = computed(() => {
 
 <template>
   <span v-bind="rootProps" data-test-announcer-root>
-    <slot v-bind="announcerContext">{{ props.message }}</slot>
+    <slot>{{ props.message }}</slot>
   </span>
 </template>

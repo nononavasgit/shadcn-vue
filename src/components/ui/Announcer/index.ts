@@ -9,18 +9,7 @@ export interface AnnouncerProps {
   politeness?: AnnouncerPoliteness
 }
 
-// Context
-export interface AnnouncerContext {
-  message: string
-}
-
-export function createAnnouncerContext(props: AnnouncerProps): AnnouncerContext {
-  return {
-    message: props.message ?? '',
-  }
-}
-
 // Slots
 export interface AnnouncerSlots {
-  default?(props: AnnouncerContext): unknown
+  default?(): unknown
 }

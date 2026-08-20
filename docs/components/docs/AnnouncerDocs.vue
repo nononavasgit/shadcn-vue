@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 
-import {
-  Announcer,
-  type AnnouncerContext,
-  type AnnouncerPoliteness,
-  type AnnouncerProps,
-} from '@/components/ui/Announcer'
+import { Announcer, type AnnouncerPoliteness, type AnnouncerProps } from '@/components/ui/Announcer'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
@@ -20,19 +15,6 @@ const playgroundProps = computed<AnnouncerProps>(() => ({
   message: message.value,
   politeness: politeness.value,
 }))
-
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'AnnouncerPoliteness',
-    type: "'assertive' | 'polite' | 'off'",
-    description: 'Nivel de prioridad de la notificacion accesible.',
-  },
-  {
-    name: 'AnnouncerContext',
-    type: '{ message: string }',
-    description: 'Contexto expuesto al slot default.',
-  },
-]
 
 const propRows: ApiTableRow[] = [
   {
@@ -49,7 +31,7 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'politeness',
-    type: 'AnnouncerPoliteness',
+    type: "'assertive' | 'polite' | 'off'",
     default: "'polite'",
     description: 'Configura aria-live y el role semantico del anuncio.',
   },
@@ -60,16 +42,16 @@ const emitRows: ApiTableRow[] = []
 const slotRows: ApiTableRow[] = [
   {
     name: 'default',
-    type: 'AnnouncerContext',
+    type: '-',
     default: '-',
-    description: 'Personaliza el contenido y recibe el mensaje mediante slot props.',
+    description: 'Personaliza el contenido del anuncio.',
   },
 ]
 
 const exposeRows: ApiTableRow[] = []
 
-function getSlotMessage(context: AnnouncerContext) {
-  return slotText.value || context.message
+function getSlotMessage() {
+  return slotText.value || message.value
 }
 </script>
 
@@ -85,16 +67,6 @@ function getSlotMessage(context: AnnouncerContext) {
 
     <section class="grid gap-4">
       <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
-
-    <section class="grid gap-4">
-      <div>
         <h3 class="text-lg font-medium">Playground</h3>
         <p class="text-sm text-muted-foreground">Cambia el mensaje y la prioridad del anuncio.</p>
       </div>
@@ -103,8 +75,8 @@ function getSlotMessage(context: AnnouncerContext) {
         <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
           <Playground>
             <Announcer v-bind="playgroundProps">
-              <template #default="context">
-                <span>{{ getSlotMessage(context) }}</span>
+              <template #default>
+                <span>{{ getSlotMessage() }}</span>
               </template>
             </Announcer>
           </Playground>

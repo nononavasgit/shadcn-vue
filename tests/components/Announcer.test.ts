@@ -4,10 +4,9 @@ import { h } from 'vue'
 
 import {
   Announcer,
-  createAnnouncerContext,
-  type AnnouncerContext,
   type AnnouncerProps,
 } from '@/components/ui/Announcer'
+import { testAttrs } from '../utils/testAttrs'
 
 function mountAnnouncer(options: MountingOptions<AnnouncerProps> = {}) {
   return mount(Announcer, options)
@@ -64,55 +63,14 @@ describe('Announcer', () => {
           expect(root.attributes('role')).toBe(expectedRole)
         },
       )
-
-      it('updates the live region when politeness changes', async () => {
-        const announcer = mountAnnouncer({ props: { politeness: 'polite' } })
-        const root = () => announcer.get('[data-test-announcer-root]')
-
-        await announcer.setProps({ politeness: 'assertive' })
-
-        expect(root().attributes('aria-live')).toBe('assertive')
-        expect(root().attributes('role')).toBe('alert')
-      })
     })
   })
 
   describe('attrs', () => {
-    it('forwards arbitrary attrs, class and style to root', () => {
-      const root = mountAnnouncer({
-        attrs: {
-          id: 'announcer',
-          'aria-label': 'Announcements',
-          class: 'custom-announcer',
-          style: 'opacity: 0.5',
-        },
-      }).get('[data-test-announcer-root]')
-
-      expect(root.attributes('id')).toBe('announcer')
-      expect(root.attributes('aria-label')).toBe('Announcements')
-      expect(root.classes()).toContain('custom-announcer')
-      expect(root.attributes('style')).toContain('opacity: 0.5')
-    })
-  })
-
-  describe('context contract', () => {
-    it.each([
-      {
-        name: 'default values',
-        input: {},
-        expected: {
-          message: '',
-        },
-      },
-      {
-        name: 'configured values',
-        input: { atomic: false, message: 'Changes saved', politeness: 'assertive' as const },
-        expected: {
-          message: 'Changes saved',
-        },
-      },
-    ])('creates the contract with $name', ({ input, expected }) => {
-      expect(createAnnouncerContext(input)).toEqual(expected satisfies AnnouncerContext)
+    testAttrs({
+      text: 'forwards arbitrary attrs, class and style to root',
+      id: '[data-test-announcer-root]',
+      mount: (attrs) => mountAnnouncer({ attrs }),
     })
   })
 

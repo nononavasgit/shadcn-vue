@@ -9,14 +9,11 @@ import {
 } from '@/components/ui/Alert'
 import type { NormalizeButtonProps } from '@/components/ui/Button'
 import type { IconConfig } from '@/components/ui/Icon'
-import { ICONS } from '@/components/ui/Icon/icons'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
-const iconNames = Object.keys(ICONS)
 const label = ref('Changes saved')
 const description = ref('Your preferences have been updated successfully.')
-const icon = ref('success')
 const iconObjectInput = ref('')
 const closeButtonInput = ref('')
 const variant = ref<AlertVariant>('soft')
@@ -61,7 +58,7 @@ function parseIconProps(value: string): IconConfig | undefined {
 const playgroundProps = computed<AlertProps>(() => ({
   label: label.value || undefined,
   description: description.value || undefined,
-  icon: parseIconProps(iconObjectInput.value) ?? (icon.value ? { name: icon.value } : undefined),
+  icon: parseIconProps(iconObjectInput.value),
   closeButton: parseButtonProps(closeButtonInput.value),
   variant: variant.value,
   severity: severity.value,
@@ -69,29 +66,6 @@ const playgroundProps = computed<AlertProps>(() => ({
   closable: closable.value,
   decorative: decorative.value,
 }))
-
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'AlertVariant',
-    type: "'solid' | 'outline' | 'plain' | 'subtle' | 'soft'",
-    description: 'Variante visual del alert.',
-  },
-  {
-    name: 'AlertSeverity',
-    type: "'primary' | 'secondary' | 'warning' | 'success' | 'error'",
-    description: 'Nivel semantico del mensaje.',
-  },
-  {
-    name: 'AlertUI',
-    type: '{ label?; description?; closeButtonContainer? }',
-    description: 'Funciones para personalizar los atributos de las partes internas.',
-  },
-  {
-    name: 'AlertContext',
-    type: '{ ui; closable: boolean; close: () => void }',
-    description: 'Contexto compartido por los slots del alert.',
-  },
-]
 
 const propRows: ApiTableRow[] = [
   { name: 'label', type: 'string', default: 'undefined', description: 'Titulo del mensaje.' },
@@ -104,26 +78,26 @@ const propRows: ApiTableRow[] = [
   {
     name: 'icon',
     type: 'IconConfig',
-    typeLink: '/icon',
+    typeLink: '/icon#icon-config',
     default: 'undefined',
     description: 'Icono mostrado junto al mensaje.',
   },
   {
     name: 'closeButton',
-    type: 'NormalizeButtonProps',
-    typeLink: '/button',
+    type: 'ButtonConfig',
+    typeLink: '/button#button-config',
     default: 'undefined',
     description: 'Props del boton de cierre.',
   },
   {
     name: 'variant',
-    type: 'AlertVariant',
+    type: "'solid' | 'outline' | 'plain' | 'subtle' | 'soft'",
     default: "'soft'",
     description: 'Variante visual.',
   },
   {
     name: 'severity',
-    type: 'AlertSeverity',
+    type: "'primary' | 'secondary' | 'warning' | 'success' | 'error'",
     default: "'primary'",
     description: 'Severidad semantica.',
   },
@@ -142,7 +116,7 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: 'AlertUI',
+    type: '{ label?: () => HTMLAttributes; description?: () => HTMLAttributes; closeButtonContainer?: () => HTMLAttributes }',
     default: 'undefined',
     description: 'Atributos personalizados para las partes internas.',
   },
@@ -153,15 +127,30 @@ const emitRows: ApiTableRow[] = [
 ]
 
 const slotRows: ApiTableRow[] = [
-  { name: 'icon', type: 'AlertContext', default: '-', description: 'Personaliza el icono.' },
-  { name: 'label', type: 'AlertContext', default: '-', description: 'Personaliza el titulo.' },
+  {
+    name: 'icon',
+    type: '-',
+    default: '-',
+    description: 'Personaliza el icono.',
+  },
+  {
+    name: 'label',
+    type: '-',
+    default: '-',
+    description: 'Personaliza el titulo.',
+  },
   {
     name: 'description',
-    type: 'AlertContext',
+    type: '-',
     default: '-',
     description: 'Personaliza la descripcion.',
   },
-  { name: 'close', type: 'AlertContext', default: '-', description: 'Personaliza el cierre.' },
+  {
+    name: 'close',
+    type: '{ close: () => void }',
+    default: '-',
+    description: 'Personaliza el cierre y recibe la funcion para cerrarlo.',
+  },
 ]
 
 const exposeRows: ApiTableRow[] = []
@@ -176,16 +165,6 @@ const exposeRows: ApiTableRow[] = []
         Mensaje contextual para comunicar estados, avisos y acciones de cierre.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -223,17 +202,6 @@ const exposeRows: ApiTableRow[] = []
 
           <label class="grid gap-1.5 text-sm">
             <span class="font-medium">icon</span>
-            <select
-              v-model="icon"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Sin icono</option>
-              <option v-for="name in iconNames" :key="name" :value="name">{{ name }}</option>
-            </select>
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">icon (objeto)</span>
             <textarea
               v-model="iconObjectInput"
               rows="4"

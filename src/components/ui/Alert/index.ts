@@ -43,7 +43,7 @@ export type AlertVariant = NonNullable<AlertVariants['variant']>
 export type AlertSeverity = NonNullable<AlertVariants['severity']>
 
 // Fn
-export type AlertFn<T> = (context: AlertContext) => T
+export type AlertFn<T> = () => T
 
 // Props
 export interface AlertProps {
@@ -66,21 +66,6 @@ export interface AlertUI {
   closeButtonContainer?: AlertFn<HTMLAttributes>
 }
 
-// Context
-export interface AlertContext {
-  ui: AlertProps['ui']
-  closable: boolean
-  close: () => void
-}
-
-export function createAlertContext(props: Pick<AlertProps, 'ui'>, close: () => void): AlertContext {
-  return {
-    ui: props.ui,
-    closable: true,
-    close,
-  }
-}
-
 // Emits
 export interface AlertEmits {
   close: []
@@ -88,8 +73,8 @@ export interface AlertEmits {
 
 // Slots
 export interface AlertSlots {
-  icon?(props: AlertContext): unknown
-  label?(props: AlertContext): unknown
-  description?(props: AlertContext): unknown
-  close?(props: AlertContext): unknown
+  icon?(): unknown
+  label?(): unknown
+  description?(): unknown
+  close?(props: { close: () => void }): unknown
 }

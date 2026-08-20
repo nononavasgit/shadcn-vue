@@ -8,26 +8,15 @@ import { useColor } from '@/composables'
 import { useI18n } from '@/i18n'
 import {
   alertVariants,
-  createAlertContext,
   type AlertEmits,
   type AlertProps,
   type AlertSlots,
 } from '.'
+import { alertDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<AlertProps>(), {
-  variant: 'soft',
-  severity: 'primary',
-  closable: false,
-  decorative: false,
-  closeButton: undefined,
-  color: undefined,
-  description: undefined,
-  icon: undefined,
-  label: undefined,
-  ui: undefined,
-})
+const props = withDefaults(defineProps<AlertProps>(), alertDefaults)
 const emit = defineEmits<AlertEmits>()
 defineSlots<AlertSlots>()
 
@@ -39,8 +28,6 @@ const { colorStyle } = useColor(
   computed(() => props.color),
   'alert',
 )
-
-const alertContext = computed(() => createAlertContext(props, close))
 
 const rootProps = computed(() => {
   const calculatedVariants = alertVariants({
@@ -66,7 +53,7 @@ const rootProps = computed(() => {
 const iconProps = computed(() => props.icon)
 
 const labelProps = computed(() => {
-  const ui = useUi(props.ui?.label, alertContext.value)
+  const ui = useUi(props.ui?.label, undefined)
   return {
     ...ui,
     class: cn('col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight', ui.class),
@@ -74,7 +61,7 @@ const labelProps = computed(() => {
 })
 
 const descriptionProps = computed(() => {
-  const ui = useUi(props.ui?.description, alertContext.value)
+  const ui = useUi(props.ui?.description, undefined)
   return {
     ...ui,
     class: cn('col-start-2 text-sm text-current/80 [&_p]:leading-relaxed', ui.class),
@@ -82,7 +69,7 @@ const descriptionProps = computed(() => {
 })
 
 const closeButtonContainerProps = computed(() => {
-  const ui = useUi(props.ui?.closeButtonContainer, alertContext.value)
+  const ui = useUi(props.ui?.closeButtonContainer, undefined)
   return { ...ui, class: cn('absolute top-2 right-2 shrink-0', ui.class) }
 })
 
@@ -108,12 +95,12 @@ function close() {
 </script>
 <template>
   <div v-if="visible" v-bind="rootProps" data-test-alert-root>
-    <slot name="icon" v-bind="alertContext">
+    <slot name="icon">
       <Icon v-if="iconProps?.name" v-bind="iconProps" data-test-alert-icon />
     </slot>
 
     <div v-if="props.label || slots.label" v-bind="labelProps" data-test-alert-label>
-      <slot name="label" v-bind="alertContext">{{ props.label }}</slot>
+      <slot name="label">{{ props.label }}</slot>
     </div>
 
     <div
@@ -121,11 +108,11 @@ function close() {
       v-bind="descriptionProps"
       data-test-alert-description
     >
-      <slot name="description" v-bind="alertContext">{{ props.description }}</slot>
+      <slot name="description">{{ props.description }}</slot>
     </div>
 
     <div v-if="props.closable" v-bind="closeButtonContainerProps">
-      <slot name="close" v-bind="alertContext">
+      <slot name="close" :close="close">
         <Button v-bind="closeButtonProps" data-test-alert-close-button @click="close" />
       </slot>
     </div>

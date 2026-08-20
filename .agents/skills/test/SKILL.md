@@ -55,7 +55,7 @@ describe('Component', () => {
 
 ### Props
 
-Crear `describe('<prop>')` para cada prop. Cubrir todos los valores declarados posibles y el valor por defecto. Comprobar el contrato real:
+Crear `describe('<prop>')` para cada prop, sin agrupar varias props públicas en un mismo caso. Cubrir todos los valores declarados posibles y el valor por defecto. Comprobar el contrato real:
 
 - Para una prop propia de la librería, comprobar el comportamiento correcto: texto renderizado, clases, estilos, estado ARIA, visibilidad, elemento, valores derivados o interacción.
 - Para una prop de Reka UI, comprobar que el wrapper pasa el valor normalizado al componente Reka subyacente correcto. Inspeccionar las props del hijo cuando el DOM no demuestre el paso. Incluir la normalización por defecto y las actualizaciones importantes.
@@ -85,7 +85,7 @@ Usar el selector real de la raíz. Si los attrs se consumen intencionadamente o 
 
 ### Emits
 
-Crear `describe('<event>')` para cada emit público cuando agrupar por evento mejore la claridad; en caso contrario, mantener los casos directamente dentro de `describe('emits')`. Cubrir todas las formas del payload y todos los caminos que lo disparen.
+Crear `describe('<event>')` para cada emit público. Cubrir todas las formas del payload y todos los caminos que lo disparen.
 
 - Para un emit propio de la librería, disparar la acción visible para el usuario y comprobar el nombre del evento, el payload exacto, el número de emisiones y los casos en los que se suprime.
 - Para un emit de Reka UI, comprobar el bridge del evento público del wrapper, el payload exacto y cualquier conversión entre el evento de Reka y el evento del wrapper. No comprobar únicamente que la primitiva interna emitió.
@@ -96,7 +96,7 @@ Usar `await` para triggers, `setProps` y otras actualizaciones asíncronas. Pref
 
 ### Slots
 
-Probar cada slot con nombre declarado y el slot por defecto. Renderizar un elemento y texto distintivos para cada slot y comprobar que aparecen en la ubicación prevista. Probar también cada regla de contenido alternativo/sustitución:
+Crear `describe('<slot>')` para cada slot con nombre declarado y para el slot por defecto. Renderizar un elemento y texto distintivos para cada slot y comprobar que aparecen en la ubicación prevista. Probar también cada regla de contenido alternativo/sustitución:
 
 - un slot proporcionado sustituye su icono, etiqueta, spinner o contenido alternativo;
 - los slots ausentes renderizan el contenido alternativo documentado;

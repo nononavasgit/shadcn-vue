@@ -2,7 +2,9 @@
 import { RouterView } from 'vue-router'
 
 const passed = {
+  alert: true,
   avatar: true,
+  announcer: true,
   aspectRadio: true,
   button: true,
   badge: true,

@@ -2,12 +2,13 @@
 import { RouterView } from 'vue-router'
 
 const passed = {
+  aspectRadio: true,
   button: true,
   badge: true,
   card: true,
   icon: true,
   separator: true,
-  splitter: true
+  splitter: true,
 }
 </script>
 

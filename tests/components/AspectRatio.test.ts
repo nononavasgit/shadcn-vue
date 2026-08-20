@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
 import { AspectRatio, type AspectRatioProps } from '@/components/ui/AspectRatio'
+import { testAttrs } from '../utils/testAttrs'
 
 function mountAspectRatio(options: MountingOptions<AspectRatioProps> = {}) {
   return mount(AspectRatio, options)
@@ -26,20 +27,9 @@ describe('AspectRatio', () => {
   })
 
   describe('attrs', () => {
-    it('forwards arbitrary attrs, class and style to root', () => {
-      const root = mountAspectRatio({
-        attrs: {
-          id: 'preview',
-          'aria-label': 'Preview',
-          class: 'custom-ratio',
-          style: 'opacity: 0.5',
-        },
-      }).get('[data-test-aspect-ratio-root]')
-
-      expect(root.attributes('id')).toBe('preview')
-      expect(root.attributes('aria-label')).toBe('Preview')
-      expect(root.classes()).toContain('custom-ratio')
-      expect(root.attributes('style')).toContain('opacity: 0.5')
+    testAttrs({
+      id: '[data-test-aspect-ratio-root]',
+      mount: (attrs) => mountAspectRatio({ attrs }),
     })
   })
 

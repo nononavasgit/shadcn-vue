@@ -13,6 +13,7 @@ const passed = {
   badge: true,
   card: true,
   empty: true,
+  fieldSet: true,
   icon: true,
   separator: true,
   splitter: true,

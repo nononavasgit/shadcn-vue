@@ -2,12 +2,13 @@
 import { computed, ref } from 'vue'
 
 import { FieldSet, type FieldSetLegendVariant, type FieldSetProps } from '@/components/ui/FieldSet'
+import { fieldSetDefaults } from '@/components/ui/FieldSet/default'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
 const legend = ref('Profile')
 const description = ref('Contact details and preferences')
-const legendVariant = ref<FieldSetLegendVariant>('legend')
+const legendVariant = ref<FieldSetLegendVariant>(fieldSetDefaults.legendVariant)
 
 const playgroundProps = computed<FieldSetProps>(() => ({
   legend: legend.value || undefined,
@@ -15,42 +16,29 @@ const playgroundProps = computed<FieldSetProps>(() => ({
   legendVariant: legendVariant.value,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'FieldSetLegendVariant',
-    type: "'legend' | 'label'",
-    description: 'Escala tipografica aplicada a la leyenda.',
-  },
-  {
-    name: 'FieldSetUI',
-    type: '{ legend?; description?; group? }',
-    description: 'Funciones de atributos para las partes internas.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'legend',
     type: 'string',
-    default: 'undefined',
+    default: String(fieldSetDefaults.legend),
     description: 'Texto de la leyenda del fieldset.',
   },
   {
     name: 'description',
     type: 'string',
-    default: 'undefined',
+    default: String(fieldSetDefaults.description),
     description: 'Descripcion secundaria del fieldset.',
   },
   {
     name: 'legendVariant',
-    type: 'FieldSetLegendVariant',
-    default: "'legend'",
+    type: "'legend' | 'label'",
+    default: `'${fieldSetDefaults.legendVariant}'`,
     description: 'Variacion visual de la leyenda.',
   },
   {
     name: 'ui',
-    type: 'FieldSetUI',
-    default: 'undefined',
+    type: '{ legend?: () => HTMLAttributes; description?: () => HTMLAttributes; group?: () => HTMLAttributes }',
+    default: String(fieldSetDefaults.ui),
     description: 'Atributos personalizados para legend, description y group.',
   },
 ]
@@ -60,19 +48,19 @@ const emitRows: ApiTableRow[] = []
 const slotRows: ApiTableRow[] = [
   {
     name: 'default',
-    type: 'Record<string, never>',
+    type: '-',
     default: '-',
     description: 'Contenido del grupo.',
   },
   {
     name: 'legend',
-    type: 'Record<string, never>',
+    type: '-',
     default: '-',
     description: 'Personaliza la leyenda.',
   },
   {
     name: 'description',
-    type: 'Record<string, never>',
+    type: '-',
     default: '-',
     description: 'Personaliza la descripcion.',
   },
@@ -90,16 +78,6 @@ const exposeRows: ApiTableRow[] = []
         Agrupa campos relacionados con una leyenda y una descripcion opcionales.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>

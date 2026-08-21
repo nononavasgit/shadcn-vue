@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
 import { FieldSet, type FieldSetProps } from '@/components/ui/FieldSet'
+import { testAttrs } from '../utils/testAttrs'
 
 function mountFieldSet(options: MountingOptions<FieldSetProps> = {}) {
   return mount(FieldSet, options)
@@ -53,56 +54,90 @@ describe('FieldSet', () => {
     })
 
     describe('ui', () => {
-      const parts = ['legend', 'description', 'group'] as const
-
-      it.each(parts)('renders ui.%s attributes', (part) => {
-        const fieldSet = mountFieldSet({
-          props: {
-            legend: 'Profile',
-            description: 'Contact details',
-            ui: {
-              [part]: () => ({ class: `ui-${part}`, style: 'opacity: 0.8' }),
-            },
-          },
+      describe('legend', () => {
+        testAttrs({
+          text: 'renders ui.legend attributes',
+          id: '[data-test-field-set-legend]',
+          mount: (attrs) =>
+            mountFieldSet({
+              props: { legend: 'Profile', ui: { legend: () => attrs } },
+            }),
         })
-        const element = fieldSet.get(`[data-test-field-set-${part}]`)
+      })
 
-        expect(element.classes()).toContain(`ui-${part}`)
-        expect(element.attributes('style')).toContain('opacity: 0.8')
+      describe('description', () => {
+        testAttrs({
+          text: 'renders ui.description attributes',
+          id: '[data-test-field-set-description]',
+          mount: (attrs) =>
+            mountFieldSet({
+              props: { description: 'Contact details', ui: { description: () => attrs } },
+            }),
+        })
+      })
+
+      describe('group', () => {
+        testAttrs({
+          text: 'renders ui.group attributes',
+          id: '[data-test-field-set-group]',
+          mount: (attrs) => mountFieldSet({ props: { ui: { group: () => attrs } } }),
+        })
       })
     })
   })
 
   describe('attrs', () => {
-    it('forwards arbitrary attrs, class and style to root', () => {
-      const root = mountFieldSet({
-        attrs: {
-          id: 'profile',
-          disabled: true,
-          class: 'custom-field-set',
-          style: 'opacity: 0.5',
-        },
-      }).get('[data-test-field-set-root]')
-
-      expect(root.element.tagName.toLowerCase()).toBe('fieldset')
-      expect(root.attributes('id')).toBe('profile')
-      expect(root.attributes('disabled')).toBeDefined()
-      expect(root.classes()).toContain('custom-field-set')
-      expect(root.attributes('style')).toContain('opacity: 0.5')
+    testAttrs({
+      text: 'forwards arbitrary attrs, class and style to root',
+      id: '[data-test-field-set-root]',
+      mount: (attrs) => mountFieldSet({ attrs }),
     })
   })
 
   describe('slots', () => {
-    const slotCases = ['default', 'legend', 'description'] as const
+    describe('default', () => {
+      it('renders the default slot', () => {
+        const fieldSet = mountFieldSet({
+          slots: {
+            default: () => h('span', { 'data-test-field-set-slot': 'default' }, 'Slot default'),
+          },
+        })
 
-    it.each(slotCases)('renders the $input slot', (input) => {
-      const fieldSet = mountFieldSet({
-        slots: {
-          [input]: () => h('span', { 'data-test-field-set-slot': input }, `Slot ${input}`),
-        },
+        expect(fieldSet.get('[data-test-field-set-slot="default"]').text()).toBe('Slot default')
       })
+    })
 
-      expect(fieldSet.get(`[data-test-field-set-slot="${input}"]`).text()).toBe(`Slot ${input}`)
+    describe('legend', () => {
+      it('renders the legend slot and hides the legend fallback', () => {
+        const fieldSet = mountFieldSet({
+          props: { legend: 'Legend fallback' },
+          slots: {
+            legend: () => h('span', { 'data-test-field-set-slot': 'legend' }, 'Slot legend'),
+          },
+        })
+
+        expect(fieldSet.get('[data-test-field-set-slot="legend"]').text()).toBe('Slot legend')
+        expect(fieldSet.get('[data-test-field-set-root]').text()).not.toContain('Legend fallback')
+      })
+    })
+
+    describe('description', () => {
+      it('renders the description slot and hides the description fallback', () => {
+        const fieldSet = mountFieldSet({
+          props: { description: 'Description fallback' },
+          slots: {
+            description: () =>
+              h('span', { 'data-test-field-set-slot': 'description' }, 'Slot description'),
+          },
+        })
+
+        expect(fieldSet.get('[data-test-field-set-slot="description"]').text()).toBe(
+          'Slot description',
+        )
+        expect(fieldSet.get('[data-test-field-set-root]').text()).not.toContain(
+          'Description fallback',
+        )
+      })
     })
   })
 })

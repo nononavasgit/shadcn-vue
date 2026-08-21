@@ -3,15 +3,11 @@ import { computed, useAttrs, useSlots } from 'vue'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { fieldSetLegendVariants, type FieldSetProps, type FieldSetSlots } from '.'
+import { fieldSetDefaults } from './default'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<FieldSetProps>(), {
-  legend: undefined,
-  description: undefined,
-  legendVariant: 'legend',
-  ui: undefined,
-})
+const props = withDefaults(defineProps<FieldSetProps>(), fieldSetDefaults)
 defineSlots<FieldSetSlots>()
 
 const attrs = useAttrs()

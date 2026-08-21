@@ -53,13 +53,8 @@ const contentProps = computed(() => {
 </script>
 
 <template>
-  <div v-bind="rootProps" data-slot="loading" data-test-loading-root>
-    <div
-      v-show="props.loading"
-      v-bind="loadingProps"
-      data-slot="loading-loading"
-      data-test-loading-loading
-    >
+  <div v-bind="rootProps" data-test-loading-root>
+    <div v-show="props.loading" v-bind="loadingProps" data-test-loading-loading>
       <slot name="loading" v-bind="loadingContext">
         <Icon
           v-if="iconProps.name"
@@ -70,12 +65,7 @@ const contentProps = computed(() => {
       </slot>
     </div>
 
-    <div
-      v-show="!props.loading"
-      v-bind="contentProps"
-      data-slot="loading-content"
-      data-test-loading-content
-    >
+    <div v-show="!props.loading" v-bind="contentProps" data-test-loading-content>
       <slot v-bind="loadingContext" />
     </div>
   </div>

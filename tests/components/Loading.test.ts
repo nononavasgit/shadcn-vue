@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { i18n } from '@/i18n'
 import { Loading, type LoadingContext, type LoadingProps } from '@/components/ui/Loading'
 import { testIconProps } from '../utils/testIconProps'
+import { testAttrs } from '../utils/testAttrs'
 
 function mountLoading(options: MountingOptions<LoadingProps> = {}) {
   return mount(Loading, {
@@ -43,20 +44,35 @@ describe('Loading', () => {
     })
 
     describe('ui', () => {
-      it('applies ui resolvers to loading and content', () => {
-        const loading = mountLoading({
-          props: {
-            loading: true,
-            ui: {
-              loading: () => ({ id: 'loading' }),
-              content: () => ({ id: 'content' }),
-            },
-          },
+      describe('loading', () => {
+        testAttrs({
+          text: 'renders ui.loading attributes',
+          id: '[data-test-loading-loading]',
+          mount: (attrs) =>
+            mountLoading({
+              props: { loading: true, ui: { loading: () => attrs } },
+            }),
         })
-
-        expect(loading.get('[data-test-loading-loading]').attributes('id')).toBe('loading')
-        expect(loading.get('[data-test-loading-content]').attributes('id')).toBe('content')
       })
+
+      describe('content', () => {
+        testAttrs({
+          text: 'renders ui.content attributes',
+          id: '[data-test-loading-content]',
+          mount: (attrs) =>
+            mountLoading({
+              props: { loading: false, ui: { content: () => attrs } },
+            }),
+        })
+      })
+    })
+  })
+
+  describe('attrs', () => {
+    testAttrs({
+      text: 'forwards arbitrary attrs, class and style to root',
+      id: '[data-test-loading-root]',
+      mount: (attrs) => mountLoading({ attrs }),
     })
   })
 

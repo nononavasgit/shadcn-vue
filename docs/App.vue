@@ -23,6 +23,7 @@ const passed = {
   input: true,
   inputTime: true,
   label: true,
+  loading: true,
   link: true,
   separator: true,
   splitter: true,

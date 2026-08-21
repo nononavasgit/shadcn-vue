@@ -15,19 +15,6 @@ const playgroundProps = computed<LoadingProps>(() => ({
   icon: icon.value ? { name: icon.value } : undefined,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'LoadingContext',
-    type: '{ loading: boolean }',
-    description: 'Estado de carga disponible en los slots.',
-  },
-  {
-    name: 'LoadingUI',
-    type: '{ loading?; content? }',
-    description: 'Resolvers para personalizar los estados de carga y contenido.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'loading',
@@ -44,8 +31,15 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: 'LoadingUI',
-    default: 'undefined',
+    type: '{ loading?: (context: LoadingContext) => HTMLAttributes; content?: (context: LoadingContext) => HTMLAttributes }',
+    typeParts: [
+      { text: '{ loading?: (context: ' },
+      { text: 'LoadingContext', link: '#loading-context' },
+      { text: ') => HTMLAttributes; content?: (context: ' },
+      { text: 'LoadingContext', link: '#loading-context' },
+      { text: ') => HTMLAttributes }' },
+    ],
+    default: String(loadingDefaults.ui),
     description: 'Atributos personalizados para loading y content.',
   },
 ]
@@ -56,18 +50,29 @@ const slotRows: ApiTableRow[] = [
   {
     name: 'default',
     type: 'LoadingContext',
+    typeLink: '#loading-context',
     default: '-',
     description: 'Contenido mostrado cuando loading es false.',
   },
   {
     name: 'loading',
     type: 'LoadingContext',
+    typeLink: '#loading-context',
     default: 'Icon',
     description: 'Contenido mostrado durante la carga.',
   },
 ]
 
 const exposeRows: ApiTableRow[] = []
+
+const contextRows: ApiTableRow[] = [
+  {
+    name: 'loading',
+    type: 'boolean',
+    default: '-',
+    description: 'Indica si el componente esta mostrando el estado de carga.',
+  },
+]
 </script>
 
 <template>
@@ -79,14 +84,6 @@ const exposeRows: ApiTableRow[] = []
         Alterna entre un indicador de carga y el contenido final.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">Tipos publicos usados por la API.</p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -142,6 +139,7 @@ const exposeRows: ApiTableRow[] = []
       />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="loading-context" title="LoadingContext" :rows="contextRows" />
     </div>
   </section>
 </template>

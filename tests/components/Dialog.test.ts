@@ -63,7 +63,9 @@ describe('Dialog', () => {
         { input: false, expected: false },
         { input: undefined, expected: false },
       ])('passes open=$input to DialogRoot as $expected', ({ input, expected }) => {
-        const wrapper = mountDialog({ props: { open: input } })
+        const wrapper = mountDialog({
+          props: { open: input, label: 'Title', description: 'Description' },
+        })
 
         expect(wrapper.getComponent(DialogRoot).props('open')).toBe(expected)
       })
@@ -87,7 +89,9 @@ describe('Dialog', () => {
         { input: false, expected: false },
         { input: undefined, expected: true },
       ])('passes unmountOnHide=$input to DialogRoot as $expected', ({ input, expected }) => {
-        const wrapper = mountDialog({ props: { unmountOnHide: input } })
+        const wrapper = mountDialog({
+          props: { unmountOnHide: input, label: 'Title', description: 'Description' },
+        })
 
         expect(wrapper.getComponent(DialogRoot).props('unmountOnHide')).toBe(expected)
       })
@@ -103,7 +107,7 @@ describe('Dialog', () => {
         async ({ input, closeButton, openAfterClose }) => {
           let context: DialogContext | undefined
           const wrapper = mountDialog({
-            props: { open: true, block: input },
+            props: { open: true, block: input, label: 'Title', description: 'Description' },
             slots: {
               default: (slotContext: DialogContext) => {
                 context = slotContext
@@ -129,7 +133,13 @@ describe('Dialog', () => {
         { input: '', expected: false },
         { input: undefined, expected: false },
       ])('renders label=$input as $expected', async ({ input, expected }) => {
-        const wrapper = mountDialog({ props: { open: true, label: input } })
+        const wrapper = mountDialog({
+          props: {
+            open: expected,
+            label: input,
+            description: expected ? 'Description' : undefined,
+          },
+        })
         await nextTick()
 
         expect(wrapper.findComponent(DialogTitle).exists()).toBe(expected)
@@ -143,7 +153,13 @@ describe('Dialog', () => {
         { input: '', expected: false },
         { input: undefined, expected: false },
       ])('renders description=$input as $expected', async ({ input, expected }) => {
-        const wrapper = mountDialog({ props: { open: true, description: input } })
+        const wrapper = mountDialog({
+          props: {
+            open: expected,
+            label: expected ? 'Title' : undefined,
+            description: input,
+          },
+        })
         await nextTick()
 
         expect(wrapper.findComponent(DialogDescription).exists()).toBe(expected)
@@ -157,7 +173,13 @@ describe('Dialog', () => {
         id: '[data-test-dialog-icon]',
         mount: async (input) => {
           const wrapper = mountDialog({
-            props: { open: true, label: 'Title', icon: input, showCloseButton: false },
+            props: {
+              open: true,
+              label: 'Title',
+              description: 'Description',
+              icon: input,
+              showCloseButton: false,
+            },
           })
           await nextTick()
           return wrapper
@@ -171,7 +193,9 @@ describe('Dialog', () => {
         id: '[data-test-dialog-close-icon]',
         default: 'x',
         mount: async (input) => {
-          const wrapper = mountDialog({ props: { open: true, closeIcon: input } })
+          const wrapper = mountDialog({
+            props: { open: true, label: 'Title', description: 'Description', closeIcon: input },
+          })
           await nextTick()
           return wrapper
         },
@@ -184,7 +208,9 @@ describe('Dialog', () => {
         { input: false, expected: false },
         { input: undefined, expected: true },
       ])('renders showCloseButton=$input as $expected', async ({ input, expected }) => {
-        const wrapper = mountDialog({ props: { open: true, showCloseButton: input } })
+        const wrapper = mountDialog({
+          props: { open: true, label: 'Title', description: 'Description', showCloseButton: input },
+        })
         await nextTick()
 
         expect(wrapper.findComponent(DialogClose).exists()).toBe(expected)
@@ -197,7 +223,9 @@ describe('Dialog', () => {
         { input: false, expected: false },
         { input: undefined, expected: undefined },
       ])('passes forceMount=$input to DialogContent as $expected', async ({ input, expected }) => {
-        const wrapper = mountDialog({ props: { open: true, forceMount: input } })
+        const wrapper = mountDialog({
+          props: { open: true, label: 'Title', description: 'Description', forceMount: input },
+        })
         await nextTick()
 
         expect(getContent(wrapper).props('forceMount')).toBe(expected)
@@ -213,7 +241,12 @@ describe('Dialog', () => {
         'passes disableOutsidePointerEvents=$input to DialogContent as $expected',
         async ({ input, expected }) => {
           const wrapper = mountDialog({
-            props: { open: true, disableOutsidePointerEvents: input },
+            props: {
+              open: true,
+              label: 'Title',
+              description: 'Description',
+              disableOutsidePointerEvents: input,
+            },
           })
           await nextTick()
 
@@ -223,90 +256,156 @@ describe('Dialog', () => {
     })
 
     describe('ui', () => {
-      it('applies resolvers to every internal part', async () => {
-        const wrapper = mountDialog({
-          props: {
-            open: true,
-            label: 'Title',
-            description: 'Description',
-            ui: {
-              overlay: () => ({
-                id: 'dialog-overlay',
-                class: 'custom-dialog-overlay',
-                'data-test-ui': 'overlay',
-              }),
-              content: () => ({
-                id: 'dialog-content',
-                class: 'custom-dialog-content',
-                'data-test-ui': 'content',
-              }),
-              header: () => ({
-                id: 'dialog-header',
-                class: 'custom-dialog-header',
-                'data-test-ui': 'header',
-              }),
-              label: () => ({
-                id: 'dialog-label',
-                class: 'custom-dialog-label',
-                'data-test-ui': 'label',
-              }),
-              description: () => ({
-                id: 'dialog-description',
-                class: 'custom-dialog-description',
-                'data-test-ui': 'description',
-              }),
-              body: () => ({
-                id: 'dialog-body',
-                class: 'custom-dialog-body',
-                'data-test-ui': 'body',
-              }),
-              footer: () => ({
-                id: 'dialog-footer',
-                class: 'custom-dialog-footer',
-                'data-test-ui': 'footer',
-              }),
-              close: () => ({
-                id: 'dialog-close',
-                class: 'custom-dialog-close',
-                'aria-label': 'Close dialog',
-                'data-test-ui': 'close',
-              }),
+      testAttrs({
+        text: 'forwards attrs through ui.overlay',
+        id: '[data-test-dialog-overlay]',
+        mount: async (attrs) => {
+          const wrapper = mountDialog({
+            props: {
+              open: true,
+              label: 'Title',
+              description: 'Description',
+              ui: { overlay: () => attrs },
             },
-          },
-          slots: {
-            default: () => h('button', 'Open'),
-            content: () => h('span', 'Body'),
-            footer: () => h('span', 'Footer'),
-          },
-        })
-        await nextTick()
-
-        expect(wrapper.get('#dialog-overlay')).toBeTruthy()
-        expect(wrapper.get('#dialog-overlay').classes()).toContain('custom-dialog-overlay')
-        expect(wrapper.get('#dialog-overlay').attributes('data-test-ui')).toBe('overlay')
-        expect(wrapper.get('#dialog-content')).toBeTruthy()
-        expect(wrapper.get('#dialog-content').classes()).toContain('custom-dialog-content')
-        expect(wrapper.get('#dialog-content').attributes('data-test-ui')).toBe('content')
-        expect(wrapper.get('#dialog-header')).toBeTruthy()
-        expect(wrapper.get('#dialog-header').classes()).toContain('custom-dialog-header')
-        expect(wrapper.get('#dialog-header').attributes('data-test-ui')).toBe('header')
-        expect(wrapper.get('#dialog-label')).toBeTruthy()
-        expect(wrapper.get('#dialog-label').classes()).toContain('custom-dialog-label')
-        expect(wrapper.get('#dialog-label').attributes('data-test-ui')).toBe('label')
-        expect(wrapper.get('#dialog-description')).toBeTruthy()
-        expect(wrapper.get('#dialog-description').classes()).toContain('custom-dialog-description')
-        expect(wrapper.get('#dialog-description').attributes('data-test-ui')).toBe('description')
-        expect(wrapper.get('#dialog-body')).toBeTruthy()
-        expect(wrapper.get('#dialog-body').classes()).toContain('custom-dialog-body')
-        expect(wrapper.get('#dialog-body').attributes('data-test-ui')).toBe('body')
-        expect(wrapper.get('#dialog-footer')).toBeTruthy()
-        expect(wrapper.get('#dialog-footer').classes()).toContain('custom-dialog-footer')
-        expect(wrapper.get('#dialog-footer').attributes('data-test-ui')).toBe('footer')
-        expect(wrapper.get('#dialog-close')).toBeTruthy()
-        expect(wrapper.get('#dialog-close').classes()).toContain('custom-dialog-close')
-        expect(wrapper.get('#dialog-close').attributes('aria-label')).toBe('Close dialog')
-        expect(wrapper.get('#dialog-close').attributes('data-test-ui')).toBe('close')
+          })
+          await nextTick()
+          return wrapper
+        },
       })
+
+      testAttrs({
+        text: 'forwards attrs through ui.content',
+        id: '[data-test-dialog-content]',
+        mount: async (attrs) => {
+          const wrapper = mountDialog({
+            props: {
+              open: true,
+              label: 'Title',
+              description: 'Description',
+              ui: { content: () => attrs },
+            },
+          })
+          await nextTick()
+          return wrapper
+        },
+      })
+
+      testAttrs({
+        text: 'forwards attrs through ui.header',
+        id: '[data-test-dialog-header]',
+        mount: async (attrs) => {
+          const wrapper = mountDialog({
+            props: {
+              open: true,
+              label: 'Title',
+              description: 'Description',
+              ui: { header: () => attrs },
+            },
+          })
+          await nextTick()
+          return wrapper
+        },
+      })
+
+      testAttrs({
+        text: 'forwards attrs through ui.label',
+        id: '[data-test-dialog-label]',
+        assertId: false,
+        mount: async (attrs) => {
+          const { id: _id, ...labelAttrs } = attrs
+          void _id
+          const wrapper = mountDialog({
+            props: {
+              open: true,
+              label: 'Title',
+              description: 'Description',
+              ui: { label: () => labelAttrs },
+            },
+          })
+          await nextTick()
+          return wrapper
+        },
+      })
+
+      testAttrs({
+        text: 'forwards attrs through ui.description',
+        id: '[data-test-dialog-description]',
+        assertId: false,
+        mount: async (attrs) => {
+          const { id: _id, ...descriptionAttrs } = attrs
+          void _id
+          const wrapper = mountDialog({
+            props: {
+              open: true,
+              label: 'Title',
+              description: 'Description',
+              ui: { description: () => descriptionAttrs },
+            },
+          })
+          await nextTick()
+          return wrapper
+        },
+      })
+
+      testAttrs({
+        text: 'forwards attrs through ui.body',
+        id: '[data-test-dialog-body]',
+        mount: async (attrs) => {
+          const wrapper = mountDialog({
+            props: {
+              open: true,
+              label: 'Title',
+              description: 'Description',
+              ui: { body: () => attrs },
+            },
+            slots: { content: () => h('span', 'Body') },
+          })
+          await nextTick()
+          return wrapper
+        },
+      })
+
+      testAttrs({
+        text: 'forwards attrs through ui.footer',
+        id: '[data-test-dialog-footer]',
+        mount: async (attrs) => {
+          const wrapper = mountDialog({
+            props: {
+              open: true,
+              label: 'Title',
+              description: 'Description',
+              ui: { footer: () => attrs },
+            },
+            slots: { footer: () => h('span', 'Footer') },
+          })
+          await nextTick()
+          return wrapper
+        },
+      })
+
+      testAttrs({
+        text: 'forwards attrs through ui.close',
+        id: '[data-test-dialog-close]',
+        mount: async (attrs) => {
+          const wrapper = mountDialog({
+            props: {
+              open: true,
+              label: 'Title',
+              description: 'Description',
+              ui: { close: () => attrs },
+            },
+          })
+          await nextTick()
+          return wrapper
+        },
+      })
+    })
+  })
+
+  describe('attrs', () => {
+    testAttrs({
+      id: '[data-test-dialog-root]',
+      mount: (attrs) => mountDialog({ attrs }),
     })
   })
 
@@ -319,7 +418,7 @@ describe('Dialog', () => {
       let context: DialogContext | undefined
 
       const wrapper = mountDialog({
-        props: { open: input },
+        props: { open: input, label: 'Title', description: 'Description' },
         slots: {
           default: (slotContext: DialogContext) => {
             context = slotContext
@@ -341,27 +440,115 @@ describe('Dialog', () => {
   })
 
   describe('slots', () => {
-    const slotCases = [
-      { input: 'default', expected: 'default' },
-      { input: 'content', expected: 'content' },
-      { input: 'header', expected: 'header' },
-      { input: 'label', expected: 'label' },
-      { input: 'description', expected: 'description' },
-      { input: 'footer', expected: 'footer' },
-      { input: 'close', expected: 'close' },
-      { input: 'closeIcon', expected: 'closeIcon' },
-    ] as const
+    describe('default', () => {
+      it('renders the default slot', async () => {
+        const wrapper = mountDialog({
+          slots: {
+            default: () => h('span', { 'data-test-dialog-slot': 'default' }, 'Slot default'),
+          },
+        })
+        await nextTick()
 
-    it.each(slotCases)('renders the $input slot', async ({ input, expected }) => {
-      const wrapper = mountDialog({
-        props: { open: true, label: 'Title', description: 'Description' },
-        slots: {
-          [input]: () => h('span', { 'data-test-dialog-slot': expected }, `Slot ${expected}`),
-        },
+        expect(wrapper.get('[data-test-dialog-slot="default"]').text()).toBe('Slot default')
       })
-      await nextTick()
+    })
 
-      expect(wrapper.get(`[data-test-dialog-slot="${expected}"]`).text()).toBe(`Slot ${expected}`)
+    describe('content', () => {
+      it('renders the content slot', async () => {
+        const wrapper = mountDialog({
+          props: { open: true, label: 'Title', description: 'Description' },
+          slots: {
+            content: () => h('span', { 'data-test-dialog-slot': 'content' }, 'Slot content'),
+          },
+        })
+        await nextTick()
+
+        expect(wrapper.get('[data-test-dialog-slot="content"]').text()).toBe('Slot content')
+      })
+    })
+
+    describe('header', () => {
+      it('renders the header slot', async () => {
+        const wrapper = mountDialog({
+          props: { open: true },
+          slots: {
+            header: () =>
+              h('div', [
+                h(DialogTitle, null, { default: () => 'Header title' }),
+                h(DialogDescription, null, { default: () => 'Header description' }),
+                h('span', { 'data-test-dialog-slot': 'header' }, 'Slot header'),
+              ]),
+          },
+        })
+        await nextTick()
+
+        expect(wrapper.get('[data-test-dialog-slot="header"]').text()).toBe('Slot header')
+      })
+    })
+
+    describe('label', () => {
+      it('renders the label slot', async () => {
+        const wrapper = mountDialog({
+          props: { open: true, description: 'Description' },
+          slots: { label: () => h('span', { 'data-test-dialog-slot': 'label' }, 'Slot label') },
+        })
+        await nextTick()
+
+        expect(wrapper.get('[data-test-dialog-slot="label"]').text()).toBe('Slot label')
+      })
+    })
+
+    describe('description', () => {
+      it('renders the description slot', async () => {
+        const wrapper = mountDialog({
+          props: { open: true, label: 'Title' },
+          slots: {
+            description: () =>
+              h('span', { 'data-test-dialog-slot': 'description' }, 'Slot description'),
+          },
+        })
+        await nextTick()
+
+        expect(wrapper.get('[data-test-dialog-slot="description"]').text()).toBe('Slot description')
+      })
+    })
+
+    describe('footer', () => {
+      it('renders the footer slot', async () => {
+        const wrapper = mountDialog({
+          props: { open: true, label: 'Title', description: 'Description' },
+          slots: { footer: () => h('span', { 'data-test-dialog-slot': 'footer' }, 'Slot footer') },
+        })
+        await nextTick()
+
+        expect(wrapper.get('[data-test-dialog-slot="footer"]').text()).toBe('Slot footer')
+      })
+    })
+
+    describe('close', () => {
+      it('renders the close slot', async () => {
+        const wrapper = mountDialog({
+          props: { open: true, label: 'Title', description: 'Description' },
+          slots: { close: () => h('span', { 'data-test-dialog-slot': 'close' }, 'Slot close') },
+        })
+        await nextTick()
+
+        expect(wrapper.get('[data-test-dialog-slot="close"]').text()).toBe('Slot close')
+      })
+    })
+
+    describe('closeIcon', () => {
+      it('renders the closeIcon slot', async () => {
+        const wrapper = mountDialog({
+          props: { open: true, label: 'Title', description: 'Description' },
+          slots: {
+            closeIcon: () => h('span', { 'data-test-dialog-slot': 'closeIcon' }, 'Slot closeIcon'),
+          },
+        })
+        await nextTick()
+
+        expect(wrapper.get('[data-test-dialog-slot="closeIcon"]').text()).toBe('Slot closeIcon')
+      })
     })
   })
 

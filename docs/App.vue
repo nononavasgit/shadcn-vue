@@ -16,6 +16,7 @@ const passed = {
   card: true,
   checkbox: true,
   attachment: true,
+  dialog: true,
   empty: true,
   fieldSet: true,
   icon: true,

@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 
 import { Link, type LinkSeverity, type LinkSize, type LinkVariant } from '@/components/ui/Link'
+import { linkDefaults } from '@/components/ui/Link/default'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
@@ -9,13 +10,13 @@ const label = ref('Open Button docs')
 const to = ref('/button')
 const external = ref(false)
 const replace = ref(false)
-const variant = ref<LinkVariant>('link')
-const severity = ref<LinkSeverity>('primary')
-const size = ref<LinkSize>('md')
-const rounded = ref(false)
-const square = ref(false)
+const variant = ref<LinkVariant>(linkDefaults.variant)
+const severity = ref<LinkSeverity>(linkDefaults.severity)
+const size = ref<LinkSize>(linkDefaults.size)
+const rounded = ref(linkDefaults.rounded)
+const square = ref(linkDefaults.square)
 const color = ref('')
-const icon = ref('arrowRight')
+const icon = ref('chevronRight')
 const trailingIcon = ref('')
 
 const playgroundProps = computed(() => ({
@@ -32,72 +33,28 @@ const playgroundProps = computed(() => ({
   trailingIcon: trailingIcon.value ? { name: trailingIcon.value } : undefined,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'NormalizeLinkProps',
-    type: 'LinkProps & EmitsAsProps<LinkEmits>',
-    description: 'Tipo auxiliar para pasar props de Link junto con el evento click.',
-  },
-  {
-    name: 'LinkVariant',
-    type: "'solid' | 'outline' | 'plain' | 'subtle' | 'soft' | 'link'",
-    description: 'Alias de la variante visual de Button.',
-  },
-  {
-    name: 'LinkSeverity',
-    type: "'primary' | 'secondary' | 'warning' | 'success' | 'error'",
-    description: 'Alias de la severidad de Button.',
-  },
-  {
-    name: 'LinkSize',
-    type: "'xs' | 'sm' | 'md' | 'lg'",
-    description: 'Alias del tamano de Button.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'to',
     type: 'RouteLocationRaw | string',
-    default: 'undefined',
+    default: String(linkDefaults.to),
     description: 'Destino interno de Vue Router o URL externa. Si falta, se renderiza un div.',
   },
   {
     name: 'replace',
     type: 'boolean',
-    default: 'false',
+    default: String(linkDefaults.replace),
     description: 'Reemplaza la entrada actual del historial al navegar.',
   },
-  { name: 'label', type: 'string', default: 'undefined', description: 'Texto del enlace.' },
+]
+
+const inheritedRows: ApiTableRow[] = [
   {
-    name: 'variant',
-    type: 'LinkVariant',
-    default: "'link'",
-    description: 'Variante visual heredada de Button.',
-  },
-  {
-    name: 'severity',
-    type: 'LinkSeverity',
-    default: "'primary'",
-    description: 'Severidad semantica heredada de Button.',
-  },
-  { name: 'size', type: 'LinkSize', default: "'md'", description: 'Tamano del enlace.' },
-  { name: 'rounded', type: 'boolean', default: 'false', description: 'Usa bordes redondeados.' },
-  { name: 'square', type: 'boolean', default: 'false', description: 'Usa una forma cuadrada.' },
-  { name: 'color', type: 'string', default: 'undefined', description: 'Color CSS personalizado.' },
-  {
-    name: 'icon',
-    type: 'IconConfig',
-    typeLink: '/icon',
-    default: 'undefined',
-    description: 'Icono al inicio.',
-  },
-  {
-    name: 'trailingIcon',
-    type: 'IconConfig',
-    typeLink: '/icon',
-    default: 'undefined',
-    description: 'Icono al final.',
+    name: 'ButtonProps',
+    type: 'ButtonProps',
+    typeLink: '/button#button-props',
+    default: '-',
+    description: 'Props visuales heredadas de Button, excepto as, asChild y loading.',
   },
 ]
 
@@ -106,16 +63,16 @@ const emitRows: ApiTableRow[] = [
 ]
 
 const slotRows: ApiTableRow[] = [
-  { name: 'default', type: 'void', default: '-', description: 'Contenido principal.' },
+  { name: 'default', type: '-', default: '-', description: 'Contenido principal.' },
   {
     name: 'leading',
-    type: 'void',
+    type: '-',
     default: '-',
     description: 'Contenido antes del texto.',
   },
   {
     name: 'trailing',
-    type: 'void',
+    type: '-',
     default: '-',
     description: 'Contenido despues del texto.',
   },
@@ -131,18 +88,12 @@ const exposeRows: ApiTableRow[] = []
       <h2 class="text-2xl font-semibold">Link</h2>
       <p class="max-w-2xl text-sm text-muted-foreground">
         Un enlace interno o externo que conserva la API visual de Button. Las unicas props propias
-        de RouterLink son <code>to</code> y <code>replace</code>. La personalizacion se hace con las
-        props, clases y slots de Button.
+        de RouterLink son <code>to</code> y <code>replace</code>. Hereda las props, el emit
+        <code>click</code> y los slots <code>default</code>, <code>leading</code> y
+        <code>trailing</code> de Button, excepto <code>as</code>, <code>asChild</code>,
+        <code>loading</code> y el slot <code>loading</code>.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">Tipos publicos usados por la API.</p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -227,7 +178,7 @@ const exposeRows: ApiTableRow[] = []
             <input
               v-model="icon"
               type="text"
-              placeholder="arrowRight"
+              placeholder="chevronRight"
               class="h-9 rounded-md border bg-background px-3 text-sm"
             />
           </label>
@@ -256,6 +207,7 @@ const exposeRows: ApiTableRow[] = []
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />
+      <ApiTable title="Button API heredada" :rows="inheritedRows" />
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />

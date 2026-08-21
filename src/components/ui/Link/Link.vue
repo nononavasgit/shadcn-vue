@@ -3,7 +3,7 @@ import { computed, mergeProps, useAttrs, useSlots } from 'vue'
 import { RouterLink } from 'vue-router'
 import { Button } from '@/components/ui/Button'
 import type { LinkEmits, LinkProps, LinkSlots } from '.'
-import { linkDefaults } from './defaults'
+import { linkDefaults } from './default'
 
 defineOptions({ inheritAttrs: false })
 
@@ -31,6 +31,7 @@ const rootProps = computed(() => {
   return mergeProps(attrs, {
     ...buttonProps.value,
     as: props.to === undefined ? 'div' : ('a' as const),
+    asChild: false,
     loading: false,
     'data-test-link-root': '',
   })

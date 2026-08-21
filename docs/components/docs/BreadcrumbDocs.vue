@@ -2,15 +2,15 @@
 import { computed, ref } from 'vue'
 
 import { Breadcrumb, type BreadcrumbItem, type BreadcrumbProps } from '@/components/ui/Breadcrumb'
-import { breadcrumbDefaults } from '@/components/ui/Breadcrumb/defaults'
+import { breadcrumbDefaults } from '@/components/ui/Breadcrumb/default'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
 const playgroundItems = ref<BreadcrumbItem[]>([
-  { value: 'home', link: { label: 'Home', to: '/' } },
-  { value: 'library', link: { label: 'Library', to: '/library' } },
-  { value: 'components', link: { label: 'Components', to: '/components' } },
-  { value: 'breadcrumb', link: { label: 'Breadcrumb' } },
+  { slot: 'home', label: 'Home', to: '/' },
+  { slot: 'library', label: 'Library', to: '/library' },
+  { slot: 'components', label: 'Components', to: '/components' },
+  { slot: 'breadcrumb', label: 'Breadcrumb' },
 ])
 const playgroundEllipsis = ref(true)
 
@@ -19,35 +19,13 @@ const playgroundProps = computed<BreadcrumbProps>(() => ({
   ellipsisIndex: playgroundEllipsis.value ? [1, 2] : undefined,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'BreadcrumbItem',
-    type: '{ value; link: LinkProps }',
-    description: 'Elemento individual con las propiedades de Link.',
-  },
-  {
-    name: 'BreadcrumbItemContext',
-    type: '{ item; index; first; last; linked; ellipsis }',
-    description: 'Contexto de cada item renderizado.',
-  },
-  {
-    name: 'BreadcrumbEllipsisContext',
-    type: '{ items }',
-    description: 'Contexto de los items afectados/ocultos por la elipsis.',
-  },
-  {
-    name: 'BreadcrumbUI',
-    type: '{ list?; ellipsisContainer?; separatorContainer?; item?; link?; page?; label? }',
-    description: 'Resolvers para personalizar cada nodo del breadcrumb.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'items',
     type: 'BreadcrumbItem[]',
+    typeLink: '#breadcrumb-item',
     default: '[]',
-    description: 'Items que forman la ruta de navegación.',
+    description: 'Items que forman la ruta y se convierten en elementos Link.',
   },
   {
     name: 'ellipsisIndex',
@@ -58,18 +36,27 @@ const propRows: ApiTableRow[] = [
   {
     name: 'ellipsisIcon',
     type: 'IconConfig',
+    typeLink: '/icon#icon-config',
     default: `{ name: '${breadcrumbDefaults.ellipsisIcon.name}' }`,
     description: 'Icono usado para representar el rango oculto.',
   },
   {
     name: 'separatorIcon',
     type: 'IconConfig',
+    typeLink: '/icon#icon-config',
     default: `{ name: '${breadcrumbDefaults.separatorIcon.name}' }`,
     description: 'Icono mostrado entre los items.',
   },
   {
     name: 'ui',
-    type: 'BreadcrumbUI',
+    type: '{ list?: () => HTMLAttributes; ellipsisContainer?: () => HTMLAttributes; separatorContainer?: () => HTMLAttributes; item?: (context: BreadcrumbItemContext) => HTMLAttributes }',
+    typeParts: [
+      {
+        text: '{ list?: () => HTMLAttributes; ellipsisContainer?: () => HTMLAttributes; separatorContainer?: () => HTMLAttributes; item?: (context: ',
+      },
+      { text: 'BreadcrumbItemContext', link: '#breadcrumb-item-context' },
+      { text: ') => HTMLAttributes }' },
+    ],
     default: 'undefined',
     description: 'Personalización dinámica de los nodos internos del componente.',
   },
@@ -79,43 +66,103 @@ const slotRows: ApiTableRow[] = [
   {
     name: 'ellipsis',
     type: 'BreadcrumbEllipsisContext',
+    typeLink: '#breadcrumb-ellipsis-context',
     default: 'ellipsisIcon',
     description: 'Personaliza la representación del rango oculto.',
   },
   {
     name: 'separator',
-    type: 'void',
+    type: '-',
     default: 'separatorIcon',
     description: 'Personaliza el separador entre items.',
   },
   {
     name: 'item',
     type: 'BreadcrumbItemContext',
+    typeLink: '#breadcrumb-item-context',
     default: 'item',
     description: 'Personaliza el contenido de cada item.',
   },
   {
-    name: 'icon',
+    name: 'item-{slot}',
     type: 'BreadcrumbItemContext',
-    default: 'item.link.icon',
-    description: 'Personaliza el icono de cada item.',
-  },
-  {
-    name: 'item-{value}',
-    type: 'BreadcrumbItemContext',
+    typeLink: '#breadcrumb-item-context',
     default: 'item',
     description: 'Slot específico para un item identificado.',
-  },
-  {
-    name: 'icon-{value}',
-    type: 'BreadcrumbItemContext',
-    default: 'item.link.icon',
-    description: 'Slot específico para el icono de un item.',
   },
 ]
 
 const emitRows: ApiTableRow[] = []
 const exposeRows: ApiTableRow[] = []
+
+const itemRows: ApiTableRow[] = [
+  {
+    name: 'slot',
+    type: 'string',
+    default: '-',
+    description: 'Identificador usado por el slot item-{slot}.',
+  },
+  {
+    name: 'label',
+    type: 'string',
+    default: 'undefined',
+    description: 'Texto mostrado por el Link.',
+  },
+  {
+    name: 'icon',
+    type: 'IconConfig',
+    typeLink: '/icon#icon-config',
+    default: 'undefined',
+    description: 'Icono que recibe el Link del item.',
+  },
+  {
+    name: 'to',
+    type: 'RouteLocationRaw | string',
+    default: 'undefined',
+    description: 'Destino del Link. Si no existe, el item se representa como página actual.',
+  },
+  {
+    name: 'command',
+    type: '(event: PointerEvent) => void',
+    default: 'undefined',
+    description: 'Callback ejecutado al hacer click en un item enlazado.',
+  },
+]
+
+const itemContextRows: ApiTableRow[] = [
+  {
+    name: 'item',
+    type: 'BreadcrumbItem',
+    typeLink: '#breadcrumb-item',
+    default: '-',
+    description: 'Item asociado al contexto.',
+  },
+  { name: 'index', type: 'number', default: '-', description: 'Posición del item.' },
+  { name: 'first', type: 'boolean', default: '-', description: 'Indica si es el primer item.' },
+  { name: 'last', type: 'boolean', default: '-', description: 'Indica si es el último item.' },
+  {
+    name: 'linked',
+    type: 'boolean',
+    default: '-',
+    description: 'Indica si el item tiene destino de navegación.',
+  },
+  {
+    name: 'ellipsis',
+    type: 'boolean',
+    default: '-',
+    description: 'Indica si representa el inicio del rango comprimido.',
+  },
+]
+
+const ellipsisContextRows: ApiTableRow[] = [
+  {
+    name: 'items',
+    type: 'BreadcrumbItem[]',
+    typeLink: '#breadcrumb-item',
+    default: '-',
+    description: 'Items ocultos por la elipsis.',
+  },
+]
 </script>
 
 <template>
@@ -127,14 +174,6 @@ const exposeRows: ApiTableRow[] = []
         Ruta de navegación accesible con enlaces, items actuales, elipsis, iconos y slots.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">Tipos públicos usados por la API.</p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -178,6 +217,17 @@ const exposeRows: ApiTableRow[] = []
       />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="breadcrumb-item" title="BreadcrumbItem" :rows="itemRows" />
+      <ApiTable
+        id="breadcrumb-item-context"
+        title="BreadcrumbItemContext"
+        :rows="itemContextRows"
+      />
+      <ApiTable
+        id="breadcrumb-ellipsis-context"
+        title="BreadcrumbEllipsisContext"
+        :rows="ellipsisContextRows"
+      />
     </div>
   </section>
 </template>

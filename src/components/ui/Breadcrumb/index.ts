@@ -6,8 +6,11 @@ export { default as Breadcrumb } from './Breadcrumb.vue'
 
 // Item
 export interface BreadcrumbItem {
-  value: string | number
-  link: LinkProps
+  slot: string
+  label?: string
+  icon?: IconConfig
+  to?: LinkProps['to']
+  command?: (event: PointerEvent) => void
 }
 
 // Props
@@ -29,9 +32,6 @@ export interface BreadcrumbUI {
   ellipsisContainer?: BreadcrumbFn<HTMLAttributes>
   separatorContainer?: BreadcrumbFn<HTMLAttributes>
   item?: BreadcrumbItemFn<HTMLAttributes>
-  link?: BreadcrumbItemFn<HTMLAttributes>
-  page?: BreadcrumbItemFn<HTMLAttributes>
-  label?: BreadcrumbItemFn<HTMLAttributes>
 }
 
 // Context
@@ -53,8 +53,6 @@ export type BreadcrumbSlots = {
   ellipsis?(props: BreadcrumbEllipsisContext): unknown
   separator?(): unknown
   item?(props: BreadcrumbItemContext): unknown
-  icon?(props: BreadcrumbItemContext): unknown
 } & {
   [name: `item-${string}`]: ((props: BreadcrumbItemContext) => unknown) | undefined
-  [name: `icon-${string}`]: ((props: BreadcrumbItemContext) => unknown) | undefined
 }

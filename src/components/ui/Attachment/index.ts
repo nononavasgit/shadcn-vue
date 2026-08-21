@@ -112,7 +112,7 @@ export type AttachmentState = NonNullable<AttachmentVariants['state']>
 export type AttachmentMediaVariant = 'icon' | 'image'
 export type AttachmentLabel = string
 export type AttachmentDescription = string
-export type AttachmentFn<T> = (context: AttachmentContext) => T
+export type AttachmentFn<T> = () => T
 
 export interface AttachmentUI {
   media?: AttachmentFn<HTMLAttributes>
@@ -133,19 +133,9 @@ export interface AttachmentProps {
   ui?: AttachmentUI
 }
 
-export interface AttachmentContext {
-  state: AttachmentState
-}
-
-export function createAttachmentContext(props: AttachmentContext): AttachmentContext {
-  return {
-    state: props.state ?? 'idle',
-  }
-}
-
 export interface AttachmentSlots {
-  media?(props: AttachmentContext): unknown
-  label?(props: AttachmentContext): unknown
-  description?(props: AttachmentContext): unknown
-  actions?(props: AttachmentContext): unknown
+  media?(): unknown
+  label?(): unknown
+  description?(): unknown
+  actions?(): unknown
 }

@@ -7,6 +7,7 @@ import type {
   AttachmentOrientation,
   AttachmentSize,
 } from '@/components/ui/Attachment'
+import { attachmentDefaults } from '@/components/ui/Attachment/default'
 import { Button } from '@/components/ui/Button'
 import type { IconConfig } from '@/components/ui/Icon'
 import { ICONS } from '@/components/ui/Icon/icons'
@@ -18,10 +19,10 @@ const label = ref('report.pdf')
 const description = ref('2.4 MB')
 const icon = ref('fileText')
 const iconObjectInput = ref('')
-const orientation = ref<AttachmentOrientation>('horizontal')
-const size = ref<AttachmentSize>('md')
-const state = ref<AttachmentState>('idle')
-const mediaVariant = ref<AttachmentMediaVariant>('icon')
+const orientation = ref<AttachmentOrientation>(attachmentDefaults.orientation)
+const size = ref<AttachmentSize>(attachmentDefaults.size)
+const state = ref<AttachmentState>(attachmentDefaults.state)
+const mediaVariant = ref<AttachmentMediaVariant>(attachmentDefaults.mediaVariant)
 
 function parseIconProps(value: string): IconConfig | undefined {
   if (!value.trim()) return undefined
@@ -49,87 +50,54 @@ const playgroundProps = computed<AttachmentProps>(() => ({
   mediaVariant: mediaVariant.value,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'AttachmentOrientation',
-    type: "'horizontal' | 'vertical'",
-    description: 'Orientacion visual del attachment.',
-  },
-  {
-    name: 'AttachmentSize',
-    type: "'xs' | 'sm' | 'md'",
-    description: 'Tamano del attachment y de sus textos e iconos.',
-  },
-  {
-    name: 'AttachmentState',
-    type: "'idle' | 'uploading' | 'processing' | 'error' | 'done'",
-    description: 'Estado visual del archivo.',
-  },
-  {
-    name: 'AttachmentMediaVariant',
-    type: "'icon' | 'image'",
-    description: 'Tipo de contenido mostrado en la zona multimedia.',
-  },
-  {
-    name: 'AttachmentUI',
-    type: '{ media?; content?; label?; description?; actions? }',
-    description: 'Funciones para personalizar los atributos de cada parte interna.',
-  },
-  {
-    name: 'AttachmentContext',
-    type: '{ state: AttachmentState }',
-    description: 'Contexto recibido por los slots del attachment.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'label',
     type: 'string',
-    default: 'undefined',
+    default: String(attachmentDefaults.label),
     description: 'Nombre o titulo del archivo.',
   },
   {
     name: 'description',
     type: 'string',
-    default: 'undefined',
+    default: String(attachmentDefaults.description),
     description: 'Informacion secundaria del archivo.',
   },
   {
     name: 'icon',
     type: 'IconConfig',
-    typeLink: '/icon',
-    default: 'undefined',
+    typeLink: '/icon#icon-config',
+    default: String(attachmentDefaults.icon),
     description: 'Icono mostrado en la zona multimedia.',
   },
   {
     name: 'orientation',
-    type: 'AttachmentOrientation',
-    default: "'horizontal'",
+    type: "'horizontal' | 'vertical'",
+    default: `'${attachmentDefaults.orientation}'`,
     description: 'Orientacion del contenido.',
   },
   {
     name: 'size',
-    type: 'AttachmentSize',
-    default: "'md'",
+    type: "'xs' | 'sm' | 'md'",
+    default: `'${attachmentDefaults.size}'`,
     description: 'Tamano del componente.',
   },
   {
     name: 'state',
-    type: 'AttachmentState',
-    default: "'idle'",
+    type: "'idle' | 'uploading' | 'processing' | 'error' | 'done'",
+    default: `'${attachmentDefaults.state}'`,
     description: 'Estado visual y de carga.',
   },
   {
     name: 'mediaVariant',
-    type: 'AttachmentMediaVariant',
-    default: "'icon'",
+    type: "'icon' | 'image'",
+    default: `'${attachmentDefaults.mediaVariant}'`,
     description: 'Renderiza un icono o el slot de media.',
   },
   {
     name: 'ui',
-    type: 'AttachmentUI',
-    default: 'undefined',
+    type: '{ media?: () => HTMLAttributes; content?: () => HTMLAttributes; label?: () => HTMLAttributes; description?: () => HTMLAttributes; actions?: () => HTMLAttributes }',
+    default: String(attachmentDefaults.ui),
     description: 'Atributos personalizados para las partes internas.',
   },
 ]
@@ -139,25 +107,25 @@ const emitRows: ApiTableRow[] = []
 const slotRows: ApiTableRow[] = [
   {
     name: 'media',
-    type: 'AttachmentContext',
+    type: '-',
     default: '-',
     description: 'Contenido multimedia cuando mediaVariant es image.',
   },
   {
     name: 'label',
-    type: 'AttachmentContext',
+    type: '-',
     default: '-',
     description: 'Personaliza el nombre del archivo.',
   },
   {
     name: 'description',
-    type: 'AttachmentContext',
+    type: '-',
     default: '-',
     description: 'Personaliza la descripcion del archivo.',
   },
   {
     name: 'actions',
-    type: 'AttachmentContext',
+    type: '-',
     default: '-',
     description: 'Acciones del attachment.',
   },
@@ -175,16 +143,6 @@ const exposeRows: ApiTableRow[] = []
         Representa un archivo con nombre, descripcion, estado, multimedia y acciones opcionales.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>

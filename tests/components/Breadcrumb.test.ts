@@ -1,7 +1,7 @@
 import { h } from 'vue'
 import { mount, type MountingOptions } from '@vue/test-utils'
 import { createMemoryHistory, createRouter } from 'vue-router'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import {
   Breadcrumb,
@@ -10,15 +10,15 @@ import {
   type BreadcrumbItemContext,
   type BreadcrumbProps,
 } from '@/components/ui/Breadcrumb'
+import { Link } from '@/components/ui/Link'
 import { i18n } from '@/i18n'
 import { testAttrs } from '../utils/testAttrs'
 import { testIconProps } from '../utils/testIconProps'
-import { testLinkProps } from '../utils/testLinkProps'
 
 const items: BreadcrumbItem[] = [
-  { value: 'home', link: { label: 'Home', to: '/' } },
-  { value: 'library', link: { label: 'Library', to: '/library' } },
-  { value: 'current', link: { label: 'Current', icon: { name: 'check' } } },
+  { slot: 'home', label: 'Home', to: '/' },
+  { slot: 'library', label: 'Library', to: '/library' },
+  { slot: 'current', label: 'Current', icon: { name: 'check' } },
 ]
 
 function createTestRouter() {
@@ -44,10 +44,6 @@ function mountBreadcrumb(options: MountingOptions<BreadcrumbProps> = {}) {
   })
 }
 
-function mountWithProp(prop: keyof BreadcrumbProps, value: unknown) {
-  return mountBreadcrumb({ props: { [prop]: value } as BreadcrumbProps })
-}
-
 describe('Breadcrumb', () => {
   describe('props', () => {
     describe('items', () => {
@@ -58,12 +54,12 @@ describe('Breadcrumb', () => {
         expect(wrapper.get('[data-test-breadcrumb-list]').exists()).toBe(true)
       })
 
-      describe('value', () => {
-        it.each([{ input: 'home' }, { input: 42 }])(
-          'uses value=$input to identify the item',
+      describe('slot', () => {
+        it.each([{ input: 'home' }, { input: 'section' }])(
+          'uses slot=$input to identify the item',
           ({ input }) => {
             const wrapper = mountBreadcrumb({
-              props: { items: [{ value: input, link: { label: 'Item' } }] },
+              props: { items: [{ slot: input, label: 'Item' }] },
             })
 
             expect(wrapper.get(`[data-test-breadcrumb-item="${input}"]`).exists()).toBe(true)
@@ -71,14 +67,42 @@ describe('Breadcrumb', () => {
         )
       })
 
-      describe('link', () => {
-        items.forEach((item) =>
-          testLinkProps({
-            text: `forwards value=${item.value} item.link to Link`,
-            input: item.link,
-            mount: (link) => mountBreadcrumb({ props: { items: [{ value: item.value, link }] } }),
-          }),
-        )
+      describe('item', () => {
+        it.each(items)('passes item slot=$slot fields to Link', (item) => {
+          const wrapper = mountBreadcrumb({ props: { items: [item] } })
+          const link = wrapper.getComponent(Link)
+
+          expect(link.props()).toMatchObject({
+            label: item.label,
+            icon: item.icon,
+            to: item.to,
+          })
+        })
+      })
+
+      describe('command', () => {
+        it('calls command when a linked item is clicked', async () => {
+          const command = vi.fn()
+          const wrapper = mountBreadcrumb({
+            props: { items: [{ ...items[0], command }] },
+          })
+
+          await wrapper.get('[data-test-breadcrumb-link]').trigger('click')
+
+          expect(command).toHaveBeenCalledTimes(1)
+          expect(command).toHaveBeenCalledWith(expect.any(Event))
+        })
+
+        it('does not call command for the current page item', async () => {
+          const command = vi.fn()
+          const wrapper = mountBreadcrumb({
+            props: { items: [{ ...items[2], command }] },
+          })
+
+          await wrapper.get('[data-test-breadcrumb-page]').trigger('click')
+
+          expect(command).not.toHaveBeenCalled()
+        })
       })
     })
 
@@ -99,11 +123,9 @@ describe('Breadcrumb', () => {
         const wrapper = mountBreadcrumb({ props: { items, ellipsisIndex: [0, 1] } })
 
         expect(wrapper.get('[data-test-breadcrumb-ellipsis]').exists()).toBe(true)
-        expect(wrapper.findAll('[data-test-breadcrumb-item]')).toHaveLength(2)
-        expect(
-          wrapper.findAll('[data-test-breadcrumb-label]').map((label) => label.text()),
-        ).toEqual(['Current'])
-        expect(wrapper.find('[data-test-breadcrumb-item="home"]').exists()).toBe(true)
+        expect(wrapper.findAll('[data-test-breadcrumb-item]')).toHaveLength(1)
+        expect(wrapper.get('[data-test-breadcrumb-page]').text()).toBe('Current')
+        expect(wrapper.find('[data-test-breadcrumb-item="home"]').exists()).toBe(false)
         expect(wrapper.find('[data-test-breadcrumb-item="library"]').exists()).toBe(false)
         expect(wrapper.find('[data-test-breadcrumb-item="current"]').exists()).toBe(true)
       })
@@ -158,24 +180,6 @@ describe('Breadcrumb', () => {
         id: '[data-test-breadcrumb-item]',
         mount: (attrs) => mountBreadcrumb({ props: { items, ui: { item: () => attrs } } }),
       })
-
-      testAttrs({
-        text: 'forwards attrs, class and style through ui.link',
-        id: '[data-test-link-root]',
-        mount: (attrs) => mountBreadcrumb({ props: { items, ui: { link: () => attrs } } }),
-      })
-
-      testAttrs({
-        text: 'forwards attrs, class and style through ui.page',
-        id: '[data-test-breadcrumb-page]',
-        mount: (attrs) => mountBreadcrumb({ props: { items, ui: { page: () => attrs } } }),
-      })
-
-      testAttrs({
-        text: 'forwards attrs, class and style through ui.label',
-        id: '[data-test-breadcrumb-label]',
-        mount: (attrs) => mountBreadcrumb({ props: { items, ui: { label: () => attrs } } }),
-      })
     })
   })
 
@@ -221,6 +225,7 @@ describe('Breadcrumb', () => {
         slotContext as BreadcrumbItemContext & {
           ref_for?: boolean
         }
+      void _slotRefFor
 
       expect(slotContextWithoutRenderMetadata).toEqual(uiContext)
     })
@@ -242,6 +247,7 @@ describe('Breadcrumb', () => {
         context as BreadcrumbEllipsisContext & {
           ref_for?: boolean
         }
+      void _refFor
 
       expect(contextWithoutRenderMetadata).toEqual({ items: [items[1]] })
     })
@@ -278,28 +284,15 @@ describe('Breadcrumb', () => {
       expect(wrapper.get('[data-test-breadcrumb-slot="item"]').text()).toBe('Custom item')
     })
 
-    it('renders the icon slot for a page item', () => {
-      const wrapper = mountBreadcrumb({
-        props: { items },
-        slots: { icon: () => h('span', { 'data-test-breadcrumb-slot': 'icon' }, 'Icon') },
-      })
-
-      expect(wrapper.get('[data-test-breadcrumb-slot="icon"]').text()).toBe('Icon')
-      expect(wrapper.find('[data-test-breadcrumb-page] [data-test-icon-root]').exists()).toBe(false)
-    })
-
-    it('renders item and icon slots scoped to the item value', () => {
+    it('renders the item slot scoped to the item slot', () => {
       const wrapper = mountBreadcrumb({
         props: { items },
         slots: {
           'item-home': () => h('span', { 'data-test-breadcrumb-slot': 'item-home' }, 'Home slot'),
-          'icon-current': () =>
-            h('span', { 'data-test-breadcrumb-slot': 'icon-current' }, 'Current icon'),
         },
       })
 
       expect(wrapper.get('[data-test-breadcrumb-slot="item-home"]').text()).toBe('Home slot')
-      expect(wrapper.get('[data-test-breadcrumb-slot="icon-current"]').text()).toBe('Current icon')
     })
   })
 })

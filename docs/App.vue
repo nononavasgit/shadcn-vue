@@ -12,6 +12,7 @@ const passed = {
   button: true,
   buttonGroup: true,
   badge: true,
+  breadcrumb: true,
   card: true,
   checkbox: true,
   attachment: true,

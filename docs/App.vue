@@ -20,6 +20,7 @@ const passed = {
   empty: true,
   fieldSet: true,
   icon: true,
+  input: true,
   link: true,
   separator: true,
   splitter: true,

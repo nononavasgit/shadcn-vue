@@ -3,12 +3,13 @@ import { computed, useAttrs, useSlots, watch } from 'vue'
 import { InputGroupAddon } from '@/components/internal/InputGroup'
 import { cn } from '@/lib/utils'
 import type { InputProps, InputSlots, InputValue } from '.'
+import { inputDefaults } from './default'
 
 defineOptions({ inheritAttrs: false })
 
-defineProps<InputProps>()
+withDefaults(defineProps<InputProps>(), inputDefaults)
 defineSlots<InputSlots>()
-const value = defineModel<InputValue>('value', { default: '' })
+const value = defineModel<InputValue>('value', { default: inputDefaults.value })
 
 watch(
   value,

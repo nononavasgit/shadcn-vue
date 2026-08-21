@@ -3,7 +3,7 @@ import type { CheckboxRootProps } from 'reka-ui'
 
 export { default as Checkbox } from './Checkbox.vue'
 
-export type CheckboxValue = boolean | string | number | bigint | Record<string, unknown>
+export type CheckboxValue = boolean | string | number
 export type CheckboxModelValue = CheckboxValue | 'indeterminate'
 export type CheckboxState = boolean | 'indeterminate'
 
@@ -26,18 +26,7 @@ export interface CheckboxProps extends Pick<
 
 // Context
 export interface CheckboxContext {
-  value: CheckboxModelValue
   state: CheckboxState
-}
-
-export function createCheckboxContext(
-  value: CheckboxModelValue,
-  trueValue: CheckboxProps['trueValue'] = true,
-): CheckboxContext {
-  return {
-    value,
-    state: value === 'indeterminate' ? 'indeterminate' : value === trueValue,
-  }
 }
 
 // Emits

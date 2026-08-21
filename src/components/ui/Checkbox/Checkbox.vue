@@ -4,20 +4,12 @@ import { Icon } from '@/components/ui/Icon'
 import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import {
-  createCheckboxContext,
-  type CheckboxModelValue,
-  type CheckboxProps,
-  type CheckboxSlots,
-} from '.'
+import type { CheckboxModelValue, CheckboxProps, CheckboxSlots } from '.'
+import { checkboxDefaults } from './default'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<CheckboxProps>(), {
-  trueValue: true,
-  falseValue: false,
-  ui: undefined,
-})
+const props = withDefaults(defineProps<CheckboxProps>(), checkboxDefaults)
 defineSlots<CheckboxSlots>()
 
 const value = defineModel<CheckboxModelValue>('value', {
@@ -41,7 +33,9 @@ watch(
   },
 )
 
-const checkboxContext = computed(() => createCheckboxContext(value.value, props.trueValue))
+const checkboxContext = computed(() => ({
+  state: value.value === 'indeterminate' ? 'indeterminate' : value.value === props.trueValue,
+}))
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
@@ -62,7 +56,11 @@ const rootProps = computed(() => {
 
 const indicatorProps = computed(() => {
   const ui = useUi(props.ui?.indicator, checkboxContext.value)
-  return { ...ui, class: cn('grid place-content-center', ui.class) }
+  return {
+    ...ui,
+    class: cn('grid place-content-center', ui.class),
+    style: ui.style,
+  }
 })
 </script>
 

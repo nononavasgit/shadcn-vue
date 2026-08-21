@@ -25,6 +25,7 @@ const passed = {
   label: true,
   loading: true,
   link: true,
+  popover: true,
   separator: true,
   splitter: true,
   switch: true,

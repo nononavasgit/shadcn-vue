@@ -4,6 +4,7 @@ import { mount, type MountingOptions } from '@vue/test-utils'
 import { PopoverArrow, PopoverContent, PopoverPortal, PopoverRoot } from 'reka-ui'
 
 import { Popover, type PopoverContext, type PopoverProps } from '@/components/ui/Popover'
+import { testAttrs } from '../utils/testAttrs'
 
 vi.stubGlobal(
   'ResizeObserver',
@@ -95,8 +96,6 @@ describe('Popover', () => {
       })
     })
 
-    const boundary = document.createElement('div')
-
     function testContentProp(
       prop: keyof PopoverProps,
       cases: ReadonlyArray<{ input: unknown; expected: unknown }>,
@@ -143,12 +142,6 @@ describe('Popover', () => {
       { input: true, expected: true },
       { input: false, expected: false },
       { input: undefined, expected: true },
-    ])
-    testContentProp('collisionBoundary', [
-      { input: null, expected: null },
-      { input: boundary, expected: boundary },
-      { input: [boundary], expected: [boundary] },
-      { input: undefined, expected: [] },
     ])
     testContentProp('collisionPadding', [
       { input: 0, expected: 0 },
@@ -264,33 +257,29 @@ describe('Popover', () => {
     ])
 
     describe('ui', () => {
-      it('applies attrs, class and style to content and arrow', async () => {
-        const wrapper = mountPopover({
-          props: {
-            open: true,
-            showArrow: true,
-            ui: {
-              content: () => ({
-                'data-test-ui': 'content',
-                class: 'custom-content',
-                style: 'opacity: 0.8',
-              }),
-              arrow: () => ({ id: 'popover-arrow', class: 'custom-arrow', style: 'opacity: 0.7' }),
-            },
-          },
-          slots: { content: () => h('span', 'Content') },
+      describe('content', () => {
+        testAttrs({
+          text: 'renders ui.content attributes',
+          id: '[data-test-popover-content]',
+          assertId: false,
+          mount: (attrs) =>
+            mountPopover({
+              props: { open: true, ui: { content: () => attrs } },
+              slots: { content: () => h('span', 'Content') },
+            }),
         })
-        await nextTick()
+      })
 
-        const content = wrapper.get('[data-test-ui="content"]')
-        const arrow = wrapper.get('#popover-arrow')
-
-        expect(content.attributes('data-test-ui')).toBe('content')
-        expect(content.classes()).toContain('custom-content')
-        expect(content.attributes('style')).toContain('opacity: 0.8')
-        expect(arrow.attributes('id')).toBe('popover-arrow')
-        expect(arrow.classes()).toContain('custom-arrow')
-        expect(arrow.attributes('style')).toContain('opacity: 0.7')
+      describe('arrow', () => {
+        testAttrs({
+          text: 'renders ui.arrow attributes',
+          id: '[data-test-popover-arrow]',
+          mount: (attrs) =>
+            mountPopover({
+              props: { open: true, showArrow: true, ui: { arrow: () => attrs } },
+              slots: { content: () => h('span', 'Content') },
+            }),
+        })
       })
     })
   })
@@ -331,7 +320,6 @@ describe('Popover', () => {
 
       expect(context).toEqual({ open: expected, close: expect.any(Function) })
     })
-
   })
 
   describe('slots', () => {

@@ -18,7 +18,6 @@ export type PopoverContentProps = Pick<
   | 'alignOffset'
   | 'arrowPadding'
   | 'avoidCollisions'
-  | 'collisionBoundary'
   | 'collisionPadding'
   | 'disableOutsidePointerEvents'
   | 'disableUpdateOnLayoutShift'

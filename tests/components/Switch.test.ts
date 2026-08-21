@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { mount, type ComponentMountingOptions } from '@vue/test-utils'
 import { h } from 'vue'
-import { Switch, createSwitchContext, type SwitchContext } from '@/components/ui/Switch'
+import { Switch, type SwitchContext } from '@/components/ui/Switch'
 import { SwitchRoot } from 'reka-ui'
 import { testAttrs } from '../utils/testAttrs'
 
@@ -39,25 +39,48 @@ describe('Switch', () => {
       )
     })
 
-    describe('ui', () => {
-      it('passes the resolver result to thumb', () => {
-        const switchWrapper = mountSwitch({
-          props: {
-            value: true,
-            ui: {
-              thumb: () => ({
-                id: `thumb`,
-                class: 'custom-thumb',
-              }),
-            },
-          },
-        })
+    describe('trueValue', () => {
+      it('defaults to true', () => {
+        const root = mountSwitch().getComponent(SwitchRoot)
 
-        const thumb = switchWrapper.get('[data-test-switch-thumb]')
-
-        expect(thumb.attributes('id')).toBe('thumb')
-        expect(thumb.classes()).toContain('custom-thumb')
+        expect(root.props('trueValue')).toBe(true)
       })
+    })
+
+    describe('falseValue', () => {
+      it('defaults to false', () => {
+        const root = mountSwitch().getComponent(SwitchRoot)
+
+        expect(root.props('falseValue')).toBe(false)
+      })
+    })
+
+    describe('ui', () => {
+      testAttrs({
+        text: 'renders ui.thumb attributes',
+        id: '[data-test-switch-thumb]',
+        mount: (attrs) =>
+          mountSwitch({
+            props: {
+              value: true,
+              ui: { thumb: () => attrs },
+            },
+          }),
+      })
+    })
+  })
+
+  describe('root configuration', () => {
+    it('always passes as=button', () => {
+      const root = mountSwitch().getComponent(SwitchRoot)
+
+      expect(root.props('as')).toBe('button')
+    })
+
+    it('always passes asChild=false', () => {
+      const root = mountSwitch().getComponent(SwitchRoot)
+
+      expect(root.props('asChild')).toBe(false)
     })
   })
 
@@ -69,46 +92,41 @@ describe('Switch', () => {
     })
   })
 
-  describe('context contract', () => {
-    it.each([
-      {
-        value: false,
-        trueValue: true,
-        falseValue: false,
-        expected: { value: false, checked: false, ui: undefined },
-      },
-      {
-        value: 1,
-        trueValue: 1,
-        falseValue: 0,
-        expected: { value: 1, checked: true, ui: undefined },
-      },
-      {
-        value: 'off',
-        trueValue: 'on',
-        falseValue: 'off',
-        expected: { value: 'off', checked: false, ui: undefined },
-      },
-    ] as const)('creates value=$value context', ({ value, trueValue, falseValue, expected }) => {
-      expect(
-        createSwitchContext({
-          value,
-          props: { trueValue, falseValue },
-        }),
-      ).toEqual(expected satisfies SwitchContext)
+  describe('emits', () => {
+    describe('update:value', () => {
+      it.each([
+        { value: false, trueValue: true, falseValue: false, expected: true },
+        { value: true, trueValue: true, falseValue: false, expected: false },
+        { value: 'off', trueValue: 'on', falseValue: 'off', expected: 'on' },
+      ])(
+        'emits the next value from the root interaction',
+        async ({ value, trueValue, falseValue, expected }) => {
+          const switchWrapper = mountSwitch({ props: { value, trueValue, falseValue } })
+
+          await switchWrapper.get('[data-test-switch-root]').trigger('click')
+
+          expect(switchWrapper.emitted('update:value')).toEqual([[expected]])
+        },
+      )
     })
   })
 
   describe('slots', () => {
-    it('renders the thumb slot', () => {
-      const switchWrapper = mountSwitch({
-        props: { value: 'on', trueValue: 'on', falseValue: 'off' },
-        slots: {
-          thumb: () => h('span', { 'data-test-switch-slot': '' }, `ok`),
-        },
-      })
+    describe('thumb', () => {
+      it.each([
+        { value: true, expected: 'true' },
+        { value: false, expected: 'false' },
+      ])('renders the state context for value=$value', ({ value, expected }) => {
+        const switchWrapper = mountSwitch({
+          props: { value },
+          slots: {
+            thumb: (context: SwitchContext) =>
+              h('span', { 'data-test-switch-slot': '' }, String(context.state)),
+          },
+        })
 
-      expect(switchWrapper.get('[data-test-switch-slot]').text()).toBe('ok')
+        expect(switchWrapper.get('[data-test-switch-slot]').text()).toBe(expected)
+      })
     })
   })
 })

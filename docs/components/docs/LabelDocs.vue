@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 
 import { Label, type LabelProps } from '@/components/ui/Label'
+import { labelDefaults } from '@/components/ui/Label/default'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
@@ -12,13 +13,11 @@ const playgroundProps = computed<LabelProps>(() => ({
   for: forValue.value || undefined,
 }))
 
-const typeRows: ApiTableRow[] = []
-
 const propRows: ApiTableRow[] = [
   {
     name: 'for',
     type: 'string',
-    default: 'undefined',
+    default: String(labelDefaults.for),
     description: 'Id del control de formulario asociado a la etiqueta.',
   },
 ]
@@ -46,20 +45,6 @@ const exposeRows: ApiTableRow[] = []
         Etiqueta accesible asociada a un control de formulario.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable
-        title="Tipos"
-        :rows="typeRows"
-        empty-text="Este componente no define tipos adicionales."
-      />
-    </section>
 
     <section class="grid gap-4">
       <div>

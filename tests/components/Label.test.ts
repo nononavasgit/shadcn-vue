@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
 import { Label, type LabelProps } from '@/components/ui/Label'
+import { testAttrs } from '../utils/testAttrs'
 
 function mountLabel(options: MountingOptions<LabelProps> = {}) {
   return mount(Label, options)
@@ -23,20 +24,10 @@ describe('Label', () => {
   })
 
   describe('attrs', () => {
-    it('forwards arbitrary attrs, class and style to root', () => {
-      const root = mountLabel({
-        attrs: {
-          id: 'email-label',
-          'aria-label': 'Email',
-          class: 'custom-label',
-          style: 'opacity: 0.5',
-        },
-      }).get('[data-test-label-root]')
-
-      expect(root.attributes('id')).toBe('email-label')
-      expect(root.attributes('aria-label')).toBe('Email')
-      expect(root.classes()).toContain('custom-label')
-      expect(root.attributes('style')).toContain('opacity: 0.5')
+    testAttrs({
+      text: 'forwards arbitrary attrs, class and style to root',
+      id: '[data-test-label-root]',
+      mount: (attrs) => mountLabel({ attrs }),
     })
   })
 

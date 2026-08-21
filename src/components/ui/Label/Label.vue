@@ -3,14 +3,13 @@ import { computed, useAttrs } from 'vue'
 import { Label } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import { type LabelProps, type LabelSlots } from '.'
+import { labelDefaults } from './default'
 
 defineOptions({ inheritAttrs: false })
 
 defineSlots<LabelSlots>()
 
-const props = withDefaults(defineProps<LabelProps>(), {
-  for: undefined,
-})
+const props = withDefaults(defineProps<LabelProps>(), labelDefaults)
 const attrs = useAttrs()
 
 const rootProps = computed(() => {

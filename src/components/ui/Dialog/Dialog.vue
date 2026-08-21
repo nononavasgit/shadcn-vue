@@ -16,7 +16,7 @@ import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { useI18n } from '@/i18n'
 import type { DialogContext, DialogEmits, DialogProps, DialogSlots } from '.'
-import { dialogDefaults } from './defaults'
+import { dialogDefaults } from './default'
 
 defineOptions({ inheritAttrs: false })
 
@@ -168,7 +168,7 @@ const closeIcon = computed(() => props.closeIcon)
 </script>
 
 <template>
-  <div class="contents">
+  <div v-bind="attrs" class="contents" data-test-dialog-root>
     <DialogRoot v-bind="rootProps" v-model:open="open" data-test-dialog-root>
       <DialogTrigger v-bind="triggerProps" data-test-dialog-trigger>
         <slot v-bind="dialogContext" />

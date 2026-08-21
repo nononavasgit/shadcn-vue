@@ -2,43 +2,45 @@
 import { computed, ref } from 'vue'
 
 import { Dialog, type DialogProps } from '@/components/ui/Dialog'
-import { dialogDefaults } from '@/components/ui/Dialog/defaults'
-import { ICONS } from '@/components/ui/Icon/icons'
+import { dialogDefaults } from '@/components/ui/Dialog/default'
+import type { IconConfig } from '@/components/ui/Icon'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
-const iconNames = Object.keys(ICONS)
 const open = ref(false)
 const label = ref('Editar perfil')
 const description = ref('Actualiza tus datos personales y guarda los cambios.')
-const icon = ref('edit')
+const iconObjectInput = ref('{\n  "name": "edit"\n}')
 const modal = ref(dialogDefaults.modal)
 const forceMount = ref(false)
 const disableOutsidePointerEvents = ref(true)
 const showCloseButton = ref(dialogDefaults.showCloseButton)
 
+function parseIconProps(value: string): IconConfig | undefined {
+  if (!value.trim()) return undefined
+
+  try {
+    const parsed: unknown = JSON.parse(value)
+
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      return parsed as IconConfig
+    }
+  } catch {
+    return undefined
+  }
+
+  return undefined
+}
+
 const playgroundProps = computed<DialogProps>(() => ({
   label: label.value || undefined,
   description: description.value || undefined,
-  icon: icon.value ? { name: icon.value } : undefined,
+  icon: parseIconProps(iconObjectInput.value),
   modal: modal.value,
   forceMount: forceMount.value,
   disableOutsidePointerEvents: disableOutsidePointerEvents.value,
   showCloseButton: showCloseButton.value,
 }))
-
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'DialogUI',
-    type: '{ overlay; content; header; label; description; body; footer; close }',
-    description: 'Resolvers para personalizar cada parte del dialogo.',
-  },
-  {
-    name: 'DialogContext',
-    type: '{ open: boolean; close: () => void }',
-    description: 'Contexto disponible en los slots y resolvers de UI.',
-  },
-]
 
 const propRows: ApiTableRow[] = [
   {
@@ -87,15 +89,15 @@ const propRows: ApiTableRow[] = [
   {
     name: 'icon',
     type: 'IconConfig',
-    typeLink: '/icon',
+    typeLink: '/icon#icon-config',
     default: 'undefined',
     description: 'Icono mostrado junto al titulo.',
   },
   {
     name: 'closeIcon',
     type: 'IconConfig',
-    typeLink: '/icon',
-    default: "'x'",
+    typeLink: '/icon#icon-config',
+    default: `{ name: '${dialogDefaults.closeIcon.name}' }`,
     description: 'Icono del boton de cierre.',
   },
   {
@@ -106,7 +108,26 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: 'DialogUI',
+    type: '{ overlay?: (context: DialogContext) => HTMLAttributes; content?: (context: DialogContext) => HTMLAttributes; header?: (context: DialogContext) => HTMLAttributes; label?: (context: DialogContext) => HTMLAttributes; description?: (context: DialogContext) => HTMLAttributes; body?: (context: DialogContext) => HTMLAttributes; footer?: (context: DialogContext) => HTMLAttributes; close?: (context: DialogContext) => HTMLAttributes }',
+    typeParts: [
+      { text: '{ overlay?: (context: ' },
+      { text: 'DialogContext', link: '#dialog-context' },
+      { text: ') => HTMLAttributes; content?: (context: ' },
+      { text: 'DialogContext', link: '#dialog-context' },
+      { text: ') => HTMLAttributes; header?: (context: ' },
+      { text: 'DialogContext', link: '#dialog-context' },
+      { text: ') => HTMLAttributes; label?: (context: ' },
+      { text: 'DialogContext', link: '#dialog-context' },
+      { text: ') => HTMLAttributes; description?: (context: ' },
+      { text: 'DialogContext', link: '#dialog-context' },
+      { text: ') => HTMLAttributes; body?: (context: ' },
+      { text: 'DialogContext', link: '#dialog-context' },
+      { text: ') => HTMLAttributes; footer?: (context: ' },
+      { text: 'DialogContext', link: '#dialog-context' },
+      { text: ') => HTMLAttributes; close?: (context: ' },
+      { text: 'DialogContext', link: '#dialog-context' },
+      { text: ') => HTMLAttributes }' },
+    ],
     default: 'undefined',
     description: 'Personalizacion dinamica de las partes internas.',
   },
@@ -160,32 +181,80 @@ const emitRows: ApiTableRow[] = [
 ]
 
 const slotRows: ApiTableRow[] = [
-  { name: 'default', type: 'DialogContext', default: '-', description: 'Trigger del dialogo.' },
-  { name: 'content', type: 'DialogContext', default: '-', description: 'Contenido principal.' },
-  { name: 'header', type: 'DialogContext', default: '-', description: 'Reemplaza el encabezado.' },
-  { name: 'label', type: 'DialogContext', default: '-', description: 'Personaliza el titulo.' },
+  {
+    name: 'default',
+    type: 'DialogContext',
+    typeLink: '#dialog-context',
+    default: '-',
+    description: 'Trigger del dialogo.',
+  },
+  {
+    name: 'content',
+    type: 'DialogContext',
+    typeLink: '#dialog-context',
+    default: '-',
+    description: 'Contenido principal.',
+  },
+  {
+    name: 'header',
+    type: 'DialogContext',
+    typeLink: '#dialog-context',
+    default: '-',
+    description: 'Reemplaza el encabezado.',
+  },
+  {
+    name: 'label',
+    type: 'DialogContext',
+    typeLink: '#dialog-context',
+    default: '-',
+    description: 'Personaliza el titulo.',
+  },
   {
     name: 'description',
     type: 'DialogContext',
+    typeLink: '#dialog-context',
     default: '-',
     description: 'Personaliza la descripcion.',
   },
-  { name: 'footer', type: 'DialogContext', default: '-', description: 'Reemplaza el pie.' },
+  {
+    name: 'footer',
+    type: 'DialogContext',
+    typeLink: '#dialog-context',
+    default: '-',
+    description: 'Reemplaza el pie.',
+  },
   {
     name: 'close',
     type: 'DialogContext',
+    typeLink: '#dialog-context',
     default: '-',
     description: 'Reemplaza el boton de cierre.',
   },
   {
     name: 'closeIcon',
     type: 'DialogContext',
+    typeLink: '#dialog-context',
     default: '-',
     description: 'Personaliza el icono de cierre.',
   },
 ]
 
 const exposeRows: ApiTableRow[] = []
+
+const contextRows: ApiTableRow[] = [
+  {
+    name: 'open',
+    type: 'boolean',
+    default: '-',
+    description: 'Indica si el dialogo esta abierto.',
+  },
+  {
+    name: 'close',
+    type: '() => void',
+    default: '-',
+    description: 'Cierra el dialogo respetando la prop block.',
+  },
+]
 </script>
 
 <template>
@@ -197,14 +266,6 @@ const exposeRows: ApiTableRow[] = []
         Dialogos modales con una API plana, slots contextuales y personalizacion por UI.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">Tipos publicos usados por la API.</p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -267,14 +328,13 @@ const exposeRows: ApiTableRow[] = []
           </label>
 
           <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">icon</span>
-            <select
-              v-model="icon"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">Sin icono</option>
-              <option v-for="name in iconNames" :key="name" :value="name">{{ name }}</option>
-            </select>
+            <span class="font-medium">icon (objeto)</span>
+            <textarea
+              v-model="iconObjectInput"
+              rows="4"
+              placeholder='{\n  "name": "edit"\n}'
+              class="rounded-md border bg-background px-3 py-2 font-mono text-xs outline-none focus:ring-2 focus:ring-ring"
+            />
           </label>
 
           <label class="flex items-center gap-2 text-sm">
@@ -309,6 +369,7 @@ const exposeRows: ApiTableRow[] = []
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="dialog-context" title="DialogContext" :rows="contextRows" />
     </div>
   </section>
 </template>

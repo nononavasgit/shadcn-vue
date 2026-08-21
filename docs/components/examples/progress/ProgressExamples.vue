@@ -44,7 +44,7 @@ const styledProgressUi: ProgressProps['ui'] = {
           </p>
         </div>
         <Progress
-          :value="controlledValue"
+          v-model:value="controlledValue"
           label="Subiendo archivos"
           color="#2563eb"
           track-color="#dbeafe"
@@ -70,7 +70,7 @@ const styledProgressUi: ProgressProps['ui'] = {
             Personaliza la etiqueta usando el contexto del progreso.
           </p>
         </div>
-        <Progress :value="65" class="h-5">
+        <Progress :value="65" class="h-5" :getValueText="() => 40">
           <template #label="{ percentage }">
             <span class="text-xs font-semibold text-white">{{ percentage }}%</span>
           </template>

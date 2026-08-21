@@ -14,7 +14,7 @@ defineSlots<ProgressSlots>()
 const attrs = useAttrs()
 const slots = useSlots()
 const props = withDefaults(defineProps<ProgressProps>(), progressDefaults)
-const value = defineModel<ProgressValue>('value', { default: 0 })
+const value = defineModel<ProgressValue>('value', { default: progressDefaults.value })
 
 const { colorStyle } = useColor(
   computed(() => props.color),
@@ -46,7 +46,6 @@ const rootProps = computed(() => {
     getValueLabel: props.getValueLabel,
     getValueText: props.getValueText,
     'aria-label': attrs['aria-label'],
-    'aria-valuetext': attrs['aria-valuetext'] ?? props.label,
     class: cn(
       'relative h-2 w-full overflow-hidden rounded-full bg-primary/20',
       (props.label || slots.label) && 'h-4',

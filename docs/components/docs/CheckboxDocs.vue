@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 
 import { Checkbox, type CheckboxModelValue, type CheckboxProps } from '@/components/ui/Checkbox'
+import { checkboxDefaults } from '@/components/ui/Checkbox/default'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
@@ -18,57 +19,34 @@ const playgroundProps = computed<CheckboxProps>(() => ({
   value: playgroundValue.value,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'CheckboxValue',
-    type: 'boolean | string | number | bigint | Record<string, unknown>',
-    description: 'Valores que pueden representar los estados verdadero y falso.',
-  },
-  {
-    name: 'CheckboxModelValue',
-    type: 'CheckboxValue | "indeterminate"',
-    description: 'Valor controlado del checkbox, incluido el estado indeterminado.',
-  },
-  {
-    name: 'CheckboxState',
-    type: 'boolean | "indeterminate"',
-    description: 'Estado derivado que reciben los slots y resolvers de UI.',
-  },
-  {
-    name: 'CheckboxContext',
-    type: '{ value: CheckboxModelValue; state: CheckboxState }',
-    description: 'Contexto disponible en el slot indicator y en ui.indicator.',
-  },
-  {
-    name: 'CheckboxUI',
-    type: '{ indicator?: (context: CheckboxContext) => HTMLAttributes }',
-    description: 'Atributos dinamicos para el indicador.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'value',
-    type: 'CheckboxModelValue',
+    type: 'boolean | string | number | "indeterminate"',
     default: 'false',
     description: 'Valor controlado del checkbox.',
   },
   {
     name: 'trueValue',
-    type: 'CheckboxValue',
-    default: 'true',
+    type: 'boolean | string | number',
+    default: String(checkboxDefaults.trueValue),
     description: 'Valor emitido cuando el checkbox esta marcado.',
   },
   {
     name: 'falseValue',
-    type: 'CheckboxValue',
-    default: 'false',
+    type: 'boolean | string | number',
+    default: String(checkboxDefaults.falseValue),
     description: 'Valor emitido cuando el checkbox esta desmarcado.',
   },
   {
     name: 'ui',
-    type: 'CheckboxUI',
-    default: 'undefined',
+    type: '{ indicator?: (context: CheckboxContext) => HTMLAttributes }',
+    typeParts: [
+      { text: '{ indicator?: (context: ' },
+      { text: 'CheckboxContext', link: '#checkbox-context' },
+      { text: ') => HTMLAttributes }' },
+    ],
+    default: String(checkboxDefaults.ui),
     description: 'Personalizacion dinamica del indicador.',
   },
 ]
@@ -76,7 +54,7 @@ const propRows: ApiTableRow[] = [
 const emitRows: ApiTableRow[] = [
   {
     name: 'update:value',
-    type: '[value: CheckboxModelValue]',
+    type: '[value: boolean | string | number | "indeterminate"]',
     default: '-',
     description: 'Actualiza el valor controlado mediante v-model:value.',
   },
@@ -86,12 +64,22 @@ const slotRows: ApiTableRow[] = [
   {
     name: 'indicator',
     type: 'CheckboxContext',
+    typeLink: '#checkbox-context',
     default: '-',
-    description: 'Contenido del indicador con value y state.',
+    description: 'Contenido del indicador con state.',
   },
 ]
 
 const exposeRows: ApiTableRow[] = []
+
+const contextRows: ApiTableRow[] = [
+  {
+    name: 'state',
+    type: 'boolean | "indeterminate"',
+    default: '-',
+    description: 'Estado derivado respecto a trueValue.',
+  },
+]
 </script>
 
 <template>
@@ -103,14 +91,6 @@ const exposeRows: ApiTableRow[] = []
         Control booleano con soporte para valores personalizados y estado indeterminado.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">Tipos publicos usados por la API.</p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -146,6 +126,7 @@ const exposeRows: ApiTableRow[] = []
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="checkbox-context" title="CheckboxContext" :rows="contextRows" />
     </div>
   </section>
 </template>

@@ -18,6 +18,7 @@ const passed = {
   empty: true,
   fieldSet: true,
   icon: true,
+  link: true,
   separator: true,
   splitter: true,
   tooltip: true,

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs, useSlots } from 'vue'
 import { useColor } from '@/composables'
-import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { chipBaseVariants, chipRootVariants, type ChipProps, type ChipSlots } from '.'
 import { chipDefaults } from './defaults'
@@ -22,29 +21,22 @@ const { colorStyle } = useColor(
 )
 
 const rootProps = computed(() => {
-  const ui = useUi(props.ui?.root, undefined)
-
   return {
     ...attrs,
-    ...ui,
     class: cn(
       chipRootVariants({
         position: hasDefaultSlot.value ? undefined : props.position,
         inset: hasDefaultSlot.value ? true : props.inset,
         standalone: hasDefaultSlot.value ? true : props.standalone,
       }),
-      ui.class,
       attrs.class,
     ),
-    style: [colorStyle.value, ui.style, attrs.style],
+    style: [colorStyle.value, attrs.style],
   }
 })
 
 const baseProps = computed(() => {
-  const ui = useUi(props.ui?.base, undefined)
-
   return {
-    ...ui,
     class: cn(
       chipBaseVariants({
         size: props.size,
@@ -53,9 +45,7 @@ const baseProps = computed(() => {
         inset: hasDefaultSlot.value ? props.inset : undefined,
         standalone: hasDefaultSlot.value ? props.standalone : undefined,
       }),
-      ui.class,
     ),
-    style: ui.style,
   }
 })
 </script>

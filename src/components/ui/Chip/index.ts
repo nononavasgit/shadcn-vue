@@ -1,5 +1,4 @@
 import { cva, type VariantProps } from 'class-variance-authority'
-import type { HTMLAttributes } from 'vue'
 
 export { default as Chip } from './Chip.vue'
 
@@ -117,13 +116,6 @@ export type ChipBaseVariants = VariantProps<typeof chipBaseVariants>
 export type ChipSize = NonNullable<ChipBaseVariants['size']>
 export type ChipPosition = NonNullable<ChipRootVariants['position']>
 
-export type ChipFn<T> = () => T
-
-export interface ChipUI {
-  root?: ChipFn<HTMLAttributes>
-  base?: ChipFn<HTMLAttributes>
-}
-
 export interface ChipProps {
   text?: string | number
   color?: string
@@ -132,7 +124,6 @@ export interface ChipProps {
   show?: boolean
   inset?: boolean
   standalone?: boolean
-  ui?: ChipUI
 }
 
 export interface ChipEmits {

@@ -6,5 +6,4 @@ export const chipDefaults = {
   size: '3xl' as const,
   standalone: false,
   text: undefined,
-  ui: undefined,
 }

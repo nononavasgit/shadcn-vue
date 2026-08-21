@@ -12,9 +12,11 @@ const passed = {
   buttonGroup: true,
   badge: true,
   card: true,
+  empty: true,
   icon: true,
   separator: true,
   splitter: true,
+  tooltip: true,
 }
 </script>
 

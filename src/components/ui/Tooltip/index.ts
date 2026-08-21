@@ -3,10 +3,9 @@ import type {
   TooltipArrowProps as RekaTooltipArrowProps,
   TooltipContentEmits as RekaTooltipContentEmits,
   TooltipContentProps as RekaTooltipContentProps,
+  TooltipRootEmits as RekaTooltipRootEmits,
   TooltipRootProps as RekaTooltipRootProps,
-  TooltipTriggerProps as RekaTooltipTriggerProps,
 } from 'reka-ui'
-import type { EmitsAsProps } from '@/types/emits'
 
 export { default as Tooltip } from './Tooltip.vue'
 
@@ -19,17 +18,13 @@ export type TooltipRootProps = Pick<
   | 'disabled'
   | 'ignoreNonKeyboardFocus'
 >
-export type TooltipTriggerProps = Pick<RekaTooltipTriggerProps, 'as' | 'asChild' | 'reference'>
 export type TooltipContentProps = Pick<
   RekaTooltipContentProps,
-  | 'as'
-  | 'asChild'
   | 'align'
   | 'alignOffset'
   | 'ariaLabel'
   | 'arrowPadding'
   | 'avoidCollisions'
-  | 'collisionBoundary'
   | 'collisionPadding'
   | 'forceMount'
   | 'hideWhenDetached'
@@ -38,17 +33,14 @@ export type TooltipContentProps = Pick<
   | 'sideOffset'
   | 'sticky'
   | 'updatePositionStrategy'
-> &
-  EmitsAsProps<RekaTooltipContentEmits>
-export type TooltipArrowProps = Pick<RekaTooltipArrowProps, 'as' | 'asChild' | 'width' | 'height'>
+>
+export type TooltipArrowProps = Pick<RekaTooltipArrowProps, 'width' | 'height'>
 
 // Fn
 export type TooltipFn<T> = (context: TooltipContext) => T
 
 // UI
 export interface TooltipUI {
-  root?: TooltipFn<HTMLAttributes>
-  trigger?: TooltipFn<HTMLAttributes>
   content?: TooltipFn<HTMLAttributes>
   arrow?: TooltipFn<HTMLAttributes>
 }
@@ -58,17 +50,11 @@ export interface TooltipProps extends TooltipRootProps {
   open?: boolean
   label?: string
   withArrow?: boolean
-  triggerAs?: TooltipTriggerProps['as']
-  triggerAsChild?: TooltipTriggerProps['asChild']
-  triggerReference?: TooltipTriggerProps['reference']
-  contentAs?: TooltipContentProps['as']
-  contentAsChild?: TooltipContentProps['asChild']
   align?: TooltipContentProps['align']
   alignOffset?: TooltipContentProps['alignOffset']
   ariaLabel?: TooltipContentProps['ariaLabel']
   arrowPadding?: TooltipContentProps['arrowPadding']
   avoidCollisions?: TooltipContentProps['avoidCollisions']
-  collisionBoundary?: TooltipContentProps['collisionBoundary']
   collisionPadding?: TooltipContentProps['collisionPadding']
   forceMount?: TooltipContentProps['forceMount']
   hideWhenDetached?: TooltipContentProps['hideWhenDetached']
@@ -77,10 +63,6 @@ export interface TooltipProps extends TooltipRootProps {
   sideOffset?: TooltipContentProps['sideOffset']
   sticky?: TooltipContentProps['sticky']
   updatePositionStrategy?: TooltipContentProps['updatePositionStrategy']
-  onEscapeKeyDown?: TooltipContentProps['onEscapeKeyDown']
-  onPointerDownOutside?: TooltipContentProps['onPointerDownOutside']
-  arrowAs?: TooltipArrowProps['as']
-  arrowAsChild?: TooltipArrowProps['asChild']
   arrowWidth?: TooltipArrowProps['width']
   arrowHeight?: TooltipArrowProps['height']
   ui?: TooltipUI
@@ -93,9 +75,7 @@ export interface TooltipContext {
 }
 
 // Emits
-export interface TooltipEmits {
-  'update:open': [value: TooltipProps['open']]
-}
+export type TooltipEmits = RekaTooltipRootEmits & RekaTooltipContentEmits
 
 // Slots
 export interface TooltipSlots {

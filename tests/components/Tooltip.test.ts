@@ -1,8 +1,9 @@
 import { h, nextTick } from 'vue'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { mount, type ComponentMountingOptions } from '@vue/test-utils'
+import { mount, type MountingOptions } from '@vue/test-utils'
 import { Tooltip, type TooltipContext, type TooltipProps } from '@/components/ui/Tooltip'
-import { TooltipArrow, TooltipContent, TooltipRoot, TooltipTrigger } from 'reka-ui'
+import { TooltipArrow, TooltipContent, TooltipPortal, TooltipRoot } from 'reka-ui'
+import { testAttrs } from '../utils/testAttrs'
 
 vi.stubGlobal(
   'ResizeObserver',
@@ -17,7 +18,7 @@ afterEach(() => {
   document.body.innerHTML = ''
 })
 
-function mountTooltip(options: ComponentMountingOptions<typeof Tooltip> = {}) {
+function mountTooltip(options: MountingOptions<TooltipProps> = {}) {
   const global = options.global ?? {}
 
   return mount(Tooltip, {
@@ -48,6 +49,25 @@ function mountWithContentProp(prop: string, value: unknown) {
 describe('Tooltip', () => {
   describe('props', () => {
     // Reka
+    describe('portal', () => {
+      it('points to the local target after the trigger', async () => {
+        const wrapper = mountTooltip({
+          global: { stubs: { TooltipPortal: false } },
+          slots: { default: () => h('button', 'Trigger') },
+        })
+        await nextTick()
+
+        const portal = wrapper.getComponent(TooltipPortal)
+        const trigger = wrapper.get('[data-test-tooltip-trigger]')
+        const target = wrapper.get('[data-test-tooltip-portal-target]').element
+
+        expect(portal.vm.$.vnode.props?.to).toBe(target)
+        expect(
+          trigger.element.compareDocumentPosition(target) & Node.DOCUMENT_POSITION_FOLLOWING,
+        ).toBeTruthy()
+      })
+    })
+
     describe('open', () => {
       it.each([
         { input: true, expected: true },
@@ -144,40 +164,39 @@ describe('Tooltip', () => {
       })
     })
 
-    describe('trigger props', () => {
-      describe('triggerReference', () => {
-        const reference = document.createElement('div')
-
-        it.each([
-          { input: undefined, expected: undefined },
-          { input: reference, expected: reference },
-        ])('passes triggerReference=$input to TooltipTrigger', ({ input, expected }) => {
-          const wrapper = mountWithProp('triggerReference', input)
-
-          expect(wrapper.getComponent(TooltipTrigger).props('reference')).toBe(expected)
+    describe('ui', () => {
+      describe('content', () => {
+        testAttrs({
+          text: 'renders ui.content attributes',
+          id: '[data-test-tooltip-content]',
+          mount: (attrs) =>
+            mountTooltip({
+              props: {
+                open: true,
+                forceMount: true,
+                withArrow: false,
+                ui: { content: () => attrs },
+              },
+              global: {
+                stubs: {
+                  TooltipContent: { template: '<div><slot /></div>' },
+                },
+              },
+              slots: { default: () => h('button', 'Trigger') },
+            }),
         })
       })
-    })
 
-    describe('ui', () => {
-      it('applies ui resolvers to trigger, content and arrow', () => {
-        const wrapper = mountTooltip({
-          props: {
-            open: true,
-            forceMount: true,
-            withArrow: true,
-            ui: {
-              trigger: () => ({ id: 'tooltip-trigger' }),
-              content: () => ({ id: 'tooltip-content' }),
-              arrow: () => ({ id: 'tooltip-arrow' }),
-            },
-          },
-          slots: { default: () => h('button', 'Trigger') },
+      describe('arrow', () => {
+        testAttrs({
+          text: 'renders ui.arrow attributes',
+          id: '[data-test-tooltip-arrow]',
+          mount: (attrs) =>
+            mountTooltip({
+              props: { open: true, forceMount: true, withArrow: true, ui: { arrow: () => attrs } },
+              slots: { default: () => h('button', 'Trigger') },
+            }),
         })
-
-        expect(wrapper.get('[data-test-tooltip-trigger]').attributes('id')).toBe('tooltip-trigger')
-        expect(wrapper.get('[data-test-tooltip-content]').attributes('id')).toBe('tooltip-content')
-        expect(wrapper.get('[data-test-tooltip-arrow]').attributes('id')).toBe('tooltip-arrow')
       })
     })
 
@@ -241,19 +260,6 @@ describe('Tooltip', () => {
             const wrapper = mountWithContentProp('avoidCollisions', input)
 
             expect(wrapper.getComponent(TooltipContent).props('avoidCollisions')).toBe(expected)
-          },
-        )
-      })
-
-      describe('collisionBoundary', () => {
-        const boundary = document.createElement('div')
-
-        it.each([undefined, null, boundary, [boundary]])(
-          'passes collisionBoundary=$input to TooltipContent',
-          (input) => {
-            const wrapper = mountWithContentProp('collisionBoundary', input)
-
-            expect(wrapper.getComponent(TooltipContent).props('collisionBoundary')).toEqual(input)
           },
         )
       })
@@ -372,26 +378,6 @@ describe('Tooltip', () => {
           },
         )
       })
-
-      it('passes onEscapeKeyDown to TooltipContent', () => {
-        const onEscapeKeyDown = vi.fn()
-        const wrapper = mountTooltip({ props: { onEscapeKeyDown } })
-        const event = new KeyboardEvent('keydown')
-
-        wrapper.getComponent(TooltipContent).vm.$emit('escapeKeyDown', event)
-
-        expect(onEscapeKeyDown).toHaveBeenCalledWith(event)
-      })
-
-      it('passes onPointerDownOutside to TooltipContent', () => {
-        const onPointerDownOutside = vi.fn()
-        const wrapper = mountTooltip({ props: { onPointerDownOutside } })
-        const event = new Event('pointerdown')
-
-        wrapper.getComponent(TooltipContent).vm.$emit('pointerDownOutside', event)
-
-        expect(onPointerDownOutside).toHaveBeenCalledWith(event)
-      })
     })
 
     describe('withArrow', () => {
@@ -438,6 +424,31 @@ describe('Tooltip', () => {
     })
   })
 
+  describe('emits', () => {
+    describe('TooltipContent events', () => {
+      it.each([
+        { event: 'escapeKeyDown', input: new KeyboardEvent('keydown') },
+        { event: 'pointerDownOutside', input: new Event('pointerdown') },
+      ])('emits $event from TooltipContent', async ({ event, input }) => {
+        const wrapper = mountWithContentProp('forceMount', true)
+
+        wrapper.getComponent(TooltipContent).vm.$emit(event, input)
+
+        expect(wrapper.emitted(event)).toEqual([[input]])
+      })
+    })
+
+    describe('update:open', () => {
+      it('forwards updates from TooltipRoot', async () => {
+        const wrapper = mountTooltip()
+
+        await wrapper.getComponent(TooltipRoot).vm.$emit('update:open', true)
+
+        expect(wrapper.emitted('update:open')).toEqual([[true]])
+      })
+    })
+  })
+
   describe('context contract', () => {
     it.each([
       { name: 'default values', input: undefined, expected: false },
@@ -469,28 +480,32 @@ describe('Tooltip', () => {
   })
 
   describe('slots', () => {
-    it('render default slot', () => {
-      const wrapper = mountTooltip({
-        props: { open: true, forceMount: true },
-        slots: {
-          default: (context: TooltipContext) =>
-            h('button', { 'data-test-context-trigger': '' }, `open:${context.open}`),
-        },
-      })
+    describe('default', () => {
+      it('renders the default slot', () => {
+        const wrapper = mountTooltip({
+          props: { open: true, forceMount: true },
+          slots: {
+            default: (context: TooltipContext) =>
+              h('button', { 'data-test-context-trigger': '' }, `open:${context.open}`),
+          },
+        })
 
-      expect(wrapper.get('[data-test-context-trigger]').text()).toBe('open:true')
+        expect(wrapper.get('[data-test-context-trigger]').text()).toBe('open:true')
+      })
     })
 
-    it('render content slot', () => {
-      const wrapper = mountTooltip({
-        props: { open: true, forceMount: true },
-        slots: {
-          content: (context: TooltipContext) =>
-            h('span', { 'data-test-context-content': '' }, `open:${context.open}`),
-        },
-      })
+    describe('content', () => {
+      it('renders the content slot', () => {
+        const wrapper = mountTooltip({
+          props: { open: true, forceMount: true },
+          slots: {
+            content: (context: TooltipContext) =>
+              h('span', { 'data-test-context-content': '' }, `open:${context.open}`),
+          },
+        })
 
-      expect(wrapper.get('[data-test-context-content]').text()).toBe('open:true')
+        expect(wrapper.get('[data-test-context-content]').text()).toBe('open:true')
+      })
     })
   })
 })

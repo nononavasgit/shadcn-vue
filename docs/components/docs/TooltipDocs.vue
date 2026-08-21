@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 
 import { Tooltip, type TooltipProps } from '@/components/ui/Tooltip'
-import { tooltipDefaults } from '@/components/ui/Tooltip/defaults'
+import { tooltipDefaults } from '@/components/ui/Tooltip/default'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
@@ -25,11 +25,6 @@ const typeRows: ApiTableRow[] = [
     name: 'TooltipContext',
     type: '{ open: boolean; close: () => void }',
     description: 'Contexto disponible en los slots y resolvers de UI.',
-  },
-  {
-    name: 'TooltipUI',
-    type: '{ root; trigger; content; arrow }',
-    description: 'Resolvers para personalizar cada parte del tooltip.',
   },
 ]
 
@@ -113,12 +108,6 @@ const propRows: ApiTableRow[] = [
     description: 'Evita que el contenido desborde los límites visibles.',
   },
   {
-    name: 'collisionBoundary',
-    type: 'Element | null | Array<Element | null>',
-    default: '[]',
-    description: 'Elemento o elementos usados como límite de colisión.',
-  },
-  {
     name: 'collisionPadding',
     type: 'number | Partial<Record<Side, number>>',
     default: String(tooltipDefaults.collisionPadding),
@@ -167,18 +156,6 @@ const propRows: ApiTableRow[] = [
     description: 'Estrategia para actualizar la posición durante el movimiento.',
   },
   {
-    name: 'onEscapeKeyDown',
-    type: '(event: KeyboardEvent) => void',
-    default: 'undefined',
-    description: 'Callback cuando se pulsa Escape dentro del contenido.',
-  },
-  {
-    name: 'onPointerDownOutside',
-    type: '(event: Event) => void',
-    default: 'undefined',
-    description: 'Callback cuando se pulsa fuera del contenido.',
-  },
-  {
     name: 'arrowWidth',
     type: 'number',
     default: String(tooltipDefaults.arrowWidth),
@@ -192,9 +169,16 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: 'TooltipUI',
+    type: '{ content?: (context: TooltipContext) => HTMLAttributes; arrow?: (context: TooltipContext) => HTMLAttributes }',
+    typeParts: [
+      { text: '{ content?: (context: ' },
+      { text: 'TooltipContext', link: '#tooltip-context' },
+      { text: ') => HTMLAttributes; arrow?: (context: ' },
+      { text: 'TooltipContext', link: '#tooltip-context' },
+      { text: ') => HTMLAttributes }' },
+    ],
     default: 'undefined',
-    description: 'Personalización dinámica de root, trigger, content y arrow.',
+    description: 'Personalización dinámica de content y arrow.',
   },
 ]
 
@@ -205,18 +189,32 @@ const emitRows: ApiTableRow[] = [
     default: '-',
     description: 'Actualiza el estado controlado mediante v-model:open.',
   },
+  {
+    name: 'escapeKeyDown',
+    type: '[event: KeyboardEvent]',
+    default: '-',
+    description: 'Se emite cuando se pulsa Escape dentro del contenido.',
+  },
+  {
+    name: 'pointerDownOutside',
+    type: '[event: Event]',
+    default: '-',
+    description: 'Se emite cuando se pulsa fuera del contenido.',
+  },
 ]
 
 const slotRows: ApiTableRow[] = [
   {
     name: 'default',
     type: 'TooltipContext',
+    typeLink: '#tooltip-context',
     default: '-',
     description: 'Contenido que actúa como trigger.',
   },
   {
     name: 'content',
     type: 'TooltipContext',
+    typeLink: '#tooltip-context',
     default: 'label',
     description: 'Contenido del tooltip.',
   },
@@ -234,14 +232,6 @@ const exposeRows: ApiTableRow[] = []
         Mensajes contextuales con props planas, posiciones y contenido personalizable.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">Tipos públicos usados por la API.</p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -320,6 +310,7 @@ const exposeRows: ApiTableRow[] = []
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="tooltip-context" title="TooltipContext" :rows="typeRows" />
     </div>
   </section>
 </template>

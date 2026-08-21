@@ -2,13 +2,9 @@ import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import {
-  Attachment,
-  createAttachmentContext,
-  type AttachmentContext,
-  type AttachmentProps,
-} from '@/components/ui/Attachment'
-import { testIconProps } from '../utils/testIconProps'
+import { Attachment, type AttachmentProps } from '@/components/ui/Attachment'
+import { testAttrs } from '../utils/testAttrs'
+import { testIconProps, testIconSize } from '../utils/testIconProps'
 
 function mountAttachment(options: MountingOptions<AttachmentProps> = {}) {
   return mount(Attachment, options)
@@ -120,16 +116,10 @@ describe('Attachment', () => {
         mount: (input) => mountAttachment({ props: { icon: input } }),
       })
 
-      it.each([
-        { attachmentSize: 'md' as const, expected: 'md' },
-        { attachmentSize: 'sm' as const, expected: 'sm' },
-        { attachmentSize: 'xs' as const, expected: 'xs' },
-      ])('maps Attachment size=$attachmentSize to icon size', ({ attachmentSize, expected }) => {
-        const icon = mountAttachment({
-          props: { size: attachmentSize, icon: { name: 'fileText' } },
-        }).getComponent('[data-test-attachment-icon]')
-
-        expect(icon.props('size')).toBe(expected)
+      testIconSize({
+        text: 'inherits Attachment size to icon',
+        id: '[data-test-attachment-icon]',
+        mount: (size) => mountAttachment({ props: { size, icon: { name: 'fileText' } } }),
       })
 
       it('renders an animated spinner while uploading', () => {
@@ -145,97 +135,140 @@ describe('Attachment', () => {
     describe('ui', () => {
       const parts = ['media', 'content', 'label', 'description', 'actions'] as const
 
-      it.each(parts)('renders ui.%s attributes', (part) => {
-        const attachment = mountAttachment({
-          props: {
-            label: 'report.pdf',
-            description: '2.4 MB',
-            mediaVariant: 'image',
-            ui: { [part]: () => ({ class: `ui-${part}`, style: 'opacity: 0.8' }) },
-          },
-          slots: {
-            media: () => 'Media',
-            actions: () => 'Actions',
-          },
+      describe('media', () => {
+        testAttrs({
+          text: 'renders ui.media attributes',
+          id: '[data-test-attachment-media]',
+          mount: (attrs) =>
+            mountAttachment({
+              props: { mediaVariant: 'image', ui: { media: () => attrs } },
+              slots: { media: () => 'Media' },
+            }),
         })
-        const element = attachment.get(`[data-test-attachment-${part}]`)
+      })
 
-        expect(element.classes()).toContain(`ui-${part}`)
-        expect(element.attributes('style')).toContain('opacity: 0.8')
+      describe('content', () => {
+        testAttrs({
+          text: 'renders ui.content attributes',
+          id: '[data-test-attachment-content]',
+          mount: (attrs) =>
+            mountAttachment({
+              props: {
+                label: 'report.pdf',
+                description: '2.4 MB',
+                ui: { content: () => attrs },
+              },
+            }),
+        })
+      })
+
+      describe('label', () => {
+        testAttrs({
+          text: 'renders ui.label attributes',
+          id: '[data-test-attachment-label]',
+          mount: (attrs) =>
+            mountAttachment({
+              props: { label: 'report.pdf', ui: { label: () => attrs } },
+            }),
+        })
+      })
+
+      describe('description', () => {
+        testAttrs({
+          text: 'renders ui.description attributes',
+          id: '[data-test-attachment-description]',
+          mount: (attrs) =>
+            mountAttachment({
+              props: { description: '2.4 MB', ui: { description: () => attrs } },
+            }),
+        })
+      })
+
+      describe('actions', () => {
+        testAttrs({
+          text: 'renders ui.actions attributes',
+          id: '[data-test-attachment-actions]',
+          mount: (attrs) =>
+            mountAttachment({
+              props: { ui: { actions: () => attrs } },
+              slots: { actions: () => 'Actions' },
+            }),
+        })
       })
     })
   })
 
   describe('attrs', () => {
-    it('forwards arbitrary attrs, class and style to root', () => {
-      const root = mountAttachment({
-        attrs: {
-          id: 'attachment',
-          'aria-label': 'Report attachment',
-          class: 'custom-attachment',
-          style: 'opacity: 0.5',
-        },
-      }).get('[data-test-attachment-root]')
-
-      expect(root.attributes('id')).toBe('attachment')
-      expect(root.attributes('aria-label')).toBe('Report attachment')
-      expect(root.classes()).toContain('custom-attachment')
-      expect(root.attributes('style')).toContain('opacity: 0.5')
-    })
-  })
-
-  describe('context contract', () => {
-    it.each([
-      {
-        name: 'default values',
-        input: {},
-        expected: {
-          state: 'idle',
-        },
-      },
-      {
-        name: 'configured values',
-        input: {
-          state: 'done' as const,
-        },
-        expected: {
-          state: 'done',
-        },
-      },
-    ])('creates the contract with $name', ({ input, expected }) => {
-      expect(createAttachmentContext(input)).toEqual(expected satisfies AttachmentContext)
+    testAttrs({
+      text: 'forwards arbitrary attrs, class and style to root',
+      id: '[data-test-attachment-root]',
+      mount: (attrs) => mountAttachment({ attrs }),
     })
   })
 
   describe('slots', () => {
-    it('does not use the media slot for icon', () => {
-      const attachment = mountAttachment({
-        props: { icon: { name: 'fileText' } },
-        slots: { media: () => h('span', { 'data-test-image-slot': '' }, 'Image') },
+    describe('media', () => {
+      it('does not use the media slot for icon', () => {
+        const attachment = mountAttachment({
+          props: { icon: { name: 'fileText' } },
+          slots: { media: () => h('span', { 'data-test-image-slot': '' }, 'Image') },
+        })
+
+        expect(attachment.find('[data-test-image-slot]').exists()).toBe(false)
+        expect(attachment.find('[data-test-attachment-icon]').exists()).toBe(true)
       })
 
-      expect(attachment.find('[data-test-image-slot]').exists()).toBe(false)
-      expect(attachment.find('[data-test-attachment-icon]').exists()).toBe(true)
+      it('renders the media slot for image', () => {
+        const attachment = mountAttachment({
+          props: { mediaVariant: 'image' },
+          slots: { media: () => h('span', { 'data-test-attachment-slot': 'media' }, 'Media') },
+        })
+
+        expect(attachment.get('[data-test-attachment-slot="media"]').text()).toBe('Media')
+      })
     })
 
-    const slotCases = [
-      { input: 'media' as const, expected: 'media', props: { mediaVariant: 'image' as const } },
-      { input: 'label' as const, expected: 'label', props: {} },
-      { input: 'description' as const, expected: 'description', props: {} },
-      { input: 'actions' as const, expected: 'actions', props: {} },
-    ]
+    describe('label', () => {
+      it('renders the label slot and hides the label fallback', () => {
+        const attachment = mountAttachment({
+          props: { label: 'Label fallback' },
+          slots: { label: () => h('span', { 'data-test-attachment-slot': 'label' }, 'Label') },
+        })
 
-    it.each(slotCases)('renders the $input slot', ({ input, expected, props }) => {
-      const attachment = mountAttachment({
-        props,
-        slots: {
-          [input]: () => h('span', { 'data-test-attachment-slot': expected }, `Slot ${expected}`),
-        },
+        expect(attachment.get('[data-test-attachment-slot="label"]').text()).toBe('Label')
+        expect(attachment.get('[data-test-attachment-root]').text()).not.toContain('Label fallback')
       })
+    })
 
-      expect(attachment.get(`[data-test-attachment-slot="${expected}"]`).text()).toBe(
-        `Slot ${expected}`,
-      )
+    describe('description', () => {
+      it('renders the description slot and hides the description fallback', () => {
+        const attachment = mountAttachment({
+          props: { description: 'Description fallback' },
+          slots: {
+            description: () =>
+              h('span', { 'data-test-attachment-slot': 'description' }, 'Description'),
+          },
+        })
+
+        expect(attachment.get('[data-test-attachment-slot="description"]').text()).toBe(
+          'Description',
+        )
+        expect(attachment.get('[data-test-attachment-root]').text()).not.toContain(
+          'Description fallback',
+        )
+      })
+    })
+
+    describe('actions', () => {
+      it('renders the actions slot', () => {
+        const attachment = mountAttachment({
+          slots: {
+            actions: () => h('span', { 'data-test-attachment-slot': 'actions' }, 'Actions'),
+          },
+        })
+
+        expect(attachment.get('[data-test-attachment-slot="actions"]').text()).toBe('Actions')
+      })
     })
   })
 })

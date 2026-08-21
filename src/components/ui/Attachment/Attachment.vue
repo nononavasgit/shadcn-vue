@@ -10,29 +10,18 @@ import {
   attachmentLabelVariants,
   attachmentMediaVariants,
   attachmentVariants,
-  createAttachmentContext,
-  type AttachmentContext,
   type AttachmentProps,
   type AttachmentSlots,
 } from '.'
+import { attachmentDefaults } from './default'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<AttachmentProps>(), {
-  label: undefined,
-  description: undefined,
-  icon: undefined,
-  orientation: 'horizontal',
-  size: 'md',
-  state: 'idle',
-  mediaVariant: 'icon',
-  ui: undefined,
-})
+const props = withDefaults(defineProps<AttachmentProps>(), attachmentDefaults)
 defineSlots<AttachmentSlots>()
 
 const attrs = useAttrs()
 const slots = useSlots()
-const attachmentContext = computed<AttachmentContext>(() => createAttachmentContext(props))
 
 const rootProps = computed(() => {
   return {
@@ -53,7 +42,7 @@ const rootProps = computed(() => {
 })
 
 const mediaProps = computed(() => {
-  const ui = useUi(props.ui?.media, attachmentContext.value)
+  const ui = useUi(props.ui?.media, undefined)
 
   return {
     ...ui,
@@ -91,7 +80,7 @@ const hasMedia = computed(() => {
 })
 
 const contentProps = computed(() => {
-  const ui = useUi(props.ui?.content, attachmentContext.value)
+  const ui = useUi(props.ui?.content, undefined)
   return {
     ...ui,
     class: cn(attachmentContentVariants({ orientation: props.orientation }), ui.class),
@@ -99,7 +88,7 @@ const contentProps = computed(() => {
 })
 
 const labelProps = computed(() => {
-  const ui = useUi(props.ui?.label, attachmentContext.value)
+  const ui = useUi(props.ui?.label, undefined)
   return {
     ...ui,
     class: cn(attachmentLabelVariants({ size: props.size, state: props.state }), ui.class),
@@ -107,7 +96,7 @@ const labelProps = computed(() => {
 })
 
 const descriptionProps = computed(() => {
-  const ui = useUi(props.ui?.description, attachmentContext.value)
+  const ui = useUi(props.ui?.description, undefined)
   return {
     ...ui,
     class: cn(attachmentDescriptionVariants({ size: props.size, state: props.state }), ui.class),
@@ -115,7 +104,7 @@ const descriptionProps = computed(() => {
 })
 
 const actionsProps = computed(() => {
-  const ui = useUi(props.ui?.actions, attachmentContext.value)
+  const ui = useUi(props.ui?.actions, undefined)
   return {
     ...ui,
     class: cn(
@@ -127,49 +116,36 @@ const actionsProps = computed(() => {
 </script>
 
 <template>
-  <div v-bind="rootProps" data-slot="attachment" data-test-attachment-root>
+  <div v-bind="rootProps" data-test-attachment-root>
     <div
       v-if="hasMedia"
       v-bind="mediaProps"
-      data-slot="attachment-media"
       data-test-attachment-media
       :data-variant="props.mediaVariant"
     >
-      <slot v-if="props.mediaVariant === 'image'" name="media" v-bind="attachmentContext" />
+      <slot v-if="props.mediaVariant === 'image'" name="media" />
       <Icon v-else-if="mediaIconProps?.name" v-bind="mediaIconProps" data-test-attachment-icon />
     </div>
 
     <div
       v-if="props.label || props.description || $slots.label || $slots.description"
       v-bind="contentProps"
-      data-slot="attachment-content"
       data-test-attachment-content
     >
-      <div
-        v-if="props.label || $slots.label"
-        v-bind="labelProps"
-        data-slot="attachment-title"
-        data-test-attachment-label
-      >
-        <slot name="label" v-bind="attachmentContext">{{ props.label }}</slot>
+      <div v-if="props.label || $slots.label" v-bind="labelProps" data-test-attachment-label>
+        <slot name="label">{{ props.label }}</slot>
       </div>
       <div
         v-if="props.description || $slots.description"
         v-bind="descriptionProps"
-        data-slot="attachment-description"
         data-test-attachment-description
       >
-        <slot name="description" v-bind="attachmentContext">{{ props.description }}</slot>
+        <slot name="description">{{ props.description }}</slot>
       </div>
     </div>
 
-    <div
-      v-if="$slots.actions"
-      v-bind="actionsProps"
-      data-slot="attachment-actions"
-      data-test-attachment-actions
-    >
-      <slot name="actions" v-bind="attachmentContext" />
+    <div v-if="$slots.actions" v-bind="actionsProps" data-test-attachment-actions>
+      <slot name="actions" />
     </div>
   </div>
 </template>

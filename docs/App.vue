@@ -12,6 +12,7 @@ const passed = {
   buttonGroup: true,
   badge: true,
   card: true,
+  attachment: true,
   empty: true,
   fieldSet: true,
   icon: true,
@@ -23,5 +24,5 @@ const passed = {
 
 <template>
   <RouterView />
-  <pre>{{passed}}</pre>
+  <pre>{{ passed }}</pre>
 </template>

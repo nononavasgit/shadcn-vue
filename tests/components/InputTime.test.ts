@@ -45,4 +45,16 @@ describe('InputTime', () => {
       mount: (attrs) => mountInputTime({ attrs }),
     })
   })
+
+  describe('emits', () => {
+    describe('update:value', () => {
+      it('emits the updated time when the user edits the input', async () => {
+        const wrapper = mountInputTime({ props: { value: '' } })
+
+        await wrapper.get('[data-test-input-root]').setValue('14:45')
+
+        expect(wrapper.emitted('update:value')).toEqual([['14:45']])
+      })
+    })
+  })
 })

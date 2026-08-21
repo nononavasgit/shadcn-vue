@@ -13,19 +13,11 @@ const playgroundProps = computed<InputTimeProps>(() => ({
   showClock: showClock.value,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'InputTimeValue',
-    type: 'string',
-    description: 'Valor controlado en formato de hora HTML.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'value',
-    type: 'InputTimeValue',
-    default: "''",
+    type: 'string',
+    default: inputTimeDefaults.value === '' ? "''" : String(inputTimeDefaults.value),
     description: 'Hora controlada mediante v-model:value.',
   },
   {
@@ -39,7 +31,7 @@ const propRows: ApiTableRow[] = [
 const emitRows: ApiTableRow[] = [
   {
     name: 'update:value',
-    type: '[value: InputTimeValue]',
+    type: '[value: string]',
     default: '-',
     description: 'Actualiza el valor controlado mediante v-model:value.',
   },
@@ -58,16 +50,6 @@ const exposeRows: ApiTableRow[] = []
         Campo de hora controlado basado en el input nativo del navegador.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>

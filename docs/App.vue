@@ -21,6 +21,7 @@ const passed = {
   fieldSet: true,
   icon: true,
   input: true,
+  inputTime: true,
   link: true,
   separator: true,
   splitter: true,

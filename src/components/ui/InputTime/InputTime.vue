@@ -10,7 +10,7 @@ defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<InputTimeProps>(), inputTimeDefaults)
 
 const attrs = useAttrs()
-const value = defineModel<InputTimeValue>('value', { default: '' })
+const value = defineModel<InputTimeValue>('value', { default: inputTimeDefaults.value })
 
 const inputProps = computed(() => {
   const { showClock, ...inputProps } = props

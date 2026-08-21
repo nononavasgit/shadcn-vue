@@ -12,6 +12,7 @@ import ButtonPage from './components/pages/ButtonPage.vue'
 import ButtonGroupPage from './components/pages/ButtonGroupPage.vue'
 import CardPage from './components/pages/CardPage.vue'
 import CheckboxPage from './components/pages/CheckboxPage.vue'
+import ChipPage from './components/pages/ChipPage.vue'
 import DialogPage from './components/pages/DialogPage.vue'
 import EmptyPage from './components/pages/EmptyPage.vue'
 import FieldSetPage from './components/pages/FieldSetPage.vue'
@@ -54,6 +55,7 @@ export const router = createRouter({
     { path: '/button-group', component: ButtonGroupPage },
     { path: '/card', component: CardPage },
     { path: '/checkbox', component: CheckboxPage },
+    { path: '/chip', component: ChipPage },
     { path: '/dialog', component: DialogPage },
     { path: '/empty', component: EmptyPage },
     { path: '/field-set', component: FieldSetPage },

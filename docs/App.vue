@@ -15,7 +15,7 @@ const passed = {
   breadcrumb: true,
   card: true,
   checkbox: true,
-  attachment: true,
+  chip: true,
   dialog: true,
   empty: true,
   fieldSet: true,

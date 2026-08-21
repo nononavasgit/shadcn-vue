@@ -142,6 +142,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/chip"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Chip</h2>
+            <p class="text-sm text-muted-foreground">
+              Indicadores compactos para valores y estados sobre otros elementos.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/dialog"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

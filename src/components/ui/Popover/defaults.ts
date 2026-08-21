@@ -6,7 +6,6 @@ export const popoverDefaults = {
   alignOffset: 0,
   arrowPadding: 0,
   avoidCollisions: true,
-  collisionBoundary: () => [],
   arrowWidth: 10,
   arrowHeight: 5,
   arrowRounded: false,

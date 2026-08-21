@@ -21,19 +21,6 @@ const playgroundProps = computed<PopoverProps>(() => ({
   sideOffset: sideOffset.value,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'PopoverUI',
-    type: '{ content?; arrow? }',
-    description: 'Resolvers para personalizar el contenido y la flecha.',
-  },
-  {
-    name: 'PopoverContext',
-    type: '{ open: boolean; close: () => void }',
-    description: 'Contexto disponible en los slots y resolvers de UI.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'open',
@@ -82,12 +69,6 @@ const propRows: ApiTableRow[] = [
     type: 'boolean',
     default: String(popoverDefaults.avoidCollisions),
     description: 'Evita que el contenido salga del viewport.',
-  },
-  {
-    name: 'collisionBoundary',
-    type: 'Element | null | Array<Element | null>',
-    default: '[]',
-    description: 'Límite utilizado para calcular colisiones.',
   },
   {
     name: 'collisionPadding',
@@ -187,7 +168,14 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: 'PopoverUI',
+    type: '{ content?: (context: PopoverContext) => HTMLAttributes; arrow?: (context: PopoverContext) => HTMLAttributes }',
+    typeParts: [
+      { text: '{ content?: (context: ' },
+      { text: 'PopoverContext', link: '#popover-context' },
+      { text: ') => HTMLAttributes; arrow?: (context: ' },
+      { text: 'PopoverContext', link: '#popover-context' },
+      { text: ') => HTMLAttributes }' },
+    ],
     default: 'undefined',
     description: 'Personalización dinámica de content y arrow.',
   },
@@ -241,12 +229,45 @@ const emitRows: ApiTableRow[] = [
 ]
 
 const slotRows: ApiTableRow[] = [
-  { name: 'default', type: 'PopoverContext', default: '-', description: 'Trigger del popover.' },
-  { name: 'content', type: 'PopoverContext', default: '-', description: 'Contenido del popover.' },
-  { name: 'arrow', type: 'PopoverContext', default: '-', description: 'Personaliza la flecha.' },
+  {
+    name: 'default',
+    type: 'PopoverContext',
+    typeLink: '#popover-context',
+    default: '-',
+    description: 'Trigger del popover.',
+  },
+  {
+    name: 'content',
+    type: 'PopoverContext',
+    typeLink: '#popover-context',
+    default: '-',
+    description: 'Contenido del popover.',
+  },
+  {
+    name: 'arrow',
+    type: 'PopoverContext',
+    typeLink: '#popover-context',
+    default: '-',
+    description: 'Personaliza la flecha.',
+  },
 ]
 
 const exposeRows: ApiTableRow[] = []
+
+const contextRows: ApiTableRow[] = [
+  {
+    name: 'open',
+    type: 'boolean',
+    default: '-',
+    description: 'Indica si el popover esta abierto.',
+  },
+  {
+    name: 'close',
+    type: '() => void',
+    default: '-',
+    description: 'Cierra el popover desde un slot o resolver de UI.',
+  },
+]
 </script>
 
 <template>
@@ -258,14 +279,6 @@ const exposeRows: ApiTableRow[] = []
         Contenido flotante contextual con props planas, posicionamiento y control accesible.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">Tipos públicos usados por la API.</p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -342,6 +355,7 @@ const exposeRows: ApiTableRow[] = []
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="popover-context" title="PopoverContext" :rows="contextRows" />
     </div>
   </section>
 </template>

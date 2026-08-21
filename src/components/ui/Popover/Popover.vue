@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useAttrs, useSlots, watch } from 'vue'
+import { computed, ref, useSlots, watch } from 'vue'
 import { PopoverArrow, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
@@ -13,7 +13,6 @@ defineSlots<PopoverSlots>()
 const props = withDefaults(defineProps<PopoverProps>(), popoverDefaults)
 const emit = defineEmits<PopoverEmits>()
 
-const attrs = useAttrs()
 const slots = useSlots()
 const portalTarget = ref<HTMLElement>()
 const open = defineModel<boolean>('open', { default: false })
@@ -37,10 +36,6 @@ const rootProps = computed(() => ({
   modal: props.modal,
 }))
 
-const triggerProps = computed(() => ({
-  asChild: true,
-}))
-
 const contentProps = computed(() => {
   const contentUI = useUi(props.ui?.content, popoverContext.value)
 
@@ -51,7 +46,6 @@ const contentProps = computed(() => {
     alignOffset: props.alignOffset,
     arrowPadding: props.arrowPadding,
     avoidCollisions: props.avoidCollisions,
-    collisionBoundary: props.collisionBoundary,
     collisionPadding: props.collisionPadding,
     disableOutsidePointerEvents: props.disableOutsidePointerEvents,
     disableUpdateOnLayoutShift: props.disableUpdateOnLayoutShift,
@@ -96,9 +90,9 @@ const arrowProps = computed(() => {
 </script>
 
 <template>
-  <div v-bind="attrs" class="contents" data-test-popover-root>
-    <PopoverRoot v-bind="rootProps" v-model:open="open" data-test-popover-root>
-      <PopoverTrigger v-bind="triggerProps" data-test-popover-trigger>
+  <div class="contents" data-test-popover-root>
+    <PopoverRoot v-bind="rootProps" v-model:open="open">
+      <PopoverTrigger as-child data-test-popover-trigger>
         <slot v-bind="popoverContext" />
       </PopoverTrigger>
 

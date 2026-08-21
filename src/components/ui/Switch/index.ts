@@ -4,6 +4,7 @@ import type { SwitchRootProps } from 'reka-ui'
 export { default as Switch } from './Switch.vue'
 
 export type SwitchValue = boolean | number | string
+export type SwitchState = boolean
 // Fn
 export type SwitchFn<T> = (context: SwitchContext) => T
 
@@ -23,23 +24,7 @@ export interface SwitchProps extends Pick<
 
 // Context
 export interface SwitchContext {
-  value: SwitchValue
-  checked: boolean
-  ui: SwitchProps['ui']
-}
-
-export function createSwitchContext({
-  value,
-  props,
-}: {
-  value: SwitchValue
-  props: SwitchProps
-}): SwitchContext {
-  return {
-    value,
-    checked: value === props.trueValue,
-    ui: props.ui,
-  }
+  state: SwitchState
 }
 
 // Emits

@@ -3,15 +3,12 @@ import { computed, useAttrs, watch } from 'vue'
 import { SwitchRoot, SwitchThumb } from 'reka-ui'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import { createSwitchContext, type SwitchProps, type SwitchSlots, type SwitchValue } from '.'
+import type { SwitchProps, SwitchSlots, SwitchValue } from '.'
+import { switchDefaults } from './default'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<SwitchProps>(), {
-  trueValue: true,
-  falseValue: false,
-  ui: undefined,
-})
+const props = withDefaults(defineProps<SwitchProps>(), switchDefaults)
 defineSlots<SwitchSlots>()
 const value = defineModel<SwitchValue>('value', { default: false })
 
@@ -31,12 +28,16 @@ watch(
     immediate: true,
   },
 )
-const switchContext = computed(() => createSwitchContext({ value: value.value, props }))
+const switchContext = computed(() => ({
+  state: value.value === props.trueValue,
+}))
 
 const attrs = useAttrs()
 const rootProps = computed(() => {
   return {
     ...attrs,
+    as: 'button',
+    asChild: false,
     trueValue: props.trueValue,
     falseValue: props.falseValue,
     class: cn(

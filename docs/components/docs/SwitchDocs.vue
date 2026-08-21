@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 
 import { Switch, type SwitchProps, type SwitchValue } from '@/components/ui/Switch'
+import { switchDefaults } from '@/components/ui/Switch/default'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
@@ -15,46 +16,33 @@ const playgroundProps = computed<SwitchProps>(() => ({
   value: playgroundValue.value,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'SwitchValue',
-    type: 'boolean | number | string',
-    description: 'Valores que pueden representar los estados del switch.',
-  },
-  {
-    name: 'SwitchContext',
-    type: '{ value: SwitchValue; checked: boolean; ui?: SwitchUI }',
-    description: 'Contexto disponible en el slot thumb y en el resolver de UI.',
-  },
-  {
-    name: 'SwitchUI',
-    type: '{ thumb?: (context: SwitchContext) => HTMLAttributes }',
-    description: 'Atributos dinamicos para el thumb.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'value',
-    type: 'SwitchValue',
-    default: 'false',
+    type: 'boolean | string | number',
+    default: String(switchDefaults.falseValue),
     description: 'Valor controlado del switch.',
   },
   {
     name: 'trueValue',
-    type: 'SwitchValue',
-    default: 'true',
+    type: 'boolean | string | number',
+    default: String(switchDefaults.trueValue),
     description: 'Valor emitido cuando el switch esta activado.',
   },
   {
     name: 'falseValue',
-    type: 'SwitchValue',
-    default: 'false',
+    type: 'boolean | string | number',
+    default: String(switchDefaults.falseValue),
     description: 'Valor emitido cuando el switch esta desactivado.',
   },
   {
     name: 'ui',
-    type: 'SwitchUI',
+    type: '{ thumb?: (context: SwitchContext) => HTMLAttributes }',
+    typeParts: [
+      { text: '{ thumb?: (context: ' },
+      { text: 'SwitchContext', link: '#switch-context' },
+      { text: ') => HTMLAttributes }' },
+    ],
     default: 'undefined',
     description: 'Personalizacion dinamica del thumb.',
   },
@@ -63,7 +51,7 @@ const propRows: ApiTableRow[] = [
 const emitRows: ApiTableRow[] = [
   {
     name: 'update:value',
-    type: '[value: SwitchValue]',
+    type: '[value: boolean | string | number]',
     default: '-',
     description: 'Actualiza el valor controlado mediante v-model:value.',
   },
@@ -73,12 +61,22 @@ const slotRows: ApiTableRow[] = [
   {
     name: 'thumb',
     type: 'SwitchContext',
+    typeLink: '#switch-context',
     default: '-',
-    description: 'Contenido del thumb con value y checked.',
+    description: 'Contenido del thumb con state.',
   },
 ]
 
 const exposeRows: ApiTableRow[] = []
+
+const contextRows: ApiTableRow[] = [
+  {
+    name: 'state',
+    type: 'boolean',
+    default: '-',
+    description: 'Estado derivado respecto a trueValue.',
+  },
+]
 </script>
 
 <template>
@@ -90,14 +88,6 @@ const exposeRows: ApiTableRow[] = []
         Control binario con valores personalizados y contexto para su thumb.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">Tipos publicos usados por la API.</p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -132,6 +122,7 @@ const exposeRows: ApiTableRow[] = []
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="switch-context" title="SwitchContext" :rows="contextRows" />
     </div>
   </section>
 </template>

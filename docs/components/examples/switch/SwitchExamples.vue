@@ -9,11 +9,9 @@ const numericValue = ref(0)
 const slotValue = ref(false)
 const styledValue = ref(true)
 const styledSwitchUi: SwitchProps['ui'] = {
-  thumb: ({ checked }) => {
+  thumb: ({ state }) => {
     return {
-      style: {
-        background: checked ? 'red' : undefined,
-      },
+      style: { background: state ? 'red' : undefined },
     }
   },
 }
@@ -102,9 +100,9 @@ const styledSwitchUi: SwitchProps['ui'] = {
         </div>
         <div class="flex items-center gap-3">
           <Switch v-model:value="slotValue" aria-label="Switch con slot personalizado">
-            <template #thumb="{ checked }">
+            <template #thumb="{ state }">
               <span class="text-[0.5rem] leading-none font-bold" aria-hidden="true">
-                {{ checked ? 'ON' : 'OFF' }}
+                {{ state ? 'ON' : 'OFF' }}
               </span>
             </template>
           </Switch>

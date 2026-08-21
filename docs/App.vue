@@ -23,6 +23,7 @@ const passed = {
   link: true,
   separator: true,
   splitter: true,
+  switch: true,
   tooltip: true,
 }
 </script>

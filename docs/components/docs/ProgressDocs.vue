@@ -20,25 +20,13 @@ const playgroundProps = computed<Omit<ProgressProps, 'value'>>(() => ({
   trackColor: playgroundTrackColor.value || undefined,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'ProgressContext',
-    type: '{ value; max; percentage }',
-    description: 'Contexto disponible en los slots y resolvers de UI.',
-  },
-  {
-    name: 'ProgressUI',
-    type: '{ indicator?; label? }',
-    description: 'Resolvers para personalizar el indicador y la etiqueta.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'value',
     type: 'number | null',
-    default: '0',
-    description: 'Valor controlado mediante v-model:value.',
+    default: String(progressDefaults.value),
+    description:
+      'Valor controlado mediante v-model:value; null representa un estado indeterminado.',
   },
   {
     name: 'max',
@@ -56,13 +44,13 @@ const propRows: ApiTableRow[] = [
     name: 'color',
     type: 'string',
     default: 'undefined',
-    description: 'Color del indicador mediante una variable CSS.',
+    description: 'Color CSS del indicador; también admite valores hexadecimales.',
   },
   {
     name: 'trackColor',
     type: 'string',
     default: 'undefined',
-    description: 'Color del track mediante una variable CSS.',
+    description: 'Color CSS del track; también admite valores hexadecimales.',
   },
   {
     name: 'getValueLabel',
@@ -78,7 +66,14 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: 'ProgressUI',
+    type: '{ indicator?: (context: ProgressContext) => HTMLAttributes; label?: (context: ProgressContext) => HTMLAttributes }',
+    typeParts: [
+      { text: '{ indicator?: (context: ' },
+      { text: 'ProgressContext', link: '#progress-context' },
+      { text: ') => HTMLAttributes; label?: (context: ' },
+      { text: 'ProgressContext', link: '#progress-context' },
+      { text: ') => HTMLAttributes }' },
+    ],
     default: 'undefined',
     description: 'Personalización dinámica de indicator y label.',
   },
@@ -97,12 +92,31 @@ const slotRows: ApiTableRow[] = [
   {
     name: 'label',
     type: 'ProgressContext',
+    typeLink: '#progress-context',
     default: 'label',
     description: 'Personaliza la etiqueta visible y recibe el contexto del progreso.',
   },
 ]
 
 const exposeRows: ApiTableRow[] = []
+
+const contextRows: ApiTableRow[] = [
+  {
+    name: 'value',
+    type: 'number | null',
+    description: 'Valor actual del progreso; null representa un estado indeterminado.',
+  },
+  {
+    name: 'max',
+    type: 'number',
+    description: 'Valor máximo utilizado para calcular el porcentaje.',
+  },
+  {
+    name: 'percentage',
+    type: 'number',
+    description: 'Porcentaje calculado y limitado entre 0 y 100.',
+  },
+]
 </script>
 
 <template>
@@ -114,14 +128,6 @@ const exposeRows: ApiTableRow[] = []
         Barra de progreso accesible con valores controlados, estado indeterminado, colores y slots.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">Tipos públicos usados por la API.</p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -219,6 +225,7 @@ const exposeRows: ApiTableRow[] = []
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="progress-context" title="ProgressContext" :rows="contextRows" />
     </div>
   </section>
 </template>

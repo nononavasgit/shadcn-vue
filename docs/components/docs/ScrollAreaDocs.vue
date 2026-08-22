@@ -25,19 +25,6 @@ const playgroundProps = computed<ScrollAreaProps>(() => ({
   },
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'ScrollAreaOrientation',
-    type: "'vertical' | 'horizontal' | 'both'",
-    description: 'Ejes en los que se muestran las barras de desplazamiento.',
-  },
-  {
-    name: 'ScrollAreaUI',
-    type: '{ viewport?; verticalScrollbar?; horizontalScrollbar?; thumbVertical?; thumbHorizontal?; corner? }',
-    description: 'Resolvers para personalizar las partes internas del componente.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'type',
@@ -53,7 +40,7 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'orientation',
-    type: 'ScrollAreaOrientation',
+    type: "'vertical' | 'horizontal' | 'both'",
     default: `'${scrollAreaDefaults.orientation}'`,
     description: 'Eje o ejes que admiten desplazamiento.',
   },
@@ -65,7 +52,7 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: 'ScrollAreaUI',
+    type: '{ viewport?: () => HTMLAttributes; verticalScrollbar?: () => HTMLAttributes; horizontalScrollbar?: () => HTMLAttributes; thumbVertical?: () => HTMLAttributes; thumbHorizontal?: () => HTMLAttributes; corner?: () => HTMLAttributes }',
     default: 'undefined',
     description: 'Atributos personalizados para las partes internas.',
   },
@@ -96,16 +83,6 @@ const items = Array.from({ length: 24 }, (_, index) => `Fila de contenido ${inde
         Contenedor de desplazamiento con barras verticales, horizontales o ambas.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos públicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>

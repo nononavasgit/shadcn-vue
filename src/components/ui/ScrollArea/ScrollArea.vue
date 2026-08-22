@@ -103,45 +103,30 @@ const cornerProps = computed(() => {
 </script>
 
 <template>
-  <ScrollAreaRoot v-bind="rootProps" data-slot="scroll-area" data-test-scroll-area-root>
-    <ScrollAreaViewport
-      v-bind="viewportProps"
-      data-slot="scroll-area-viewport"
-      data-test-scroll-area-viewport
-    >
+  <ScrollAreaRoot v-bind="rootProps" data-test-scroll-area-root>
+    <ScrollAreaViewport v-bind="viewportProps" data-test-scroll-area-viewport>
       <slot />
     </ScrollAreaViewport>
 
     <ScrollAreaScrollbar
       v-if="props.orientation === 'vertical' || props.orientation === 'both'"
       v-bind="verticalScrollbarProps"
-      data-slot="scroll-area-scrollbar"
       data-test-scroll-area-vertical-scrollbar
     >
-      <ScrollAreaThumb
-        v-bind="thumbVerticalProps"
-        data-slot="scroll-area-thumb"
-        data-test-scroll-area-vertical-thumb
-      />
+      <ScrollAreaThumb v-bind="thumbVerticalProps" data-test-scroll-area-vertical-thumb />
     </ScrollAreaScrollbar>
 
     <ScrollAreaScrollbar
       v-if="props.orientation === 'horizontal' || props.orientation === 'both'"
       v-bind="horizontalScrollbarProps"
-      data-slot="scroll-area-scrollbar"
       data-test-scroll-area-horizontal-scrollbar
     >
-      <ScrollAreaThumb
-        v-bind="thumbHorizontalProps"
-        data-slot="scroll-area-thumb"
-        data-test-scroll-area-horizontal-thumb
-      />
+      <ScrollAreaThumb v-bind="thumbHorizontalProps" data-test-scroll-area-horizontal-thumb />
     </ScrollAreaScrollbar>
 
     <ScrollAreaCorner
       v-if="props.orientation === 'both'"
       v-bind="cornerProps"
-      data-slot="scroll-area-corner"
       data-test-scroll-area-corner
     />
   </ScrollAreaRoot>

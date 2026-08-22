@@ -8,13 +8,16 @@ function mountTextarea(options: MountingOptions<TextareaProps> = {}) {
   return mount(Textarea, options)
 }
 
+const casesValue = [
+  { input: 'Description', expected: 'Description' },
+  { input: '', expected: '' },
+  { input: undefined, expected: '' },
+]
+
 describe('Textarea', () => {
   describe('props', () => {
     describe('value', () => {
-      it.each([
-        { input: 'Description', expected: 'Description' },
-        { input: undefined, expected: '' },
-      ])('renders value=$input as "$expected"', ({ input, expected }) => {
+      it.each(casesValue)('renders value=$input as "$expected"', ({ input, expected }) => {
         const root = mountTextarea({ props: { value: input } }).get('[data-test-textarea-root]')
 
         expect(root.element.value).toBe(expected)
@@ -30,4 +33,15 @@ describe('Textarea', () => {
     })
   })
 
+  describe('emits', () => {
+    describe('update:value', () => {
+      it('emits the updated value when the user edits the textarea', async () => {
+        const wrapper = mountTextarea({ props: { value: '' } })
+
+        await wrapper.get('[data-test-textarea-root]').setValue('Updated value')
+
+        expect(wrapper.emitted('update:value')).toEqual([['Updated value']])
+      })
+    })
+  })
 })

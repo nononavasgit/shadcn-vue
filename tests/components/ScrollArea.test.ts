@@ -1,125 +1,190 @@
 import { h } from 'vue'
 import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { ScrollArea, type ScrollAreaProps } from '@/components/ui/ScrollArea'
 import { ScrollAreaCorner, ScrollAreaRoot, ScrollAreaScrollbar } from 'reka-ui'
+import { ScrollArea, type ScrollAreaProps, type ScrollAreaUI } from '@/components/ui/ScrollArea'
+import { scrollAreaDefaults } from '@/components/ui/ScrollArea/defaults'
 import { testAttrs } from '../utils/testAttrs'
 
 function mountScrollArea(options: MountingOptions<ScrollAreaProps> = {}) {
   return mount(ScrollArea, options)
 }
 
+function mountWithProp(prop: keyof ScrollAreaProps, value: unknown) {
+  return mountScrollArea({ props: { [prop]: value } as ScrollAreaProps })
+}
+
+const passthroughStub = {
+  inheritAttrs: false,
+  template: '<div v-bind="$attrs"><slot /></div>',
+}
+
+function mountWithUi(ui: ScrollAreaUI) {
+  return mountScrollArea({
+    props: {
+      orientation: 'both',
+      forceMount: true,
+      ui,
+    },
+    attrs: { style: 'height: 100px; width: 100px' },
+    slots: {
+      default: () => h('div', { style: 'height: 1000px; width: 1000px' }, 'Content'),
+    },
+    global: {
+      stubs: {
+        ScrollAreaScrollbar: passthroughStub,
+        ScrollAreaThumb: passthroughStub,
+        ScrollAreaCorner: passthroughStub,
+      },
+    },
+  })
+}
+
+const casesType = [
+  { input: 'scroll' as const, expected: 'scroll' },
+  { input: 'always' as const, expected: 'always' },
+  { input: 'hover' as const, expected: 'hover' },
+  { input: 'auto' as const, expected: 'auto' },
+  { input: 'glimpse' as const, expected: 'glimpse' },
+  { input: undefined, expected: scrollAreaDefaults.type },
+]
+
+const casesScrollHideDelay = [
+  { input: 0, expected: 0 },
+  { input: 1000, expected: 1000 },
+  { input: undefined, expected: scrollAreaDefaults.scrollHideDelay },
+]
+
+const casesOrientation = [
+  {
+    input: 'vertical' as const,
+    expectedScrollbars: 1,
+    expectedOrientations: ['vertical'],
+    expectedCorner: false,
+  },
+  {
+    input: 'horizontal' as const,
+    expectedScrollbars: 1,
+    expectedOrientations: ['horizontal'],
+    expectedCorner: false,
+  },
+  {
+    input: 'both' as const,
+    expectedScrollbars: 2,
+    expectedOrientations: ['vertical', 'horizontal'],
+    expectedCorner: true,
+  },
+  {
+    input: undefined,
+    expectedScrollbars: 1,
+    expectedOrientations: ['vertical'],
+    expectedCorner: false,
+  },
+]
+
+const casesForceMount = [
+  { input: true, expected: true },
+  { input: false, expected: false },
+  { input: undefined, expected: scrollAreaDefaults.forceMount },
+]
+
 describe('ScrollArea', () => {
   describe('props', () => {
     describe('type', () => {
-      it.each([
-        { input: 'scroll' as const, expected: 'scroll' },
-        { input: 'always' as const, expected: 'always' },
-        { input: 'hover' as const, expected: 'hover' },
-        { input: 'auto' as const, expected: 'auto' },
-        { input: 'glimpse' as const, expected: 'glimpse' },
-        { input: undefined, expected: 'hover' },
-      ])('passes type=$input to ScrollAreaRoot as $expected', ({ input, expected }) => {
-        const wrapper = mountScrollArea({ props: { type: input } })
+      it.each(casesType)(
+        'passes type=$input to ScrollAreaRoot as $expected',
+        ({ input, expected }) => {
+          const wrapper = mountWithProp('type', input)
 
-        expect(wrapper.getComponent(ScrollAreaRoot).props('type')).toBe(expected)
-      })
+          expect(wrapper.getComponent(ScrollAreaRoot).props('type')).toBe(expected)
+        },
+      )
     })
 
     describe('scrollHideDelay', () => {
-      it.each([
-        { input: 0, expected: 0 },
-        { input: 1000, expected: 1000 },
-        { input: undefined, expected: 600 },
-      ])('passes scrollHideDelay=$input to ScrollAreaRoot as $expected', ({ input, expected }) => {
-        const wrapper = mountScrollArea({ props: { scrollHideDelay: input } })
+      it.each(casesScrollHideDelay)(
+        'passes scrollHideDelay=$input to ScrollAreaRoot as $expected',
+        ({ input, expected }) => {
+          const wrapper = mountWithProp('scrollHideDelay', input)
 
-        expect(wrapper.getComponent(ScrollAreaRoot).props('scrollHideDelay')).toBe(expected)
-      })
+          expect(wrapper.getComponent(ScrollAreaRoot).props('scrollHideDelay')).toBe(expected)
+        },
+      )
     })
 
     describe('orientation', () => {
-      it.each([
-        { input: 'vertical' as const, expectedScrollbars: 1, expectedCorner: false },
-        { input: 'horizontal' as const, expectedScrollbars: 1, expectedCorner: false },
-        { input: 'both' as const, expectedScrollbars: 2, expectedCorner: true },
-        { input: undefined, expectedScrollbars: 1, expectedCorner: false },
-      ])('renders orientation=$input', ({ input, expectedScrollbars, expectedCorner }) => {
-        const wrapper = mountScrollArea({
-          props: { orientation: input, forceMount: true },
-          attrs: { style: 'height: 100px; width: 100px' },
-          slots: {
-            default: () => h('div', { style: 'height: 1000px; width: 1000px' }, 'Content'),
-          },
-        })
+      it.each(casesOrientation)(
+        'renders orientation=$input',
+        ({ input, expectedScrollbars, expectedOrientations, expectedCorner }) => {
+          const wrapper = mountScrollArea({
+            props: { orientation: input, forceMount: true },
+            attrs: { style: 'height: 100px; width: 100px' },
+            slots: {
+              default: () => h('div', { style: 'height: 1000px; width: 1000px' }, 'Content'),
+            },
+          })
 
-        expect(wrapper.findAllComponents(ScrollAreaScrollbar)).toHaveLength(expectedScrollbars)
-        expect(wrapper.findComponent(ScrollAreaCorner).exists()).toBe(expectedCorner)
-      })
+          const scrollbars = wrapper.findAllComponents(ScrollAreaScrollbar)
+
+          expect(scrollbars).toHaveLength(expectedScrollbars)
+          expect(scrollbars.map((scrollbar) => scrollbar.props('orientation'))).toEqual(
+            expectedOrientations,
+          )
+          expect(wrapper.findComponent(ScrollAreaCorner).exists()).toBe(expectedCorner)
+        },
+      )
     })
 
     describe('forceMount', () => {
-      it.each([
-        { input: true, expected: true },
-        { input: false, expected: false },
-        { input: undefined, expected: false },
-      ])('passes forceMount=$input to ScrollAreaScrollbar as $expected', ({ input, expected }) => {
-        const wrapper = mountScrollArea({ props: { forceMount: input } })
+      it.each(casesForceMount)(
+        'passes forceMount=$input to ScrollAreaScrollbar as $expected',
+        ({ input, expected }) => {
+          const wrapper = mountScrollArea({ props: { orientation: 'both', forceMount: input } })
+          const scrollbars = wrapper.findAllComponents(ScrollAreaScrollbar)
 
-        expect(wrapper.getComponent(ScrollAreaScrollbar).props('forceMount')).toBe(expected)
-      })
+          expect(scrollbars).toHaveLength(2)
+          expect(scrollbars.every((scrollbar) => scrollbar.props('forceMount') === expected)).toBe(
+            true,
+          )
+        },
+      )
     })
 
     describe('ui', () => {
-      it('applies ui resolvers to the viewport, scrollbars, thumbs and corner', () => {
-        const passthroughStub = {
-          inheritAttrs: false,
-          template: '<div v-bind="$attrs"><slot /></div>',
-        }
-        const wrapper = mountScrollArea({
-          props: {
-            orientation: 'both',
-            forceMount: true,
-            ui: {
-              viewport: () => ({ id: 'scroll-area-viewport' }),
-              verticalScrollbar: () => ({ id: 'scroll-area-vertical-scrollbar' }),
-              horizontalScrollbar: () => ({ id: 'scroll-area-horizontal-scrollbar' }),
-              thumbVertical: () => ({ id: 'scroll-area-vertical-thumb' }),
-              thumbHorizontal: () => ({ id: 'scroll-area-horizontal-thumb' }),
-              corner: () => ({ id: 'scroll-area-corner' }),
-            },
-          },
-          attrs: { style: 'height: 100px; width: 100px' },
-          slots: {
-            default: () => h('div', { style: 'height: 1000px; width: 1000px' }, 'Content'),
-          },
-          global: {
-            stubs: {
-              ScrollAreaScrollbar: passthroughStub,
-              ScrollAreaThumb: passthroughStub,
-              ScrollAreaCorner: passthroughStub,
-            },
-          },
-        })
+      testAttrs({
+        text: 'forwards attrs through ui.viewport',
+        id: '[data-test-scroll-area-viewport]',
+        mount: (attrs) => mountWithUi({ viewport: () => attrs }),
+      })
 
-        expect(wrapper.get('[data-test-scroll-area-viewport]').attributes('id')).toBe(
-          'scroll-area-viewport',
-        )
-        expect(wrapper.get('[data-test-scroll-area-vertical-scrollbar]').attributes('id')).toBe(
-          'scroll-area-vertical-scrollbar',
-        )
-        expect(wrapper.get('[data-test-scroll-area-horizontal-scrollbar]').attributes('id')).toBe(
-          'scroll-area-horizontal-scrollbar',
-        )
-        expect(wrapper.get('[data-test-scroll-area-vertical-thumb]').attributes('id')).toBe(
-          'scroll-area-vertical-thumb',
-        )
-        expect(wrapper.get('[data-test-scroll-area-horizontal-thumb]').attributes('id')).toBe(
-          'scroll-area-horizontal-thumb',
-        )
-        expect(wrapper.get('[data-test-scroll-area-corner]').attributes('id')).toBe(
-          'scroll-area-corner',
-        )
+      testAttrs({
+        text: 'forwards attrs through ui.verticalScrollbar',
+        id: '[data-test-scroll-area-vertical-scrollbar]',
+        mount: (attrs) => mountWithUi({ verticalScrollbar: () => attrs }),
+      })
+
+      testAttrs({
+        text: 'forwards attrs through ui.horizontalScrollbar',
+        id: '[data-test-scroll-area-horizontal-scrollbar]',
+        mount: (attrs) => mountWithUi({ horizontalScrollbar: () => attrs }),
+      })
+
+      testAttrs({
+        text: 'forwards attrs through ui.thumbVertical',
+        id: '[data-test-scroll-area-vertical-thumb]',
+        mount: (attrs) => mountWithUi({ thumbVertical: () => attrs }),
+      })
+
+      testAttrs({
+        text: 'forwards attrs through ui.thumbHorizontal',
+        id: '[data-test-scroll-area-horizontal-thumb]',
+        mount: (attrs) => mountWithUi({ thumbHorizontal: () => attrs }),
+      })
+
+      testAttrs({
+        text: 'forwards attrs through ui.corner',
+        id: '[data-test-scroll-area-corner]',
+        mount: (attrs) => mountWithUi({ corner: () => attrs }),
       })
     })
   })

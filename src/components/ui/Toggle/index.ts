@@ -120,6 +120,9 @@ export const toggleVariants = cva('', {
 })
 
 export type ToggleVariants = VariantProps<typeof toggleVariants>
+export type ToggleVariant = NonNullable<ToggleVariants['variant']>
+export type ToggleSeverity = NonNullable<ToggleVariants['severity']>
+export type ToggleSize = NonNullable<ToggleVariants['size']>
 
 export type ToggleValue = boolean
 export type ToggleState = 'on' | 'off'
@@ -130,16 +133,15 @@ export interface ToggleProps extends Pick<RekaToggleProps, 'disabled'> {
   label?: string
   icon?: IconConfig
   trailingIcon?: IconConfig
-  variant?: ToggleVariants['variant']
-  severity?: ToggleVariants['severity']
-  size?: ToggleVariants['size']
+  variant?: ToggleVariant
+  severity?: ToggleSeverity
+  size?: ToggleSize
   color?: string
 }
 
 // Emits
 export interface ToggleEmits {
   'update:value': [value: ToggleValue]
-  valueChange: [value: ToggleValue]
 }
 
 // Context

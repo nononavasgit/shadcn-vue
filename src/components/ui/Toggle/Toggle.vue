@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useAttrs, watch } from 'vue'
+import { computed, useAttrs } from 'vue'
 import { Toggle } from 'reka-ui'
 import { Icon } from '@/components/ui/Icon'
 import { cn } from '@/lib/utils'
@@ -11,31 +11,19 @@ import {
   type ToggleSlots,
   type ToggleValue,
 } from '.'
+import { toggleDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<ToggleProps>(), {
-  label: undefined,
-  icon: undefined,
-  trailingIcon: undefined,
-  variant: 'outline',
-  severity: 'default',
-  size: 'md',
-  color: undefined,
-})
+const props = withDefaults(defineProps<ToggleProps>(), toggleDefaults)
 defineSlots<ToggleSlots>()
-const emit = defineEmits<{ valueChange: [value: ToggleValue] }>()
 
 const attrs = useAttrs()
-const value = defineModel<ToggleValue>('value', { default: false })
+const value = defineModel<ToggleValue>('value', { default: toggleDefaults.value })
 const { colorStyle } = useColor(
   computed(() => props.color),
   'toggle',
 )
-
-watch(value, (nextValue, previousValue) => {
-  if (nextValue !== previousValue) emit('valueChange', nextValue)
-})
 
 const toggleContext = computed(() => createToggleContext(value.value))
 

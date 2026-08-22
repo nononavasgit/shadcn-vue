@@ -47,6 +47,7 @@ const itemRows: ApiTableRow[] = [
   {
     name: 'icon',
     type: 'IconConfig',
+    typeLink: '/icon#icon-config',
     default: 'undefined',
     description: 'Icono mostrado en la leyenda usando su nombre y el color del item.',
   },

@@ -1,22 +1,26 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 
-import { Toggle, type ToggleProps, type ToggleValue } from '@/components/ui/Toggle'
+import {
+  Toggle,
+  type ToggleProps,
+  type ToggleSeverity,
+  type ToggleSize,
+  type ToggleValue,
+  type ToggleVariant,
+} from '@/components/ui/Toggle'
+import { toggleDefaults } from '@/components/ui/Toggle/defaults'
 import type { IconConfig } from '@/components/ui/Icon'
 import { ICONS } from '@/components/ui/Icon/icons'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
-type ToggleVariant = 'outline' | 'plain'
-type ToggleSeverity = 'default' | 'primary' | 'secondary' | 'warning' | 'success' | 'error'
-type ToggleSize = 'xs' | 'sm' | 'md' | 'lg'
-
 const iconNames = Object.keys(ICONS)
 const label = ref('Notifications')
-const value = ref<ToggleValue>(false)
-const variant = ref<ToggleVariant>('outline')
-const severity = ref<ToggleSeverity>('default')
-const size = ref<ToggleSize>('md')
+const value = ref<ToggleValue>(toggleDefaults.value)
+const variant = ref<ToggleVariant>(toggleDefaults.variant)
+const severity = ref<ToggleSeverity>(toggleDefaults.severity)
+const size = ref<ToggleSize>(toggleDefaults.size)
 const disabled = ref(false)
 const color = ref('')
 const icon = ref('')
@@ -40,9 +44,8 @@ function parseIconProps(input: string): IconConfig | undefined {
   return undefined
 }
 
-const playgroundProps = computed<ToggleProps>(() => ({
+const playgroundProps = computed<Omit<ToggleProps, 'value'>>(() => ({
   label: label.value || undefined,
-  value: value.value,
   variant: variant.value,
   severity: severity.value,
   size: size.value,
@@ -54,32 +57,13 @@ const playgroundProps = computed<ToggleProps>(() => ({
     (trailingIcon.value ? { name: trailingIcon.value } : undefined),
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'ToggleValue',
-    type: 'boolean',
-    description: 'Valor controlado del toggle.',
-  },
-  {
-    name: 'ToggleState',
-    type: "'on' | 'off'",
-    description: 'Estado semantico derivado del valor.',
-  },
-  {
-    name: 'ToggleContext',
-    type: '{ value: ToggleValue; state: ToggleState; pressed: boolean }',
-    description: 'Contexto expuesto por los slots.',
-  },
-  {
-    name: 'IconConfig',
-    type: 'IconProps & HTMLAttributes',
-    typeLink: '/icon',
-    description: 'Formato normalizado para los iconos del toggle.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
-  { name: 'value', type: 'ToggleValue', default: 'false', description: 'Estado controlado.' },
+  {
+    name: 'value',
+    type: 'boolean',
+    default: String(toggleDefaults.value),
+    description: 'Estado controlado.',
+  },
   { name: 'label', type: 'string', default: 'undefined', description: 'Texto del toggle.' },
   {
     name: 'icon',
@@ -120,25 +104,43 @@ const propRows: ApiTableRow[] = [
 const emitRows: ApiTableRow[] = [
   {
     name: 'update:value',
-    type: '[value: ToggleValue]',
+    type: '[value: boolean]',
     default: '-',
     description: 'Actualiza el valor controlado.',
-  },
-  {
-    name: 'valueChange',
-    type: '[value: ToggleValue]',
-    default: '-',
-    description: 'Se emite cuando cambia el estado del toggle.',
   },
 ]
 
 const slotRows: ApiTableRow[] = [
-  { name: 'default', type: 'ToggleContext', default: '-', description: 'Contenido principal.' },
-  { name: 'leading', type: 'ToggleContext', default: '-', description: 'Contenido al inicio.' },
-  { name: 'trailing', type: 'ToggleContext', default: '-', description: 'Contenido al final.' },
+  {
+    name: 'default',
+    type: 'ToggleContext',
+    typeLink: '#toggle-context',
+    default: '-',
+    description: 'Contenido principal.',
+  },
+  {
+    name: 'leading',
+    type: 'ToggleContext',
+    typeLink: '#toggle-context',
+    default: '-',
+    description: 'Contenido al inicio.',
+  },
+  {
+    name: 'trailing',
+    type: 'ToggleContext',
+    typeLink: '#toggle-context',
+    default: '-',
+    description: 'Contenido al final.',
+  },
 ]
 
 const exposeRows: ApiTableRow[] = []
+
+const contextRows: ApiTableRow[] = [
+  { name: 'value', type: 'boolean', description: 'Valor actual del toggle.' },
+  { name: 'state', type: "'on' | 'off'", description: 'Estado derivado del valor actual.' },
+  { name: 'pressed', type: 'boolean', description: 'Indica si el toggle está pulsado.' },
+]
 </script>
 
 <template>
@@ -153,16 +155,6 @@ const exposeRows: ApiTableRow[] = []
 
     <section class="grid gap-4">
       <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
-
-    <section class="grid gap-4">
-      <div>
         <h3 class="text-lg font-medium">Playground</h3>
         <p class="text-sm text-muted-foreground">Prueba el estado, las variantes y los iconos.</p>
       </div>
@@ -170,7 +162,7 @@ const exposeRows: ApiTableRow[] = []
       <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
         <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
           <Playground>
-            <Toggle v-bind="playgroundProps">
+            <Toggle v-model:value="value" v-bind="playgroundProps">
               <template #default="context">
                 <span>{{ label }} ({{ context.state }})</span>
               </template>
@@ -297,6 +289,7 @@ const exposeRows: ApiTableRow[] = []
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="toggle-context" title="ToggleContext" :rows="contextRows" />
     </div>
   </section>
 </template>

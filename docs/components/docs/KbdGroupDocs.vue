@@ -5,14 +5,6 @@ import Playground from '../Playground.vue'
 
 const playgroundProps: KbdGroupProps = {}
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'KbdGroupProps',
-    type: 'Record<string, never>',
-    description: 'El wrapper no define props propias.',
-  },
-]
-
 const propRows: ApiTableRow[] = []
 
 const emitRows: ApiTableRow[] = []
@@ -38,16 +30,6 @@ const exposeRows: ApiTableRow[] = []
         Agrupa varias teclas Kbd para representar atajos completos.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>

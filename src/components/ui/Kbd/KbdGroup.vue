@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { cn } from '@/lib/utils'
-import { type KbdGroupSlots } from '.'
+import { kbdGroupVariants, type KbdGroupSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -11,7 +11,7 @@ const attrs = useAttrs()
 const rootProps = computed(() => {
   return {
     ...attrs,
-    class: cn('inline-flex items-center gap-1', attrs.class),
+    class: cn(kbdGroupVariants(), attrs.class),
     style: attrs.style,
   }
 })

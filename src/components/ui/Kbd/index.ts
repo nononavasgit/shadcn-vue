@@ -3,6 +3,8 @@ import { cva, type VariantProps } from 'class-variance-authority'
 export { default as Kbd } from './Kbd.vue'
 export { default as KbdGroup } from './KbdGroup.vue'
 
+export const kbdGroupVariants = cva('inline-flex items-center gap-1')
+
 export const kbdVariants = cva(
   'pointer-events-none inline-flex w-fit min-w-5 items-center justify-center gap-1 rounded-sm border font-sans font-medium uppercase select-none [&_svg:not([class*="size-"])]:size-3',
   {

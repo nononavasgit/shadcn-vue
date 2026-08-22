@@ -1,4 +1,5 @@
 export const sliderDefaults = {
+  value: [0] as number[],
   disabled: false,
   orientation: 'horizontal' as const,
   inverted: false,

@@ -3,13 +3,11 @@ import { computed, useAttrs } from 'vue'
 import { useDates } from '@/composables/useDates'
 import { cn } from '@/lib/utils'
 import { createTimeContext, type TimeProps, type TimeSlots } from '.'
+import { timeDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<TimeProps>(), {
-  locale: undefined,
-  format: undefined,
-})
+const props = withDefaults(defineProps<TimeProps>(), timeDefaults)
 defineSlots<TimeSlots>()
 
 const attrs = useAttrs()

@@ -25,14 +25,6 @@ const playgroundProps = computed<TimeProps>(() => ({
   format: format.value,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'TimeContext',
-    type: '{ date: string }',
-    description: 'Fecha formateada expuesta al slot default.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'datetime',
@@ -60,12 +52,21 @@ const slotRows: ApiTableRow[] = [
   {
     name: 'default',
     type: 'TimeContext',
+    typeLink: '#time-context',
     default: '-',
     description: 'Contenido personalizado. Recibe la fecha formateada como date.',
   },
 ]
 
 const exposeRows: ApiTableRow[] = []
+
+const contextRows: ApiTableRow[] = [
+  {
+    name: 'date',
+    type: 'string',
+    description: 'Fecha formateada según locale y format.',
+  },
+]
 
 function renderSlot(context: TimeContext) {
   return `Fecha: ${context.date}`
@@ -81,16 +82,6 @@ function renderSlot(context: TimeContext) {
         Representa una fecha semantica con formato localizado y contexto para el slot.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -149,6 +140,7 @@ function renderSlot(context: TimeContext) {
       />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="time-context" title="TimeContext" :rows="contextRows" />
     </div>
   </section>
 </template>

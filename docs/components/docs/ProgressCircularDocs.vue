@@ -20,24 +20,11 @@ const playgroundProps = computed<Omit<ProgressCircularProps, 'value'>>(() => ({
   color: playgroundColor.value || undefined,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'ProgressCircularContext',
-    type: '{ value; max; percentage }',
-    description: 'Contexto disponible en el slot label y los resolvers de UI.',
-  },
-  {
-    name: 'ProgressCircularUI',
-    type: '{ svg?; track?; indicator?; label? }',
-    description: 'Resolvers para personalizar cada nodo interno del progreso circular.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'value',
     type: 'number | null',
-    default: '0',
+    default: String(progressCircularDefaults.value),
     description:
       'Valor controlado mediante v-model:value; null representa un estado indeterminado.',
   },
@@ -91,7 +78,18 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: 'ProgressCircularUI',
+    type: '{ svg?: (context: ProgressCircularContext) => SVGAttributes; track?: (context: ProgressCircularContext) => SVGAttributes; indicator?: (context: ProgressCircularContext) => SVGAttributes; label?: (context: ProgressCircularContext) => HTMLAttributes }',
+    typeParts: [
+      { text: '{ svg?: (context: ' },
+      { text: 'ProgressCircularContext', link: '#progress-circular-context' },
+      { text: ') => SVGAttributes; track?: (context: ' },
+      { text: 'ProgressCircularContext', link: '#progress-circular-context' },
+      { text: ') => SVGAttributes; indicator?: (context: ' },
+      { text: 'ProgressCircularContext', link: '#progress-circular-context' },
+      { text: ') => SVGAttributes; label?: (context: ' },
+      { text: 'ProgressCircularContext', link: '#progress-circular-context' },
+      { text: ') => HTMLAttributes }' },
+    ],
     default: 'undefined',
     description: 'Personalización dinámica de svg, track, indicator y label.',
   },
@@ -110,12 +108,31 @@ const slotRows: ApiTableRow[] = [
   {
     name: 'label',
     type: 'ProgressCircularContext',
+    typeLink: '#progress-circular-context',
     default: 'label',
     description: 'Personaliza la etiqueta central y recibe el contexto del progreso.',
   },
 ]
 
 const exposeRows: ApiTableRow[] = []
+
+const contextRows: ApiTableRow[] = [
+  {
+    name: 'value',
+    type: 'number | null',
+    description: 'Valor actual del progreso; null representa un estado indeterminado.',
+  },
+  {
+    name: 'max',
+    type: 'number',
+    description: 'Valor máximo utilizado para calcular el porcentaje.',
+  },
+  {
+    name: 'percentage',
+    type: 'number',
+    description: 'Porcentaje calculado y limitado entre 0 y 100.',
+  },
+]
 </script>
 
 <template>
@@ -127,14 +144,6 @@ const exposeRows: ApiTableRow[] = []
         Progreso circular accesible con valores controlados, estado indeterminado, colores y slots.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">Tipos públicos usados por la API.</p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -233,6 +242,11 @@ const exposeRows: ApiTableRow[] = []
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable
+        id="progress-circular-context"
+        title="ProgressCircularContext"
+        :rows="contextRows"
+      />
     </div>
   </section>
 </template>

@@ -1,25 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-import { Textarea, type TextareaValue } from '@/components/ui/Textarea'
+import { Textarea } from '@/components/ui/Textarea'
+import { textareaDefaults } from '@/components/ui/Textarea/defaults'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 import Playground from '../Playground.vue'
 
-const value = ref<TextareaValue>('Una nota editable desde el playground.')
-
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'TextareaValue',
-    type: 'string',
-    description: 'Valor controlado del textarea.',
-  },
-]
+const value = ref('Una nota editable desde el playground.')
 
 const propRows: ApiTableRow[] = [
   {
     name: 'value',
-    type: 'TextareaValue',
-    default: "''",
+    type: 'string',
+    default: textareaDefaults.value === '' ? "''" : textareaDefaults.value,
     description: 'Valor controlado del campo de texto multilínea.',
   },
 ]
@@ -27,7 +20,7 @@ const propRows: ApiTableRow[] = [
 const emitRows: ApiTableRow[] = [
   {
     name: 'update:value',
-    type: '[value: TextareaValue]',
+    type: '[value: string]',
     default: '-',
     description: 'Actualiza el valor controlado mediante v-model:value.',
   },
@@ -46,16 +39,6 @@ const exposeRows: ApiTableRow[] = []
         Campo de texto multilínea controlado para introducir contenido largo.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>

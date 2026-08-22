@@ -2,11 +2,12 @@
 import { computed, useAttrs, watch } from 'vue'
 import { cn } from '@/lib/utils'
 import type { TextareaProps, TextareaValue } from '.'
+import { textareaDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
 
-defineProps<TextareaProps>()
-const value = defineModel<TextareaValue>('value', { default: '' })
+withDefaults(defineProps<TextareaProps>(), textareaDefaults)
+const value = defineModel<TextareaValue>('value', { default: textareaDefaults.value })
 
 watch(
   value,
@@ -27,7 +28,7 @@ const rootProps = computed(() => {
       'focus-visible:border-primary focus-visible:ring-primary/50',
       attrs.class,
     ),
-    style: [attrs.style],
+    style: attrs.style,
   }
 })
 </script>

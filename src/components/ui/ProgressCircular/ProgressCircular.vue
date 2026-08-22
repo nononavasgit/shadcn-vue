@@ -13,7 +13,7 @@ defineOptions({ inheritAttrs: false })
 defineSlots<ProgressCircularSlots>()
 
 const props = withDefaults(defineProps<ProgressCircularProps>(), progressCircularDefaults)
-const value = defineModel<ProgressValue>('value', { default: 0 })
+const value = defineModel<ProgressValue>('value', { default: progressCircularDefaults.value })
 
 const attrs = useAttrs()
 const slots = useSlots()
@@ -53,7 +53,6 @@ const rootProps = computed(() => {
     getValueLabel: props.getValueLabel,
     getValueText: props.getValueText,
     'aria-label': attrs['aria-label'],
-    'aria-valuetext': attrs['aria-valuetext'] ?? props.label,
     class: cn(
       'relative inline-grid shrink-0 place-items-center overflow-visible bg-transparent',
       attrs.class,

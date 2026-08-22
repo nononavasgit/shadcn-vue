@@ -27,6 +27,7 @@ const passed = {
   link: true,
   meterGruop: true,
   progress: true,
+  progressCircular: true,
   popover: true,
   separator: true,
   splitter: true,

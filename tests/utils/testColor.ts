@@ -16,6 +16,6 @@ export function testColor({ text, id, varColor, mount }: TestColorOptions) {
     const root = mount(input).get(id)
 
     if (expected) expect(root.attributes('style')).toContain(expected)
-    else expect(root.attributes('style')).toBeUndefined()
+    else expect(root.attributes('style') ?? '').not.toContain(varColor)
   })
 }

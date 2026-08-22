@@ -13,6 +13,7 @@ export interface ProgressCircularUI {
 }
 
 export interface ProgressCircularProps extends ProgressRootProps {
+  value?: ProgressValue
   label?: string
   color?: string
   trackColor?: string

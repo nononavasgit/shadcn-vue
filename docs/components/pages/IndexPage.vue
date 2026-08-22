@@ -242,6 +242,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/meter-group"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">MeterGroup</h2>
+            <p class="text-sm text-muted-foreground">
+              Distribución segmentada de valores entre varias categorías.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/popover"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

@@ -25,6 +25,7 @@ import KbdGroupPage from './components/pages/KbdGroupPage.vue'
 import LabelPage from './components/pages/LabelPage.vue'
 import LinkPage from './components/pages/LinkPage.vue'
 import LoadingPage from './components/pages/LoadingPage.vue'
+import MeterGroupPage from './components/pages/MeterGroupPage.vue'
 import PopoverPage from './components/pages/PopoverPage.vue'
 import ProgressPage from './components/pages/ProgressPage.vue'
 import ProgressCircularPage from './components/pages/ProgressCircularPage.vue'
@@ -65,6 +66,7 @@ export const router = createRouter({
     { path: '/label', component: LabelPage },
     { path: '/link', component: LinkPage },
     { path: '/loading', component: LoadingPage },
+    { path: '/meter-group', component: MeterGroupPage },
     { path: '/popover', component: PopoverPage },
     { path: '/progress', component: ProgressPage },
     { path: '/progress-circular', component: ProgressCircularPage },

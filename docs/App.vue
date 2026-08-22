@@ -25,12 +25,15 @@ const passed = {
   label: true,
   loading: true,
   link: true,
+  meterGruop: true,
+  progress: true,
   popover: true,
   separator: true,
   splitter: true,
   switch: true,
   tooltip: true,
 }
+
 </script>
 
 <template>

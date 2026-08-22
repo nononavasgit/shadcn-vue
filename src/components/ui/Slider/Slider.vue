@@ -22,7 +22,7 @@ const emit = defineEmits<{
 defineSlots<SliderSlots>()
 
 const attrs = useAttrs()
-const value = defineModel<SliderValue>('value', { default: () => [0] })
+const value = defineModel<SliderValue>('value', { default: () => [...sliderDefaults.value] })
 const sliderValues = computed(() => value.value ?? [])
 const { t } = useI18n()
 
@@ -111,7 +111,7 @@ function getThumbProps(context: SliderThumbContext) {
     ...ui,
     'aria-label': ui['aria-label'] ?? rangeAriaLabel,
     class: cn(
-      'block size-5 shrink-0 rounded-full border-2 border-primary bg-background shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
+      'block size-5 shrink-0 cursor-grab rounded-full border-2 border-primary bg-background shadow-sm transition-colors active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
       ui.class,
     ),
     style: ui.style,

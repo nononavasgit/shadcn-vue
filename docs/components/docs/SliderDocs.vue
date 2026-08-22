@@ -21,29 +21,11 @@ const playgroundProps = computed<Omit<SliderProps, 'value'>>(() => ({
   step: playgroundStep.value,
 }))
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'SliderContext',
-    type: '{ values: number[] }',
-    description: 'Contexto disponible en los slots track y range.',
-  },
-  {
-    name: 'SliderThumbContext',
-    type: '{ values: number[]; index: number; value: number; first: boolean; last: boolean }',
-    description: 'Contexto de cada thumb con su posición y valor.',
-  },
-  {
-    name: 'SliderUI',
-    type: '{ track?; range?; thumb? }',
-    description: 'Resolvers para personalizar las partes internas del slider.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'value',
     type: 'number[] | null',
-    default: '[0]',
+    default: JSON.stringify(sliderDefaults.value),
     description: 'Valores controlados del slider mediante v-model:value.',
   },
   {
@@ -108,7 +90,16 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: 'SliderUI',
+    type: '{ track?: (context: SliderContext) => HTMLAttributes; range?: (context: SliderContext) => HTMLAttributes; thumb?: (context: SliderThumbContext) => HTMLAttributes }',
+    typeParts: [
+      { text: '{ track?: (context: ' },
+      { text: 'SliderContext', link: '#slider-context' },
+      { text: ') => HTMLAttributes; range?: (context: ' },
+      { text: 'SliderContext', link: '#slider-context' },
+      { text: ') => HTMLAttributes; thumb?: (context: ' },
+      { text: 'SliderThumbContext', link: '#slider-thumb-context' },
+      { text: ') => HTMLAttributes }' },
+    ],
     default: 'undefined',
     description: 'Atributos personalizados para track, range y thumb.',
   },
@@ -133,24 +124,63 @@ const slotRows: ApiTableRow[] = [
   {
     name: 'track',
     type: 'SliderContext',
+    typeLink: '#slider-context',
     default: 'range',
     description: 'Reemplaza el track completo.',
   },
   {
     name: 'range',
     type: 'SliderContext',
+    typeLink: '#slider-context',
     default: 'SliderRange',
     description: 'Personaliza el rango activo dentro del track.',
   },
   {
     name: 'thumb',
     type: 'SliderThumbContext',
+    typeLink: '#slider-thumb-context',
     default: '-',
     description: 'Contenido opcional dentro de cada thumb.',
   },
 ]
 
 const exposeRows: ApiTableRow[] = []
+
+const contextRows: ApiTableRow[] = [
+  {
+    name: 'values',
+    type: 'number[]',
+    description: 'Valores actuales del slider compartidos por track y range.',
+  },
+]
+
+const thumbContextRows: ApiTableRow[] = [
+  {
+    name: 'values',
+    type: 'number[]',
+    description: 'Valores actuales de todos los thumbs.',
+  },
+  {
+    name: 'index',
+    type: 'number',
+    description: 'Índice del thumb dentro del array de valores.',
+  },
+  {
+    name: 'value',
+    type: 'number',
+    description: 'Valor del thumb actual.',
+  },
+  {
+    name: 'first',
+    type: 'boolean',
+    description: 'Indica si es el primer thumb.',
+  },
+  {
+    name: 'last',
+    type: 'boolean',
+    description: 'Indica si es el último thumb.',
+  },
+]
 </script>
 
 <template>
@@ -162,14 +192,6 @@ const exposeRows: ApiTableRow[] = []
         Control de rango con uno o varios thumbs, orientación y valores controlados.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">Tipos públicos usados por la API.</p>
-      </div>
-      <ApiTable title="Tipos" :rows="typeRows" />
-    </section>
 
     <section class="grid gap-4">
       <div>
@@ -249,6 +271,8 @@ const exposeRows: ApiTableRow[] = []
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="slider-context" title="SliderContext" :rows="contextRows" />
+      <ApiTable id="slider-thumb-context" title="SliderThumbContext" :rows="thumbContextRows" />
     </div>
   </section>
 </template>

@@ -21,10 +21,25 @@ const customLabel = ref('Esc')
           <h3 class="font-medium">Etiqueta</h3>
           <p class="text-sm text-muted-foreground">Usa la prop label para teclas de texto.</p>
         </div>
-        <div class="flex items-center gap-2">
-          <Kbd label="Ctrl" />
-          <Kbd label="K" />
-          <Kbd label="Enter" />
+        <div class="flex flex-wrap items-center gap-2">
+          <Kbd label="Ctrl" severity="primary" variant="outline" />
+          <Kbd label="K" severity="success" variant="solid" />
+          <Kbd label="Enter" severity="warning" variant="soft" />
+        </div>
+      </div>
+
+      <div class="grid gap-3 rounded-lg border p-4">
+        <div>
+          <h3 class="font-medium">Tamaños y variantes</h3>
+          <p class="text-sm text-muted-foreground">
+            Combina size, severity y variant para expresar distintos estados.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <Kbd label="Esc" size="sm" severity="secondary" variant="subtle" />
+          <Kbd label="Space" size="md" severity="primary" variant="outline" />
+          <Kbd label="Tab" size="lg" severity="error" variant="solid" />
+          <Kbd label="F1" color="#2563eb" variant="solid" />
         </div>
       </div>
 

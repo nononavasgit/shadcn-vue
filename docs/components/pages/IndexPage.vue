@@ -262,6 +262,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/pagination"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Pagination</h2>
+            <p class="text-sm text-muted-foreground">
+              Navegación entre páginas con controles y slots personalizables.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/progress"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

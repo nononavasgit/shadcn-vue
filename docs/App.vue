@@ -29,6 +29,7 @@ const passed = {
   progress: true,
   progressCircular: true,
   popover: true,
+  pagination: true,
   separator: true,
   splitter: true,
   switch: true,

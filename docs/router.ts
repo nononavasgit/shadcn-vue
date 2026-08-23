@@ -27,6 +27,7 @@ import LinkPage from './components/pages/LinkPage.vue'
 import LoadingPage from './components/pages/LoadingPage.vue'
 import MeterGroupPage from './components/pages/MeterGroupPage.vue'
 import PopoverPage from './components/pages/PopoverPage.vue'
+import PaginationPage from './components/pages/PaginationPage.vue'
 import ProgressPage from './components/pages/ProgressPage.vue'
 import ProgressCircularPage from './components/pages/ProgressCircularPage.vue'
 import ScrollAreaPage from './components/pages/ScrollAreaPage.vue'
@@ -68,6 +69,7 @@ export const router = createRouter({
     { path: '/loading', component: LoadingPage },
     { path: '/meter-group', component: MeterGroupPage },
     { path: '/popover', component: PopoverPage },
+    { path: '/pagination', component: PaginationPage },
     { path: '/progress', component: ProgressPage },
     { path: '/progress-circular', component: ProgressCircularPage },
     { path: '/scroll-area', component: ScrollAreaPage },

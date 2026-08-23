@@ -9,9 +9,11 @@ import type { IconConfig } from '@/components/ui/Icon'
 export { default as Pagination } from './Pagination.vue'
 
 // Props Reka
-export type PaginationRootProps = Pick<
-  RekaPaginationRootProps,
-  'as' | 'asChild' | 'page' | 'total' | 'itemsPerPage' | 'siblingCount' | 'showEdges' | 'disabled'
+export type PaginationRootProps = Partial<
+  Pick<
+    RekaPaginationRootProps,
+    'page' | 'total' | 'itemsPerPage' | 'siblingCount' | 'showEdges' | 'disabled'
+  >
 >
 
 export type PaginationGeneratedItem = { type: 'page'; value: number } | { type: 'ellipsis' }
@@ -51,7 +53,6 @@ export interface PaginationUI {
 
 // Context
 export interface PaginationContext {
-  props: Omit<PaginationProps, 'ui'>
   page: number
   pageCount: number
 }
@@ -65,9 +66,7 @@ export interface PaginationItemContext extends PaginationContext {
 }
 
 // Emits
-export type PaginationEmits = RekaPaginationRootEmits & {
-  pageChange: [page: number]
-}
+export type PaginationEmits = RekaPaginationRootEmits
 
 // Slots
 export type PaginationSlots = {

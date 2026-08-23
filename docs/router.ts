@@ -31,6 +31,7 @@ import PaginationPage from './components/pages/PaginationPage.vue'
 import ProgressPage from './components/pages/ProgressPage.vue'
 import ProgressCircularPage from './components/pages/ProgressCircularPage.vue'
 import ScrollAreaPage from './components/pages/ScrollAreaPage.vue'
+import SearchPage from './components/pages/SearchPage.vue'
 import SeparatorPage from './components/pages/SeparatorPage.vue'
 import SliderPage from './components/pages/SliderPage.vue'
 import SplitterPage from './components/pages/SplitterPage.vue'
@@ -74,6 +75,7 @@ export const router = createRouter({
     { path: '/progress', component: ProgressPage },
     { path: '/progress-circular', component: ProgressCircularPage },
     { path: '/scroll-area', component: ScrollAreaPage },
+    { path: '/search', component: SearchPage },
     { path: '/separator', component: SeparatorPage },
     { path: '/slider', component: SliderPage },
     { path: '/splitter', component: SplitterPage },

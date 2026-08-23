@@ -322,6 +322,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/search"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Search</h2>
+            <p class="text-sm text-muted-foreground">
+              Formularios semánticos para búsquedas con contenido personalizable.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/separator"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Table, type TableColumn } from '@/components/ui/Table'
 import DocsLayout from '../DocsLayout.vue'
+import TableDocs from '../docs/TableDocs.vue'
 
 type Payment = {
   id: string
@@ -61,6 +62,8 @@ const emptyData: Payment[] = []
           <h1 class="text-2xl font-semibold">Table</h1>
           <p class="max-w-2xl text-sm text-muted-foreground">Ejemplos del componente Table.</p>
         </header>
+
+        <TableDocs />
 
         <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
           <h2 class="text-xl font-semibold">Ejemplos</h2>

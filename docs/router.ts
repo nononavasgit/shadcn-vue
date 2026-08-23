@@ -34,6 +34,7 @@ import SeparatorPage from './components/pages/SeparatorPage.vue'
 import SliderPage from './components/pages/SliderPage.vue'
 import SplitterPage from './components/pages/SplitterPage.vue'
 import SwitchPage from './components/pages/SwitchPage.vue'
+import TablePage from './components/pages/TablePage.vue'
 import TimePage from './components/pages/TimePage.vue'
 import TogglePage from './components/pages/TogglePage.vue'
 import TextareaPage from './components/pages/TextareaPage.vue'
@@ -77,6 +78,7 @@ export const router = createRouter({
     { path: '/kbd', component: KbdPage },
     { path: '/kbd-group', component: KbdGroupPage },
     { path: '/switch', component: SwitchPage },
+    { path: '/table', component: TablePage },
     { path: '/time', component: TimePage },
     { path: '/toggle', component: TogglePage },
     { path: '/textarea', component: TextareaPage },

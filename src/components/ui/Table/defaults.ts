@@ -1,1 +1,4 @@
-export const tableDefaults = {}
+export const tableDefaults = {
+  data: () => [],
+  textNoResults: 'No results.',
+}

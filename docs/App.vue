@@ -33,6 +33,7 @@ const passed = {
   separator: true,
   splitter: true,
   switch: true,
+  tabs: true,
   tooltip: true,
 }
 

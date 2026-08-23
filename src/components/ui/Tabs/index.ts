@@ -1,14 +1,13 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { HTMLAttributes } from 'vue'
 import type {
-  TabsContentProps as RekaTabsContentProps,
-  TabsListProps as RekaTabsListProps,
   TabsRootProps as RekaTabsRootProps,
   TabsTriggerProps as RekaTabsTriggerProps,
 } from 'reka-ui'
 import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Tabs } from './Tabs.vue'
+export { tabsDefaults } from './defaults'
 
 export const tabsVariants = {
   root: cva('', {
@@ -77,29 +76,23 @@ export const tabsVariants = {
 
 export type TabsVariants = VariantProps<typeof tabsVariants.list>
 export type TabsValue = string | number
-export type TabsRootProps = Pick<
-  RekaTabsRootProps<TabsValue>,
-  'orientation' | 'dir' | 'activationMode' | 'unmountOnHide' | 'as' | 'asChild'
+export type TabsRootProps = Partial<
+  Pick<RekaTabsRootProps<TabsValue>, 'orientation' | 'activationMode' | 'unmountOnHide'>
 >
-export type TabsListProps = Pick<RekaTabsListProps, 'as' | 'asChild'>
-export type TabsTriggerProps = Pick<RekaTabsTriggerProps, 'as' | 'asChild'>
-export type TabsContentProps = Pick<RekaTabsContentProps, 'as' | 'asChild' | 'forceMount'>
+export type TabsTriggerProps = Partial<Pick<RekaTabsTriggerProps, 'as' | 'asChild'>>
 
 export interface TabItem {
-  id: string | number
+  slot: string
   value: TabsValue
   label?: string
-  content?: string
   icon?: IconConfig
   trailingIcon?: IconConfig
   disabled?: boolean
   forceMount?: boolean
-  trigger?: TabsTriggerProps
-  contentProps?: TabsContentProps
 }
 
 // Fn
-export type TabsFn<T> = (context: TabsContext) => T
+export type TabsFn<T> = () => T
 export type TabsItemFn<T> = (context: TabsItemContext) => T
 
 // Props
@@ -107,7 +100,6 @@ export interface TabsProps extends TabsRootProps {
   value?: TabsValue
   loop?: boolean
   variant?: TabsVariants['variant']
-  list?: TabsListProps
   tabs?: TabItem[]
   ui?: TabsUI
 }
@@ -124,11 +116,10 @@ export interface TabsUI {
 
 // Context
 export interface TabsContext {
-  props: Omit<TabsProps, 'ui'>
-  value: TabsValue | undefined
+  tabs: TabItem[]
 }
 
-export interface TabsItemContext extends TabsContext {
+export interface TabsItemContext {
   tab: TabItem
   index: number
   active: boolean
@@ -139,16 +130,15 @@ export interface TabsItemContext extends TabsContext {
 // Emits
 export interface TabsEmits {
   'update:value': [value: TabsValue | undefined]
-  valueChange: [value: TabsValue | undefined]
 }
 
 // Slots
 export type TabsSlots = {
-  trigger?(props: TabsItemContext): unknown
-  leading?(props: TabsItemContext): unknown
-  label?(props: TabsItemContext): unknown
-  trailing?(props: TabsItemContext): unknown
-  content?(props: TabsItemContext): unknown
+  trigger?(props: TabsContext): unknown
+  leading?(props: TabsContext): unknown
+  label?(props: TabsContext): unknown
+  trailing?(props: TabsContext): unknown
+  content?(props: TabsContext): unknown
 } & {
   [name: `trigger-${string}`]: ((props: TabsItemContext) => unknown) | undefined
   [name: `leading-${string}`]: ((props: TabsItemContext) => unknown) | undefined

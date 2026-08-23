@@ -182,6 +182,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/tabs"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Tabs</h2>
+            <p class="text-sm text-muted-foreground">
+              Navegación por pestañas con orientación, variantes, items y slots.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/field-set"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >

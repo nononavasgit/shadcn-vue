@@ -234,6 +234,53 @@ describe('Table', () => {
       })
     })
 
+    describe('columnPinning', () => {
+      it('renders start and end pinned columns in their logical regions', () => {
+        const table = mountTable({
+          props: {
+            data,
+            columnPinning: { start: ['name'], end: ['id'] },
+          },
+        })
+
+        expect(table.findAll('thead th').map((header) => header.text())).toEqual([
+          'Name',
+          'Status',
+          'ID',
+        ])
+        expect(
+          table
+            .findAll('tbody tr')[0]
+            .findAll('td')
+            .map((cell) => cell.text()),
+        ).toEqual(['Ada Lovelace', 'active', '1'])
+        expect(table.get('th[data-pinned="start"]').attributes('style')).toContain(
+          'position: sticky',
+        )
+        expect(table.get('th[data-pinned="end"]').attributes('style')).toContain('position: sticky')
+      })
+
+      it('reacts to columnPinning prop changes', async () => {
+        const table = mountTable({
+          props: { data, columnPinning: { start: ['id'], end: [] } },
+        })
+
+        expect(table.get('th[data-pinned="start"]').text()).toBe('ID')
+
+        await table.setProps({ columnPinning: { start: [], end: ['status'] } })
+
+        expect(table.find('th[data-pinned="start"]').exists()).toBe(false)
+        expect(table.get('th[data-pinned="end"]').text()).toBe('Status')
+      })
+
+      it('does not apply sticky styles when no columns are pinned', () => {
+        const table = mountTable({ props: { data } })
+
+        expect(table.find('[data-pinned]').exists()).toBe(false)
+        expect(table.findAll('th').every((header) => !header.attributes('style'))).toBe(true)
+      })
+    })
+
     describe('textNoResults', () => {
       it.each([
         { input: undefined, expected: 'No results.' },

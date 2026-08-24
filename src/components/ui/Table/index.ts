@@ -2,6 +2,7 @@ import type {
   Cell,
   Column,
   ColumnDef,
+  ColumnPinningState,
   Header,
   Row,
   RowData,
@@ -37,6 +38,7 @@ export type TableColumn<TData extends RowData> = ColumnDef<TableFeatures, TData>
 
 export interface TableProps<TData extends RowData> {
   columns: ReadonlyArray<TableColumn<TData>>
+  columnPinning?: ColumnPinningState
   data?: ReadonlyArray<TData>
   enableCellSpanning?: boolean
   textNoResults?: string

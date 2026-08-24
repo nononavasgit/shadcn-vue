@@ -1,7 +1,15 @@
 <script setup lang="ts" generic="TData extends RowData">
-import { cellSpanningFeature, FlexRender, tableFeatures, useTable } from '@tanstack/vue-table'
-import type { RowData } from '@tanstack/vue-table'
+import {
+  cellSpanningFeature,
+  columnPinningFeature,
+  columnSizingFeature,
+  FlexRender,
+  tableFeatures,
+  useTable,
+} from '@tanstack/vue-table'
+import type { Column, Row, RowData, TableFeatures } from '@tanstack/vue-table'
 import { computed, toRef, useAttrs } from 'vue'
+import type { CSSProperties } from 'vue'
 import { cn } from '@/lib/utils'
 import type { TableProps, TableSlots } from '.'
 import { tableDefaults } from './defaults'
@@ -12,13 +20,55 @@ const props = withDefaults(defineProps<TableProps<TData>>(), tableDefaults)
 defineSlots<TableSlots<TData>>()
 const attrs = useAttrs()
 
-const features = tableFeatures({ cellSpanningFeature })
+const features = tableFeatures({ columnSizingFeature, columnPinningFeature, cellSpanningFeature })
 const table = useTable({
   features,
   columns: props.columns,
   data: toRef(props, 'data'),
   enableCellSpanning: toRef(props, 'enableCellSpanning'),
+  state: {
+    get columnPinning() {
+      return props.columnPinning
+    },
+  },
 })
+
+function getPinningStyle(column: Column<TableFeatures, TData>): CSSProperties {
+  const position = column.getIsPinned()
+
+  if (!position) return {}
+
+  return {
+    background: 'var(--background)',
+    insetInlineEnd: position === 'end' ? `${column.getAfter('end')}px` : undefined,
+    insetInlineStart: position === 'start' ? `${column.getStart('start')}px` : undefined,
+    maxWidth: `${column.getSize()}px`,
+    minWidth: `${column.getSize()}px`,
+    position: 'sticky',
+    width: `${column.getSize()}px`,
+    zIndex: 1,
+  }
+}
+
+function getPinningClass(column: Column<TableFeatures, TData>) {
+  const position = column.getIsPinned()
+  const pinnedIndex = column.getPinnedIndex()
+
+  return cn(
+    position === 'start' &&
+      pinnedIndex === props.columnPinning.start.length - 1 &&
+      'shadow-[4px_0_4px_-4px_var(--border)]',
+    position === 'end' && pinnedIndex === 0 && 'shadow-[-4px_0_4px_-4px_var(--border)]',
+  )
+}
+
+function getRowCells(row: Row<TableFeatures, TData>) {
+  return [
+    ...row.getStartVisibleCells(),
+    ...row.getCenterVisibleCells(),
+    ...row.getEndVisibleCells(),
+  ]
+}
 
 const rootProps = computed(() => ({
   ...attrs,
@@ -28,6 +78,9 @@ const rootProps = computed(() => ({
 
 const tableProps = computed(() => ({
   class: 'w-full caption-bottom text-sm',
+  style: table.getIsSomeColumnsPinned()
+    ? { width: `max(100%, ${table.getTotalSize()}px)` }
+    : undefined,
 }))
 
 const theadProps = computed(() => ({
@@ -55,6 +108,9 @@ const columnCount = computed(() => table.getAllLeafColumns().length)
               v-if="header.rowSpan > 0"
               :colspan="header.colSpan"
               :rowspan="header.rowSpan"
+              :data-pinned="header.column.getIsPinned() || undefined"
+              :class="getPinningClass(header.column)"
+              :style="getPinningStyle(header.column)"
               class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
             >
               <slot
@@ -76,11 +132,14 @@ const columnCount = computed(() => table.getAllLeafColumns().length)
           :key="row.id"
           class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
         >
-          <template v-for="cell in row.getAllCells()" :key="cell.id">
+          <template v-for="cell in getRowCells(row)" :key="cell.id">
             <td
               v-if="!cell.getIsCovered()"
               :colspan="cell.getColSpan()"
               :rowspan="cell.getRowSpan()"
+              :data-pinned="cell.column.getIsPinned() || undefined"
+              :class="getPinningClass(cell.column)"
+              :style="getPinningStyle(cell.column)"
               class="p-4 align-middle [&:has([role=checkbox])]:pr-0"
             >
               <slot

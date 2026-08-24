@@ -16,6 +16,12 @@ const propRows: ApiTableRow[] = [
     description: 'Filas que se muestran en la tabla.',
   },
   {
+    name: 'columnPinning',
+    type: 'ColumnPinningState',
+    default: '{ start: [], end: [] }',
+    description: 'Fija columnas en los extremos lógicos start y end durante el scroll horizontal.',
+  },
+  {
     name: 'enableCellSpanning',
     type: 'boolean',
     default: 'false',

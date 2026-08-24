@@ -85,6 +85,7 @@ const data: Payment[] = [
 ]
 
 const emptyData: Payment[] = []
+const pinnedColumns = { start: ['id'], end: ['date'] }
 
 const spanningData: RegionalSale[] = [
   { region: 'Norte', customer: 'Ana', product: 'Consultoría', amount: '450,00 €' },
@@ -126,6 +127,16 @@ const spanningData: RegionalSale[] = [
                 </span>
               </template>
             </Table>
+          </div>
+        </section>
+
+        <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+          <h2 class="text-xl font-semibold">Columnas fijadas</h2>
+          <p class="text-sm text-muted-foreground">
+            ID permanece al inicio y Fecha al final durante el desplazamiento horizontal.
+          </p>
+          <div class="max-w-2xl rounded-md border">
+            <Table :columns="columns" :column-pinning="pinnedColumns" :data="data" />
           </div>
         </section>
 

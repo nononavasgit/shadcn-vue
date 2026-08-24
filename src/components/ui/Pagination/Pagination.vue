@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useAttrs, watch } from 'vue'
+import { computed, useAttrs } from 'vue'
 import {
   PaginationEllipsis,
   PaginationFirst,
@@ -22,48 +22,20 @@ import type {
   PaginationProps,
   PaginationSlots,
 } from '.'
+import { paginationDefaults } from './default'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<PaginationProps>(), {
-  as: 'nav',
-  asChild: false,
-  total: 0,
-  itemsPerPage: 10,
-  siblingCount: 2,
-  showEdges: true,
-  disabled: false,
-  showControls: true,
-  color: undefined,
-  variant: 'outline',
-  size: 'md',
-  severity: 'primary',
-  activeColor: undefined,
-  activeVariant: 'solid',
-  firstIcon: { name: 'chevronsLeft' },
-  previousIcon: { name: 'chevronLeft' },
-  nextIcon: { name: 'chevronRight' },
-  lastIcon: { name: 'chevronsRight' },
-  ellipsisIcon: { name: 'moreHorizontal' },
-  ui: undefined,
-})
-const emit = defineEmits<PaginationEmits>()
+const props = withDefaults(defineProps<PaginationProps>(), paginationDefaults)
+defineEmits<PaginationEmits>()
 defineSlots<PaginationSlots>()
 
 const attrs = useAttrs()
 const page = defineModel<number>('page', { default: 1 })
 const { t } = useI18n()
 
-watch(page, (nextPage, previousPage) => {
-  if (nextPage !== previousPage) emit('pageChange', nextPage)
-})
-
 const paginationContext = computed<PaginationContext>(() => {
-  const { ui, ...paginationProps } = props
-  void ui
-
   return {
-    props: paginationProps,
     page: page.value,
     pageCount: props.itemsPerPage > 0 ? Math.ceil(props.total / props.itemsPerPage) : 0,
   }
@@ -75,14 +47,13 @@ const rootProps = computed(() => {
   return {
     ...attrs,
     ...rootUI,
-    as: props.as,
-    asChild: props.asChild,
+    as: 'nav' as const,
+    asChild: false,
     total: props.total,
     itemsPerPage: props.itemsPerPage,
     siblingCount: props.siblingCount,
     showEdges: props.showEdges,
     disabled: props.disabled,
-    'data-slot': 'pagination',
     class: cn(
       'mx-auto flex w-full flex-wrap items-center justify-center gap-3',
       attrs.class,
@@ -97,7 +68,6 @@ const listProps = computed(() => {
 
   return {
     ...listUI,
-    'data-slot': 'pagination-list',
     class: cn('flex flex-row flex-wrap items-center gap-1', listUI.class),
     style: listUI.style,
   }
@@ -110,7 +80,6 @@ const firstProps = computed(() => {
     ...firstUI,
     asChild: true,
     'aria-label': firstUI['aria-label'] ?? t('first'),
-    'data-slot': 'pagination-first',
     class: cn(firstUI.class),
     style: firstUI.style,
   }
@@ -123,7 +92,6 @@ const previousProps = computed(() => {
     ...previousUI,
     asChild: true,
     'aria-label': previousUI['aria-label'] ?? t('previus'),
-    'data-slot': 'pagination-previous',
     class: cn(previousUI.class),
     style: previousUI.style,
   }
@@ -136,7 +104,6 @@ const nextProps = computed(() => {
     ...nextUI,
     asChild: true,
     'aria-label': nextUI['aria-label'] ?? t('next'),
-    'data-slot': 'pagination-next',
     class: cn(nextUI.class),
     style: nextUI.style,
   }
@@ -149,7 +116,6 @@ const lastProps = computed(() => {
     ...lastUI,
     asChild: true,
     'aria-label': lastUI['aria-label'] ?? t('last'),
-    'data-slot': 'pagination-last',
     class: cn(lastUI.class),
     style: lastUI.style,
   }
@@ -179,8 +145,9 @@ function getItemProps(context: PaginationItemContext) {
     ...ui,
     asChild: true,
     'aria-label':
-      context.item.type === 'page' ? t('page_{n}', { n: context.item.value }) : undefined,
-    'data-slot': 'pagination-item',
+      context.item.type === 'page'
+        ? (ui['aria-label'] ?? t('page_{n}', { n: context.item.value }))
+        : undefined,
     class: cn(ui.class),
     style: ui.style,
   }
@@ -193,7 +160,6 @@ function getEllipsisProps(context: PaginationItemContext) {
     ...ui,
     asChild: true,
     'aria-label': ui['aria-label'] ?? t('morePages'),
-    'data-slot': 'pagination-ellipsis',
     class: cn('flex items-center justify-center', ui.class),
     style: ui.style,
   }
@@ -213,11 +179,11 @@ function getEllipsisSlotName(context: PaginationItemContext): `ellipsis-${string
 </script>
 
 <template>
-  <PaginationRoot v-model:page="page" v-bind="rootProps">
-    <PaginationList v-slot="{ items }" v-bind="listProps">
+  <PaginationRoot v-model:page="page" v-bind="rootProps" data-test-pagination-root>
+    <PaginationList v-slot="{ items }" v-bind="listProps" data-test-pagination-list>
       <slot name="preContent" v-bind="paginationContext" />
 
-      <PaginationFirst v-if="props.showControls" v-bind="firstProps">
+      <PaginationFirst v-if="props.showControls" v-bind="firstProps" data-test-pagination-first>
         <slot name="first" v-bind="paginationContext">
           <Button
             :icon="firstIconProps"
@@ -230,7 +196,11 @@ function getEllipsisSlotName(context: PaginationItemContext): `ellipsis-${string
         </slot>
       </PaginationFirst>
 
-      <PaginationPrev v-if="props.showControls" v-bind="previousProps">
+      <PaginationPrev
+        v-if="props.showControls"
+        v-bind="previousProps"
+        data-test-pagination-previous
+      >
         <slot name="previous" v-bind="paginationContext">
           <Button
             :icon="previousIconProps"
@@ -248,6 +218,7 @@ function getEllipsisSlotName(context: PaginationItemContext): `ellipsis-${string
           v-if="itemContext.item.type === 'page'"
           v-bind="getItemProps(itemContext)"
           :value="itemContext.item.value"
+          data-test-pagination-item
         >
           <slot :name="getItemSlotName(itemContext)" v-bind="itemContext">
             <slot name="item" v-bind="itemContext">
@@ -265,7 +236,11 @@ function getEllipsisSlotName(context: PaginationItemContext): `ellipsis-${string
           </slot>
         </PaginationListItem>
 
-        <PaginationEllipsis v-else v-bind="getEllipsisProps(itemContext)">
+        <PaginationEllipsis
+          v-else
+          v-bind="getEllipsisProps(itemContext)"
+          data-test-pagination-ellipsis
+        >
           <slot :name="getEllipsisSlotName(itemContext)" v-bind="itemContext">
             <slot name="ellipsis" v-bind="itemContext">
               <Button
@@ -282,7 +257,7 @@ function getEllipsisSlotName(context: PaginationItemContext): `ellipsis-${string
         </PaginationEllipsis>
       </template>
 
-      <PaginationNext v-if="props.showControls" v-bind="nextProps">
+      <PaginationNext v-if="props.showControls" v-bind="nextProps" data-test-pagination-next>
         <slot name="next" v-bind="paginationContext">
           <Button
             :icon="nextIconProps"
@@ -295,7 +270,7 @@ function getEllipsisSlotName(context: PaginationItemContext): `ellipsis-${string
         </slot>
       </PaginationNext>
 
-      <PaginationLast v-if="props.showControls" v-bind="lastProps">
+      <PaginationLast v-if="props.showControls" v-bind="lastProps" data-test-pagination-last>
         <slot name="last" v-bind="paginationContext">
           <Button
             :icon="lastIconProps"

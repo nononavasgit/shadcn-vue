@@ -182,6 +182,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/tabs"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Tabs</h2>
+            <p class="text-sm text-muted-foreground">
+              Navegación por pestañas con orientación, variantes, items y slots.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/field-set"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >
@@ -262,6 +272,16 @@
           </RouterLink>
 
           <RouterLink
+            to="/pagination"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Pagination</h2>
+            <p class="text-sm text-muted-foreground">
+              Navegación entre páginas con controles y slots personalizables.
+            </p>
+          </RouterLink>
+
+          <RouterLink
             to="/progress"
             class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
           >
@@ -298,6 +318,16 @@
             <h2 class="font-medium">ScrollArea</h2>
             <p class="text-sm text-muted-foreground">
               Contenedor de desplazamiento con orientación configurable.
+            </p>
+          </RouterLink>
+
+          <RouterLink
+            to="/search"
+            class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
+          >
+            <h2 class="font-medium">Search</h2>
+            <p class="text-sm text-muted-foreground">
+              Formularios semánticos para búsquedas con contenido personalizable.
             </p>
           </RouterLink>
 

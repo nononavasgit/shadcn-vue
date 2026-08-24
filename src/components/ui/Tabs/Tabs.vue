@@ -1,48 +1,26 @@
 <script setup lang="ts">
-import { computed, useAttrs, watch } from 'vue'
+import { computed, useAttrs } from 'vue'
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
 import { Icon } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { tabsVariants } from '.'
+import { tabsDefaults } from './defaults'
 import type { IconProps } from '@/components/ui/Icon'
-import type { TabsContext, TabsItemContext, TabsProps, TabsSlots, TabsValue } from '.'
+import type { TabsContext, TabsEmits, TabsItemContext, TabsProps, TabsSlots, TabsValue } from '.'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<TabsProps>(), {
-  orientation: 'horizontal',
-  activationMode: 'automatic',
-  unmountOnHide: true,
-  loop: true,
-  variant: 'default',
-  as: 'div',
-  asChild: false,
-  tabs: () => [],
-  ui: undefined,
-})
+const props = withDefaults(defineProps<TabsProps>(), tabsDefaults)
 defineSlots<TabsSlots>()
-const emit = defineEmits<{ valueChange: [value: TabsValue | undefined] }>()
+defineEmits<TabsEmits>()
 
 const attrs = useAttrs()
 const value = defineModel<TabsValue>('value')
-
-watch(value, (nextValue, previousValue) => {
-  if (nextValue !== previousValue) emit('valueChange', nextValue)
-})
-
-const tabsContext = computed<TabsContext>(() => {
-  const { ui, ...tabsProps } = props
-  void ui
-
-  return {
-    props: tabsProps,
-    value: value.value,
-  }
-})
+const tabsContext = computed<TabsContext>(() => ({ tabs: props.tabs }))
 
 const rootProps = computed(() => {
-  const normalizedRootUI = useUi(props.ui?.root, tabsContext.value)
+  const normalizedRootUI = useUi(props.ui?.root, undefined)
   const { dir: rootDirection, ...rootUI } = normalizedRootUI
 
   void rootDirection
@@ -51,11 +29,10 @@ const rootProps = computed(() => {
     ...attrs,
     ...rootUI,
     orientation: props.orientation,
-    dir: props.dir,
     activationMode: props.activationMode,
     unmountOnHide: props.unmountOnHide,
-    as: props.as,
-    asChild: props.asChild,
+    as: 'div' as const,
+    asChild: false,
     'data-variant': props.variant,
     class: cn(
       'flex flex-col gap-2',
@@ -68,12 +45,10 @@ const rootProps = computed(() => {
 })
 
 const listProps = computed(() => {
-  const ui = useUi(props.ui?.list, tabsContext.value)
+  const ui = useUi(props.ui?.list, undefined)
 
   return {
     ...ui,
-    as: props.list?.as,
-    asChild: props.list?.asChild,
     loop: props.loop,
     'data-variant': props.variant,
     class: cn(
@@ -86,13 +61,12 @@ const listProps = computed(() => {
 })
 
 const contentWrapperProps = computed(() => {
-  const ui = useUi(props.ui?.contentWrapper, tabsContext.value)
+  const ui = useUi(props.ui?.contentWrapper, undefined)
   return { ...ui, class: cn('min-w-0 flex-1', ui.class), style: ui.style }
 })
 
 const itemContexts = computed<TabsItemContext[]>(() =>
   props.tabs.map((tab, index) => ({
-    ...tabsContext.value,
     tab,
     index,
     active: Object.is(value.value, tab.value),
@@ -101,13 +75,15 @@ const itemContexts = computed<TabsItemContext[]>(() =>
   })),
 )
 
+function getTabsContext(): TabsContext {
+  return tabsContext.value
+}
+
 function getTriggerProps(context: TabsItemContext) {
   const ui = useUi(props.ui?.trigger, context)
 
   return {
     ...ui,
-    as: context.tab.trigger?.as,
-    asChild: context.tab.trigger?.asChild,
     value: context.tab.value,
     disabled: context.tab.disabled,
     class: cn(
@@ -132,11 +108,9 @@ function getContentProps(context: TabsItemContext) {
 
   return {
     ...ui,
-    as: context.tab.contentProps?.as,
-    asChild: context.tab.contentProps?.asChild,
     tabindex: ui.tabindex ?? 0,
     value: context.tab.value,
-    forceMount: context.tab.forceMount ?? context.tab.contentProps?.forceMount,
+    forceMount: context.tab.forceMount,
     class: cn(
       'flex-1 outline-none rounded-md focus-visible:ring-3 focus-visible:ring-ring/50',
       ui.class,
@@ -165,29 +139,29 @@ function getSlotNames(context: TabsItemContext) {
 }
 
 function getKey(context: TabsItemContext) {
-  return String(context.tab.id)
+  return context.tab.slot
 }
 </script>
 
 <template>
-  <TabsRoot v-model="value" v-bind="rootProps" data-slot="tabs">
-    <TabsList v-bind="listProps" data-slot="tabs-list">
+  <TabsRoot v-model="value" v-bind="rootProps" data-test-tabs-root>
+    <TabsList v-bind="listProps" data-test-tabs-list>
       <TabsTrigger
         v-for="itemContext in itemContexts"
         :key="getKey(itemContext)"
         v-bind="getTriggerProps(itemContext)"
-        data-slot="tabs-trigger"
+        data-test-tabs-trigger
       >
         <slot :name="getSlotNames(itemContext).trigger" v-bind="itemContext">
-          <slot name="trigger" v-bind="itemContext">
+          <slot name="trigger" v-bind="getTabsContext()">
             <slot :name="getSlotNames(itemContext).leading" v-bind="itemContext">
-              <slot name="leading" v-bind="itemContext">
+              <slot name="leading" v-bind="getTabsContext()">
                 <Icon v-if="itemContext.tab.icon" v-bind="getIconProps(itemContext)" />
               </slot>
             </slot>
 
             <slot :name="getSlotNames(itemContext).label" v-bind="itemContext">
-              <slot name="label" v-bind="itemContext">
+              <slot name="label" v-bind="getTabsContext()">
                 <span v-if="itemContext.tab.label" v-bind="getLabelProps(itemContext)">
                   {{ itemContext.tab.label }}
                 </span>
@@ -195,7 +169,7 @@ function getKey(context: TabsItemContext) {
             </slot>
 
             <slot :name="getSlotNames(itemContext).trailing" v-bind="itemContext">
-              <slot name="trailing" v-bind="itemContext">
+              <slot name="trailing" v-bind="getTabsContext()">
                 <Icon
                   v-if="itemContext.tab.trailingIcon"
                   v-bind="getTrailingIconProps(itemContext)"
@@ -207,17 +181,15 @@ function getKey(context: TabsItemContext) {
       </TabsTrigger>
     </TabsList>
 
-    <div v-bind="contentWrapperProps" data-slot="tabs-content-wrapper">
+    <div v-bind="contentWrapperProps" data-test-tabs-content-wrapper>
       <TabsContent
         v-for="itemContext in itemContexts"
         :key="getKey(itemContext)"
         v-bind="getContentProps(itemContext)"
-        data-slot="tabs-content"
+        data-test-tabs-content
       >
         <slot :name="getSlotNames(itemContext).content" v-bind="itemContext">
-          <slot name="content" v-bind="itemContext">
-            {{ itemContext.tab.content }}
-          </slot>
+          <slot name="content" v-bind="getTabsContext()"> </slot>
         </slot>
       </TabsContent>
     </div>

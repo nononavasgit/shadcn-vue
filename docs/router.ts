@@ -27,14 +27,17 @@ import LinkPage from './components/pages/LinkPage.vue'
 import LoadingPage from './components/pages/LoadingPage.vue'
 import MeterGroupPage from './components/pages/MeterGroupPage.vue'
 import PopoverPage from './components/pages/PopoverPage.vue'
+import PaginationPage from './components/pages/PaginationPage.vue'
 import ProgressPage from './components/pages/ProgressPage.vue'
 import ProgressCircularPage from './components/pages/ProgressCircularPage.vue'
 import ScrollAreaPage from './components/pages/ScrollAreaPage.vue'
+import SearchPage from './components/pages/SearchPage.vue'
 import SeparatorPage from './components/pages/SeparatorPage.vue'
 import SliderPage from './components/pages/SliderPage.vue'
 import SplitterPage from './components/pages/SplitterPage.vue'
 import SwitchPage from './components/pages/SwitchPage.vue'
 import TablePage from './components/pages/TablePage.vue'
+import TabsPage from './components/pages/TabsPage.vue'
 import TimePage from './components/pages/TimePage.vue'
 import TogglePage from './components/pages/TogglePage.vue'
 import TextareaPage from './components/pages/TextareaPage.vue'
@@ -69,9 +72,11 @@ export const router = createRouter({
     { path: '/loading', component: LoadingPage },
     { path: '/meter-group', component: MeterGroupPage },
     { path: '/popover', component: PopoverPage },
+    { path: '/pagination', component: PaginationPage },
     { path: '/progress', component: ProgressPage },
     { path: '/progress-circular', component: ProgressCircularPage },
     { path: '/scroll-area', component: ScrollAreaPage },
+    { path: '/search', component: SearchPage },
     { path: '/separator', component: SeparatorPage },
     { path: '/slider', component: SliderPage },
     { path: '/splitter', component: SplitterPage },
@@ -79,6 +84,7 @@ export const router = createRouter({
     { path: '/kbd-group', component: KbdGroupPage },
     { path: '/switch', component: SwitchPage },
     { path: '/table', component: TablePage },
+    { path: '/tabs', component: TabsPage },
     { path: '/time', component: TimePage },
     { path: '/toggle', component: TogglePage },
     { path: '/textarea', component: TextareaPage },

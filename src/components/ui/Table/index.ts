@@ -10,6 +10,27 @@ import type {
 
 export { default as Table } from './Table.vue'
 
+/**
+ * Definición de una columna de Table.
+ *
+ * Propiedades principales admitidas por TanStack Table:
+ * - `id`: identificador único de la columna.
+ * - `accessorKey`: propiedad del objeto de datos que se muestra.
+ * - `accessorFn`: función para calcular el valor de la columna.
+ * - `header`: contenido o función que renderiza la cabecera.
+ * - `cell`: contenido o función que renderiza las celdas.
+ * - `footer`: contenido o función para el pie de columna.
+ * - `columns`: columnas hijas para crear grupos de cabecera.
+ * - `meta`: metadatos personalizados de la columna.
+ * - `size`, `minSize` y `maxSize`: configuración de tamaño.
+ * - `enableSorting` y `sortFn`: configuración de ordenación.
+ * - `enableColumnFilter` y `filterFn`: configuración de filtrado.
+ * - `enableHiding`: permite ocultar la columna.
+ * - `enablePinning`: permite fijar la columna.
+ *
+ * Las propiedades de ordenación, filtrado, tamaño y fijación requieren que
+ * la funcionalidad correspondiente esté registrada y renderizada en la tabla.
+ */
 export type TableColumn<TData extends RowData> = ColumnDef<TableFeatures, TData>
 
 export interface TableProps<TData extends RowData> {
@@ -21,6 +42,7 @@ export interface TableProps<TData extends RowData> {
 export type TableHeaderSlotProps<TData extends RowData> = {
   header: Header<TableFeatures, TData>
   column: Column<TableFeatures, TData>
+  columnDef: TableColumn<TData>
 }
 
 export type TableCellSlotProps<TData extends RowData> = {

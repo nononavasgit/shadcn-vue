@@ -19,6 +19,26 @@ const columns: TableColumn<Payment>[] = [
   { accessorKey: 'date', header: 'Fecha' },
 ]
 
+const groupedColumns: TableColumn<Payment>[] = [
+  {
+    id: 'customer-info',
+    header: 'Cliente',
+    columns: [
+      { accessorKey: 'id', header: 'ID' },
+      { accessorKey: 'customer', header: 'Nombre' },
+    ],
+  },
+  {
+    id: 'payment-info',
+    header: 'Pago',
+    columns: [
+      { accessorKey: 'status', header: 'Estado' },
+      { accessorKey: 'amount', header: 'Importe' },
+    ],
+  },
+  { accessorKey: 'date', header: 'Fecha' },
+]
+
 const data: Payment[] = [
   {
     id: 'P-1001',
@@ -69,7 +89,7 @@ const emptyData: Payment[] = []
           <h2 class="text-xl font-semibold">Ejemplos</h2>
           <div class="rounded-md border">
             <Table :columns="columns" :data="data">
-              <template #header-status="{ columnDef }">
+              <template #header-status>
                 <span class="inline-flex items-center gap-2">
                   <span class="rounded bg-primary/10 px-1.5 py-0.5 text-xs text-primary">
                     Personalizado
@@ -77,7 +97,7 @@ const emptyData: Payment[] = []
                 </span>
               </template>
 
-              <template #cell-status="{ value, cell }">
+              <template #cell-status="{ value }">
                 <span
                   class="inline-flex rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700"
                 >
@@ -96,6 +116,16 @@ const emptyData: Payment[] = []
                 <span class="text-muted-foreground">No hay pagos para mostrar.</span>
               </template>
             </Table>
+          </div>
+        </section>
+
+        <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+          <h2 class="text-xl font-semibold">Cabeceras agrupadas</h2>
+          <p class="text-sm text-muted-foreground">
+            Las columnas anidadas generan varias filas de cabecera y agrupan sus columnas hijas.
+          </p>
+          <div class="rounded-md border">
+            <Table :columns="groupedColumns" :data="data" />
           </div>
         </section>
       </div>

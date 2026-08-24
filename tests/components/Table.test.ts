@@ -26,6 +26,18 @@ const derivedColumns: TableColumn<Person>[] = [
   },
 ]
 
+const groupedColumns: TableColumn<Person>[] = [
+  {
+    id: 'profile',
+    header: 'Profile',
+    columns: [
+      { accessorKey: 'id', header: 'ID' },
+      { accessorKey: 'name', header: 'Name' },
+    ],
+  },
+  { accessorKey: 'status', header: 'Status' },
+]
+
 const data: Person[] = [
   { id: '1', name: 'Ada Lovelace', status: 'active' },
   { id: '2', name: 'Grace Hopper', status: 'inactive' },
@@ -56,6 +68,30 @@ describe('Table', () => {
         expect(table.findAll('tbody tr').map((row) => row.text())).toEqual([
           '1Ada Lovelace (active)',
           '2Grace Hopper (inactive)',
+        ])
+      })
+
+      it('renders nested columns as grouped header rows', () => {
+        const table = mountTable({ props: { columns: groupedColumns, data } })
+        const headerRows = table.findAll('thead tr')
+
+        expect(headerRows).toHaveLength(2)
+        expect(headerRows[0].findAll('th').map((header) => header.text())).toEqual([
+          'Profile',
+          'Status',
+        ])
+        expect(headerRows[0].findAll('th').map((header) => header.attributes('colspan'))).toEqual([
+          '2',
+          '1',
+        ])
+        expect(headerRows[0].findAll('th').map((header) => header.attributes('rowspan'))).toEqual([
+          '1',
+          '2',
+        ])
+        expect(headerRows[1].findAll('th').map((header) => header.text())).toEqual(['ID', 'Name'])
+        expect(headerRows[1].findAll('th').map((header) => header.attributes('colspan'))).toEqual([
+          '1',
+          '1',
         ])
       })
     })
@@ -170,6 +206,19 @@ describe('Table', () => {
 
         expect(table.get('[data-test-table-empty-slot]').text()).toBe('Empty:3')
         expect(table.get('tbody').text()).not.toContain('No results.')
+      })
+
+      it('uses the number of leaf columns for grouped tables', () => {
+        const table = mountTable({
+          props: { columns: groupedColumns, data: [] },
+          slots: {
+            empty: ({ colspan }) =>
+              h('span', { 'data-test-table-empty-slot': '' }, `Empty:${colspan}`),
+          },
+        })
+
+        expect(table.get('[data-test-table-empty-slot]').text()).toBe('Empty:3')
+        expect(table.get('tbody td').attributes('colspan')).toBe('3')
       })
     })
   })

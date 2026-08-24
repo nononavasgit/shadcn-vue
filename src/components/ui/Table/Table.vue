@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="TData extends RowData">
 import { FlexRender, tableFeatures, useTable } from '@tanstack/vue-table'
 import type { RowData, TableFeatures } from '@tanstack/vue-table'
-import { computed, toRef, useAttrs, useSlots } from 'vue'
+import { computed, toRef, useAttrs } from 'vue'
 import { cn } from '@/lib/utils'
 import type { TableProps, TableSlots } from '.'
 import { tableDefaults } from './defaults'
@@ -11,7 +11,6 @@ defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<TableProps<TData>>(), tableDefaults)
 defineSlots<TableSlots<TData>>()
 const attrs = useAttrs()
-const slots = useSlots()
 
 const features: TableFeatures = tableFeatures({})
 const table = useTable({
@@ -37,6 +36,8 @@ const theadProps = computed(() => ({
 const tbodyProps = computed(() => ({
   class: '[&_tr:last-child]:border-0',
 }))
+
+const columnCount = computed(() => table.getAllLeafColumns().length)
 </script>
 
 <template>
@@ -48,18 +49,23 @@ const tbodyProps = computed(() => ({
           :key="headerGroup.id"
           class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
         >
-          <th
-            v-for="header in headerGroup.headers"
-            :key="header.id"
-            class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
-          >
+          <template v-for="header in headerGroup.headers" :key="header.id">
+            <th
+              v-if="header.rowSpan > 0"
+              :colspan="header.colSpan"
+              :rowspan="header.rowSpan"
+              class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
+            >
               <slot
-                  :name="`header-${header.column.columnDef.accessorKey}`"
-                  :columnDef="header.column?.columnDef"
-                >
-                  <FlexRender :header="header" />
-                </slot>  
-         </th>
+                :name="`header-${header.column.id}`"
+                :header="header"
+                :column="header.column"
+                :column-def="header.column.columnDef"
+              >
+                <FlexRender :header="header" />
+              </slot>
+            </th>
+          </template>
         </tr>
       </thead>
 
@@ -86,8 +92,8 @@ const tbodyProps = computed(() => ({
         </tr>
 
         <tr v-if="!table.getRowModel().rows.length">
-          <td :colspan="props.columns.length" class="h-24 text-center">
-            <slot name="empty" :colspan="props.columns.length">
+          <td :colspan="columnCount" class="h-24 text-center">
+            <slot name="empty" :colspan="columnCount">
               {{ props.textNoResults }}
             </slot>
           </td>

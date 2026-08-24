@@ -101,6 +101,35 @@ describe('Table', () => {
   })
 
   describe('slots', () => {
+    describe('header-{accessorKey}', () => {
+      it('renders a custom header slot with header and column props', () => {
+        const table = mountTable({
+          props: { data },
+          slots: {
+            'header-status': ({ header, column }) =>
+              h('span', { 'data-test-table-header-slot': 'status' }, `${header.id}:${column.id}`),
+          },
+        })
+
+        expect(table.get('[data-test-table-header-slot="status"]').text()).toBe('status:status')
+        expect(table.findAll('thead th').map((header) => header.text())).toEqual([
+          'ID',
+          'Name',
+          'status:status',
+        ])
+      })
+
+      it('keeps the default header rendering when the slot is absent', () => {
+        const table = mountTable({ props: { data } })
+
+        expect(table.findAll('thead th').map((header) => header.text())).toEqual([
+          'ID',
+          'Name',
+          'Status',
+        ])
+      })
+    })
+
     describe('cell-{accessorKey}', () => {
       it('renders a custom cell slot with row, cell and value props', () => {
         const table = mountTable({

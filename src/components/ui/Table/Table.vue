@@ -1,15 +1,17 @@
 <script setup lang="ts" generic="TData extends RowData">
 import { FlexRender, tableFeatures, useTable } from '@tanstack/vue-table'
 import type { RowData, TableFeatures } from '@tanstack/vue-table'
-import { computed, toRef, useAttrs } from 'vue'
+import { computed, toRef, useAttrs, useSlots } from 'vue'
 import { cn } from '@/lib/utils'
-import type { TableProps } from '.'
+import type { TableProps, TableSlots } from '.'
 import { tableDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<TableProps<TData>>(), tableDefaults)
+defineSlots<TableSlots<TData>>()
 const attrs = useAttrs()
+const slots = useSlots()
 
 const features: TableFeatures = tableFeatures({})
 const table = useTable({
@@ -51,8 +53,13 @@ const tbodyProps = computed(() => ({
             :key="header.id"
             class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
           >
-            <FlexRender v-if="!header.isPlaceholder" :header="header" />
-          </th>
+              <slot
+                  :name="`header-${header.column.columnDef.accessorKey}`"
+                  :columnDef="header.column?.columnDef"
+                >
+                  <FlexRender :header="header" />
+                </slot>  
+         </th>
         </tr>
       </thead>
 

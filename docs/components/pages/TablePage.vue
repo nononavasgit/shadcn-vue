@@ -69,7 +69,15 @@ const emptyData: Payment[] = []
           <h2 class="text-xl font-semibold">Ejemplos</h2>
           <div class="rounded-md border">
             <Table :columns="columns" :data="data">
-              <template #cell-status="{ value }">
+              <template #header-status="{ columnDef }">
+                <span class="inline-flex items-center gap-2">
+                  <span class="rounded bg-primary/10 px-1.5 py-0.5 text-xs text-primary">
+                    Personalizado
+                  </span>
+                </span>
+              </template>
+
+              <template #cell-status="{ value, cell }">
                 <span
                   class="inline-flex rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700"
                 >

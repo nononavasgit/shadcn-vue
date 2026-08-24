@@ -25,6 +25,12 @@ const propRows: ApiTableRow[] = [
 
 const slotRows: ApiTableRow[] = [
   {
+    name: 'header-{accessorKey}',
+    type: '{ header, column }',
+    description:
+      'Personaliza el contenido de una cabecera según el accessorKey de la columna. Si no existe, se usa FlexRender.',
+  },
+  {
     name: 'cell-{accessorKey}',
     type: '{ row, cell, value }',
     description:

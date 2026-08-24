@@ -43,6 +43,38 @@ const data: Person[] = [
   { id: '2', name: 'Grace Hopper', status: 'inactive' },
 ]
 
+const repeatedStatusData: Person[] = [
+  { id: '1', name: 'Ada Lovelace', status: 'active' },
+  { id: '2', name: 'Alan Turing', status: 'active' },
+  { id: '3', name: 'Grace Hopper', status: 'inactive' },
+]
+
+const rowSpanningColumns: TableColumn<Person>[] = [
+  { accessorKey: 'id', header: 'ID' },
+  { accessorKey: 'name', header: 'Name' },
+  { accessorKey: 'status', header: 'Status', spanRows: true },
+]
+
+const predicateRowSpanningColumns: TableColumn<Person>[] = [
+  { accessorKey: 'id', header: 'ID' },
+  {
+    accessorKey: 'name',
+    header: 'Name',
+    spanRows: ({ anchorValue, value }) => String(anchorValue).charAt(0) === String(value).charAt(0),
+  },
+  { accessorKey: 'status', header: 'Status' },
+]
+
+const columnSpanningColumns: TableColumn<Person>[] = [
+  {
+    accessorKey: 'id',
+    header: 'ID',
+    spanColumns: ({ row }) => (row.original.status === 'inactive' ? Infinity : 1),
+  },
+  { accessorKey: 'name', header: 'Name' },
+  { accessorKey: 'status', header: 'Status' },
+]
+
 function mountTable(options: MountingOptions<TableProps<Person>> = {}) {
   return mount(Table, {
     ...options,
@@ -113,6 +145,92 @@ describe('Table', () => {
 
         expect(table.findAll('tbody tr')[0].text()).toBe('1Ada Lovelaceactive')
         expect(table.findAll('tbody tr')[1].text()).toBe('2Grace Hopperinactive')
+      })
+    })
+
+    describe('enableCellSpanning', () => {
+      it.each([undefined, false])(
+        'does not merge cells when enableCellSpanning=%s',
+        (enableCellSpanning) => {
+          const table = mountTable({
+            props: {
+              columns: rowSpanningColumns,
+              data: repeatedStatusData,
+              enableCellSpanning,
+            },
+          })
+
+          expect(table.findAll('tbody tr').map((row) => row.findAll('td').length)).toEqual([
+            3, 3, 3,
+          ])
+          expect(table.findAll('tbody tr')[0].findAll('td')[2].attributes('rowspan')).toBe('1')
+          expect(table.findAll('tbody tr')[1].text()).toContain('active')
+        },
+      )
+
+      it('merges adjacent equal values vertically and skips covered cells', () => {
+        const table = mountTable({
+          props: {
+            columns: rowSpanningColumns,
+            data: repeatedStatusData,
+            enableCellSpanning: true,
+          },
+        })
+        const rows = table.findAll('tbody tr')
+
+        expect(rows.map((row) => row.findAll('td').length)).toEqual([3, 2, 3])
+        expect(rows[0].findAll('td')[2].text()).toBe('active')
+        expect(rows[0].findAll('td')[2].attributes('rowspan')).toBe('2')
+        expect(rows[1].text()).toBe('2Alan Turing')
+        expect(rows[2].findAll('td')[2].attributes('rowspan')).toBe('1')
+      })
+
+      it('supports a spanRows predicate for custom vertical merging', () => {
+        const table = mountTable({
+          props: {
+            columns: predicateRowSpanningColumns,
+            data: repeatedStatusData,
+            enableCellSpanning: true,
+          },
+        })
+        const rows = table.findAll('tbody tr')
+
+        expect(rows.map((row) => row.findAll('td').length)).toEqual([3, 2, 3])
+        expect(rows[0].findAll('td')[1].text()).toBe('Ada Lovelace')
+        expect(rows[0].findAll('td')[1].attributes('rowspan')).toBe('2')
+        expect(rows[1].text()).toBe('2active')
+      })
+
+      it('merges cells horizontally with spanColumns and skips covered cells', () => {
+        const table = mountTable({
+          props: {
+            columns: columnSpanningColumns,
+            data,
+            enableCellSpanning: true,
+          },
+        })
+        const rows = table.findAll('tbody tr')
+
+        expect(rows.map((row) => row.findAll('td').length)).toEqual([3, 1])
+        expect(rows[1].get('td').text()).toBe('2')
+        expect(rows[1].get('td').attributes('colspan')).toBe('3')
+      })
+
+      it('reacts when cell spanning is enabled after mount', async () => {
+        const table = mountTable({
+          props: {
+            columns: rowSpanningColumns,
+            data: repeatedStatusData,
+            enableCellSpanning: false,
+          },
+        })
+
+        expect(table.findAll('tbody tr').map((row) => row.findAll('td').length)).toEqual([3, 3, 3])
+
+        await table.setProps({ enableCellSpanning: true })
+
+        expect(table.findAll('tbody tr').map((row) => row.findAll('td').length)).toEqual([3, 2, 3])
+        expect(table.findAll('tbody tr')[0].findAll('td')[2].attributes('rowspan')).toBe('2')
       })
     })
 

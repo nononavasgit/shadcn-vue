@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="TData extends RowData">
-import { FlexRender, tableFeatures, useTable } from '@tanstack/vue-table'
-import type { RowData, TableFeatures } from '@tanstack/vue-table'
+import { cellSpanningFeature, FlexRender, tableFeatures, useTable } from '@tanstack/vue-table'
+import type { RowData } from '@tanstack/vue-table'
 import { computed, toRef, useAttrs } from 'vue'
 import { cn } from '@/lib/utils'
 import type { TableProps, TableSlots } from '.'
@@ -12,11 +12,12 @@ const props = withDefaults(defineProps<TableProps<TData>>(), tableDefaults)
 defineSlots<TableSlots<TData>>()
 const attrs = useAttrs()
 
-const features: TableFeatures = tableFeatures({})
+const features = tableFeatures({ cellSpanningFeature })
 const table = useTable({
   features,
   columns: props.columns,
   data: toRef(props, 'data'),
+  enableCellSpanning: toRef(props, 'enableCellSpanning'),
 })
 
 const rootProps = computed(() => ({
@@ -75,20 +76,23 @@ const columnCount = computed(() => table.getAllLeafColumns().length)
           :key="row.id"
           class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
         >
-          <td
-            v-for="cell in row.getAllCells()"
-            :key="cell.id"
-            class="p-4 align-middle [&:has([role=checkbox])]:pr-0"
-          >
-            <slot
-              :name="`cell-${cell.column.columnDef.accessorKey}`"
-              :row="row"
-              :cell="cell"
-              :value="cell.getValue()"
+          <template v-for="cell in row.getAllCells()" :key="cell.id">
+            <td
+              v-if="!cell.getIsCovered()"
+              :colspan="cell.getColSpan()"
+              :rowspan="cell.getRowSpan()"
+              class="p-4 align-middle [&:has([role=checkbox])]:pr-0"
             >
-              <FlexRender :cell="cell" />
-            </slot>
-          </td>
+              <slot
+                :name="`cell-${cell.column.columnDef.accessorKey}`"
+                :row="row"
+                :cell="cell"
+                :value="cell.getValue()"
+              >
+                <FlexRender :cell="cell" />
+              </slot>
+            </td>
+          </template>
         </tr>
 
         <tr v-if="!table.getRowModel().rows.length">

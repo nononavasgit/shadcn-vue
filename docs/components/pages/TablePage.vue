@@ -11,6 +11,13 @@ type Payment = {
   date: string
 }
 
+type RegionalSale = {
+  region: string
+  customer: string
+  product: string
+  amount: string
+}
+
 const columns: TableColumn<Payment>[] = [
   { accessorKey: 'id', header: 'ID' },
   { accessorKey: 'customer', header: 'Cliente' },
@@ -37,6 +44,13 @@ const groupedColumns: TableColumn<Payment>[] = [
     ],
   },
   { accessorKey: 'date', header: 'Fecha' },
+]
+
+const spanningColumns: TableColumn<RegionalSale>[] = [
+  { accessorKey: 'region', header: 'Región', spanRows: true },
+  { accessorKey: 'customer', header: 'Cliente' },
+  { accessorKey: 'product', header: 'Producto' },
+  { accessorKey: 'amount', header: 'Importe' },
 ]
 
 const data: Payment[] = [
@@ -71,6 +85,13 @@ const data: Payment[] = [
 ]
 
 const emptyData: Payment[] = []
+
+const spanningData: RegionalSale[] = [
+  { region: 'Norte', customer: 'Ana', product: 'Consultoría', amount: '450,00 €' },
+  { region: 'Norte', customer: 'Carlos', product: 'Soporte', amount: '180,00 €' },
+  { region: 'Sur', customer: 'Lucía', product: 'Desarrollo', amount: '720,00 €' },
+  { region: 'Sur', customer: 'Javier', product: 'Diseño', amount: '310,00 €' },
+]
 </script>
 
 <template>
@@ -116,6 +137,16 @@ const emptyData: Payment[] = []
                 <span class="text-muted-foreground">No hay pagos para mostrar.</span>
               </template>
             </Table>
+          </div>
+        </section>
+
+        <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+          <h2 class="text-xl font-semibold">Celdas combinadas</h2>
+          <p class="text-sm text-muted-foreground">
+            Las filas consecutivas con la misma región comparten una única celda vertical.
+          </p>
+          <div class="rounded-md border">
+            <Table :columns="spanningColumns" :data="spanningData" enable-cell-spanning />
           </div>
         </section>
 

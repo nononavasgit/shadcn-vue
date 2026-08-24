@@ -22,6 +22,8 @@ export { default as Table } from './Table.vue'
  * - `footer`: contenido o función para el pie de columna.
  * - `columns`: columnas hijas para crear grupos de cabecera.
  * - `meta`: metadatos personalizados de la columna.
+ * - `spanRows`: combina verticalmente celdas adyacentes con valores iguales.
+ * - `spanColumns`: combina horizontalmente varias celdas de una fila.
  * - `size`, `minSize` y `maxSize`: configuración de tamaño.
  * - `enableSorting` y `sortFn`: configuración de ordenación.
  * - `enableColumnFilter` y `filterFn`: configuración de filtrado.
@@ -36,6 +38,7 @@ export type TableColumn<TData extends RowData> = ColumnDef<TableFeatures, TData>
 export interface TableProps<TData extends RowData> {
   columns: ReadonlyArray<TableColumn<TData>>
   data?: ReadonlyArray<TData>
+  enableCellSpanning?: boolean
   textNoResults?: string
 }
 

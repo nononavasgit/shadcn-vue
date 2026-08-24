@@ -16,6 +16,12 @@ const propRows: ApiTableRow[] = [
     description: 'Filas que se muestran en la tabla.',
   },
   {
+    name: 'enableCellSpanning',
+    type: 'boolean',
+    default: 'false',
+    description: 'Permite combinar celdas vertical u horizontalmente mediante las columnas.',
+  },
+  {
     name: 'textNoResults',
     type: 'string',
     default: 'No results.',

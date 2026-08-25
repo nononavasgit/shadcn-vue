@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Checkbox } from '@/components/ui/Checkbox'
 import { Table, type TableColumn } from '@/components/ui/Table'
 import { ref } from 'vue'
 import DocsLayout from '../DocsLayout.vue'
@@ -33,6 +34,14 @@ const sizedColumns: TableColumn<Payment>[] = [
   { accessorKey: 'status', header: 'Estado · 140 px', size: 140 },
   { accessorKey: 'amount', header: 'Importe · 130 px', size: 130 },
   { accessorKey: 'date', header: 'Fecha · 150 px', size: 150 },
+]
+
+const visibilityColumns: TableColumn<Payment>[] = [
+  { accessorKey: 'id', header: 'ID', enableHiding: false },
+  { accessorKey: 'customer', header: 'Cliente' },
+  { accessorKey: 'status', header: 'Estado' },
+  { accessorKey: 'amount', header: 'Importe' },
+  { accessorKey: 'date', header: 'Fecha' },
 ]
 
 const groupedColumns: TableColumn<Payment>[] = [
@@ -95,6 +104,18 @@ const data: Payment[] = [
 
 const emptyData: Payment[] = []
 const pinnedColumns = ref({ start: ['id'], end: ['date'] })
+const visibleColumns = ref<Record<string, boolean>>({ amount: false })
+const visibilityOptions = [
+  { id: 'id', label: 'ID', hideable: false },
+  { id: 'customer', label: 'Cliente', hideable: true },
+  { id: 'status', label: 'Estado', hideable: true },
+  { id: 'amount', label: 'Importe', hideable: true },
+  { id: 'date', label: 'Fecha', hideable: true },
+]
+
+function setColumnVisibility(columnId: string, visible: boolean) {
+  visibleColumns.value = { ...visibleColumns.value, [columnId]: visible }
+}
 
 const spanningData: RegionalSale[] = [
   { region: 'Norte', customer: 'Ana', product: 'Consultoría', amount: '450,00 €' },
@@ -165,6 +186,41 @@ const spanningData: RegionalSale[] = [
               pinnable
             />
           </div>
+        </section>
+
+        <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+          <div class="grid gap-1">
+            <h2 class="text-xl font-semibold">Visibilidad de columnas</h2>
+            <p class="text-sm text-muted-foreground">
+              Los controles viven fuera de Table y actualizan su estado controlado. Importe comienza
+              oculto e ID permanece siempre visible mediante <code>enableHiding: false</code>.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-4 rounded-md border p-3">
+            <label
+              v-for="option in visibilityOptions"
+              :key="option.id"
+              class="flex items-center gap-2 text-sm"
+              :class="!option.hideable && 'cursor-not-allowed text-muted-foreground'"
+            >
+              <Checkbox
+                :value="visibleColumns[option.id] !== false"
+                :disabled="!option.hideable"
+                @update:value="setColumnVisibility(option.id, Boolean($event))"
+              />
+              {{ option.label }}
+            </label>
+          </div>
+          <div class="rounded-md border p-3">
+            <Table
+              v-model:column-visibility="visibleColumns"
+              :columns="visibilityColumns"
+              :data="data"
+            />
+          </div>
+          <pre
+            class="overflow-auto rounded-md bg-muted p-3 text-xs"
+          ><code>{{ visibleColumns }}</code></pre>
         </section>
 
         <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">

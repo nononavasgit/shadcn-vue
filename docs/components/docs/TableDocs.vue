@@ -22,6 +22,12 @@ const propRows: ApiTableRow[] = [
     description: 'Fija columnas en los extremos lógicos start y end durante el scroll horizontal.',
   },
   {
+    name: 'columnVisibility',
+    type: 'ColumnVisibilityState',
+    default: '{}',
+    description: 'Mapa controlado de columnas visibles. Un valor false oculta la columna.',
+  },
+  {
     name: 'enableCellSpanning',
     type: 'boolean',
     default: 'false',
@@ -69,6 +75,11 @@ const slotRows: ApiTableRow[] = [
 ]
 
 const emitRows: ApiTableRow[] = [
+  {
+    name: 'update:columnVisibility',
+    type: 'ColumnVisibilityState',
+    description: 'Actualiza la visibilidad al usar el selector. Permite v-model:column-visibility.',
+  },
   {
     name: 'update:columnPinning',
     type: 'ColumnPinningState',

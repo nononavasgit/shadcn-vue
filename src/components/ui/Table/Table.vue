@@ -3,6 +3,7 @@ import {
   cellSpanningFeature,
   columnPinningFeature,
   columnSizingFeature,
+  columnVisibilityFeature,
   FlexRender,
   tableFeatures,
   useTable,
@@ -23,7 +24,12 @@ const emit = defineEmits<TableEmits>()
 defineSlots<TableSlots<TData>>()
 const attrs = useAttrs()
 
-const features = tableFeatures({ columnSizingFeature, columnPinningFeature, cellSpanningFeature })
+const features = tableFeatures({
+  columnSizingFeature,
+  columnPinningFeature,
+  columnVisibilityFeature,
+  cellSpanningFeature,
+})
 const table = useTable({
   features,
   columns: props.columns,
@@ -33,11 +39,19 @@ const table = useTable({
     get columnPinning() {
       return props.columnPinning
     },
+    get columnVisibility() {
+      return props.columnVisibility
+    },
   },
   onColumnPinningChange: (updater) => {
     const nextValue = updater instanceof Function ? updater(props.columnPinning) : updater
 
     emit('update:columnPinning', nextValue)
+  },
+  onColumnVisibilityChange: (updater) => {
+    const nextValue = updater instanceof Function ? updater(props.columnVisibility) : updater
+
+    emit('update:columnVisibility', nextValue)
   },
 })
 
@@ -99,7 +113,7 @@ const tbodyProps = computed(() => ({
   class: '[&_tr:last-child]:border-0',
 }))
 
-const columnCount = computed(() => table.getAllLeafColumns().length)
+const columnCount = computed(() => Math.max(1, table.getVisibleLeafColumns().length))
 </script>
 
 <template>

@@ -316,6 +316,63 @@ describe('Table', () => {
       })
     })
 
+    describe('columnVisibility', () => {
+      it.each([
+        { input: undefined, expectedHeaders: ['ID', 'Name', 'Status'] },
+        { input: {}, expectedHeaders: ['ID', 'Name', 'Status'] },
+        { input: { name: false }, expectedHeaders: ['ID', 'Status'] },
+        { input: { id: false, status: false }, expectedHeaders: ['Name'] },
+      ])('renders visible headers for columnVisibility=$input', ({ input, expectedHeaders }) => {
+        const table = mountTable({ props: { columnVisibility: input, data } })
+
+        expect(table.findAll('thead th').map((header) => header.text())).toEqual(expectedHeaders)
+        expect(
+          table
+            .findAll('tbody tr')[0]
+            .findAll('td')
+            .map((cell) => cell.text()),
+        ).toEqual(
+          expectedHeaders.map((header) => {
+            if (header === 'ID') return '1'
+            if (header === 'Name') return 'Ada Lovelace'
+            return 'active'
+          }),
+        )
+      })
+
+      it('reacts to external column visibility changes', async () => {
+        const table = mountTable({ props: { columnVisibility: { name: false }, data } })
+
+        expect(table.findAll('thead th').map((header) => header.text())).toEqual(['ID', 'Status'])
+
+        await table.setProps({ columnVisibility: { id: false } })
+
+        expect(table.findAll('thead th').map((header) => header.text())).toEqual(['Name', 'Status'])
+      })
+
+      it('uses the visible leaf column count for the empty row colspan', () => {
+        const table = mountTable({
+          props: { columns: groupedColumns, columnVisibility: { name: false }, data: [] },
+        })
+
+        expect(table.get('tbody td').attributes('colspan')).toBe('2')
+      })
+
+      it('keeps pinned visible columns in their logical regions', () => {
+        const table = mountTable({
+          props: {
+            columnPinning: { start: ['name'], end: ['id'] },
+            columnVisibility: { status: false },
+            data,
+          },
+        })
+
+        expect(table.findAll('thead th').map((header) => header.text())).toEqual(['Name', 'ID'])
+        expect(table.get('th[data-pinned="start"]').text()).toBe('Name')
+        expect(table.get('th[data-pinned="end"]').text()).toBe('ID')
+      })
+    })
+
     describe('column sizing', () => {
       it('applies each configured size to its header and cells', () => {
         const sizedColumns: TableColumn<Person>[] = [
@@ -384,6 +441,25 @@ describe('Table', () => {
           expect(table.emitted('update:columnPinning')).toEqual([[{ start: [], end: [] }]])
         },
       )
+    })
+
+    describe('update:columnVisibility', () => {
+      it('emits the next controlled state when a column is toggled', async () => {
+        const table = mountTable({
+          props: { columnVisibility: { status: false }, data },
+          slots: {
+            'header-name': ({ column }) =>
+              h('button', {
+                'data-test-column-visibility-toggle': '',
+                onClick: () => column.toggleVisibility(),
+              }),
+          },
+        })
+
+        await table.get('[data-test-column-visibility-toggle]').trigger('click')
+
+        expect(table.emitted('update:columnVisibility')).toEqual([[{ status: false, name: false }]])
+      })
     })
   })
 

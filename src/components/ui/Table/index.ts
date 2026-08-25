@@ -3,6 +3,7 @@ import type {
   Column,
   ColumnDef,
   ColumnPinningState,
+  ColumnVisibilityState,
   Header,
   Row,
   RowData,
@@ -39,6 +40,7 @@ export type TableColumn<TData extends RowData> = ColumnDef<TableFeatures, TData>
 export interface TableProps<TData extends RowData> {
   columns: ReadonlyArray<TableColumn<TData>>
   columnPinning?: ColumnPinningState
+  columnVisibility?: ColumnVisibilityState
   data?: ReadonlyArray<TData>
   enableCellSpanning?: boolean
   pinnable?: boolean
@@ -47,6 +49,7 @@ export interface TableProps<TData extends RowData> {
 
 export interface TableEmits {
   'update:columnPinning': [value: ColumnPinningState]
+  'update:columnVisibility': [value: ColumnVisibilityState]
 }
 
 export type TableHeaderSlotProps<TData extends RowData> = {

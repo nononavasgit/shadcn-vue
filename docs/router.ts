@@ -43,7 +43,7 @@ import TextareaPage from './components/pages/TextareaPage.vue'
 import TooltipPage from './components/pages/TooltipPage.vue'
 
 export const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', component: IndexPage },
     { path: '/accordion', component: AccordionPage },

@@ -30,6 +30,14 @@ const columns: TableColumn<Payment>[] = [
   { accessorKey: 'date', header: 'Fecha' },
 ]
 
+const facetedColumns: TableColumn<Payment>[] = [
+  { accessorKey: 'id', header: 'ID' },
+  { accessorKey: 'customer', header: 'Cliente' },
+  { accessorKey: 'status', header: 'Estado', filterFn: 'equals' },
+  { accessorKey: 'amount', header: 'Importe' },
+  { accessorKey: 'date', header: 'Fecha' },
+]
+
 const sizedColumns: TableColumn<Payment>[] = [
   { accessorKey: 'id', header: 'ID · 90 px', size: 90 },
   { accessorKey: 'customer', header: 'Cliente · 300 px', size: 300 },
@@ -108,6 +116,7 @@ const emptyData: Payment[] = []
 const pinnedColumns = ref({ start: ['id'], end: ['date'] })
 const visibleColumns = ref<Record<string, boolean>>({ amount: false })
 const columnFilters = ref<ColumnFiltersState>([])
+const facetedFilters = ref<ColumnFiltersState>([])
 const globalFilter = ref('')
 const visibilityOptions = [
   { id: 'id', label: 'ID', hideable: false },
@@ -209,6 +218,44 @@ const spanningData: RegionalSale[] = [
           <pre
             class="overflow-auto rounded-md bg-muted p-3 text-xs"
           ><code>{{ columnFilters }}</code></pre>
+        </section>
+
+        <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+          <div class="grid gap-1">
+            <h2 class="text-xl font-semibold">Filtro con facetas</h2>
+            <p class="text-sm text-muted-foreground">
+              Las opciones y sus cantidades se obtienen de los datos con
+              <code>getFacetedUniqueValues()</code>.
+            </p>
+          </div>
+          <div class="rounded-md border">
+            <Table v-model:column-filters="facetedFilters" :columns="facetedColumns" :data="data">
+              <template #header-status="{ column }">
+                <label class="grid min-w-44 gap-2 py-2">
+                  <span>Estado</span>
+                  <select
+                    class="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground"
+                    :value="String(column.getFilterValue() ?? '')"
+                    aria-label="Filtrar por estado"
+                    @change="
+                      column.setFilterValue(($event.target as HTMLSelectElement).value || undefined)
+                    "
+                  >
+                    <option value="">Todos</option>
+                    <option
+                      v-for="[value, count] in Array.from(
+                        column.getFacetedUniqueValues().entries(),
+                      ).sort(([a], [b]) => String(a).localeCompare(String(b)))"
+                      :key="String(value)"
+                      :value="String(value)"
+                    >
+                      {{ value }} ({{ count }})
+                    </option>
+                  </select>
+                </label>
+              </template>
+            </Table>
+          </div>
         </section>
 
         <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">

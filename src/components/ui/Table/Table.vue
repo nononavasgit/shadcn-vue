@@ -1,10 +1,14 @@
 <script setup lang="ts" generic="TData extends RowData">
 import {
   cellSpanningFeature,
+  columnFacetingFeature,
   columnFilteringFeature,
   columnPinningFeature,
   columnSizingFeature,
   columnVisibilityFeature,
+  createFacetedMinMaxValues,
+  createFacetedRowModel,
+  createFacetedUniqueValues,
   createFilteredRowModel,
   filterFn_arrIncludes,
   filterFn_equals,
@@ -57,9 +61,13 @@ const deepGlobalFilterFn: FilterFn<TableFeatures, TData> = (row, columnId, filte
   normalizeSearchText(row.getValue(columnId)).includes(normalizeSearchText(filterValue))
 
 const features = tableFeatures({
+  columnFacetingFeature,
   columnFilteringFeature,
   globalFilteringFeature,
   filteredRowModel: createFilteredRowModel(),
+  facetedRowModel: createFacetedRowModel(),
+  facetedUniqueValues: createFacetedUniqueValues(),
+  facetedMinMaxValues: createFacetedMinMaxValues(),
   filterFns: {
     arrIncludes: filterFn_arrIncludes,
     equals: filterFn_equals,
@@ -112,6 +120,15 @@ const table = useTable({
 
     emit('update:columnVisibility', nextValue)
   },
+})
+
+function getColumn(columnId: string) {
+  return table.getColumn(columnId)
+}
+
+defineExpose({
+  table,
+  getColumn,
 })
 
 function toggleColumnPin(column: Column<TableFeatures, TData>) {

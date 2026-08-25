@@ -277,7 +277,29 @@ describe('Table', () => {
         const table = mountTable({ props: { data } })
 
         expect(table.find('[data-pinned]').exists()).toBe(false)
-        expect(table.findAll('th').every((header) => !header.attributes('style'))).toBe(true)
+        expect(
+          table.findAll('th').every((header) => !header.attributes('style')?.includes('sticky')),
+        ).toBe(true)
+      })
+    })
+
+    describe('column sizing', () => {
+      it('applies each configured size to its header and cells', () => {
+        const sizedColumns: TableColumn<Person>[] = [
+          { accessorKey: 'id', header: 'ID', size: 80 },
+          { accessorKey: 'name', header: 'Name', size: 260 },
+          { accessorKey: 'status', header: 'Status', size: 120 },
+        ]
+        const table = mountTable({ props: { columns: sizedColumns, data } })
+
+        expect(table.findAll('thead th').map((header) => header.attributes('style'))).toEqual([
+          'max-width: 80px; min-width: 80px; width: 80px;',
+          'max-width: 260px; min-width: 260px; width: 260px;',
+          'max-width: 120px; min-width: 120px; width: 120px;',
+        ])
+        expect(table.findAll('tbody tr')[0].findAll('td')[1].attributes('style')).toContain(
+          'width: 260px',
+        )
       })
     })
 

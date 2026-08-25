@@ -33,20 +33,18 @@ const table = useTable({
   },
 })
 
-function getPinningStyle(column: Column<TableFeatures, TData>): CSSProperties {
+function getColumnStyle(column: Column<TableFeatures, TData>): CSSProperties {
   const position = column.getIsPinned()
 
-  if (!position) return {}
-
   return {
-    background: 'var(--background)',
+    background: position ? 'var(--background)' : undefined,
     insetInlineEnd: position === 'end' ? `${column.getAfter('end')}px` : undefined,
     insetInlineStart: position === 'start' ? `${column.getStart('start')}px` : undefined,
     maxWidth: `${column.getSize()}px`,
     minWidth: `${column.getSize()}px`,
-    position: 'sticky',
+    position: position ? 'sticky' : undefined,
     width: `${column.getSize()}px`,
-    zIndex: 1,
+    zIndex: position ? 1 : undefined,
   }
 }
 
@@ -78,9 +76,7 @@ const rootProps = computed(() => ({
 
 const tableProps = computed(() => ({
   class: 'w-full caption-bottom text-sm',
-  style: table.getIsSomeColumnsPinned()
-    ? { width: `max(100%, ${table.getTotalSize()}px)` }
-    : undefined,
+  style: { width: `max(100%, ${table.getTotalSize()}px)` },
 }))
 
 const theadProps = computed(() => ({
@@ -110,7 +106,7 @@ const columnCount = computed(() => table.getAllLeafColumns().length)
               :rowspan="header.rowSpan"
               :data-pinned="header.column.getIsPinned() || undefined"
               :class="getPinningClass(header.column)"
-              :style="getPinningStyle(header.column)"
+              :style="getColumnStyle(header.column)"
               class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
             >
               <slot
@@ -139,7 +135,7 @@ const columnCount = computed(() => table.getAllLeafColumns().length)
               :rowspan="cell.getRowSpan()"
               :data-pinned="cell.column.getIsPinned() || undefined"
               :class="getPinningClass(cell.column)"
-              :style="getPinningStyle(cell.column)"
+              :style="getColumnStyle(cell.column)"
               class="p-4 align-middle [&:has([role=checkbox])]:pr-0"
             >
               <slot

@@ -1,67 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import { AlertDialog, type AlertDialogProps } from '@/components/ui/AlertDialog'
-import type { NormalizeButtonProps } from '@/components/ui/Button'
-import type { IconConfig } from '@/components/ui/Icon'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const open = ref(false)
-const label = ref('Delete project?')
-const description = ref('This action cannot be undone.')
-const iconObjectInput = ref('')
-const actionButtonInput = ref(`{
-  "label": "Delete",
-  "severity": "error"
-}`)
-const cancelButtonInput = ref(`{
-  "label": "Cancel",
-  "variant": "outline"
-}`)
-const unmountOnHide = ref(true)
-const forceMount = ref(false)
-const disableOutsidePointerEvents = ref(true)
-
-function parseButtonProps(value: string): NormalizeButtonProps | undefined {
-  try {
-    const parsed: unknown = JSON.parse(value)
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return parsed as NormalizeButtonProps
-    }
-  } catch {
-    return undefined
-  }
-
-  return undefined
-}
-
-function parseIconProps(value: string): IconConfig | undefined {
-  if (!value.trim()) return undefined
-
-  try {
-    const parsed: unknown = JSON.parse(value)
-
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return parsed as IconConfig
-    }
-  } catch {
-    return undefined
-  }
-
-  return undefined
-}
-
-const playgroundProps = computed<AlertDialogProps>(() => ({
-  label: label.value || undefined,
-  description: description.value || undefined,
-  icon: parseIconProps(iconObjectInput.value),
-  actionButton: parseButtonProps(actionButtonInput.value),
-  cancelButton: parseButtonProps(cancelButtonInput.value),
-  unmountOnHide: unmountOnHide.value,
-  forceMount: forceMount.value,
-  disableOutsidePointerEvents: disableOutsidePointerEvents.value,
-}))
 
 const propRows: ApiTableRow[] = [
   {
@@ -131,6 +69,12 @@ const propRows: ApiTableRow[] = [
 
 const emitRows: ApiTableRow[] = [
   {
+    name: 'update:open',
+    type: '[open: boolean]',
+    default: '-',
+    description: 'Actualiza el estado controlado del dialogo.',
+  },
+  {
     name: 'action',
     type: '[event: PointerEvent]',
     default: '-',
@@ -145,37 +89,17 @@ const emitRows: ApiTableRow[] = [
 ]
 
 const slotRows: ApiTableRow[] = [
+  { name: 'default', type: '-', default: '-', description: 'Trigger del dialogo.' },
+  { name: 'content', type: '-', default: '-', description: 'Contenido principal.' },
+  { name: 'header', type: '-', default: '-', description: 'Reemplaza el encabezado.' },
+  { name: 'label', type: '-', default: '-', description: 'Personaliza el titulo.' },
+  { name: 'description', type: '-', default: '-', description: 'Personaliza la descripcion.' },
   {
-    name: 'default',
-    type: '-',
+    name: 'footer',
+    type: '{ close: () => void }',
     default: '-',
-    description: 'Trigger del dialogo.',
+    description: 'Reemplaza el pie y recibe la funcion para cerrar el dialogo.',
   },
-  {
-    name: 'content',
-    type: '-',
-    default: '-',
-    description: 'Contenido principal.',
-  },
-  {
-    name: 'header',
-    type: '-',
-    default: '-',
-    description: 'Reemplaza el encabezado.',
-  },
-  {
-    name: 'label',
-    type: '-',
-    default: '-',
-    description: 'Personaliza el titulo.',
-  },
-  {
-    name: 'description',
-    type: '-',
-    default: '-',
-    description: 'Personaliza la descripcion.',
-  },
-  { name: 'footer', type: '-', default: '-', description: 'Reemplaza el pie.' },
   {
     name: 'action',
     type: '{ close: () => void }',
@@ -205,109 +129,10 @@ const exposeRows: ApiTableRow[] = [
       </p>
     </header>
 
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">
-          Configura el contenido y prueba la confirmacion.
-        </p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <AlertDialog v-model:open="open" v-bind="playgroundProps">
-              <button
-                type="button"
-                class="rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-              >
-                Open dialog
-              </button>
-              <template #content>
-                <p class="text-sm text-muted-foreground">
-                  The content slot can contain any confirmation details.
-                </p>
-              </template>
-            </AlertDialog>
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">label</span>
-            <input
-              v-model="label"
-              type="text"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">description</span>
-            <input
-              v-model="description"
-              type="text"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">icon (objeto)</span>
-            <textarea
-              v-model="iconObjectInput"
-              rows="4"
-              placeholder='{
-  "name": "warning",
-  "size": "lg"
-}'
-              class="rounded-md border bg-background px-3 py-2 font-mono text-xs outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">actionButton</span>
-            <textarea
-              v-model="actionButtonInput"
-              rows="4"
-              class="rounded-md border bg-background px-3 py-2 font-mono text-xs outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">cancelButton</span>
-            <textarea
-              v-model="cancelButtonInput"
-              rows="4"
-              class="rounded-md border bg-background px-3 py-2 font-mono text-xs outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="flex items-center gap-2 text-sm">
-            <input v-model="unmountOnHide" type="checkbox" class="size-4 rounded border-input" />
-            <span class="font-medium">unmountOnHide</span>
-          </label>
-
-          <label class="flex items-center gap-2 text-sm">
-            <input v-model="forceMount" type="checkbox" class="size-4 rounded border-input" />
-            <span class="font-medium">forceMount</span>
-          </label>
-
-          <label class="flex items-center gap-2 text-sm">
-            <input
-              v-model="disableOutsidePointerEvents"
-              type="checkbox"
-              class="size-4 rounded border-input"
-            />
-            <span class="font-medium">disableOutsidePointerEvents</span>
-          </label>
-        </div>
-      </div>
-    </section>
-
     <div class="grid gap-4">
-      <ApiTable title="Props" :rows="propRows" />
-      <ApiTable title="Emits" :rows="emitRows" />
-      <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
+      <ApiTable id="alert-dialog-props" title="Props" :rows="propRows" />
+      <ApiTable id="alert-dialog-emits" title="Emits" :rows="emitRows" />
+      <ApiTable id="alert-dialog-slots" title="Slots" type-label="slotProps" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" />
     </div>
   </section>

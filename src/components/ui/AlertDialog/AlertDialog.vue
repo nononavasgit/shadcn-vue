@@ -180,7 +180,7 @@ const actionButtonProps = computed(() => ({
           </div>
 
           <div v-bind="footerProps" data-test-alert-dialog-footer>
-            <slot name="footer">
+            <slot name="footer" :close="close">
               <AlertDialogCancel
                 as-child
                 data-test-alert-dialog-cancel

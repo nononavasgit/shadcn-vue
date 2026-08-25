@@ -60,7 +60,7 @@ export interface AlertDialogSlots {
   header?(): unknown
   label?(): unknown
   description?(): unknown
-  footer?(): unknown
+  footer?(props: { close: () => void }): unknown
   action?(props: { close: () => void }): unknown
   cancel?(props: { close: () => void }): unknown
 }

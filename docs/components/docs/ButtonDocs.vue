@@ -1,58 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import {
-  Button,
-  type ButtonProps,
-  type ButtonSeverity,
-  type ButtonSize,
-  type ButtonVariant,
-} from '@/components/ui/Button'
-import type { IconConfig } from '@/components/ui/Icon'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const label = ref('Save changes')
-const variant = ref<ButtonVariant>('solid')
-const severity = ref<ButtonSeverity>('primary')
-const size = ref<ButtonSize>('md')
-const rounded = ref(false)
-const square = ref(false)
-const raised = ref(false)
-const loading = ref(false)
-const color = ref('')
-const iconObjectInput = ref('')
-const trailingIconObjectInput = ref('')
-
-function parseIconProps(value: string): IconConfig | undefined {
-  if (!value.trim()) return undefined
-
-  try {
-    const parsed: unknown = JSON.parse(value)
-
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
-      return parsed as IconConfig
-    }
-  } catch {
-    return undefined
-  }
-
-  return undefined
-}
-
-const playgroundProps = computed<ButtonProps>(() => ({
-  label: label.value || undefined,
-  variant: variant.value,
-  severity: severity.value,
-  size: size.value,
-  rounded: rounded.value,
-  square: square.value,
-  raised: raised.value,
-  loading: loading.value,
-  color: color.value || undefined,
-  icon: parseIconProps(iconObjectInput.value),
-  trailingIcon: parseIconProps(trailingIconObjectInput.value),
-}))
 
 const buttonConfigRows: ApiTableRow[] = [
   {
@@ -160,130 +107,16 @@ const exposeRows: ApiTableRow[] = []
       </p>
     </header>
 
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">Prueba las variantes y estados del boton.</p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <Button v-bind="playgroundProps" />
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">label</span>
-            <input
-              v-model="label"
-              type="text"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">variant</span>
-            <select
-              v-model="variant"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="solid">solid</option>
-              <option value="outline">outline</option>
-              <option value="plain">plain</option>
-              <option value="subtle">subtle</option>
-              <option value="soft">soft</option>
-              <option value="link">link</option>
-            </select>
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">severity</span>
-            <select
-              v-model="severity"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="primary">primary</option>
-              <option value="secondary">secondary</option>
-              <option value="warning">warning</option>
-              <option value="success">success</option>
-              <option value="error">error</option>
-            </select>
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">size</span>
-            <select
-              v-model="size"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="xs">xs</option>
-              <option value="sm">sm</option>
-              <option value="md">md</option>
-              <option value="lg">lg</option>
-            </select>
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">icon (objeto)</span>
-            <textarea
-              v-model="iconObjectInput"
-              rows="4"
-              placeholder='{
-  "name": "check",
-  "size": "sm"
-}'
-              class="rounded-md border bg-background px-3 py-2 font-mono text-xs outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">trailingIcon (objeto)</span>
-            <textarea
-              v-model="trailingIconObjectInput"
-              rows="4"
-              placeholder='{
-  "name": "check",
-  "size": "sm"
-}'
-              class="rounded-md border bg-background px-3 py-2 font-mono text-xs outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">color</span>
-            <input
-              v-model="color"
-              type="color"
-              class="h-9 w-full rounded-md border bg-background p-1"
-            />
-          </label>
-
-          <label class="flex items-center gap-2 text-sm">
-            <input v-model="rounded" type="checkbox" class="size-4 rounded border-input" />
-            <span class="font-medium">rounded</span>
-          </label>
-          <label class="flex items-center gap-2 text-sm">
-            <input v-model="square" type="checkbox" class="size-4 rounded border-input" />
-            <span class="font-medium">square</span>
-          </label>
-          <label class="flex items-center gap-2 text-sm">
-            <input v-model="raised" type="checkbox" class="size-4 rounded border-input" />
-            <span class="font-medium">raised</span>
-          </label>
-          <label class="flex items-center gap-2 text-sm">
-            <input v-model="loading" type="checkbox" class="size-4 rounded border-input" />
-            <span class="font-medium">loading</span>
-          </label>
-        </div>
-      </div>
-    </section>
-
     <div class="grid gap-4">
       <ApiTable id="button-props" title="Props" :rows="propRows" />
       <ApiTable id="button-emits" title="Emits" :rows="emitRows" />
-      <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
+      <ApiTable
+        id="button-slots"
+        title="Slots"
+        type-label="slotProps"
+        :show-default="false"
+        :rows="slotRows"
+      />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
       <ApiTable id="button-config" title="ButtonConfig" :rows="buttonConfigRows" />
     </div>

@@ -235,6 +235,39 @@ describe('Table', () => {
     })
 
     describe('columnPinning', () => {
+      it.each([undefined, false])('does not render pin buttons when pinnable=%s', (pinnable) => {
+        const table = mountTable({ props: { data, pinnable } })
+
+        expect(table.find('[data-test-table-pin]').exists()).toBe(false)
+      })
+
+      it('renders an accessible pin button before every pinnable header when enabled', () => {
+        const table = mountTable({ props: { data, pinnable: true } })
+        const headers = table.findAll('thead th')
+
+        expect(table.findAll('[data-test-table-pin]')).toHaveLength(columns.length)
+        expect(headers[0].element.firstElementChild?.querySelector('button')).not.toBeNull()
+        expect(table.get('[data-test-table-pin][data-column-id="id"]').attributes()).toMatchObject({
+          'aria-label': 'Fijar columna id',
+          'aria-pressed': 'false',
+          'data-test-button-root': '',
+          type: 'button',
+        })
+      })
+
+      it('does not render a pin button for a column with pinning disabled', () => {
+        const columnsWithDisabledPinning: TableColumn<Person>[] = [
+          { accessorKey: 'id', header: 'ID', enablePinning: false },
+          { accessorKey: 'name', header: 'Name' },
+        ]
+        const table = mountTable({
+          props: { columns: columnsWithDisabledPinning, data, pinnable: true },
+        })
+
+        expect(table.find('[data-test-table-pin][data-column-id="id"]').exists()).toBe(false)
+        expect(table.find('[data-test-table-pin][data-column-id="name"]').exists()).toBe(true)
+      })
+
       it('renders start and end pinned columns in their logical regions', () => {
         const table = mountTable({
           props: {
@@ -274,7 +307,7 @@ describe('Table', () => {
       })
 
       it('does not apply sticky styles when no columns are pinned', () => {
-        const table = mountTable({ props: { data } })
+        const table = mountTable({ props: { data, pinnable: true } })
 
         expect(table.find('[data-pinned]').exists()).toBe(false)
         expect(
@@ -323,7 +356,93 @@ describe('Table', () => {
     })
   })
 
+  describe('emits', () => {
+    describe('update:columnPinning', () => {
+      it('emits start pinning when an unpinned column button is clicked', async () => {
+        const table = mountTable({ props: { data, pinnable: true } })
+
+        await table.get('[data-test-table-pin][data-column-id="name"]').trigger('click')
+
+        expect(table.emitted('update:columnPinning')).toEqual([[{ start: ['name'], end: [] }]])
+      })
+
+      it.each(['start', 'end'] as const)(
+        'emits unpinning when a column pinned at %s is clicked',
+        async (position) => {
+          const columnPinning = {
+            start: position === 'start' ? ['name'] : [],
+            end: position === 'end' ? ['name'] : [],
+          }
+          const table = mountTable({ props: { data, columnPinning, pinnable: true } })
+          const button = table.get('[data-test-table-pin][data-column-id="name"]')
+
+          expect(button.attributes('aria-pressed')).toBe('true')
+          expect(button.attributes('aria-label')).toBe('Desfijar columna name')
+
+          await button.trigger('click')
+
+          expect(table.emitted('update:columnPinning')).toEqual([[{ start: [], end: [] }]])
+        },
+      )
+    })
+  })
+
   describe('slots', () => {
+    describe('pinning', () => {
+      it('replaces the default button and exposes isPinned and togglePinning', async () => {
+        const pinningColumns: TableColumn<Person>[] = [{ accessorKey: 'name', header: 'Name' }]
+        const table = mountTable({
+          props: {
+            columns: pinningColumns,
+            columnPinning: { start: ['name'], end: [] },
+            data,
+            pinnable: true,
+          },
+          slots: {
+            pinning: ({ isPinned, togglePinning }) =>
+              h(
+                'button',
+                {
+                  'data-test-custom-pinning': '',
+                  'data-is-pinned': String(isPinned),
+                  onClick: togglePinning,
+                },
+                'Custom pin',
+              ),
+          },
+        })
+        const customPinning = table.get('[data-test-custom-pinning]')
+
+        expect(customPinning.attributes('data-is-pinned')).toBe('true')
+        expect(table.find('[data-test-table-pin]').exists()).toBe(false)
+
+        await customPinning.trigger('click')
+
+        expect(table.emitted('update:columnPinning')).toEqual([[{ start: [], end: [] }]])
+      })
+
+      it.each([
+        { pinnable: undefined, enablePinning: undefined },
+        { pinnable: false, enablePinning: undefined },
+        { pinnable: true, enablePinning: false },
+      ])(
+        'does not render when pinnable=$pinnable and enablePinning=$enablePinning',
+        ({ pinnable, enablePinning }) => {
+          const pinningColumns: TableColumn<Person>[] = [
+            { accessorKey: 'name', header: 'Name', enablePinning },
+          ]
+          const table = mountTable({
+            props: { columns: pinningColumns, data, pinnable },
+            slots: {
+              pinning: () => h('span', { 'data-test-custom-pinning': '' }, 'Custom pin'),
+            },
+          })
+
+          expect(table.find('[data-test-custom-pinning]').exists()).toBe(false)
+        },
+      )
+    })
+
     describe('header-{accessorKey}', () => {
       it('renders a custom header slot with header and column props', () => {
         const table = mountTable({

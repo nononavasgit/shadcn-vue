@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Table, type TableColumn } from '@/components/ui/Table'
+import { ref } from 'vue'
 import DocsLayout from '../DocsLayout.vue'
 import TableDocs from '../docs/TableDocs.vue'
 
@@ -22,7 +23,7 @@ const columns: TableColumn<Payment>[] = [
   { accessorKey: 'id', header: 'ID' },
   { accessorKey: 'customer', header: 'Cliente' },
   { accessorKey: 'status', header: 'Estado' },
-  { accessorKey: 'amount', header: 'Importe' },
+  { accessorKey: 'amount', header: 'Importe', enablePinning: false },
   { accessorKey: 'date', header: 'Fecha' },
 ]
 
@@ -93,7 +94,7 @@ const data: Payment[] = [
 ]
 
 const emptyData: Payment[] = []
-const pinnedColumns = { start: ['id'], end: ['date'] }
+const pinnedColumns = ref({ start: ['id'], end: ['date'] })
 
 const spanningData: RegionalSale[] = [
   { region: 'Norte', customer: 'Ana', product: 'Consultoría', amount: '450,00 €' },
@@ -149,13 +150,6 @@ const spanningData: RegionalSale[] = [
           <div class="max-w-2xl rounded-md border">
             <Table :columns="sizedColumns" :data="data" />
           </div>
-          <pre class="overflow-x-auto rounded-md bg-muted p-4 text-xs"><code>const columns = [
-  { accessorKey: 'id', size: 90 },
-  { accessorKey: 'customer', size: 300 },
-  { accessorKey: 'status', size: 140 },
-  { accessorKey: 'amount', size: 130 },
-  { accessorKey: 'date', size: 150 },
-]</code></pre>
         </section>
 
         <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
@@ -164,7 +158,12 @@ const spanningData: RegionalSale[] = [
             ID permanece al inicio y Fecha al final durante el desplazamiento horizontal.
           </p>
           <div class="max-w-2xl rounded-md border">
-            <Table :columns="columns" :column-pinning="pinnedColumns" :data="data" />
+            <Table
+              v-model:column-pinning="pinnedColumns"
+              :columns="columns"
+              :data="data"
+              pinnable
+            />
           </div>
         </section>
 

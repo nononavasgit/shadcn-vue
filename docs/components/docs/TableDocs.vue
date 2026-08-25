@@ -28,6 +28,12 @@ const propRows: ApiTableRow[] = [
     description: 'Permite combinar celdas vertical u horizontalmente mediante las columnas.',
   },
   {
+    name: 'pinnable',
+    type: 'boolean',
+    default: 'false',
+    description: 'Muestra los botones de cabecera para fijar y liberar columnas manualmente.',
+  },
+  {
     name: 'textNoResults',
     type: 'string',
     default: 'No results.',
@@ -36,6 +42,12 @@ const propRows: ApiTableRow[] = [
 ]
 
 const slotRows: ApiTableRow[] = [
+  {
+    name: 'pinning',
+    type: '{ isPinned, togglePinning }',
+    description:
+      'Personaliza el botón de fijación. isPinned indica su estado y togglePinning lo alterna.',
+  },
   {
     name: 'header-{columnId}',
     type: '{ header, column, columnDef }',
@@ -56,7 +68,14 @@ const slotRows: ApiTableRow[] = [
   },
 ]
 
-const emitRows: ApiTableRow[] = []
+const emitRows: ApiTableRow[] = [
+  {
+    name: 'update:columnPinning',
+    type: 'ColumnPinningState',
+    description:
+      'Actualiza el estado al usar los botones de las cabeceras. Permite v-model:column-pinning.',
+  },
+]
 const exposeRows: ApiTableRow[] = []
 </script>
 
@@ -72,11 +91,7 @@ const exposeRows: ApiTableRow[] = []
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />
-      <ApiTable
-        title="Emits"
-        :rows="emitRows"
-        empty-text="Este componente no emite eventos propios."
-      />
+      <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
     </div>

@@ -8,15 +8,18 @@ import {
   useTable,
 } from '@tanstack/vue-table'
 import type { Column, Row, RowData, TableFeatures } from '@tanstack/vue-table'
+import { Pin } from '@lucide/vue'
 import { computed, toRef, useAttrs } from 'vue'
 import type { CSSProperties } from 'vue'
+import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
-import type { TableProps, TableSlots } from '.'
+import type { TableEmits, TableProps, TableSlots } from '.'
 import { tableDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<TableProps<TData>>(), tableDefaults)
+const emit = defineEmits<TableEmits>()
 defineSlots<TableSlots<TData>>()
 const attrs = useAttrs()
 
@@ -31,7 +34,16 @@ const table = useTable({
       return props.columnPinning
     },
   },
+  onColumnPinningChange: (updater) => {
+    const nextValue = updater instanceof Function ? updater(props.columnPinning) : updater
+
+    emit('update:columnPinning', nextValue)
+  },
 })
+
+function toggleColumnPin(column: Column<TableFeatures, TData>) {
+  column.pin(column.getIsPinned() ? false : 'start')
+}
 
 function getColumnStyle(column: Column<TableFeatures, TData>): CSSProperties {
   const position = column.getIsPinned()
@@ -109,14 +121,48 @@ const columnCount = computed(() => table.getAllLeafColumns().length)
               :style="getColumnStyle(header.column)"
               class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
             >
-              <slot
-                :name="`header-${header.column.id}`"
-                :header="header"
-                :column="header.column"
-                :column-def="header.column.columnDef"
-              >
-                <FlexRender :header="header" />
-              </slot>
+              <div class="flex items-center gap-2">
+                <template v-if="props.pinnable && header.column.getCanPin()">
+                  <slot
+                    name="pinning"
+                    :is-pinned="Boolean(header.column.getIsPinned())"
+                    :toggle-pinning="() => toggleColumnPin(header.column)"
+                  >
+                    <Button
+                      type="button"
+                      severity="secondary"
+                      size="xs"
+                      square
+                      variant="plain"
+                      :aria-label="
+                        header.column.getIsPinned()
+                          ? `Desfijar columna ${header.column.id}`
+                          : `Fijar columna ${header.column.id}`
+                      "
+                      :aria-pressed="Boolean(header.column.getIsPinned())"
+                      :data-column-id="header.column.id"
+                      :data-pinned="header.column.getIsPinned() || undefined"
+                      class="size-6 rounded-sm text-muted-foreground hover:text-foreground"
+                      data-test-table-pin
+                      @click="toggleColumnPin(header.column)"
+                    >
+                      <Pin
+                        :class="cn('size-3.5', header.column.getIsPinned() && 'fill-current')"
+                        aria-hidden="true"
+                      />
+                    </Button>
+                  </slot>
+                </template>
+
+                <slot
+                  :name="`header-${header.column.id}`"
+                  :header="header"
+                  :column="header.column"
+                  :column-def="header.column.columnDef"
+                >
+                  <FlexRender :header="header" />
+                </slot>
+              </div>
             </th>
           </template>
         </tr>

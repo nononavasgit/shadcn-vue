@@ -41,7 +41,12 @@ export interface TableProps<TData extends RowData> {
   columnPinning?: ColumnPinningState
   data?: ReadonlyArray<TData>
   enableCellSpanning?: boolean
+  pinnable?: boolean
   textNoResults?: string
+}
+
+export interface TableEmits {
+  'update:columnPinning': [value: ColumnPinningState]
 }
 
 export type TableHeaderSlotProps<TData extends RowData> = {
@@ -58,6 +63,7 @@ export type TableCellSlotProps<TData extends RowData> = {
 
 export type TableSlots<TData extends RowData> = {
   empty?(props: { colspan: number }): unknown
+  pinning?(props: { isPinned: boolean; togglePinning: () => void }): unknown
 } & {
   [name: `header-${string}`]: ((props: TableHeaderSlotProps<TData>) => unknown) | undefined
   [name: `cell-${string}`]: ((props: TableCellSlotProps<TData>) => unknown) | undefined

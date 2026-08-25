@@ -16,6 +16,12 @@ const propRows: ApiTableRow[] = [
     description: 'Filas que se muestran en la tabla.',
   },
   {
+    name: 'columnFilters',
+    type: 'ColumnFiltersState',
+    default: '[]',
+    description: 'Estado controlado de filtros por columna. Permite v-model:column-filters.',
+  },
+  {
     name: 'columnPinning',
     type: 'ColumnPinningState',
     default: '{ start: [], end: [] }',
@@ -26,6 +32,19 @@ const propRows: ApiTableRow[] = [
     type: 'ColumnVisibilityState',
     default: '{}',
     description: 'Mapa controlado de columnas visibles. Un valor false oculta la columna.',
+  },
+  {
+    name: 'enableColumnFilters',
+    type: 'boolean',
+    default: 'true',
+    description: 'Habilita o deshabilita el filtrado para todas las columnas.',
+  },
+  {
+    name: 'manualFiltering',
+    type: 'boolean',
+    default: 'false',
+    description:
+      'Omite el filtrado local cuando los datos ya llegan filtrados desde un servidor u otra fuente.',
   },
   {
     name: 'enableCellSpanning',
@@ -75,6 +94,11 @@ const slotRows: ApiTableRow[] = [
 ]
 
 const emitRows: ApiTableRow[] = [
+  {
+    name: 'update:columnFilters',
+    type: 'ColumnFiltersState',
+    description: 'Actualiza los filtros controlados. Permite v-model:column-filters.',
+  },
   {
     name: 'update:columnVisibility',
     type: 'ColumnVisibilityState',

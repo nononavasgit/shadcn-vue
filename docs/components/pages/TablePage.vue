@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Checkbox } from '@/components/ui/Checkbox'
+import { Input } from '@/components/ui/Input'
 import { Table, type TableColumn } from '@/components/ui/Table'
+import type { ColumnFiltersState } from '@tanstack/vue-table'
 import { ref } from 'vue'
 import DocsLayout from '../DocsLayout.vue'
 import TableDocs from '../docs/TableDocs.vue'
@@ -105,6 +107,7 @@ const data: Payment[] = [
 const emptyData: Payment[] = []
 const pinnedColumns = ref({ start: ['id'], end: ['date'] })
 const visibleColumns = ref<Record<string, boolean>>({ amount: false })
+const columnFilters = ref<ColumnFiltersState>([])
 const visibilityOptions = [
   { id: 'id', label: 'ID', hideable: false },
   { id: 'customer', label: 'Cliente', hideable: true },
@@ -158,6 +161,34 @@ const spanningData: RegionalSale[] = [
               </template>
             </Table>
           </div>
+        </section>
+
+        <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+          <div class="grid gap-1">
+            <h2 class="text-xl font-semibold">Filtrado por columna</h2>
+            <p class="text-sm text-muted-foreground">
+              El estado es controlado con <code>v-model:column-filters</code>. La interfaz del
+              filtro vive en el slot de cabecera y usa la API de la columna de TanStack Table.
+            </p>
+          </div>
+          <div class="rounded-md border">
+            <Table v-model:column-filters="columnFilters" :columns="columns" :data="data">
+              <template #header-customer="{ column }">
+                <div class="grid min-w-44 gap-2 py-2">
+                  <span>Cliente</span>
+                  <Input
+                    :value="String(column.getFilterValue() ?? '')"
+                    aria-label="Filtrar por cliente"
+                    placeholder="Buscar cliente..."
+                    @update:value="column.setFilterValue($event)"
+                  />
+                </div>
+              </template>
+            </Table>
+          </div>
+          <pre
+            class="overflow-auto rounded-md bg-muted p-3 text-xs"
+          ><code>{{ columnFilters }}</code></pre>
         </section>
 
         <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">

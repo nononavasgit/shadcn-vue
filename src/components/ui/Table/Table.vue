@@ -1,9 +1,17 @@
 <script setup lang="ts" generic="TData extends RowData">
 import {
   cellSpanningFeature,
+  columnFilteringFeature,
   columnPinningFeature,
   columnSizingFeature,
   columnVisibilityFeature,
+  createFilteredRowModel,
+  filterFn_arrIncludes,
+  filterFn_equals,
+  filterFn_inDateRange,
+  filterFn_inNumberRange,
+  filterFn_includesString,
+  filterFn_weakEquals,
   FlexRender,
   tableFeatures,
   useTable,
@@ -25,6 +33,16 @@ defineSlots<TableSlots<TData>>()
 const attrs = useAttrs()
 
 const features = tableFeatures({
+  columnFilteringFeature,
+  filteredRowModel: createFilteredRowModel(),
+  filterFns: {
+    arrIncludes: filterFn_arrIncludes,
+    equals: filterFn_equals,
+    inDateRange: filterFn_inDateRange,
+    inNumberRange: filterFn_inNumberRange,
+    includesString: filterFn_includesString,
+    weakEquals: filterFn_weakEquals,
+  },
   columnSizingFeature,
   columnPinningFeature,
   columnVisibilityFeature,
@@ -35,13 +53,23 @@ const table = useTable({
   columns: props.columns,
   data: toRef(props, 'data'),
   enableCellSpanning: toRef(props, 'enableCellSpanning'),
+  enableColumnFilters: toRef(props, 'enableColumnFilters'),
+  manualFiltering: toRef(props, 'manualFiltering'),
   state: {
+    get columnFilters() {
+      return props.columnFilters
+    },
     get columnPinning() {
       return props.columnPinning
     },
     get columnVisibility() {
       return props.columnVisibility
     },
+  },
+  onColumnFiltersChange: (updater) => {
+    const nextValue = updater instanceof Function ? updater(props.columnFilters) : updater
+
+    emit('update:columnFilters', nextValue)
   },
   onColumnPinningChange: (updater) => {
     const nextValue = updater instanceof Function ? updater(props.columnPinning) : updater

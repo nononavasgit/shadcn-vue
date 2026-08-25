@@ -148,6 +148,84 @@ describe('Table', () => {
       })
     })
 
+    describe('columnFilters', () => {
+      it.each([
+        { input: undefined, expectedNames: ['Ada Lovelace', 'Grace Hopper'] },
+        { input: [], expectedNames: ['Ada Lovelace', 'Grace Hopper'] },
+        { input: [{ id: 'name', value: 'ada' }], expectedNames: ['Ada Lovelace'] },
+        { input: [{ id: 'status', value: 'inactive' }], expectedNames: ['Grace Hopper'] },
+      ])('renders rows matching columnFilters=$input', ({ input, expectedNames }) => {
+        const table = mountTable({ props: { columnFilters: input, data } })
+
+        expect(table.findAll('tbody tr').map((row) => row.findAll('td')[1].text())).toEqual(
+          expectedNames,
+        )
+      })
+
+      it('reacts to external filter changes', async () => {
+        const table = mountTable({ props: { columnFilters: [], data } })
+
+        await table.setProps({ columnFilters: [{ id: 'name', value: 'grace' }] })
+
+        expect(table.findAll('tbody tr')).toHaveLength(1)
+        expect(table.get('tbody').text()).toContain('Grace Hopper')
+      })
+    })
+
+    describe('enableColumnFilters', () => {
+      it.each([undefined, true])(
+        'filters rows when enableColumnFilters=%s',
+        (enableColumnFilters) => {
+          const table = mountTable({
+            props: {
+              columnFilters: [{ id: 'name', value: 'ada' }],
+              data,
+              enableColumnFilters,
+            },
+          })
+
+          expect(table.findAll('tbody tr')).toHaveLength(1)
+        },
+      )
+
+      it('does not expose filtering through columns when disabled', () => {
+        const table = mountTable({
+          props: { data, enableColumnFilters: false },
+          slots: {
+            'header-name': ({ column }) =>
+              h('span', { 'data-test-can-filter': '' }, String(column.getCanFilter())),
+          },
+        })
+
+        expect(table.get('[data-test-can-filter]').text()).toBe('false')
+      })
+    })
+
+    describe('manualFiltering', () => {
+      it.each([undefined, false])(
+        'filters local data when manualFiltering=%s',
+        (manualFiltering) => {
+          const table = mountTable({
+            props: { columnFilters: [{ id: 'name', value: 'ada' }], data, manualFiltering },
+          })
+
+          expect(table.findAll('tbody tr')).toHaveLength(1)
+        },
+      )
+
+      it('renders the supplied data unchanged when manualFiltering=true', () => {
+        const table = mountTable({
+          props: {
+            columnFilters: [{ id: 'name', value: 'ada' }],
+            data,
+            manualFiltering: true,
+          },
+        })
+
+        expect(table.findAll('tbody tr')).toHaveLength(2)
+      })
+    })
+
     describe('enableCellSpanning', () => {
       it.each([undefined, false])(
         'does not merge cells when enableCellSpanning=%s',
@@ -414,6 +492,53 @@ describe('Table', () => {
   })
 
   describe('emits', () => {
+    describe('update:columnFilters', () => {
+      it('emits the next controlled state when a column filter changes', async () => {
+        const table = mountTable({
+          props: { columnFilters: [{ id: 'status', value: 'active' }], data },
+          slots: {
+            'header-name': ({ column }) =>
+              h(
+                'button',
+                {
+                  'data-test-column-filter': '',
+                  onClick: () => column.setFilterValue('ada'),
+                },
+                'Filter',
+              ),
+          },
+        })
+
+        await table.get('[data-test-column-filter]').trigger('click')
+
+        expect(table.emitted('update:columnFilters')).toEqual([
+          [
+            [
+              { id: 'status', value: 'active' },
+              { id: 'name', value: 'ada' },
+            ],
+          ],
+        ])
+      })
+
+      it('emits removal when a filter is cleared', async () => {
+        const table = mountTable({
+          props: { columnFilters: [{ id: 'name', value: 'ada' }], data },
+          slots: {
+            'header-name': ({ column }) =>
+              h('button', {
+                'data-test-column-filter': '',
+                onClick: () => column.setFilterValue(''),
+              }),
+          },
+        })
+
+        await table.get('[data-test-column-filter]').trigger('click')
+
+        expect(table.emitted('update:columnFilters')).toEqual([[[]]])
+      })
+    })
+
     describe('update:columnPinning', () => {
       it('emits start pinning when an unpinned column button is clicked', async () => {
         const table = mountTable({ props: { data, pinnable: true } })

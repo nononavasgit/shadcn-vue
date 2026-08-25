@@ -2,6 +2,7 @@ import type {
   Cell,
   Column,
   ColumnDef,
+  ColumnFiltersState,
   ColumnPinningState,
   ColumnVisibilityState,
   Header,
@@ -39,15 +40,19 @@ export type TableColumn<TData extends RowData> = ColumnDef<TableFeatures, TData>
 
 export interface TableProps<TData extends RowData> {
   columns: ReadonlyArray<TableColumn<TData>>
+  columnFilters?: ColumnFiltersState
   columnPinning?: ColumnPinningState
   columnVisibility?: ColumnVisibilityState
   data?: ReadonlyArray<TData>
   enableCellSpanning?: boolean
+  enableColumnFilters?: boolean
+  manualFiltering?: boolean
   pinnable?: boolean
   textNoResults?: string
 }
 
 export interface TableEmits {
+  'update:columnFilters': [value: ColumnFiltersState]
   'update:columnPinning': [value: ColumnPinningState]
   'update:columnVisibility': [value: ColumnVisibilityState]
 }

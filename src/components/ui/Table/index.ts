@@ -79,4 +79,5 @@ export type TableSlots<TData extends RowData> = {
 } & {
   [name: `header-${string}`]: ((props: TableHeaderSlotProps<TData>) => unknown) | undefined
   [name: `cell-${string}`]: ((props: TableCellSlotProps<TData>) => unknown) | undefined
+  [name: `footer-${string}`]: ((props: TableHeaderSlotProps<TData>) => unknown) | undefined
 }

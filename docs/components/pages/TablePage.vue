@@ -22,6 +22,12 @@ type RegionalSale = {
   amount: string
 }
 
+type Invoice = {
+  customer: string
+  status: 'Completado' | 'Pendiente'
+  amount: number
+}
+
 const columns: TableColumn<Payment>[] = [
   { accessorKey: 'id', header: 'ID' },
   { accessorKey: 'customer', header: 'Cliente' },
@@ -36,6 +42,26 @@ const facetedColumns: TableColumn<Payment>[] = [
   { accessorKey: 'status', header: 'Estado', filterFn: 'equals' },
   { accessorKey: 'amount', header: 'Importe' },
   { accessorKey: 'date', header: 'Fecha' },
+]
+
+const aggregationColumns: TableColumn<Invoice>[] = [
+  {
+    accessorKey: 'customer',
+    header: 'Cliente',
+    footer: 'Total filtrado',
+  },
+  {
+    accessorKey: 'status',
+    header: 'Estado',
+    filterFn: 'equals',
+  },
+  {
+    accessorKey: 'amount',
+    header: 'Importe',
+    cell: ({ getValue }) => formatCurrency(getValue<number>()),
+    aggregationFn: 'sum',
+    footer: ({ column }) => formatCurrency(column.getAggregationValue<number>()),
+  },
 ]
 
 const sizedColumns: TableColumn<Payment>[] = [
@@ -136,6 +162,22 @@ const spanningData: RegionalSale[] = [
   { region: 'Sur', customer: 'Lucía', product: 'Desarrollo', amount: '720,00 €' },
   { region: 'Sur', customer: 'Javier', product: 'Diseño', amount: '310,00 €' },
 ]
+
+const aggregationData: Invoice[] = [
+  { customer: 'Ana García', status: 'Completado', amount: 316 },
+  { customer: 'Carlos Ruiz', status: 'Pendiente', amount: 242 },
+  { customer: 'Lucía Martín', status: 'Completado', amount: 837 },
+  { customer: 'Javier López', status: 'Pendiente', amount: 721 },
+]
+
+const aggregationFilters = ref<ColumnFiltersState>([])
+
+function formatCurrency(value: number | undefined) {
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+  }).format(value ?? 0)
+}
 </script>
 
 <template>
@@ -170,6 +212,39 @@ const spanningData: RegionalSale[] = [
                 </span>
               </template>
             </Table>
+          </div>
+        </section>
+
+        <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+          <div class="grid gap-1">
+            <h2 class="text-xl font-semibold">Agregación</h2>
+            <p class="text-sm text-muted-foreground">
+              El pie suma los importes con <code>aggregationFn: 'sum'</code>. El total se recalcula
+              al filtrar las filas.
+            </p>
+          </div>
+          <label class="grid max-w-xs gap-2 text-sm font-medium">
+            Estado
+            <select
+              class="h-9 rounded-md border border-input bg-background px-3 text-sm text-foreground"
+              :value="String(aggregationFilters[0]?.value ?? '')"
+              @change="
+                aggregationFilters = ($event.target as HTMLSelectElement).value
+                  ? [{ id: 'status', value: ($event.target as HTMLSelectElement).value }]
+                  : []
+              "
+            >
+              <option value="">Todos</option>
+              <option value="Completado">Completado</option>
+              <option value="Pendiente">Pendiente</option>
+            </select>
+          </label>
+          <div class="rounded-md border">
+            <Table
+              v-model:column-filters="aggregationFilters"
+              :columns="aggregationColumns"
+              :data="aggregationData"
+            />
           </div>
         </section>
 

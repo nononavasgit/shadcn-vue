@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="TData extends RowData">
 import {
+  aggregationFn_sum,
   cellSpanningFeature,
   columnFacetingFeature,
   columnFilteringFeature,
@@ -18,6 +19,7 @@ import {
   filterFn_weakEquals,
   FlexRender,
   globalFilteringFeature,
+  rowAggregationFeature,
   tableFeatures,
   useTable,
 } from '@tanstack/vue-table'
@@ -61,6 +63,10 @@ const deepGlobalFilterFn: FilterFn<TableFeatures, TData> = (row, columnId, filte
   normalizeSearchText(row.getValue(columnId)).includes(normalizeSearchText(filterValue))
 
 const features = tableFeatures({
+  rowAggregationFeature,
+  aggregationFns: {
+    sum: aggregationFn_sum,
+  },
   columnFacetingFeature,
   columnFilteringFeature,
   globalFilteringFeature,
@@ -189,6 +195,14 @@ const tbodyProps = computed(() => ({
   class: '[&_tr:last-child]:border-0',
 }))
 
+const tfootProps = computed(() => ({
+  class: 'border-t bg-muted/50 font-medium',
+}))
+
+const hasFooter = computed(() =>
+  table.getAllLeafColumns().some((column) => column.columnDef.footer != null),
+)
+
 const columnCount = computed(() => Math.max(1, table.getVisibleLeafColumns().length))
 </script>
 
@@ -294,6 +308,29 @@ const columnCount = computed(() => Math.max(1, table.getVisibleLeafColumns().len
           </td>
         </tr>
       </tbody>
+
+      <tfoot v-if="hasFooter" v-bind="tfootProps" data-test-table-tfoot>
+        <tr v-for="footerGroup in table.getFooterGroups()" :key="footerGroup.id">
+          <th
+            v-for="footer in footerGroup.headers"
+            :key="footer.id"
+            :colspan="footer.colSpan"
+            :data-pinned="footer.column.getIsPinned() || undefined"
+            :class="getPinningClass(footer.column)"
+            :style="getColumnStyle(footer.column)"
+            class="h-12 px-4 text-left align-middle"
+          >
+            <slot
+              :name="`footer-${footer.column.id}`"
+              :footer="footer"
+              :column="footer.column"
+              :column-def="footer.column.columnDef"
+            >
+              <FlexRender v-if="!footer.isPlaceholder" :footer="footer" />
+            </slot>
+          </th>
+        </tr>
+      </tfoot>
     </table>
   </div>
 </template>

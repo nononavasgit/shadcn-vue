@@ -13,10 +13,11 @@ import {
   filterFn_includesString,
   filterFn_weakEquals,
   FlexRender,
+  globalFilteringFeature,
   tableFeatures,
   useTable,
 } from '@tanstack/vue-table'
-import type { Column, Row, RowData, TableFeatures } from '@tanstack/vue-table'
+import type { Column, FilterFn, Row, RowData, TableFeatures } from '@tanstack/vue-table'
 import { Pin } from '@lucide/vue'
 import { computed, toRef, useAttrs } from 'vue'
 import type { CSSProperties } from 'vue'
@@ -32,8 +33,32 @@ const emit = defineEmits<TableEmits>()
 defineSlots<TableSlots<TData>>()
 const attrs = useAttrs()
 
+function normalizeSearchValue(value: unknown, seen = new WeakSet<object>()): string {
+  if (value == null) return ''
+  if (value instanceof Date) return value.toISOString()
+  if (typeof value !== 'object') return String(value)
+  if (seen.has(value)) return ''
+
+  seen.add(value)
+
+  return Object.values(value)
+    .map((item) => normalizeSearchValue(item, seen))
+    .join(' ')
+}
+
+function normalizeSearchText(value: unknown) {
+  return normalizeSearchValue(value)
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLocaleLowerCase()
+}
+
+const deepGlobalFilterFn: FilterFn<TableFeatures, TData> = (row, columnId, filterValue) =>
+  normalizeSearchText(row.getValue(columnId)).includes(normalizeSearchText(filterValue))
+
 const features = tableFeatures({
   columnFilteringFeature,
+  globalFilteringFeature,
   filteredRowModel: createFilteredRowModel(),
   filterFns: {
     arrIncludes: filterFn_arrIncludes,
@@ -54,10 +79,16 @@ const table = useTable({
   data: toRef(props, 'data'),
   enableCellSpanning: toRef(props, 'enableCellSpanning'),
   enableColumnFilters: toRef(props, 'enableColumnFilters'),
+  enableGlobalFilter: toRef(props, 'enableGlobalFilter'),
+  getColumnCanGlobalFilter: () => true,
+  globalFilterFn: props.globalFilterFn ?? deepGlobalFilterFn,
   manualFiltering: toRef(props, 'manualFiltering'),
   state: {
     get columnFilters() {
       return props.columnFilters
+    },
+    get globalFilter() {
+      return props.globalFilter
     },
     get columnPinning() {
       return props.columnPinning
@@ -227,7 +258,7 @@ const columnCount = computed(() => Math.max(1, table.getVisibleLeafColumns().len
               class="p-4 align-middle [&:has([role=checkbox])]:pr-0"
             >
               <slot
-                :name="`cell-${cell.column.columnDef.accessorKey}`"
+                :name="`cell-${cell.column.id}`"
                 :row="row"
                 :cell="cell"
                 :value="cell.getValue()"

@@ -5,6 +5,8 @@ export const tableDefaults = {
   data: () => [],
   enableCellSpanning: false,
   enableColumnFilters: true,
+  enableGlobalFilter: true,
+  globalFilter: undefined,
   manualFiltering: false,
   pinnable: false,
   textNoResults: 'No results.',

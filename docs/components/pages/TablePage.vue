@@ -108,6 +108,7 @@ const emptyData: Payment[] = []
 const pinnedColumns = ref({ start: ['id'], end: ['date'] })
 const visibleColumns = ref<Record<string, boolean>>({ amount: false })
 const columnFilters = ref<ColumnFiltersState>([])
+const globalFilter = ref('')
 const visibilityOptions = [
   { id: 'id', label: 'ID', hideable: false },
   { id: 'customer', label: 'Cliente', hideable: true },
@@ -160,6 +161,25 @@ const spanningData: RegionalSale[] = [
                 </span>
               </template>
             </Table>
+          </div>
+        </section>
+
+        <section class="grid gap-4 rounded-xl border bg-card p-6 text-card-foreground shadow-sm">
+          <div class="grid gap-1">
+            <h2 class="text-xl font-semibold">Buscador global</h2>
+            <p class="text-sm text-muted-foreground">
+              Un único valor externo busca en todas las columnas compatibles. No necesita conocer el
+              identificador de ninguna columna.
+            </p>
+          </div>
+          <Input
+            v-model:value="globalFilter"
+            class="max-w-sm"
+            aria-label="Buscar pagos"
+            placeholder="Buscar en todos los campos..."
+          />
+          <div class="rounded-md border">
+            <Table :columns="columns" :data="data" :global-filter="globalFilter" />
           </div>
         </section>
 

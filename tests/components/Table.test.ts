@@ -201,6 +201,120 @@ describe('Table', () => {
       })
     })
 
+    describe('globalFilter', () => {
+      it.each([
+        { input: undefined, expectedNames: ['Ada Lovelace', 'Grace Hopper'] },
+        { input: '', expectedNames: ['Ada Lovelace', 'Grace Hopper'] },
+        { input: 'ada', expectedNames: ['Ada Lovelace'] },
+        { input: 'INACTIVE', expectedNames: ['Grace Hopper'] },
+      ])('searches all eligible columns for globalFilter=$input', ({ input, expectedNames }) => {
+        const table = mountTable({ props: { data, globalFilter: input } })
+
+        expect(table.findAll('tbody tr').map((row) => row.findAll('td')[1].text())).toEqual(
+          expectedNames,
+        )
+      })
+
+      it('reacts to an externally controlled search value', async () => {
+        const table = mountTable({ props: { data, globalFilter: '' } })
+
+        await table.setProps({ globalFilter: 'grace' })
+
+        expect(table.findAll('tbody tr')).toHaveLength(1)
+        expect(table.get('tbody').text()).toContain('Grace Hopper')
+      })
+
+      it('respects enableGlobalFilter=false on a column', () => {
+        const globallyFilteredColumns: TableColumn<Person>[] = [
+          { accessorKey: 'id', header: 'ID' },
+          { accessorKey: 'name', header: 'Name', enableGlobalFilter: false },
+          { accessorKey: 'status', header: 'Status' },
+        ]
+        const table = mountTable({
+          props: { columns: globallyFilteredColumns, data, globalFilter: 'ada' },
+        })
+
+        expect(table.get('tbody').text()).toContain('No results.')
+      })
+
+      it.each([
+        { input: 'jose', expectedId: '1' },
+        { input: 'madrid', expectedId: '1' },
+        { input: 'administracion', expectedId: '1' },
+        { input: 'vue', expectedId: '2' },
+      ])('searches nested objects and arrays for $input', ({ input, expectedId }) => {
+        type RichPerson = Person & {
+          profile: { city: string; displayName: string }
+          tags: string[]
+        }
+        const richColumns: TableColumn<RichPerson>[] = [
+          { accessorKey: 'id', header: 'ID' },
+          { accessorKey: 'profile', header: 'Profile' },
+          { accessorKey: 'tags', header: 'Tags' },
+        ]
+        const richData: RichPerson[] = [
+          {
+            id: '1',
+            name: 'Fallback name',
+            status: 'active',
+            profile: { city: 'Madrid', displayName: 'José Navas' },
+            tags: ['Administración', 'TypeScript'],
+          },
+          {
+            id: '2',
+            name: 'Another name',
+            status: 'inactive',
+            profile: { city: 'Lisboa', displayName: 'Ana Silva' },
+            tags: ['Vue', 'Diseño'],
+          },
+        ]
+        const table = mount(Table, {
+          props: { columns: richColumns, data: richData, globalFilter: input },
+          slots: {
+            'cell-profile': ({ value }) =>
+              h('span', { 'data-test-profile-component': '' }, JSON.stringify(value)),
+          },
+        })
+
+        expect(table.findAll('tbody tr')).toHaveLength(1)
+        expect(table.get('tbody tr td').text()).toBe(expectedId)
+        expect(table.get('[data-test-profile-component]').exists()).toBe(true)
+      })
+
+      it('accepts a custom globalFilterFn criterion', () => {
+        const table = mountTable({
+          props: {
+            data,
+            globalFilter: '2',
+            globalFilterFn: (row, _columnId, filterValue) => row.original.id === filterValue,
+          },
+        })
+
+        expect(table.findAll('tbody tr')).toHaveLength(1)
+        expect(table.get('tbody').text()).toContain('Grace Hopper')
+      })
+    })
+
+    describe('enableGlobalFilter', () => {
+      it.each([undefined, true])(
+        'searches rows when enableGlobalFilter=%s',
+        (enableGlobalFilter) => {
+          const table = mountTable({ props: { data, enableGlobalFilter, globalFilter: 'ada' } })
+
+          expect(table.findAll('tbody tr')).toHaveLength(1)
+          expect(table.get('tbody').text()).toContain('Ada Lovelace')
+        },
+      )
+
+      it('renders the supplied data unchanged when enableGlobalFilter=false', () => {
+        const table = mountTable({
+          props: { data, enableGlobalFilter: false, globalFilter: 'ada' },
+        })
+
+        expect(table.findAll('tbody tr')).toHaveLength(2)
+      })
+    })
+
     describe('manualFiltering', () => {
       it.each([undefined, false])(
         'filters local data when manualFiltering=%s',
@@ -221,6 +335,12 @@ describe('Table', () => {
             manualFiltering: true,
           },
         })
+
+        expect(table.findAll('tbody tr')).toHaveLength(2)
+      })
+
+      it('bypasses global filtering when manualFiltering=true', () => {
+        const table = mountTable({ props: { data, globalFilter: 'ada', manualFiltering: true } })
 
         expect(table.findAll('tbody tr')).toHaveLength(2)
       })
@@ -673,7 +793,7 @@ describe('Table', () => {
       })
     })
 
-    describe('cell-{accessorKey}', () => {
+    describe('cell-{columnId}', () => {
       it('renders a custom cell slot with row, cell and value props', () => {
         const table = mountTable({
           props: { data },
@@ -691,6 +811,24 @@ describe('Table', () => {
           table.findAll('[data-test-table-cell-slot="status"]').map((cell) => cell.text()),
         ).toEqual(['Ada Lovelace:status:active', 'Grace Hopper:status:inactive'])
         expect(table.findAll('tbody td')[1].text()).toBe('Ada Lovelace')
+      })
+
+      it('uses the explicit column id for an accessorFn column', () => {
+        const table = mountTable({
+          props: { columns: derivedColumns, data },
+          slots: {
+            'cell-summary': ({ row, cell, value }) =>
+              h(
+                'span',
+                { 'data-test-table-derived-cell-slot': '' },
+                `${row.original.id}:${cell.column.id}:${value}`,
+              ),
+          },
+        })
+
+        expect(
+          table.findAll('[data-test-table-derived-cell-slot]').map((cell) => cell.text()),
+        ).toEqual(['1:summary:Ada Lovelace (active)', '2:summary:Grace Hopper (inactive)'])
       })
     })
 

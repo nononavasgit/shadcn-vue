@@ -5,6 +5,7 @@ import type {
   ColumnFiltersState,
   ColumnPinningState,
   ColumnVisibilityState,
+  FilterFn,
   Header,
   Row,
   RowData,
@@ -46,6 +47,9 @@ export interface TableProps<TData extends RowData> {
   data?: ReadonlyArray<TData>
   enableCellSpanning?: boolean
   enableColumnFilters?: boolean
+  enableGlobalFilter?: boolean
+  globalFilter?: unknown
+  globalFilterFn?: FilterFn<TableFeatures, TData>
   manualFiltering?: boolean
   pinnable?: boolean
   textNoResults?: string

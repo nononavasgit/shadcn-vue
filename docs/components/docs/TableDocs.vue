@@ -40,6 +40,26 @@ const propRows: ApiTableRow[] = [
     description: 'Habilita o deshabilita el filtrado para todas las columnas.',
   },
   {
+    name: 'enableGlobalFilter',
+    type: 'boolean',
+    default: 'true',
+    description: 'Habilita o deshabilita la búsqueda global para toda la tabla.',
+  },
+  {
+    name: 'globalFilter',
+    type: 'unknown',
+    default: 'undefined',
+    description:
+      'Valor de búsqueda global controlado externamente. Se aplica a todas las columnas compatibles.',
+  },
+  {
+    name: 'globalFilterFn',
+    type: 'FilterFn<TableFeatures, TData>',
+    default: 'deepGlobalFilterFn',
+    description:
+      'Criterio global personalizado. Por defecto normaliza mayúsculas y acentos y recorre arrays y objetos anidados.',
+  },
+  {
     name: 'manualFiltering',
     type: 'boolean',
     default: 'false',
@@ -80,10 +100,10 @@ const slotRows: ApiTableRow[] = [
       'Personaliza el contenido de una cabecera según el id de la columna. Si no existe, se usa FlexRender.',
   },
   {
-    name: 'cell-{accessorKey}',
+    name: 'cell-{columnId}',
     type: '{ row, cell, value }',
     description:
-      'Personaliza el contenido de una celda según el accessorKey de la columna. Si no existe, se usa FlexRender.',
+      'Personaliza el contenido de una celda según el id resuelto de la columna. Funciona con accessorKey y accessorFn.',
   },
   {
     name: 'empty',

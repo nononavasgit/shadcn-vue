@@ -1,23 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import { Button } from '@/components/ui/Button'
-import {
-  ButtonGroup,
-  type ButtonGroupOrientation,
-  type ButtonGroupProps,
-  type ButtonGroupSize,
-} from '@/components/ui/ButtonGroup'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const orientation = ref<ButtonGroupOrientation>('horizontal')
-const size = ref<ButtonGroupSize>('md')
-
-const playgroundProps = computed<ButtonGroupProps>(() => ({
-  orientation: orientation.value,
-  size: size.value,
-}))
 
 const propRows: ApiTableRow[] = [
   {
@@ -58,59 +40,15 @@ const exposeRows: ApiTableRow[] = []
       </p>
     </header>
 
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">Cambia la orientacion y el tamano del grupo.</p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <ButtonGroup v-bind="playgroundProps">
-              <Button>Back</Button>
-              <Button>Next</Button>
-              <Button>Finish</Button>
-            </ButtonGroup>
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">orientation</span>
-            <select
-              v-model="orientation"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="horizontal">horizontal</option>
-              <option value="vertical">vertical</option>
-            </select>
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">size</span>
-            <select
-              v-model="size"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="xs">xs</option>
-              <option value="sm">sm</option>
-              <option value="md">md</option>
-              <option value="lg">lg</option>
-            </select>
-          </label>
-        </div>
-      </div>
-    </section>
-
     <div class="grid gap-4">
-      <ApiTable title="Props" :rows="propRows" />
+      <ApiTable id="button-group-props" title="Props" :rows="propRows" />
       <ApiTable
+        id="button-group-emits"
         title="Emits"
         :rows="emitRows"
         empty-text="Este componente no emite eventos propios."
       />
-      <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
+      <ApiTable id="button-group-slots" title="Slots" type-label="slotProps" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
     </div>
   </section>

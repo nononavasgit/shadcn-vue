@@ -1,6 +1,49 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/Button'
 import { ButtonGroup } from '@/components/ui/ButtonGroup'
+import Example from '../../Example.vue'
+
+const horizontalCode = `<ButtonGroup>
+  <Button variant="outline">Back</Button>
+  <Button variant="outline">Next</Button>
+  <Button>Finish</Button>
+</ButtonGroup>`
+const verticalCode = `<ButtonGroup orientation="vertical">
+  <Button variant="outline">Profile</Button>
+  <Button variant="outline">Preferences</Button>
+  <Button>Sign out</Button>
+</ButtonGroup>`
+const sizeCode = `<div class="flex items-center gap-3">
+  <ButtonGroup size="xs">
+    <Button variant="outline">xs 1</Button>
+    <Button>xs 2</Button>
+  </ButtonGroup>
+  <ButtonGroup size="sm">
+    <Button variant="outline">sm 1</Button>
+    <Button>sm 2</Button>
+  </ButtonGroup>
+  <ButtonGroup size="md">
+    <Button variant="outline">md 1</Button>
+    <Button>md 2</Button>
+  </ButtonGroup>
+  <ButtonGroup size="lg">
+    <Button variant="outline">lg 1</Button>
+    <Button>lg 2</Button>
+  </ButtonGroup>
+</div>`
+const defaultSlotCode = `<ButtonGroup>
+  <Button :icon="{ name: 'chevronLeft' }" aria-label="Anterior" />
+  <Button>Page 1</Button>
+  <Button :icon="{ name: 'chevronRight' }" aria-label="Siguiente" />
+</ButtonGroup>`
+const attrsCode = `<ButtonGroup
+  class="rounded-lg border p-1"
+  data-state="ready"
+  aria-label="Acciones de navegación"
+>
+  <Button variant="outline">Back</Button>
+  <Button>Next</Button>
+</ButtonGroup>`
 </script>
 
 <template>
@@ -8,69 +51,88 @@ import { ButtonGroup } from '@/components/ui/ButtonGroup'
     <div>
       <h2 class="text-xl font-semibold">Ejemplos</h2>
       <p class="text-sm text-muted-foreground">
-        Agrupa acciones relacionadas y ajusta su orientación y tamaño.
+        Cada ejemplo muestra una prop, slot o atributo disponible en ButtonGroup.
       </p>
     </div>
 
     <div class="grid gap-4 md:grid-cols-2">
-      <div class="grid gap-3 rounded-lg border p-4">
-        <div>
-          <h3 class="font-medium">Grupo horizontal</h3>
-          <p class="text-sm text-muted-foreground">La orientación por defecto.</p>
-        </div>
-        <div class="flex flex-wrap items-center gap-3">
-          <ButtonGroup>
-            <Button variant="outline">Back</Button>
-            <Button variant="outline">Next</Button>
-            <Button>Finish</Button>
-          </ButtonGroup>
-        </div>
-      </div>
+      <Example
+        title="Orientation horizontal"
+        description="La orientación horizontal es el valor por defecto."
+        :code="horizontalCode"
+        class="md:col-span-2"
+      >
+        <ButtonGroup>
+          <Button variant="outline">Back</Button>
+          <Button variant="outline">Next</Button>
+          <Button>Finish</Button>
+        </ButtonGroup>
+      </Example>
 
-      <div class="grid gap-3 rounded-lg border p-4">
-        <div>
-          <h3 class="font-medium">Grupo vertical</h3>
-          <p class="text-sm text-muted-foreground">Útil para menús y acciones apiladas.</p>
-        </div>
-        <div class="flex items-start">
-          <ButtonGroup orientation="vertical">
-            <Button variant="outline">Perfil</Button>
-            <Button variant="outline">Preferencias</Button>
-            <Button>Salir</Button>
-          </ButtonGroup>
-        </div>
-      </div>
+      <Example
+        title="Orientation vertical"
+        description="vertical apila los botones para menús y acciones relacionadas."
+        :code="verticalCode"
+      >
+        <ButtonGroup orientation="vertical">
+          <Button variant="outline">Profile</Button>
+          <Button variant="outline">Preferences</Button>
+          <Button>Sign out</Button>
+        </ButtonGroup>
+      </Example>
 
-      <div class="grid gap-3 rounded-lg border p-4">
-        <div>
-          <h3 class="font-medium">Tamaños</h3>
-          <p class="text-sm text-muted-foreground">El tamaño se aplica a todos los botones.</p>
-        </div>
+      <Example
+        title="Size"
+        description="size ajusta el tamaño de todos los botones del grupo."
+        :code="sizeCode"
+        class="md:col-span-2"
+      >
         <div class="flex flex-wrap items-center gap-3">
           <ButtonGroup size="xs">
-            <Button variant="outline">Small</Button>
-            <Button variant="outline">Group</Button>
+            <Button variant="outline">xs 1</Button>
+            <Button>xs 2</Button>
+          </ButtonGroup>
+          <ButtonGroup size="sm">
+            <Button variant="outline">sm 1</Button>
+            <Button>sm 2</Button>
+          </ButtonGroup>
+          <ButtonGroup size="md">
+            <Button variant="outline">md 1</Button>
+            <Button>md 2</Button>
           </ButtonGroup>
           <ButtonGroup size="lg">
-            <Button variant="outline">Large</Button>
-            <Button>Group</Button>
+            <Button variant="outline">lg 1</Button>
+            <Button>lg 2</Button>
           </ButtonGroup>
         </div>
-      </div>
+      </Example>
 
-      <div class="grid gap-3 rounded-lg border p-4">
-        <div>
-          <h3 class="font-medium">Acciones con iconos</h3>
-          <p class="text-sm text-muted-foreground">Combina ButtonGroup con configuraciones de Button.</p>
-        </div>
-        <div class="flex flex-wrap items-center gap-3">
-          <ButtonGroup>
-            <Button variant="outline" :icon="{ name: 'check' }" aria-label="Negrita" />
-            <Button variant="outline" :icon="{ name: 'info' }" aria-label="Cursiva" />
-            <Button :icon="{ name: 'warning' }" :severity="'warning'" aria-label="Subrayado" />
-          </ButtonGroup>
-        </div>
-      </div>
+      <Example
+        title="Slot default"
+        description="El slot default contiene los botones que forman el grupo."
+        :code="defaultSlotCode"
+      >
+        <ButtonGroup>
+          <Button :icon="{ name: 'chevronLeft' }" aria-label="Anterior" />
+          <Button>Page 1</Button>
+          <Button :icon="{ name: 'chevronRight' }" aria-label="Siguiente" />
+        </ButtonGroup>
+      </Example>
+
+      <Example
+        title="Atributos HTML"
+        description="Los atributos, clases y el rol group se aplican al elemento raíz."
+        :code="attrsCode"
+      >
+        <ButtonGroup
+          class="rounded-lg border p-1"
+          data-state="ready"
+          aria-label="Acciones de navegación"
+        >
+          <Button variant="outline">Back</Button>
+          <Button>Next</Button>
+        </ButtonGroup>
+      </Example>
     </div>
   </section>
 </template>

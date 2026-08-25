@@ -5,9 +5,12 @@ import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'vite'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const repositoryName = process.env.GITHUB_REPOSITORY?.split('/')[1]
+const base = process.env.GITHUB_ACTIONS && repositoryName ? `/${repositoryName}/` : '/'
 
 export default defineConfig({
   root: path.resolve(__dirname, 'docs'),
+  base,
   plugins: [vue(), tailwindcss()],
   resolve: {
     alias: { '@': path.resolve(__dirname, 'src') },

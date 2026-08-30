@@ -10,29 +10,37 @@ function mountCheckbox(options: MountingOptions<CheckboxProps> = {}) {
   return mount(Checkbox, options)
 }
 
+const casesValue = [
+  { input: true, trueValue: true, falseValue: false, expected: true },
+  { input: false, trueValue: true, falseValue: false, expected: false },
+  {
+    input: 'indeterminate' as const,
+    trueValue: true,
+    falseValue: false,
+    expected: 'indeterminate' as const,
+  },
+  { input: undefined, trueValue: true, falseValue: false, expected: false },
+  { input: 'yes', trueValue: 'yes', falseValue: 'no', expected: 'yes' },
+  { input: 'no', trueValue: 'yes', falseValue: 'no', expected: 'no' },
+  {
+    input: 'indeterminate' as const,
+    trueValue: 'yes',
+    falseValue: 'no',
+    expected: 'indeterminate' as const,
+  },
+  { input: 'invalid', trueValue: 'yes', falseValue: 'no', expected: 'no' },
+] as const
+
+const casesUpdateValue = [
+  { value: false, trueValue: true, falseValue: false, expected: true },
+  { value: true, trueValue: true, falseValue: false, expected: false },
+  { value: 'off', trueValue: 'on', falseValue: 'off', expected: 'on' },
+]
+
 describe('Checkbox', () => {
   describe('props', () => {
     describe('value', () => {
-      it.each([
-        { input: true, trueValue: true, falseValue: false, expected: true },
-        { input: false, trueValue: true, falseValue: false, expected: false },
-        {
-          input: 'indeterminate' as const,
-          trueValue: true,
-          falseValue: false,
-          expected: 'indeterminate' as const,
-        },
-        { input: undefined, trueValue: true, falseValue: false, expected: false },
-        { input: 'yes', trueValue: 'yes', falseValue: 'no', expected: 'yes' },
-        { input: 'no', trueValue: 'yes', falseValue: 'no', expected: 'no' },
-        {
-          input: 'indeterminate' as const,
-          trueValue: 'yes',
-          falseValue: 'no',
-          expected: 'indeterminate' as const,
-        },
-        { input: 'invalid', trueValue: 'yes', falseValue: 'no', expected: 'no' },
-      ] as const)('passes value=$input as modelValue=$expected', (inputCase) => {
+      it.each(casesValue)('pasa value=$input como modelValue=$expected', (inputCase) => {
         const { input, trueValue, falseValue, expected } = inputCase
         const root = mountCheckbox({ props: { value: input, trueValue, falseValue } }).getComponent(
           CheckboxRoot,
@@ -45,7 +53,7 @@ describe('Checkbox', () => {
     })
 
     describe('trueValue', () => {
-      it('defaults to true', () => {
+      it('usa true por defecto', () => {
         const root = mountCheckbox().getComponent(CheckboxRoot)
 
         expect(root.props('trueValue')).toBe(true)
@@ -53,7 +61,7 @@ describe('Checkbox', () => {
     })
 
     describe('falseValue', () => {
-      it('defaults to false', () => {
+      it('usa false por defecto', () => {
         const root = mountCheckbox().getComponent(CheckboxRoot)
 
         expect(root.props('falseValue')).toBe(false)
@@ -62,7 +70,7 @@ describe('Checkbox', () => {
 
     describe('ui.indicator', () => {
       testAttrs({
-        text: 'renders ui.indicator attributes',
+        text: 'pasa los atributos de ui.indicator',
         id: '[data-test-checkbox-indicator]',
         mount: (attrs) =>
           mountCheckbox({
@@ -76,13 +84,13 @@ describe('Checkbox', () => {
   })
 
   describe('root configuration', () => {
-    it('always passes as=button', () => {
+    it('siempre pasa as=button', () => {
       const root = mountCheckbox().getComponent(CheckboxRoot)
 
       expect(root.props('as')).toBe('button')
     })
 
-    it('always passes asChild=false', () => {
+    it('siempre pasa asChild=false', () => {
       const root = mountCheckbox().getComponent(CheckboxRoot)
 
       expect(root.props('asChild')).toBe(false)
@@ -91,7 +99,7 @@ describe('Checkbox', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to root',
+      text: 'pasa los atributos arbitrarios, la clase y el estilo a la raíz',
       id: '[data-test-checkbox-root]',
       mount: (attrs) => mountCheckbox({ attrs }),
     })
@@ -99,12 +107,8 @@ describe('Checkbox', () => {
 
   describe('emits', () => {
     describe('update:value', () => {
-      it.each([
-        { value: false, trueValue: true, falseValue: false, expected: true },
-        { value: true, trueValue: true, falseValue: false, expected: false },
-        { value: 'off', trueValue: 'on', falseValue: 'off', expected: 'on' },
-      ])(
-        'emits the next value from the root interaction',
+      it.each(casesUpdateValue)(
+        'emite el siguiente valor tras interactuar con la raíz',
         async ({ value, trueValue, falseValue, expected }) => {
           const checkbox = mountCheckbox({ props: { value, trueValue, falseValue } })
 
@@ -118,7 +122,7 @@ describe('Checkbox', () => {
 
   describe('slots', () => {
     describe('indicator', () => {
-      it('renders the indicator slot with state context', () => {
+      it('renderiza el slot indicator con el contexto state', () => {
         const checkbox = mountCheckbox({
           props: { value: true },
           slots: {
@@ -131,7 +135,7 @@ describe('Checkbox', () => {
         expect(checkbox.find('[data-test-checkbox-icon]').exists()).toBe(false)
       })
 
-      it('renders the default indicator icon', () => {
+      it('renderiza el icono predeterminado del indicador', () => {
         const checkbox = mountCheckbox({ props: { value: true } })
 
         expect(checkbox.get('[data-test-checkbox-icon]').exists()).toBe(true)

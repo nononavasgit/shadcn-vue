@@ -167,6 +167,11 @@ export const componentMeta = [
       'Progreso circular accesible con valores controlados, estado indeterminado, colores y slots.',
   },
   {
+    slug: 'ribbon',
+    title: 'Ribbon',
+    description: 'Cinta diagonal decorativa para destacar una tarjeta o contenido.',
+  },
+  {
     slug: 'scroll-area',
     title: 'ScrollArea',
     description: 'Contenedor de desplazamiento con barras verticales, horizontales o ambas.',

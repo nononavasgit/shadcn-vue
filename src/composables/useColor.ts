@@ -63,6 +63,18 @@ export function getContrastColor(color: string, light = '#ffffff', dark = '#0909
   return contrastWithLight >= contrastWithDark ? light : dark
 }
 
+export function getColorStyle(
+  color: string | undefined,
+  prefix = 'button',
+): ColorStyle | undefined {
+  if (!color) return undefined
+
+  return {
+    [`--${prefix}-color`]: color,
+    [`--${prefix}-color-foreground`]: getContrastColor(color),
+  }
+}
+
 export function useColor(color: MaybeRefOrGetter<string | undefined>, prefix = 'button') {
   const contrastColor = computed(() => {
     const value = toValue(color)
@@ -71,12 +83,7 @@ export function useColor(color: MaybeRefOrGetter<string | undefined>, prefix = '
 
   const colorStyle = computed<ColorStyle | undefined>(() => {
     const value = toValue(color)
-    if (!value || !contrastColor.value) return undefined
-
-    return {
-      [`--${prefix}-color`]: value,
-      [`--${prefix}-color-foreground`]: contrastColor.value,
-    }
+    return value && contrastColor.value ? getColorStyle(value, prefix) : undefined
   })
 
   return { contrastColor, colorStyle }

@@ -9,39 +9,45 @@ function mountAspectRatio(options: MountingOptions<AspectRatioProps> = {}) {
   return mount(AspectRatio, options)
 }
 
+const casesRatio = [
+  { input: undefined, expected: '100%' },
+  { input: 16 / 9, expected: '56.25%' },
+  { input: 4 / 3, expected: '75%' },
+]
+
 describe('AspectRatio', () => {
   describe('props', () => {
     describe('ratio', () => {
-      it.each([
-        { input: undefined, expected: '100%' },
-        { input: 16 / 9, expected: '56.25%' },
-        { input: 4 / 3, expected: '75%' },
-      ])('renders ratio=$input with padding-bottom: $expected', ({ input, expected }) => {
-        const wrapper = mountAspectRatio({ props: { ratio: input } }).get(
-          '[data-reka-aspect-ratio-wrapper]',
-        )
+      it.each(casesRatio)(
+        'renderiza ratio=$input con padding-bottom: $expected',
+        ({ input, expected }) => {
+          const wrapper = mountAspectRatio({ props: { ratio: input } }).get(
+            '[data-reka-aspect-ratio-wrapper]',
+          )
 
-        expect(wrapper.attributes('style')).toContain(`padding-bottom: ${expected}`)
-      })
+          expect(wrapper.attributes('style')).toContain(`padding-bottom: ${expected}`)
+        },
+      )
     })
   })
 
   describe('attrs', () => {
     testAttrs({
+      text: 'pasa los atributos arbitrarios, la clase y el estilo a la raíz',
       id: '[data-test-aspect-ratio-root]',
       mount: (attrs) => mountAspectRatio({ attrs }),
     })
   })
 
   describe('slots', () => {
-    it('renders the default slot', () => {
+    it('renderiza el slot predeterminado', () => {
       const aspectRatio = mountAspectRatio({
         slots: {
-          default: () => h('span', { 'data-test-aspect-ratio-content': '' }, 'Content'),
+          default: () => h('span', { 'data-test-aspect-ratio-content': '' }, 'Contenido'),
         },
       })
 
-      expect(aspectRatio.get('[data-test-aspect-ratio-content]').text()).toBe('Content')
+      expect(aspectRatio.get('[data-test-aspect-ratio-content]').text()).toBe('Contenido')
     })
   })
 })

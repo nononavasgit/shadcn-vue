@@ -2,10 +2,7 @@ import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import {
-  Alert,
-  type AlertProps,
-} from '@/components/ui/Alert'
+import { Alert, type AlertProps } from '@/components/ui/Alert'
 import { i18n } from '@/i18n'
 import { testAttrs } from '../utils/testAttrs'
 import { testButtonConfig } from '../utils/testButtonConfig'
@@ -19,14 +16,47 @@ function mountAlert(options: MountingOptions<AlertProps> = {}) {
   })
 }
 
+const casesLabel = [
+  { input: 'Guardado', expected: 'Guardado' },
+  { input: '', expected: undefined },
+  { input: undefined, expected: undefined },
+]
+
+const casesDescription = [
+  { input: 'Cambios guardados', expected: 'Cambios guardados' },
+  { input: '', expected: undefined },
+  { input: undefined, expected: undefined },
+]
+
+const casesVariant = [
+  { input: 'solid' as const, expected: ['border-transparent', 'bg-(--alert-solid)'] },
+  { input: 'outline' as const, expected: ['border-(--alert-color)/40', 'bg-transparent'] },
+  { input: 'plain' as const, expected: ['border-transparent', 'bg-transparent'] },
+  {
+    input: 'subtle' as const,
+    expected: ['border-(--alert-color)/20', 'bg-(--alert-color)/10'],
+  },
+  { input: 'soft' as const, expected: ['border-transparent', 'bg-(--alert-color)/10'] },
+]
+
+const casesSeverity = ['primary', 'secondary', 'warning', 'success', 'error'] as const
+
+const casesDecorative = [
+  { input: true as const, expected: 'none' },
+  { input: false as const, expected: 'alert' },
+  { input: undefined, expected: 'alert' },
+]
+
+const casesClosable = [
+  { input: true, expected: true },
+  { input: false, expected: false },
+  { input: undefined, expected: false },
+]
+
 describe('Alert', () => {
   describe('props', () => {
     describe('label', () => {
-      it.each([
-        { input: 'Saved', expected: 'Saved' },
-        { input: '', expected: undefined },
-        { input: undefined, expected: undefined },
-      ])('renders label=$input as "$expected"', ({ input, expected }) => {
+      it.each(casesLabel)('renderiza label=$input como "$expected"', ({ input, expected }) => {
         const alert = mountAlert({ props: { label: input } })
         const label = alert.find('[data-test-alert-label]')
 
@@ -36,30 +66,20 @@ describe('Alert', () => {
     })
 
     describe('description', () => {
-      it.each([
-        { input: 'Changes saved', expected: 'Changes saved' },
-        { input: '', expected: undefined },
-        { input: undefined, expected: undefined },
-      ])('renders description=$input as "$expected"', ({ input, expected }) => {
-        const alert = mountAlert({ props: { description: input } })
-        const description = alert.find('[data-test-alert-description]')
+      it.each(casesDescription)(
+        'renderiza description=$input como "$expected"',
+        ({ input, expected }) => {
+          const alert = mountAlert({ props: { description: input } })
+          const description = alert.find('[data-test-alert-description]')
 
-        expect(description.exists()).toBe(expected !== undefined)
-        if (expected !== undefined) expect(description.text()).toBe(expected)
-      })
+          expect(description.exists()).toBe(expected !== undefined)
+          if (expected !== undefined) expect(description.text()).toBe(expected)
+        },
+      )
     })
 
     describe('variant', () => {
-      it.each([
-        { input: 'solid' as const, expected: ['border-transparent', 'bg-(--alert-solid)'] },
-        { input: 'outline' as const, expected: ['border-(--alert-color)/40', 'bg-transparent'] },
-        { input: 'plain' as const, expected: ['border-transparent', 'bg-transparent'] },
-        {
-          input: 'subtle' as const,
-          expected: ['border-(--alert-color)/20', 'bg-(--alert-color)/10'],
-        },
-        { input: 'soft' as const, expected: ['border-transparent', 'bg-(--alert-color)/10'] },
-      ])('renders variant=$input', ({ input, expected }) => {
+      it.each(casesVariant)('renderiza variant=$input', ({ input, expected }) => {
         const root = mountAlert({ props: { variant: input } }).get('[data-test-alert-root]')
 
         expect(root.classes()).toEqual(expect.arrayContaining(expected))
@@ -67,31 +87,27 @@ describe('Alert', () => {
     })
 
     describe('severity', () => {
-      it.each(['primary', 'secondary', 'warning', 'success', 'error'] as const)(
-        'renders severity=%s',
-        (severity) => {
-          const root = mountAlert({ props: { severity } }).get('[data-test-alert-root]')
+      it.each(casesSeverity)('renderiza severity=%s', (severity) => {
+        const root = mountAlert({ props: { severity } }).get('[data-test-alert-root]')
 
-          expect(root.classes()).toContain(
-            `[--alert-color:var(--${severity === 'secondary' ? 'secondary-foreground' : severity})]`,
-          )
-        },
-      )
+        expect(root.classes()).toContain(
+          `[--alert-color:var(--${severity === 'secondary' ? 'secondary-foreground' : severity})]`,
+        )
+      })
     })
 
     describe('color', () => {
       testColor({
-        text: 'renders color',
+        text: 'renderiza color',
         id: '[data-test-alert-root]',
         varColor: '--alert-color',
         mount: (color) => mountAlert({ props: { color } }),
       })
-
     })
 
     describe('icon', () => {
       testIconProps({
-        text: 'passes icon props',
+        text: 'pasa las props de icon',
         id: '[data-test-alert-icon]',
         mount: (input) => mountAlert({ props: { icon: input } }),
       })
@@ -99,12 +115,12 @@ describe('Alert', () => {
 
     describe('closeButton', () => {
       testButtonConfig({
-        text: 'passes closeButton config to Button',
+        text: 'pasa la configuración de closeButton a Button',
         id: '[data-test-alert-close-button]',
         mount: (input) => mountAlert({ props: { closable: true, closeButton: input } }),
       })
 
-      it('default configuration closeButton', () => {
+      it('usa la configuración predeterminada de closeButton', () => {
         const alert = mountAlert({
           props: {
             closable: true,
@@ -126,59 +142,60 @@ describe('Alert', () => {
             color: '#ff0000',
           }),
         )
-        expect(closeButton.attributes('aria-label')).toBe(i18n.global.t('close'))      
+        expect(closeButton.attributes('aria-label')).toBe(i18n.global.t('close'))
       })
     })
 
     describe('decorative', () => {
-      it.each([
-        { input: true as const, expected: 'none' },
-        { input: false as const, expected: 'alert' },
-        { input: undefined, expected: 'alert' },
-      ])('renders decorative=$input as role=$expected', ({ input, expected }) => {
-        const alert = mountAlert({ props: { decorative: input } })
+      it.each(casesDecorative)(
+        'renderiza decorative=$input como role=$expected',
+        ({ input, expected }) => {
+          const alert = mountAlert({ props: { decorative: input } })
 
-        expect(alert.get('[data-test-alert-root]').attributes('role')).toBe(expected)
-      })
+          expect(alert.get('[data-test-alert-root]').attributes('role')).toBe(expected)
+        },
+      )
     })
 
     describe('closable', () => {
-      it.each([
-        { input: true, expected: true },
-        { input: false, expected: false },
-        { input: undefined, expected: false },
-      ])('renders close button for closable=$input', ({ input, expected }) => {
-        const alert = mountAlert({ props: { closable: input } })
+      it.each(casesClosable)(
+        'renderiza el botón de cierre para closable=$input',
+        ({ input, expected }) => {
+          const alert = mountAlert({ props: { closable: input } })
 
-        expect(alert.find('[data-test-alert-close-button]').exists()).toBe(expected)
-      })
+          expect(alert.find('[data-test-alert-close-button]').exists()).toBe(expected)
+        },
+      )
     })
 
     describe('ui', () => {
       testAttrs({
-        text: 'renders ui.label attributes',
+        text: 'renderiza los atributos de ui.label',
         id: '[data-test-alert-label]',
         mount: (attrs) =>
           mountAlert({
-            props: { label: 'Saved', ui: { label: () => attrs } },
+            props: { label: 'Guardado', ui: { label: () => attrs } },
           }),
       })
 
       testAttrs({
-        text: 'renders ui.description attributes',
+        text: 'renderiza los atributos de ui.description',
         id: '[data-test-alert-description]',
         mount: (attrs) =>
           mountAlert({
-            props: { description: 'Changes saved', ui: { description: () => attrs } },
+            props: { description: 'Cambios guardados', ui: { description: () => attrs } },
           }),
       })
 
-      it('renders ui.closeButtonContainer attributes', () => {
+      it('renderiza los atributos de ui.closeButtonContainer', () => {
         const alert = mountAlert({
           props: {
             closable: true,
             ui: {
-              closeButtonContainer: () => ({ class: 'ui-closeButtonContainer', style: 'opacity: 0.8' }),
+              closeButtonContainer: () => ({
+                class: 'ui-closeButtonContainer',
+                style: 'opacity: 0.8',
+              }),
             },
           },
         })
@@ -192,7 +209,7 @@ describe('Alert', () => {
 
   describe('emits', () => {
     describe('close', () => {
-      it('closes and emits close from the default button', async () => {
+      it('cierra y emite close desde el botón predeterminado', async () => {
         const alert = mountAlert({ props: { closable: true } })
 
         await alert.get('[data-test-alert-close-button]').trigger('click')
@@ -205,7 +222,7 @@ describe('Alert', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to root',
+      text: 'pasa los atributos arbitrarios, la clase y el estilo a la raíz',
       id: '[data-test-alert-root]',
       mount: (attrs) => mountAlert({ attrs }),
     })
@@ -213,69 +230,67 @@ describe('Alert', () => {
 
   describe('slots', () => {
     describe('icon', () => {
-      it('renders the icon slot', () => {
+      it('renderiza el slot del icono', () => {
         const alert = mountAlert({
           props: { icon: { name: 'info' } },
           slots: {
-            icon: () => h('span', { 'data-test-alert-slot': 'icon' }, 'Slot icon'),
+            icon: () => h('span', { 'data-test-alert-slot': 'icon' }, 'Icono del slot'),
           },
         })
 
-        expect(alert.get('[data-test-alert-slot="icon"]').text()).toBe('Slot icon')
+        expect(alert.get('[data-test-alert-slot="icon"]').text()).toBe('Icono del slot')
         expect(alert.find('[data-test-alert-icon]').exists()).toBe(false)
       })
     })
 
     describe('label', () => {
-      it('renders the label slot', () => {
+      it('renderiza el slot de label', () => {
         const alert = mountAlert({
           slots: {
-            label: () => h('span', { 'data-test-alert-slot': 'label' }, 'Slot label'),
+            label: () => h('span', { 'data-test-alert-slot': 'label' }, 'Label del slot'),
           },
         })
 
-        expect(alert.get('[data-test-alert-slot="label"]').text()).toBe('Slot label')
-        expect(alert.text()).not.toContain('Saved')
+        expect(alert.get('[data-test-alert-slot="label"]').text()).toBe('Label del slot')
+        expect(alert.text()).not.toContain('Guardado')
       })
     })
 
     describe('description', () => {
-      it('renders the description slot', () => {
+      it('renderiza el slot de description', () => {
         const alert = mountAlert({
           slots: {
             description: () =>
-              h('span', { 'data-test-alert-slot': 'description' }, 'Slot description'),
+              h('span', { 'data-test-alert-slot': 'description' }, 'Description del slot'),
           },
         })
 
-        expect(alert.get('[data-test-alert-slot="description"]').text()).toBe('Slot description')
-        expect(alert.text()).not.toContain('Changes saved')
+        expect(alert.get('[data-test-alert-slot="description"]').text()).toBe(
+          'Description del slot',
+        )
+        expect(alert.text()).not.toContain('Cambios guardados')
       })
     })
 
     describe('close', () => {
-      it('renders the close slot', () => {
+      it('renderiza el slot de cierre', () => {
         const alert = mountAlert({
           props: { closable: true },
           slots: {
-            close: () => h('span', { 'data-test-alert-slot': 'close' }, 'Slot close'),
+            close: () => h('span', { 'data-test-alert-slot': 'close' }, 'Cierre del slot'),
           },
         })
 
-        expect(alert.get('[data-test-alert-slot="close"]').text()).toBe('Slot close')
+        expect(alert.get('[data-test-alert-slot="close"]').text()).toBe('Cierre del slot')
         expect(alert.find('[data-test-alert-close-button]').exists()).toBe(false)
       })
 
-      it('exposes the close function in slot props', async () => {
+      it('expone la función de cierre en las props del slot', async () => {
         const alert = mountAlert({
           props: { closable: true },
           slots: {
             close: ({ close }) =>
-              h(
-                'button',
-                { 'data-test-alert-slot': 'close', onClick: close },
-                'Slot close',
-              ),
+              h('button', { 'data-test-alert-slot': 'close', onClick: close }, 'Cierre del slot'),
           },
         })
 
@@ -286,5 +301,4 @@ describe('Alert', () => {
       })
     })
   })
-
 })

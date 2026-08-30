@@ -1,18 +1,10 @@
 <script setup lang="ts">
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 
-const typeRows: ApiTableRow[] = [
-  {
-    name: 'AspectRatioRatio',
-    type: 'number',
-    description: 'Relacion entre el ancho y el alto del contenedor.',
-  },
-]
-
 const propRows: ApiTableRow[] = [
   {
     name: 'ratio',
-    type: 'AspectRatioRatio',
+    type: 'string',
     default: '1',
     description: 'Relacion de aspecto aplicada al contenedor.',
   },
@@ -41,16 +33,6 @@ const exposeRows: ApiTableRow[] = []
         Mantiene una relacion de aspecto estable para el contenido que contiene.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Tipos</h3>
-        <p class="text-sm text-muted-foreground">
-          Tipos publicos usados por la API del componente.
-        </p>
-      </div>
-      <ApiTable id="aspect-ratio-types" title="Tipos" :rows="typeRows" />
-    </section>
 
     <div class="grid gap-4">
       <ApiTable id="aspect-ratio-props" title="Props" :rows="propRows" />

@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-
-import { Input } from '@/components/ui/Input'
 import { inputDefaults } from '@/components/ui/Input/default'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const value = ref('Buscar componentes')
 
 const propRows: ApiTableRow[] = [
   {
@@ -52,39 +46,6 @@ const exposeRows: ApiTableRow[] = []
         Campo de entrada controlado para texto y valores nativos del formulario.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">
-          Edita el valor mediante el modelo controlado del componente.
-        </p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <Input
-              v-model:value="value"
-              type="text"
-              placeholder="Buscar componentes"
-              aria-label="Input playground"
-            />
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">value</span>
-            <input
-              v-model="value"
-              type="text"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-        </div>
-      </div>
-    </section>
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />

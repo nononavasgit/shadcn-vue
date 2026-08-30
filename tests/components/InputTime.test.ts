@@ -8,14 +8,22 @@ function mountInputTime(options: MountingOptions<InputTimeProps> = {}) {
   return mount(InputTime, options)
 }
 
+const casesValue = [
+  { input: '09:30', expected: '09:30' },
+  { input: '', expected: '' },
+  { input: undefined, expected: '' },
+]
+
+const casesShowClock = [
+  { input: true, expected: false },
+  { input: false, expected: true },
+  { input: undefined, expected: false },
+]
+
 describe('InputTime', () => {
   describe('props', () => {
     describe('value', () => {
-      it.each([
-        { input: '09:30', expected: '09:30' },
-        { input: '', expected: '' },
-        { input: undefined, expected: '' },
-      ])('renders value=$input as "$expected"', ({ input, expected }) => {
+      it.each(casesValue)('renderiza value=$input como "$expected"', ({ input, expected }) => {
         const root = mountInputTime({ props: { value: input } }).get('[data-test-input-root]')
 
         expect(root.element.value).toBe(expected)
@@ -24,23 +32,22 @@ describe('InputTime', () => {
     })
 
     describe('showClock', () => {
-      it.each([
-        { input: true, expected: false },
-        { input: false, expected: true },
-        { input: undefined, expected: false },
-      ])('renders showClock=$input with hidden clock=$expected', ({ input, expected }) => {
-        const wrapper = mountInputTime({ props: { showClock: input } })
+      it.each(casesShowClock)(
+        'renderiza showClock=$input con reloj oculto=$expected',
+        ({ input, expected }) => {
+          const wrapper = mountInputTime({ props: { showClock: input } })
 
-        expect(wrapper.get('[data-test-input-root]').classes().includes('appearance-none')).toBe(
-          expected,
-        )
-      })
+          expect(wrapper.get('[data-test-input-root]').classes().includes('appearance-none')).toBe(
+            expected,
+          )
+        },
+      )
     })
   })
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to the native input',
+      text: 'pasa los atributos arbitrarios, la clase y el estilo al input nativo',
       id: '[data-test-input-root]',
       mount: (attrs) => mountInputTime({ attrs }),
     })
@@ -48,7 +55,7 @@ describe('InputTime', () => {
 
   describe('emits', () => {
     describe('update:value', () => {
-      it('emits the updated time when the user edits the input', async () => {
+      it('emite la hora actualizada cuando el usuario edita el campo', async () => {
         const wrapper = mountInputTime({ props: { value: '' } })
 
         await wrapper.get('[data-test-input-root]').setValue('14:45')

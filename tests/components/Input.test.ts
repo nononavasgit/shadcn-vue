@@ -9,14 +9,16 @@ function mountInput(options: MountingOptions<InputProps> = {}) {
   return mount(Input, options)
 }
 
+const casesValue = [
+  { input: 'Término de búsqueda', expected: 'Término de búsqueda' },
+  { input: '', expected: '' },
+  { input: undefined, expected: '' },
+]
+
 describe('Input', () => {
   describe('props', () => {
     describe('value', () => {
-      it.each([
-        { input: 'Search term', expected: 'Search term' },
-        { input: '', expected: '' },
-        { input: undefined, expected: '' },
-      ])('renders value=$input as "$expected"', ({ input, expected }) => {
+      it.each(casesValue)('renderiza value=$input como "$expected"', ({ input, expected }) => {
         const root = mountInput({ props: { value: input } }).get('[data-test-input-root]')
 
         expect(root.element.value).toBe(expected)
@@ -26,12 +28,12 @@ describe('Input', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to root',
+      text: 'pasa los atributos arbitrarios, la clase y el estilo a la raíz',
       id: '[data-test-input-root]',
       mount: (attrs) => mountInput({ attrs }),
     })
 
-    it('forwards class and style to the input group root', () => {
+    it('pasa la clase y el estilo a la raíz del grupo de entrada', () => {
       const root = mountInput({
         attrs: {
           id: 'input-control',
@@ -48,44 +50,44 @@ describe('Input', () => {
 
   describe('emits', () => {
     describe('update:value', () => {
-      it('emits the updated value when the user edits the input', async () => {
+      it('emite el valor actualizado cuando el usuario edita el campo', async () => {
         const wrapper = mountInput({ props: { value: '' } })
 
-        await wrapper.get('[data-test-input-root]').setValue('Updated value')
+        await wrapper.get('[data-test-input-root]').setValue('Valor actualizado')
 
-        expect(wrapper.emitted('update:value')).toEqual([['Updated value']])
+        expect(wrapper.emitted('update:value')).toEqual([['Valor actualizado']])
       })
     })
   })
 
   describe('slots', () => {
     describe('leading', () => {
-      it('renders the leading slot inside the default addon', () => {
+      it('renderiza el slot leading dentro del addon predeterminado', () => {
         const wrapper = mountInput({
           slots: {
-            leading: () => h('span', { 'data-test-input-leading': '' }, 'Leading'),
+            leading: () => h('span', { 'data-test-input-leading': '' }, 'Contenido inicial'),
           },
         })
 
-        expect(wrapper.get('[data-test-input-leading]').text()).toBe('Leading')
+        expect(wrapper.get('[data-test-input-leading]').text()).toBe('Contenido inicial')
         expect(wrapper.findAll('[data-test-input-group-addon]')).toHaveLength(1)
       })
     })
 
     describe('trailing', () => {
-      it('renders the trailing slot inside the inline-end addon', () => {
+      it('renderiza el slot trailing dentro del addon final', () => {
         const wrapper = mountInput({
           slots: {
-            trailing: () => h('span', { 'data-test-input-trailing': '' }, 'Trailing'),
+            trailing: () => h('span', { 'data-test-input-trailing': '' }, 'Contenido final'),
           },
         })
 
-        expect(wrapper.get('[data-test-input-trailing]').text()).toBe('Trailing')
+        expect(wrapper.get('[data-test-input-trailing]').text()).toBe('Contenido final')
         expect(wrapper.findAll('[data-test-input-group-addon]')).toHaveLength(1)
       })
     })
 
-    it('does not render addons when the slots are absent', () => {
+    it('no renderiza addons cuando faltan los slots', () => {
       expect(mountInput().find('[data-test-input-group-addon]').exists()).toBe(false)
     })
   })

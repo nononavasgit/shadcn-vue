@@ -1,17 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import { InputTime, type InputTimeProps } from '@/components/ui/InputTime'
 import { inputTimeDefaults } from '@/components/ui/InputTime/defaults'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const value = ref('09:30')
-const showClock = ref(inputTimeDefaults.showClock)
-
-const playgroundProps = computed<InputTimeProps>(() => ({
-  showClock: showClock.value,
-}))
 
 const propRows: ApiTableRow[] = [
   {
@@ -50,39 +39,6 @@ const exposeRows: ApiTableRow[] = []
         Campo de hora controlado basado en el input nativo del navegador.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">
-          Cambia la hora y alterna la visibilidad del reloj nativo.
-        </p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <InputTime v-model:value="value" v-bind="playgroundProps" aria-label="Hora" />
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">value</span>
-            <input
-              v-model="value"
-              type="time"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="flex items-center gap-2 text-sm">
-            <input v-model="showClock" type="checkbox" class="size-4 rounded border-input" />
-            <span class="font-medium">showClock</span>
-          </label>
-        </div>
-      </div>
-    </section>
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />

@@ -23,8 +23,8 @@ function mountWithProp(prop: keyof MeterGroupProps, value: unknown) {
 }
 
 const baseItems: MeterGroupItem[] = [
-  { label: 'System', value: 42, color: '#2563eb' },
-  { label: 'Apps', value: 18, color: '#7c3aed' },
+  { label: 'Sistema', value: 42, color: '#2563eb' },
+  { label: 'Aplicaciones', value: 18, color: '#7c3aed' },
 ]
 
 const casesMax = [
@@ -43,7 +43,7 @@ const casesItemValues = [
 ]
 
 const casesItemLabels = [
-  { input: 'System', expected: 'System', visible: true },
+  { input: 'Sistema', expected: 'Sistema', visible: true },
   { input: '', expected: '', visible: false },
   { input: undefined, expected: '', visible: false },
 ]
@@ -86,9 +86,9 @@ const casesItemContext = [
     ],
   },
   {
-    items: [{ label: 'Over max', value: 120 }],
+    items: [{ label: 'Supera el máximo', value: 120 }],
     max: 100,
-    expected: [{ item: { label: 'Over max', value: 120 }, index: 0, percentage: 100 }],
+    expected: [{ item: { label: 'Supera el máximo', value: 120 }, index: 0, percentage: 100 }],
   },
 ]
 
@@ -96,14 +96,14 @@ describe('MeterGroup', () => {
   describe('props', () => {
     describe('items', () => {
       describe('value', () => {
-        it.each(casesItemValues)('derives total=$expectedTotal', ({ items, expectedTotal }) => {
+        it.each(casesItemValues)('calcula total=$expectedTotal', ({ items, expectedTotal }) => {
           const wrapper = mountMeterGroup({ props: { items } })
 
           expect(wrapper.findAllComponents(ProgressIndicator)).toHaveLength(items.length)
           expect(wrapper.getComponent(ProgressRoot).props('modelValue')).toBe(expectedTotal)
         })
 
-        it('clamps negative values and scales segments when total exceeds max', () => {
+        it('limita los valores negativos y escala los segmentos cuando el total supera el máximo', () => {
           const items = [
             { value: -10, color: '#111111' },
             { value: 80, color: '#222222' },
@@ -121,7 +121,7 @@ describe('MeterGroup', () => {
 
       describe('label', () => {
         it.each(casesItemLabels)(
-          'renders label=$input as visible=$visible',
+          'renderiza label=$input como visible=$visible',
           ({ input, expected, visible }) => {
             const wrapper = mountMeterGroup({
               props: { items: [{ value: 40, label: input }] },
@@ -135,7 +135,7 @@ describe('MeterGroup', () => {
       })
 
       describe('color', () => {
-        it.each(casesItemColors)('renders color=$input', ({ input, expected }) => {
+        it.each(casesItemColors)('renderiza color=$input', ({ input, expected }) => {
           const wrapper = mountMeterGroup({
             props: { items: [{ value: 40, label: 'Color', color: input }] },
           })
@@ -154,19 +154,19 @@ describe('MeterGroup', () => {
 
       describe('icon', () => {
         testIconProps({
-          text: 'passes item.icon props and item color to Icon',
+          text: 'pasa las props de item.icon y el color del item a Icon',
           id: '[data-test-meter-group-icon]',
           mount: (input) =>
             mountMeterGroup({
               props: {
-                items: [{ label: 'Item', value: 20, color: input?.color, icon: input }],
+                items: [{ label: 'Elemento', value: 20, color: input?.color, icon: input }],
               },
             }),
         })
       })
 
-      describe('leading fallback', () => {
-        it('renders the leading when the item has no icon', () => {
+      describe('fallback inicial', () => {
+        it('renderiza el contenido inicial cuando el elemento no tiene icono', () => {
           const wrapper = mountMeterGroup({ props: { items: [baseItems[0]] } })
 
           expect(wrapper.find('[data-test-meter-group-icon]').exists()).toBe(false)
@@ -178,7 +178,7 @@ describe('MeterGroup', () => {
     })
 
     describe('max', () => {
-      it.each(casesMax)('normalizes max=$input to $expected', ({ input, expected }) => {
+      it.each(casesMax)('normaliza max=$input a $expected', ({ input, expected }) => {
         const root = mountWithProp('max', input).getComponent(ProgressRoot)
 
         expect(root.props('max')).toBe(expected)
@@ -187,7 +187,7 @@ describe('MeterGroup', () => {
 
     describe('orientation', () => {
       it.each(casesOrientation)(
-        'passes orientation=$input to ProgressRoot and applies $expected classes',
+        'pasa orientation=$input a ProgressRoot y aplica las clases $expected',
         ({ input, expected, class: expectedClass }) => {
           const wrapper = mountWithProp('orientation', input)
           const root = wrapper.getComponent(ProgressRoot)
@@ -199,7 +199,7 @@ describe('MeterGroup', () => {
     })
 
     describe('size', () => {
-      it.each(casesSize)('applies horizontal size=$input', ({ input, horizontal }) => {
+      it.each(casesSize)('aplica el tamaño horizontal=$input', ({ input, horizontal }) => {
         const root = mountMeterGroup({
           props: { orientation: 'horizontal', size: input },
         }).getComponent(ProgressRoot)
@@ -207,7 +207,7 @@ describe('MeterGroup', () => {
         expect(root.classes()).toContain(horizontal)
       })
 
-      it.each(casesSize)('applies vertical size=$input', ({ input, vertical }) => {
+      it.each(casesSize)('aplica el tamaño vertical=$input', ({ input, vertical }) => {
         const root = mountMeterGroup({
           props: { orientation: 'vertical', size: input },
         }).getComponent(ProgressRoot)
@@ -217,11 +217,11 @@ describe('MeterGroup', () => {
     })
 
     describe('status', () => {
-      it('does not render the status by default', () => {
+      it('no renderiza el estado de forma predeterminada', () => {
         expect(mountMeterGroup().find('[data-test-meter-group-status]').exists()).toBe(false)
       })
 
-      it('renders the total percentage when true', () => {
+      it('renderiza el porcentaje total cuando es true', () => {
         const wrapper = mountMeterGroup({ props: { items: baseItems, status: true } })
 
         expect(wrapper.get('[data-test-meter-group-status]').text()).toBe('60%')
@@ -230,47 +230,47 @@ describe('MeterGroup', () => {
 
     describe('ui', () => {
       testAttrs({
-        text: 'forwards attrs through ui.status',
+        text: 'pasa los atributos mediante ui.status',
         id: '[data-test-meter-group-status]',
         mount: (attrs) => mountMeterGroup({ props: { status: true, ui: { status: () => attrs } } }),
       })
 
       testAttrs({
-        text: 'forwards attrs through ui.meter',
+        text: 'pasa los atributos mediante ui.meter',
         id: '[data-test-meter-group-meter]',
         mount: (attrs) => mountMeterGroup({ props: { ui: { meter: () => attrs } } }),
       })
 
       testAttrs({
-        text: 'forwards attrs through ui.list',
+        text: 'pasa los atributos mediante ui.list',
         id: '[data-test-meter-group-list]',
         mount: (attrs) =>
           mountMeterGroup({ props: { items: baseItems, ui: { list: () => attrs } } }),
       })
 
       testAttrs({
-        text: 'forwards attrs through ui.item',
+        text: 'pasa los atributos mediante ui.item',
         id: '[data-test-meter-group-item]',
         mount: (attrs) =>
           mountMeterGroup({ props: { items: baseItems, ui: { item: () => attrs } } }),
       })
 
       testAttrs({
-        text: 'forwards attrs through ui.label',
+        text: 'pasa los atributos mediante ui.label',
         id: '[data-test-meter-group-label]',
         mount: (attrs) =>
           mountMeterGroup({ props: { items: baseItems, ui: { label: () => attrs } } }),
       })
 
       testAttrs({
-        text: 'forwards attrs through ui.leading',
+        text: 'pasa los atributos mediante ui.leading',
         id: '[data-test-meter-group-leading]',
         mount: (attrs) =>
           mountMeterGroup({ props: { items: baseItems, ui: { leading: () => attrs } } }),
       })
 
       testAttrs({
-        text: 'forwards attrs through ui.trailing',
+        text: 'pasa los atributos mediante ui.trailing',
         id: '[data-test-meter-group-trailing]',
         mount: (attrs) =>
           mountMeterGroup({ props: { items: baseItems, ui: { trailing: () => attrs } } }),
@@ -280,6 +280,7 @@ describe('MeterGroup', () => {
 
   describe('attrs', () => {
     testAttrs({
+      text: 'pasa los atributos arbitrarios, la clase y el estilo a la raíz',
       id: '[data-test-meter-group-root]',
       mount: (attrs) => mountMeterGroup({ attrs }),
     })
@@ -287,17 +288,19 @@ describe('MeterGroup', () => {
 
   describe('slots', () => {
     describe('status', () => {
-      it('renders the slot and replaces the fallback', () => {
+      it('renderiza el slot y sustituye el contenido alternativo', () => {
         const wrapper = mountMeterGroup({
           props: { items: baseItems, status: true },
-          slots: { status: () => h('span', { 'data-test-status-slot': true }, 'Custom status') },
+          slots: {
+            status: () => h('span', { 'data-test-status-slot': true }, 'Estado personalizado'),
+          },
         })
 
-        expect(wrapper.get('[data-test-status-slot]').text()).toBe('Custom status')
+        expect(wrapper.get('[data-test-status-slot]').text()).toBe('Estado personalizado')
         expect(wrapper.get('[data-test-meter-group-status]').text()).not.toContain('60%')
       })
 
-      it('passes the complete context', () => {
+      it('pasa el contexto completo', () => {
         let context: MeterGroupStatusContext | undefined
 
         mountMeterGroup({
@@ -315,17 +318,19 @@ describe('MeterGroup', () => {
     })
 
     describe('item', () => {
-      it('renders the slot and replaces the fallback', () => {
+      it('renderiza el slot y sustituye el contenido alternativo', () => {
         const wrapper = mountMeterGroup({
           props: { items: baseItems },
-          slots: { item: () => h('strong', { 'data-test-item-slot': true }, 'Custom item') },
+          slots: {
+            item: () => h('strong', { 'data-test-item-slot': true }, 'Elemento personalizado'),
+          },
         })
 
-        expect(wrapper.get('[data-test-item-slot]').text()).toBe('Custom item')
+        expect(wrapper.get('[data-test-item-slot]').text()).toBe('Elemento personalizado')
         expect(wrapper.find('[data-test-meter-group-label]').exists()).toBe(false)
       })
 
-      it('passes the complete context', () => {
+      it('pasa el contexto completo', () => {
         const contexts: MeterGroupItemContext[] = []
 
         mountMeterGroup({
@@ -348,11 +353,11 @@ describe('MeterGroup', () => {
     })
 
     describe('item-leading', () => {
-      it('renders the slot and replaces the icon and leading fallback', () => {
+      it('renderiza el slot y sustituye el icono y el contenido inicial alternativo', () => {
         const wrapper = mountMeterGroup({
           props: {
             items: [
-              { label: 'Documents', value: 24, color: '#db2777', icon: { name: 'fileText' } },
+              { label: 'Documentos', value: 24, color: '#db2777', icon: { name: 'fileText' } },
             ],
           },
           slots: {
@@ -365,7 +370,7 @@ describe('MeterGroup', () => {
         expect(wrapper.find('[data-test-meter-group-icon]').exists()).toBe(false)
       })
 
-      it('passes the complete context', () => {
+      it('pasa el contexto completo', () => {
         const contexts: MeterGroupItemContext[] = []
 
         mountMeterGroup({
@@ -388,20 +393,20 @@ describe('MeterGroup', () => {
     })
 
     describe('item-label', () => {
-      it('renders the slot and replaces the item label fallback', () => {
+      it('renderiza el slot y sustituye el label alternativo del elemento', () => {
         const wrapper = mountMeterGroup({
           props: { items: baseItems },
           slots: {
             'item-label': (context: MeterGroupItemContext) =>
-              h('strong', { 'data-test-label-slot': true }, `${context.item.label}-custom`),
+              h('strong', { 'data-test-label-slot': true }, `${context.item.label}-personalizado`),
           },
         })
 
-        expect(wrapper.get('[data-test-label-slot]').text()).toBe('System-custom')
+        expect(wrapper.get('[data-test-label-slot]').text()).toBe('Sistema-personalizado')
         expect(wrapper.find('[data-test-meter-group-label]').exists()).toBe(false)
       })
 
-      it('passes the complete context', () => {
+      it('pasa el contexto completo', () => {
         const contexts: MeterGroupItemContext[] = []
 
         mountMeterGroup({
@@ -424,7 +429,7 @@ describe('MeterGroup', () => {
     })
 
     describe('item-trailing', () => {
-      it('renders the slot and replaces the percentage fallback', () => {
+      it('renderiza el slot y sustituye el porcentaje alternativo', () => {
         const wrapper = mountMeterGroup({
           props: { items: baseItems },
           slots: {
@@ -437,7 +442,7 @@ describe('MeterGroup', () => {
         expect(wrapper.find('[data-test-meter-group-trailing]').exists()).toBe(false)
       })
 
-      it('passes the complete context', () => {
+      it('pasa el contexto completo', () => {
         const contexts: MeterGroupItemContext[] = []
 
         mountMeterGroup({
@@ -463,7 +468,7 @@ describe('MeterGroup', () => {
   describe('context contract', () => {
     describe('status context', () => {
       it.each(casesStatusContext)(
-        'passes total and percentage for items=$items and max=$max',
+        'pasa total y porcentaje para items=$items y max=$max',
         ({ items, max, expected }) => {
           let statusContext: MeterGroupStatusContext | undefined
           let meterContext: MeterGroupStatusContext | undefined
@@ -494,7 +499,7 @@ describe('MeterGroup', () => {
 
     describe('item context', () => {
       it.each(casesItemContext)(
-        'passes item, index and percentage for items=$items and max=$max',
+        'pasa item, index y porcentaje para items=$items y max=$max',
         ({ items, max, expected }) => {
           const itemContexts: MeterGroupItemContext[] = []
 

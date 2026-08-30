@@ -1,29 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import { MeterGroup, type MeterGroupItem, type MeterGroupProps } from '@/components/ui/MeterGroup'
 import { meterGroupDefaults } from '@/components/ui/MeterGroup/defaults'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const playgroundMax = ref(meterGroupDefaults.max)
-const playgroundOrientation = ref<MeterGroupProps['orientation']>('horizontal')
-const playgroundSize = ref<MeterGroupProps['size']>(meterGroupDefaults.size)
-const playgroundStatus = ref(meterGroupDefaults.status)
-
-const playgroundItems: MeterGroupItem[] = [
-  { label: 'System', value: 19, color: '#2563eb', icon: { name: 'file' } },
-  { label: 'Apps', value: 6, color: '#7c3aed', icon: { name: 'fileText' } },
-  { label: 'Documents', value: 9, color: '#db2777', icon: { name: 'fileSpreadsheet' } },
-  { label: 'Multimedia', value: 33, color: '#ea580c', icon: { name: 'image' } },
-]
-
-const playgroundProps = computed<Omit<MeterGroupProps, 'items'>>(() => ({
-  max: playgroundMax.value,
-  orientation: playgroundOrientation.value,
-  size: playgroundSize.value,
-  status: playgroundStatus.value,
-}))
 
 const itemRows: ApiTableRow[] = [
   {
@@ -191,69 +168,6 @@ const itemContextRows: ApiTableRow[] = [
         Medidor segmentado para representar cómo se distribuye un total entre varias categorías.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">
-          Ajusta el valor máximo, la orientación, el tamaño y si se muestra el estado total.
-        </p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <div class="w-full max-w-md">
-              <MeterGroup :items="playgroundItems" v-bind="playgroundProps" />
-            </div>
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">max</span>
-            <input
-              v-model.number="playgroundMax"
-              type="number"
-              min="1"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">orientation</span>
-            <select
-              v-model="playgroundOrientation"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="horizontal">horizontal</option>
-              <option value="vertical">vertical</option>
-            </select>
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">size</span>
-            <select
-              v-model="playgroundSize"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="2xs">2xs</option>
-              <option value="xs">xs</option>
-              <option value="sm">sm</option>
-              <option value="md">md</option>
-              <option value="lg">lg</option>
-              <option value="xl">xl</option>
-              <option value="2xl">2xl</option>
-            </select>
-          </label>
-
-          <label class="flex items-center gap-2 text-sm">
-            <input v-model="playgroundStatus" type="checkbox" class="size-4 rounded border-input" />
-            <span class="font-medium">Mostrar status</span>
-          </label>
-        </div>
-      </div>
-    </section>
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />

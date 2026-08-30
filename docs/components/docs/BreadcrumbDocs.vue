@@ -1,23 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import { Breadcrumb, type BreadcrumbItem, type BreadcrumbProps } from '@/components/ui/Breadcrumb'
 import { breadcrumbDefaults } from '@/components/ui/Breadcrumb/default'
+
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const playgroundItems = ref<BreadcrumbItem[]>([
-  { slot: 'home', label: 'Home', to: '/' },
-  { slot: 'library', label: 'Library', to: '/library' },
-  { slot: 'components', label: 'Components', to: '/components' },
-  { slot: 'breadcrumb', label: 'Breadcrumb' },
-])
-const playgroundEllipsis = ref(true)
-
-const playgroundProps = computed<BreadcrumbProps>(() => ({
-  items: playgroundItems.value,
-  ellipsisIndex: playgroundEllipsis.value ? [1, 2] : undefined,
-}))
 
 const propRows: ApiTableRow[] = [
   {
@@ -174,39 +158,6 @@ const ellipsisContextRows: ApiTableRow[] = [
         Ruta de navegación accesible con enlaces, items actuales, elipsis, iconos y slots.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">
-          Alterna la elipsis para comprobar la navegación completa y la ruta comprimida.
-        </p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-40 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <Breadcrumb v-bind="playgroundProps" />
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="flex items-center gap-2 text-sm">
-            <input
-              v-model="playgroundEllipsis"
-              type="checkbox"
-              class="size-4 rounded border-input"
-            />
-            <span class="font-medium">Mostrar elipsis</span>
-          </label>
-
-          <p class="text-xs text-muted-foreground">
-            Items: {{ playgroundItems.length }} · Rango:
-            {{ playgroundEllipsis ? '[1, 2]' : 'ninguno' }}
-          </p>
-        </div>
-      </div>
-    </section>
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />

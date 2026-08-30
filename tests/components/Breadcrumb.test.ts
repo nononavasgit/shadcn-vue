@@ -16,9 +16,19 @@ import { testAttrs } from '../utils/testAttrs'
 import { testIconProps } from '../utils/testIconProps'
 
 const items: BreadcrumbItem[] = [
-  { slot: 'home', label: 'Home', to: '/' },
-  { slot: 'library', label: 'Library', to: '/library' },
-  { slot: 'current', label: 'Current', icon: { name: 'check' } },
+  { slot: 'home', label: 'Inicio', to: '/' },
+  { slot: 'library', label: 'Biblioteca', to: '/library' },
+  { slot: 'current', label: 'Actual', icon: { name: 'check' } },
+]
+
+const casesSlot = [{ input: 'home' }, { input: 'section' }]
+
+const casesEllipsisIndex = [
+  { input: undefined, visible: false },
+  { input: [0, 1] as [number, number], visible: true },
+  { input: [-1, 1] as [number, number], visible: false },
+  { input: [2, 1] as [number, number], visible: false },
+  { input: [3, 3] as [number, number], visible: false },
 ]
 
 function createTestRouter() {
@@ -47,7 +57,7 @@ function mountBreadcrumb(options: MountingOptions<BreadcrumbProps> = {}) {
 describe('Breadcrumb', () => {
   describe('props', () => {
     describe('items', () => {
-      it('renders no items by default', () => {
+      it('no renderiza items por defecto', () => {
         const wrapper = mountBreadcrumb()
 
         expect(wrapper.find('[data-test-breadcrumb-item]').exists()).toBe(false)
@@ -55,20 +65,17 @@ describe('Breadcrumb', () => {
       })
 
       describe('slot', () => {
-        it.each([{ input: 'home' }, { input: 'section' }])(
-          'uses slot=$input to identify the item',
-          ({ input }) => {
-            const wrapper = mountBreadcrumb({
-              props: { items: [{ slot: input, label: 'Item' }] },
-            })
+        it.each(casesSlot)('usa slot=$input para identificar el item', ({ input }) => {
+          const wrapper = mountBreadcrumb({
+            props: { items: [{ slot: input, label: 'Elemento' }] },
+          })
 
-            expect(wrapper.get(`[data-test-breadcrumb-item="${input}"]`).exists()).toBe(true)
-          },
-        )
+          expect(wrapper.get(`[data-test-breadcrumb-item="${input}"]`).exists()).toBe(true)
+        })
       })
 
       describe('item', () => {
-        it.each(items)('passes item slot=$slot fields to Link', (item) => {
+        it.each(items)('pasa los campos del item slot=$slot a Link', (item) => {
           const wrapper = mountBreadcrumb({ props: { items: [item] } })
           const link = wrapper.getComponent(Link)
 
@@ -81,7 +88,7 @@ describe('Breadcrumb', () => {
       })
 
       describe('command', () => {
-        it('calls command when a linked item is clicked', async () => {
+        it('ejecuta command al hacer clic en un item enlazado', async () => {
           const command = vi.fn()
           const wrapper = mountBreadcrumb({
             props: { items: [{ ...items[0], command }] },
@@ -93,7 +100,7 @@ describe('Breadcrumb', () => {
           expect(command).toHaveBeenCalledWith(expect.any(Event))
         })
 
-        it('does not call command for the current page item', async () => {
+        it('no ejecuta command en el item de la página actual', async () => {
           const command = vi.fn()
           const wrapper = mountBreadcrumb({
             props: { items: [{ ...items[2], command }] },
@@ -107,24 +114,21 @@ describe('Breadcrumb', () => {
     })
 
     describe('ellipsisIndex', () => {
-      it.each([
-        { input: undefined, visible: false },
-        { input: [0, 1] as [number, number], visible: true },
-        { input: [-1, 1] as [number, number], visible: false },
-        { input: [2, 1] as [number, number], visible: false },
-        { input: [3, 3] as [number, number], visible: false },
-      ])('renders ellipsis=$visible for range=$input', ({ input, visible }) => {
-        const wrapper = mountBreadcrumb({ props: { items, ellipsisIndex: input } })
+      it.each(casesEllipsisIndex)(
+        'renderiza ellipsis=$visible para range=$input',
+        ({ input, visible }) => {
+          const wrapper = mountBreadcrumb({ props: { items, ellipsisIndex: input } })
 
-        expect(wrapper.find('[data-test-breadcrumb-ellipsis]').exists()).toBe(visible)
-      })
+          expect(wrapper.find('[data-test-breadcrumb-ellipsis]').exists()).toBe(visible)
+        },
+      )
 
-      it('hides the affected items and keeps the ellipsis item visible', () => {
+      it('oculta los items afectados y mantiene visible el item de elipsis', () => {
         const wrapper = mountBreadcrumb({ props: { items, ellipsisIndex: [0, 1] } })
 
         expect(wrapper.get('[data-test-breadcrumb-ellipsis]').exists()).toBe(true)
         expect(wrapper.findAll('[data-test-breadcrumb-item]')).toHaveLength(1)
-        expect(wrapper.get('[data-test-breadcrumb-page]').text()).toBe('Current')
+        expect(wrapper.get('[data-test-breadcrumb-page]').text()).toBe('Actual')
         expect(wrapper.find('[data-test-breadcrumb-item="home"]').exists()).toBe(false)
         expect(wrapper.find('[data-test-breadcrumb-item="library"]').exists()).toBe(false)
         expect(wrapper.find('[data-test-breadcrumb-item="current"]').exists()).toBe(true)
@@ -133,7 +137,7 @@ describe('Breadcrumb', () => {
 
     describe('ellipsisIcon', () => {
       testIconProps({
-        text: 'renders ellipsisIcon',
+        text: 'renderiza ellipsisIcon',
         id: '[data-test-breadcrumb-ellipsis] [data-test-icon-root]',
         default: 'moreHorizontal',
         mount: (input) =>
@@ -145,7 +149,7 @@ describe('Breadcrumb', () => {
 
     describe('separatorIcon', () => {
       testIconProps({
-        text: 'renders separatorIcon',
+        text: 'renderiza separatorIcon',
         id: '[data-test-breadcrumb-separator] [data-test-icon-root]',
         default: 'chevronRight',
         mount: (input) => mountBreadcrumb({ props: { items, separatorIcon: input } }),
@@ -154,13 +158,13 @@ describe('Breadcrumb', () => {
 
     describe('ui', () => {
       testAttrs({
-        text: 'forwards attrs, class and style through ui.list',
+        text: 'pasa atributos, clase y estilo mediante ui.list',
         id: '[data-test-breadcrumb-list]',
         mount: (attrs) => mountBreadcrumb({ props: { items, ui: { list: () => attrs } } }),
       })
 
       testAttrs({
-        text: 'forwards attrs, class and style through ui.ellipsisContainer',
+        text: 'pasa atributos, clase y estilo mediante ui.ellipsisContainer',
         id: '[data-test-breadcrumb-ellipsis]',
         mount: (attrs) =>
           mountBreadcrumb({
@@ -169,14 +173,14 @@ describe('Breadcrumb', () => {
       })
 
       testAttrs({
-        text: 'forwards attrs, class and style through ui.separatorContainer',
+        text: 'pasa atributos, clase y estilo mediante ui.separatorContainer',
         id: '[data-test-breadcrumb-separator]',
         mount: (attrs) =>
           mountBreadcrumb({ props: { items, ui: { separatorContainer: () => attrs } } }),
       })
 
       testAttrs({
-        text: 'forwards attrs, class and style through ui.item',
+        text: 'pasa atributos, clase y estilo mediante ui.item',
         id: '[data-test-breadcrumb-item]',
         mount: (attrs) => mountBreadcrumb({ props: { items, ui: { item: () => attrs } } }),
       })
@@ -185,13 +189,14 @@ describe('Breadcrumb', () => {
 
   describe('attrs', () => {
     testAttrs({
+      text: 'pasa los atributos arbitrarios, la clase y el estilo a la raíz',
       id: '[data-test-breadcrumb-root]',
       mount: (attrs) => mountBreadcrumb({ attrs }),
     })
   })
 
   describe('context contract', () => {
-    it('passes the complete itemContext', () => {
+    it('pasa el itemContext completo', () => {
       let uiContext: BreadcrumbItemContext | undefined
       let slotContext: BreadcrumbItemContext | undefined
 
@@ -208,7 +213,7 @@ describe('Breadcrumb', () => {
         slots: {
           item: (context: BreadcrumbItemContext) => {
             slotContext ??= context
-            return h('span', 'Custom item')
+            return h('span', 'Elemento personalizado')
           },
         },
       })
@@ -230,7 +235,7 @@ describe('Breadcrumb', () => {
       expect(slotContextWithoutRenderMetadata).toEqual(uiContext)
     })
 
-    it('passes only the affected items to the ellipsisContext', () => {
+    it('pasa solo los items afectados a ellipsisContext', () => {
       let context: BreadcrumbEllipsisContext | undefined
 
       mountBreadcrumb({
@@ -238,7 +243,7 @@ describe('Breadcrumb', () => {
         slots: {
           ellipsis: (slotContext: BreadcrumbEllipsisContext) => {
             context = slotContext
-            return h('span', 'More')
+            return h('span', 'Más')
           },
         },
       })
@@ -254,19 +259,19 @@ describe('Breadcrumb', () => {
   })
 
   describe('slots', () => {
-    it('renders the ellipsis slot', () => {
+    it('renderiza el slot ellipsis', () => {
       const wrapper = mountBreadcrumb({
         props: { items, ellipsisIndex: [0, 1] },
-        slots: { ellipsis: () => h('span', { 'data-test-breadcrumb-slot': 'ellipsis' }, 'More') },
+        slots: { ellipsis: () => h('span', { 'data-test-breadcrumb-slot': 'ellipsis' }, 'Más') },
       })
 
-      expect(wrapper.get('[data-test-breadcrumb-slot="ellipsis"]').text()).toBe('More')
+      expect(wrapper.get('[data-test-breadcrumb-slot="ellipsis"]').text()).toBe('Más')
       expect(wrapper.find('[data-test-breadcrumb-ellipsis] [data-test-icon-root]').exists()).toBe(
         false,
       )
     })
 
-    it('renders the separator slot', () => {
+    it('renderiza el slot separator', () => {
       const wrapper = mountBreadcrumb({
         props: { items },
         slots: { separator: () => h('span', { 'data-test-breadcrumb-slot': 'separator' }, '|') },
@@ -275,24 +280,29 @@ describe('Breadcrumb', () => {
       expect(wrapper.get('[data-test-breadcrumb-slot="separator"]').text()).toBe('|')
     })
 
-    it('renders the item slot', () => {
-      const wrapper = mountBreadcrumb({
-        props: { items },
-        slots: { item: () => h('span', { 'data-test-breadcrumb-slot': 'item' }, 'Custom item') },
-      })
-
-      expect(wrapper.get('[data-test-breadcrumb-slot="item"]').text()).toBe('Custom item')
-    })
-
-    it('renders the item slot scoped to the item slot', () => {
+    it('renderiza el slot item', () => {
       const wrapper = mountBreadcrumb({
         props: { items },
         slots: {
-          'item-home': () => h('span', { 'data-test-breadcrumb-slot': 'item-home' }, 'Home slot'),
+          item: () => h('span', { 'data-test-breadcrumb-slot': 'item' }, 'Elemento personalizado'),
         },
       })
 
-      expect(wrapper.get('[data-test-breadcrumb-slot="item-home"]').text()).toBe('Home slot')
+      expect(wrapper.get('[data-test-breadcrumb-slot="item"]').text()).toBe(
+        'Elemento personalizado',
+      )
+    })
+
+    it('renderiza el slot item específico del item', () => {
+      const wrapper = mountBreadcrumb({
+        props: { items },
+        slots: {
+          'item-home': () =>
+            h('span', { 'data-test-breadcrumb-slot': 'item-home' }, 'Slot de inicio'),
+        },
+      })
+
+      expect(wrapper.get('[data-test-breadcrumb-slot="item-home"]').text()).toBe('Slot de inicio')
     })
   })
 })

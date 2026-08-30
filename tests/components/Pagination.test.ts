@@ -32,7 +32,7 @@ describe('Pagination', () => {
       it.each([
         { input: undefined, expected: 'nav' },
         { input: 'div', expected: 'nav' },
-      ])('renders as=$input as $expected', ({ input, expected }) => {
+      ])('renderiza as=$input como $expected', ({ input, expected }) => {
         const wrapper = mountPagination({ attrs: { as: input } })
 
         expect(wrapper.getComponent(PaginationRoot).props('as')).toBe(expected)
@@ -43,7 +43,7 @@ describe('Pagination', () => {
       it.each([
         { input: undefined, expected: false },
         { input: true, expected: false },
-      ])('renders asChild=$input as $expected', ({ input, expected }) => {
+      ])('renderiza asChild=$input como $expected', ({ input, expected }) => {
         const wrapper = mountPagination({ attrs: { asChild: input } })
 
         expect(wrapper.getComponent(PaginationRoot).props('asChild')).toBe(expected)
@@ -54,7 +54,7 @@ describe('Pagination', () => {
       it.each([
         { input: undefined, expected: 0 },
         { input: 100, expected: 100 },
-      ])('passes input=$input as expected=$expected', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected', ({ input, expected }) => {
         const wrapper = mountPagination({ props: { total: input } })
 
         expect(wrapper.getComponent(PaginationRoot).props('total')).toBe(expected)
@@ -65,7 +65,7 @@ describe('Pagination', () => {
       it.each([
         { input: undefined, expected: 10 },
         { input: 20, expected: 20 },
-      ])('passes input=$input as expected=$expected', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected', ({ input, expected }) => {
         const wrapper = mountPagination({ props: { itemsPerPage: input } })
 
         expect(wrapper.getComponent(PaginationRoot).props('itemsPerPage')).toBe(expected)
@@ -76,7 +76,7 @@ describe('Pagination', () => {
       it.each([
         { input: undefined, expected: 2 },
         { input: 1, expected: 1 },
-      ])('passes input=$input as expected=$expected', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected', ({ input, expected }) => {
         const wrapper = mountPagination({ props: { siblingCount: input } })
 
         expect(wrapper.getComponent(PaginationRoot).props('siblingCount')).toBe(expected)
@@ -88,7 +88,7 @@ describe('Pagination', () => {
         { input: undefined, expectedFirst: true, expectedLast: true },
         { input: true, expectedFirst: true, expectedLast: true },
         { input: false, expectedFirst: false, expectedLast: false },
-      ])('renders edge pages for input=$input', ({ input, expectedFirst, expectedLast }) => {
+      ])('renderiza las paginas de los extremos para input=$input', ({ input, expectedFirst, expectedLast }) => {
         const wrapper = mountPagination({
           props: { total: 100, page: 5, siblingCount: 1, showEdges: input },
         })
@@ -104,7 +104,7 @@ describe('Pagination', () => {
         { input: undefined, expected: false },
         { input: false, expected: false },
         { input: true, expected: true },
-      ])('passes input=$input as expected=$expected', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected', ({ input, expected }) => {
         const wrapper = mountPagination({ props: { disabled: input } })
 
         expect(wrapper.getComponent(PaginationRoot).props('disabled')).toBe(expected)
@@ -115,7 +115,7 @@ describe('Pagination', () => {
       it.each([
         { input: undefined, expected: 1 },
         { input: 2, expected: 2 },
-      ])('passes page=$input as $expected', ({ input, expected }) => {
+      ])('pasa page=$input como $expected', ({ input, expected }) => {
         const root = mountPagination({ props: { total: 100, page: input } }).getComponent(
           PaginationRoot,
         )
@@ -129,7 +129,7 @@ describe('Pagination', () => {
         { input: undefined, visible: true },
         { input: true, visible: true },
         { input: false, visible: false },
-      ])('renders controls=$visible for showControls=$input', ({ input, visible }) => {
+      ])('renderiza controls=$visible para showControls=$input', ({ input, visible }) => {
         const wrapper = mountPagination({ props: { total: 100, showControls: input } })
 
         expect(wrapper.find('[data-test-pagination-first]').exists()).toBe(visible)
@@ -143,7 +143,7 @@ describe('Pagination', () => {
       it.each([
         { input: undefined, expected: undefined },
         { input: '#ff0000', expected: '#ff0000' },
-      ])('passes input=$input as expected=$expected to buttons', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected a los botones', ({ input, expected }) => {
         const wrapper = mountPagination({ props: { total: 100, color: input } })
 
         expect(wrapper.getComponent(Button).props('color')).toBe(expected)
@@ -154,7 +154,7 @@ describe('Pagination', () => {
       it.each([
         { input: undefined, expected: 'outline' },
         { input: 'plain', expected: 'plain' },
-      ])('passes input=$input as expected=$expected to buttons', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected a los botones', ({ input, expected }) => {
         const wrapper = mountPagination({ props: { total: 100, variant: input } })
 
         expect(wrapper.getComponent(Button).props('variant')).toBe(expected)
@@ -165,7 +165,7 @@ describe('Pagination', () => {
       it.each([
         { input: undefined, expected: 'md' },
         { input: 'sm', expected: 'sm' },
-      ])('passes input=$input as expected=$expected to buttons', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected a los botones', ({ input, expected }) => {
         const wrapper = mountPagination({ props: { total: 100, size: input } })
 
         expect(wrapper.getComponent(Button).props('size')).toBe(expected)
@@ -176,7 +176,7 @@ describe('Pagination', () => {
       it.each([
         { input: undefined, expected: 'primary' },
         { input: 'success', expected: 'success' },
-      ])('passes input=$input as expected=$expected to buttons', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected a los botones', ({ input, expected }) => {
         const wrapper = mountPagination({ props: { total: 100, severity: input } })
 
         expect(wrapper.getComponent(Button).props('severity')).toBe(expected)
@@ -187,7 +187,7 @@ describe('Pagination', () => {
       it.each([
         { input: undefined, expected: undefined },
         { input: '#00ff00', expected: '#00ff00' },
-      ])('passes input=$input as expected=$expected to the active page', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected a la pagina activa', ({ input, expected }) => {
         const wrapper = mountPagination({ props: { total: 100, activeColor: input } })
         const activeButton = wrapper
           .findAllComponents(Button)
@@ -201,7 +201,7 @@ describe('Pagination', () => {
       it.each([
         { input: undefined, expected: 'solid' },
         { input: 'plain', expected: 'plain' },
-      ])('passes input=$input as expected=$expected to the active page', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected a la pagina activa', ({ input, expected }) => {
         const wrapper = mountPagination({ props: { total: 100, activeVariant: input } })
         const activeButton = wrapper
           .findAllComponents(Button)
@@ -213,7 +213,7 @@ describe('Pagination', () => {
 
     describe('firstIcon', () => {
       testIconProps({
-        text: 'renders firstIcon',
+        text: 'renderiza firstIcon',
         id: '[data-test-pagination-first] [data-test-icon-root]',
         default: 'chevronsLeft',
         mount: (input) => mountPagination({ props: { total: 100, firstIcon: input } }),
@@ -222,7 +222,7 @@ describe('Pagination', () => {
 
     describe('previousIcon', () => {
       testIconProps({
-        text: 'renders previousIcon',
+        text: 'renderiza previousIcon',
         id: '[data-test-pagination-previous] [data-test-icon-root]',
         default: 'chevronLeft',
         mount: (input) => mountPagination({ props: { total: 100, previousIcon: input } }),
@@ -231,7 +231,7 @@ describe('Pagination', () => {
 
     describe('nextIcon', () => {
       testIconProps({
-        text: 'renders nextIcon',
+        text: 'renderiza nextIcon',
         id: '[data-test-pagination-next] [data-test-icon-root]',
         default: 'chevronRight',
         mount: (input) => mountPagination({ props: { total: 100, nextIcon: input } }),
@@ -240,7 +240,7 @@ describe('Pagination', () => {
 
     describe('lastIcon', () => {
       testIconProps({
-        text: 'renders lastIcon',
+        text: 'renderiza lastIcon',
         id: '[data-test-pagination-last] [data-test-icon-root]',
         default: 'chevronsRight',
         mount: (input) => mountPagination({ props: { total: 100, lastIcon: input } }),
@@ -249,7 +249,7 @@ describe('Pagination', () => {
 
     describe('ellipsisIcon', () => {
       testIconProps({
-        text: 'renders ellipsisIcon',
+        text: 'renderiza ellipsisIcon',
         id: '[data-test-pagination-ellipsis] [data-test-icon-root]',
         default: 'moreHorizontal',
         mount: (input) =>
@@ -260,28 +260,28 @@ describe('Pagination', () => {
     describe('ui', () => {
       describe('root', () => {
         testAttrs({
-          text: 'forwards attrs through ui.root',
+          text: 'reenvia attrs mediante ui.root',
           id: '[data-test-pagination-root]',
           mount: (attrs) => mountPagination({ props: { ui: { root: () => attrs } } }),
         })
       })
       describe('list', () => {
         testAttrs({
-          text: 'forwards attrs through ui.list',
+          text: 'reenvia attrs mediante ui.list',
           id: '[data-test-pagination-list]',
           mount: (attrs) => mountPagination({ props: { ui: { list: () => attrs } } }),
         })
       })
       describe('first', () => {
         testAttrs({
-          text: 'forwards attrs through ui.first',
+          text: 'reenvia attrs mediante ui.first',
           id: '[data-test-pagination-first]',
           mount: (attrs) => mountPagination({ props: { total: 100, ui: { first: () => attrs } } }),
         })
       })
       describe('previous', () => {
         testAttrs({
-          text: 'forwards attrs through ui.previous',
+          text: 'reenvia attrs mediante ui.previous',
           id: '[data-test-pagination-previous]',
           mount: (attrs) =>
             mountPagination({ props: { total: 100, ui: { previous: () => attrs } } }),
@@ -289,28 +289,28 @@ describe('Pagination', () => {
       })
       describe('next', () => {
         testAttrs({
-          text: 'forwards attrs through ui.next',
+          text: 'reenvia attrs mediante ui.next',
           id: '[data-test-pagination-next]',
           mount: (attrs) => mountPagination({ props: { total: 100, ui: { next: () => attrs } } }),
         })
       })
       describe('last', () => {
         testAttrs({
-          text: 'forwards attrs through ui.last',
+          text: 'reenvia attrs mediante ui.last',
           id: '[data-test-pagination-last]',
           mount: (attrs) => mountPagination({ props: { total: 100, ui: { last: () => attrs } } }),
         })
       })
       describe('item', () => {
         testAttrs({
-          text: 'forwards attrs through ui.item',
+          text: 'reenvia attrs mediante ui.item',
           id: '[data-test-pagination-item]',
           mount: (attrs) => mountPagination({ props: { ui: { item: () => attrs } } }),
         })
       })
       describe('ellipsis', () => {
         testAttrs({
-          text: 'forwards attrs through ui.ellipsis',
+          text: 'reenvia attrs mediante ui.ellipsis',
           id: '[data-test-pagination-ellipsis]',
           mount: (attrs) =>
             mountPagination({
@@ -323,7 +323,7 @@ describe('Pagination', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to root',
+      text: 'reenvia atributos arbitrarios, class y style a la raiz',
       id: '[data-test-pagination-root]',
       mount: (attrs) => mountPagination({ attrs }),
     })
@@ -331,7 +331,7 @@ describe('Pagination', () => {
 
   describe('emits', () => {
     describe('update:page', () => {
-      it('forwards PaginationRoot page updates', async () => {
+      it('reenvia las actualizaciones de page de PaginationRoot', async () => {
         const wrapper = mountPagination({ props: { total: 100, page: 1 } })
 
         await wrapper.getComponent(PaginationRoot).vm.$emit('update:page', 3)
@@ -351,7 +351,7 @@ describe('Pagination', () => {
       ]
 
       it.each(pageContextCases)(
-        'passes page=$page and pageCount=$expectedPageCount to context',
+        'pasa page=$page y pageCount=$expectedPageCount al contexto',
         ({ page, total, itemsPerPage, expectedPageCount }) => {
           let context: PaginationContext | undefined
 
@@ -378,7 +378,7 @@ describe('Pagination', () => {
     })
 
     describe('PaginationItemContext', () => {
-      it('passes item state to item context', () => {
+      it('pasa el estado del elemento al contexto del elemento', () => {
         let context: PaginationItemContext | undefined
 
         mountPagination({
@@ -409,18 +409,18 @@ describe('Pagination', () => {
 
   describe('slots', () => {
     describe('default', () => {
-      it('renders the default slot', () => {
+      it('renderiza el slot por defecto', () => {
         const wrapper = mountPagination({
           props: { total: 100, page: 2 },
           slots: {
-            default: () => h('span', { 'data-test-pagination-slot': 'default' }, 'Default slot'),
+            default: () => h('span', { 'data-test-pagination-slot': 'default' }, 'Slot por defecto'),
           },
         })
 
-        expect(wrapper.get('[data-test-pagination-slot="default"]').text()).toBe('Default slot')
+        expect(wrapper.get('[data-test-pagination-slot="default"]').text()).toBe('Slot por defecto')
       })
 
-      it('passes PaginationContext as slotProps', () => {
+      it('pasa PaginationContext como slotProps', () => {
         let slotProps: PaginationContext | undefined
 
         mountPagination({
@@ -438,7 +438,7 @@ describe('Pagination', () => {
     })
 
     describe('preContent', () => {
-      it('renders the slot', () => {
+      it('renderiza el slot', () => {
         const wrapper = mountPagination({
           props: { total: 100 },
           slots: { preContent: () => h('span', { 'data-test-pagination-slot': 'preContent' }) },
@@ -447,7 +447,7 @@ describe('Pagination', () => {
         expect(wrapper.get('[data-test-pagination-slot="preContent"]').exists()).toBe(true)
       })
 
-      it('passes PaginationContext as slotProps', () => {
+      it('pasa PaginationContext como slotProps', () => {
         let slotProps: PaginationContext | undefined
 
         mountPagination({
@@ -465,7 +465,7 @@ describe('Pagination', () => {
     })
 
     describe('postContent', () => {
-      it('renders the slot', () => {
+      it('renderiza el slot', () => {
         const wrapper = mountPagination({
           props: { total: 100 },
           slots: { postContent: () => h('span', { 'data-test-pagination-slot': 'postContent' }) },
@@ -474,7 +474,7 @@ describe('Pagination', () => {
         expect(wrapper.get('[data-test-pagination-slot="postContent"]').exists()).toBe(true)
       })
 
-      it('passes PaginationContext as slotProps', () => {
+      it('pasa PaginationContext como slotProps', () => {
         let slotProps: PaginationContext | undefined
 
         mountPagination({
@@ -492,19 +492,19 @@ describe('Pagination', () => {
     })
 
     describe('first', () => {
-      it('renders the slot and replaces the default button', () => {
+      it('renderiza el slot y sustituye el boton por defecto', () => {
         const wrapper = mountPagination({
           props: { total: 100 },
-          slots: { first: () => h('span', { 'data-test-pagination-slot': 'first' }, 'First') },
+          slots: { first: () => h('span', { 'data-test-pagination-slot': 'first' }, 'Primera') },
         })
 
-        expect(wrapper.get('[data-test-pagination-slot="first"]').text()).toBe('First')
+        expect(wrapper.get('[data-test-pagination-slot="first"]').text()).toBe('Primera')
         expect(wrapper.find('[data-test-pagination-first] [data-test-button-root]').exists()).toBe(
           false,
         )
       })
 
-      it('passes PaginationContext as slotProps', () => {
+      it('pasa PaginationContext como slotProps', () => {
         let slotProps: PaginationContext | undefined
 
         mountPagination({
@@ -522,21 +522,21 @@ describe('Pagination', () => {
     })
 
     describe('previous', () => {
-      it('renders the slot and replaces the default button', () => {
+      it('renderiza el slot y sustituye el boton por defecto', () => {
         const wrapper = mountPagination({
           props: { total: 100 },
           slots: {
-            previous: () => h('span', { 'data-test-pagination-slot': 'previous' }, 'Previous'),
+            previous: () => h('span', { 'data-test-pagination-slot': 'previous' }, 'Anterior'),
           },
         })
 
-        expect(wrapper.get('[data-test-pagination-slot="previous"]').text()).toBe('Previous')
+        expect(wrapper.get('[data-test-pagination-slot="previous"]').text()).toBe('Anterior')
         expect(
           wrapper.find('[data-test-pagination-previous] [data-test-button-root]').exists(),
         ).toBe(false)
       })
 
-      it('passes PaginationContext as slotProps', () => {
+      it('pasa PaginationContext como slotProps', () => {
         let slotProps: PaginationContext | undefined
 
         mountPagination({
@@ -554,19 +554,19 @@ describe('Pagination', () => {
     })
 
     describe('next', () => {
-      it('renders the slot and replaces the default button', () => {
+      it('renderiza el slot y sustituye el boton por defecto', () => {
         const wrapper = mountPagination({
           props: { total: 100 },
-          slots: { next: () => h('span', { 'data-test-pagination-slot': 'next' }, 'Next') },
+          slots: { next: () => h('span', { 'data-test-pagination-slot': 'next' }, 'Siguiente') },
         })
 
-        expect(wrapper.get('[data-test-pagination-slot="next"]').text()).toBe('Next')
+        expect(wrapper.get('[data-test-pagination-slot="next"]').text()).toBe('Siguiente')
         expect(wrapper.find('[data-test-pagination-next] [data-test-button-root]').exists()).toBe(
           false,
         )
       })
 
-      it('passes PaginationContext as slotProps', () => {
+      it('pasa PaginationContext como slotProps', () => {
         let slotProps: PaginationContext | undefined
 
         mountPagination({
@@ -584,19 +584,19 @@ describe('Pagination', () => {
     })
 
     describe('last', () => {
-      it('renders the slot and replaces the default button', () => {
+      it('renderiza el slot y sustituye el boton por defecto', () => {
         const wrapper = mountPagination({
           props: { total: 100 },
-          slots: { last: () => h('span', { 'data-test-pagination-slot': 'last' }, 'Last') },
+          slots: { last: () => h('span', { 'data-test-pagination-slot': 'last' }, 'Ultima') },
         })
 
-        expect(wrapper.get('[data-test-pagination-slot="last"]').text()).toBe('Last')
+        expect(wrapper.get('[data-test-pagination-slot="last"]').text()).toBe('Ultima')
         expect(wrapper.find('[data-test-pagination-last] [data-test-button-root]').exists()).toBe(
           false,
         )
       })
 
-      it('passes PaginationContext as slotProps', () => {
+      it('pasa PaginationContext como slotProps', () => {
         let slotProps: PaginationContext | undefined
 
         mountPagination({
@@ -614,7 +614,7 @@ describe('Pagination', () => {
     })
 
     describe('item', () => {
-      it('renders the item slot and replaces the default button', () => {
+      it('renderiza el slot item y sustituye el boton por defecto', () => {
         const wrapper = mountPagination({
           props: { total: 100, page: 2 },
           slots: {
@@ -629,7 +629,7 @@ describe('Pagination', () => {
         )
       })
 
-      it('passes PaginationItemContext as slotProps', () => {
+      it('pasa PaginationItemContext como slotProps', () => {
         let slotProps: PaginationItemContext | undefined
 
         mountPagination({
@@ -655,19 +655,22 @@ describe('Pagination', () => {
     })
 
     describe('item-{page}', () => {
-      it('renders a page-specific slot before the generic item slot', () => {
+      it('renderiza el slot especifico de pagina antes que el slot item generico', () => {
         const wrapper = mountPagination({
           props: { total: 100 },
           slots: {
             item: () => h('span', 'Generic item'),
-            'item-1': () => h('span', { 'data-test-pagination-slot': 'item-1' }, 'Specific item'),
+            'item-1': () =>
+              h('span', { 'data-test-pagination-slot': 'item-1' }, 'Elemento especifico'),
           },
         })
 
-        expect(wrapper.get('[data-test-pagination-slot="item-1"]').text()).toBe('Specific item')
+        expect(wrapper.get('[data-test-pagination-slot="item-1"]').text()).toBe(
+          'Elemento especifico',
+        )
       })
 
-      it('passes PaginationItemContext as slotProps', () => {
+      it('pasa PaginationItemContext como slotProps', () => {
         let slotProps: PaginationItemContext | undefined
 
         mountPagination({
@@ -692,7 +695,7 @@ describe('Pagination', () => {
     })
 
     describe('ellipsis', () => {
-      it('renders the generic ellipsis slot', () => {
+      it('renderiza el slot ellipsis generico', () => {
         const wrapper = mountPagination({
           props: { total: 100, page: 5, siblingCount: 1 },
           slots: {
@@ -704,7 +707,7 @@ describe('Pagination', () => {
         expect(wrapper.findAll('[data-test-pagination-slot="ellipsis"]').length).toBeGreaterThan(0)
       })
 
-      it('passes PaginationItemContext as slotProps', () => {
+      it('pasa PaginationItemContext como slotProps', () => {
         let slotProps: PaginationItemContext | undefined
 
         mountPagination({
@@ -728,22 +731,22 @@ describe('Pagination', () => {
     })
 
     describe('ellipsis-{index}', () => {
-      it('renders an ellipsis-specific slot before the generic ellipsis slot', () => {
+      it('renderiza el slot especifico de ellipsis antes que el slot ellipsis generico', () => {
         const wrapper = mountPagination({
           props: { total: 100, page: 5, siblingCount: 1 },
           slots: {
             ellipsis: () => h('span', 'Generic ellipsis'),
             'ellipsis-1': () =>
-              h('span', { 'data-test-pagination-slot': 'ellipsis-1' }, 'Specific ellipsis'),
+              h('span', { 'data-test-pagination-slot': 'ellipsis-1' }, 'Ellipsis especifica'),
           },
         })
 
         expect(wrapper.get('[data-test-pagination-slot="ellipsis-1"]').text()).toBe(
-          'Specific ellipsis',
+          'Ellipsis especifica',
         )
       })
 
-      it('passes PaginationItemContext as slotProps', () => {
+      it('pasa PaginationItemContext como slotProps', () => {
         let slotProps: PaginationItemContext | undefined
 
         mountPagination({

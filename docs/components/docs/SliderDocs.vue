@@ -1,25 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import { Slider, type SliderProps } from '@/components/ui/Slider'
+import type { SliderProps } from '@/components/ui/Slider'
 import { sliderDefaults } from '@/components/ui/Slider/defaults'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const playgroundValue = ref<number[] | null>([40])
-const playgroundOrientation = ref<NonNullable<SliderProps['orientation']>>(
-  sliderDefaults.orientation,
-)
-const playgroundMin = ref(sliderDefaults.min)
-const playgroundMax = ref(sliderDefaults.max)
-const playgroundStep = ref(sliderDefaults.step)
-
-const playgroundProps = computed<Omit<SliderProps, 'value'>>(() => ({
-  orientation: playgroundOrientation.value,
-  min: playgroundMin.value,
-  max: playgroundMax.value,
-  step: playgroundStep.value,
-}))
 
 const propRows: ApiTableRow[] = [
   {
@@ -192,79 +174,6 @@ const thumbContextRows: ApiTableRow[] = [
         Control de rango con uno o varios thumbs, orientación y valores controlados.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">
-          Ajusta los límites, el paso y la orientación del slider.
-        </p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <div
-              :class="[
-                'flex w-full max-w-md items-center gap-4',
-                playgroundOrientation === 'vertical' ? 'h-48 justify-center' : 'flex-col',
-              ]"
-            >
-              <Slider
-                v-bind="playgroundProps"
-                v-model:value="playgroundValue"
-                :class="playgroundOrientation === 'vertical' ? 'h-full' : 'w-full'"
-              />
-              <output class="text-sm font-medium tabular-nums">
-                {{ playgroundValue?.join(' – ') ?? 'Sin valor' }}
-              </output>
-            </div>
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">orientation</span>
-            <select
-              v-model="playgroundOrientation"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="horizontal">horizontal</option>
-              <option value="vertical">vertical</option>
-            </select>
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">min</span>
-            <input
-              v-model.number="playgroundMin"
-              type="number"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">max</span>
-            <input
-              v-model.number="playgroundMax"
-              type="number"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">step</span>
-            <input
-              v-model.number="playgroundStep"
-              type="number"
-              min="0.01"
-              step="0.01"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-        </div>
-      </div>
-    </section>
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />

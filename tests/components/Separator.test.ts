@@ -14,49 +14,60 @@ function mountWithProp(prop: keyof SeparatorProps, value: unknown) {
   return mountSeparator({ props: { [prop]: value } as SeparatorProps })
 }
 
+const casesOrientation = [
+  { input: 'horizontal', expected: 'horizontal' },
+  { input: 'vertical', expected: 'vertical' },
+  { input: undefined, expected: 'horizontal' },
+]
+
+const casesDecorative = [
+  { input: true, expected: true },
+  { input: false, expected: false },
+  { input: undefined, expected: true },
+]
+
 describe('Separator', () => {
   describe('props', () => {
     describe('orientation', () => {
-      it.each([
-        { input: 'horizontal', expected: 'horizontal' },
-        { input: 'vertical', expected: 'vertical' },
-        { input: undefined, expected: 'horizontal' },
-      ])('passes orientation=$input to Reka Separator as $expected', ({ input, expected }) => {
-        const wrapper = mountWithProp('orientation', input)
+      it.each(casesOrientation)(
+        'pasa orientation=$input a Reka Separator como $expected',
+        ({ input, expected }) => {
+          const wrapper = mountWithProp('orientation', input)
 
-        expect(wrapper.getComponent(RekaSeparator).props('orientation')).toBe(expected)
-      })
+          expect(wrapper.getComponent(RekaSeparator).props('orientation')).toBe(expected)
+        },
+      )
     })
 
     describe('decorative', () => {
-      it.each([
-        { input: true, expected: true },
-        { input: false, expected: false },
-        { input: undefined, expected: true },
-      ])('passes decorative=$input to Reka Separator as $expected', ({ input, expected }) => {
-        const wrapper = mountWithProp('decorative', input)
+      it.each(casesDecorative)(
+        'pasa decorative=$input a Reka Separator como $expected',
+        ({ input, expected }) => {
+          const wrapper = mountWithProp('decorative', input)
 
-        expect(wrapper.getComponent(RekaSeparator).props('decorative')).toBe(expected)
-      })
+          expect(wrapper.getComponent(RekaSeparator).props('decorative')).toBe(expected)
+        },
+      )
     })
   })
 
   describe('attrs', () => {
     testAttrs({
+      text: 'pasa los atributos arbitrarios, la clase y el estilo a la raíz',
       id: '[data-test-separator-root]',
       mount: (attrs) => mountSeparator({ attrs }),
     })
   })
 
   describe('slots', () => {
-    it('renders the default slot', () => {
+    it('renderiza el slot predeterminado', () => {
       const separator = mountSeparator({
         slots: {
-          default: () => h('span', { 'data-test-separator-content': '' }, 'Content'),
+          default: () => h('span', { 'data-test-separator-content': '' }, 'Contenido'),
         },
       })
 
-      expect(separator.get('[data-test-separator-content]').text()).toBe('Content')
+      expect(separator.get('[data-test-separator-content]').text()).toBe('Contenido')
     })
   })
 })

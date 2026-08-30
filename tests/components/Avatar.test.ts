@@ -10,16 +10,29 @@ function mountAvatar(options: MountingOptions<AvatarProps> = {}) {
   return mount(Avatar, options)
 }
 
+const casesSize = [
+  { input: 'xs' as const, expected: ['size-6', 'text-xs'] },
+  { input: 'sm' as const, expected: ['size-8', 'text-sm'] },
+  { input: 'md' as const, expected: ['size-10', 'text-base'] },
+  { input: 'lg' as const, expected: ['size-12', 'text-lg'] },
+  { input: undefined, expected: ['size-10', 'text-base'] },
+]
+
+const casesShape = [
+  { input: 'rounded' as const, expected: 'rounded-full' },
+  { input: 'square' as const, expected: 'rounded-none' },
+  { input: undefined, expected: 'rounded-full' },
+]
+
+const casesLabel = [
+  { input: 'AL', expected: 'AL' },
+  { input: undefined, expected: '' },
+]
+
 describe('Avatar', () => {
   describe('props', () => {
     describe('size', () => {
-      it.each([
-        { input: 'xs' as const, expected: ['size-6', 'text-xs'] },
-        { input: 'sm' as const, expected: ['size-8', 'text-sm'] },
-        { input: 'md' as const, expected: ['size-10', 'text-base'] },
-        { input: 'lg' as const, expected: ['size-12', 'text-lg'] },
-        { input: undefined, expected: ['size-10', 'text-base'] },
-      ])('renders size=$input', ({ input, expected }) => {
+      it.each(casesSize)('renderiza size=$input', ({ input, expected }) => {
         const root = mountAvatar({ props: { size: input } }).get('[data-test-avatar-root]')
 
         expect(root.classes()).toEqual(expect.arrayContaining(expected))
@@ -27,11 +40,7 @@ describe('Avatar', () => {
     })
 
     describe('shape', () => {
-      it.each([
-        { input: 'rounded' as const, expected: 'rounded-full' },
-        { input: 'square' as const, expected: 'rounded-none' },
-        { input: undefined, expected: 'rounded-full' },
-      ])('renders shape=$input', ({ input, expected }) => {
+      it.each(casesShape)('renderiza shape=$input', ({ input, expected }) => {
         const root = mountAvatar({ props: { shape: input } }).get('[data-test-avatar-root]')
 
         expect(root.classes()).toContain(expected)
@@ -39,7 +48,7 @@ describe('Avatar', () => {
     })
 
     describe('src', () => {
-      it('renders image attributes', () => {
+      it('renderiza los atributos de la imagen', () => {
         const avatar = mountAvatar({
           props: { src: 'avatar.png' },
         })
@@ -50,7 +59,7 @@ describe('Avatar', () => {
     })
 
     describe('delayMs', () => {
-      it('passes delayMs to AvatarFallback', async () => {
+      it('pasa delayMs a AvatarFallback', async () => {
         vi.useFakeTimers()
 
         try {
@@ -67,23 +76,20 @@ describe('Avatar', () => {
     })
 
     describe('label', () => {
-      it.each([
-        { input: 'AL', expected: 'AL' },
-        { input: undefined, expected: '' },
-      ])('renders label=$input in AvatarFallback', ({ input, expected }) => {
+      it.each(casesLabel)('renderiza label=$input en AvatarFallback', ({ input, expected }) => {
         expect(mountAvatar({ props: { label: input } }).text()).toBe(expected)
       })
     })
 
     describe('icon', () => {
       testIconProps({
-        text: 'passes icon object props',
+        text: 'pasa las props del objeto icon',
         id: '[data-test-avatar-icon]',
         mount: (input) => mountAvatar({ props: { icon: input } }),
       })
 
       testIconSize({
-        text: 'passes icon size',
+        text: 'pasa el tamaño de icon',
         id: '[data-test-avatar-icon]',
         input: 'sm',
         mount: (size) => mountAvatar({ props: { icon: { name: 'info', size } } }),
@@ -92,14 +98,14 @@ describe('Avatar', () => {
   })
 
   describe('internal props', () => {
-    it('uses the fixed root configuration', () => {
+    it('usa la configuración fija de la raíz', () => {
       const root = mountAvatar().getComponent('[data-test-avatar-root]')
 
       expect(root.props('as')).toBe('span')
       expect(root.props('asChild')).toBe(false)
     })
 
-    it('uses the fixed image configuration', () => {
+    it('usa la configuración fija de la imagen', () => {
       const image = mountAvatar({ props: { src: 'avatar.png' } }).getComponent(
         '[data-test-avatar-image]',
       )
@@ -108,7 +114,7 @@ describe('Avatar', () => {
       expect(image.props('asChild')).toBe(false)
     })
 
-    it('uses the fixed fallback configuration', () => {
+    it('usa la configuración fija del contenido alternativo', () => {
       const fallback = mountAvatar().getComponent('[data-test-avatar-fallback]')
 
       expect(fallback.props('as')).toBe('div')
@@ -118,20 +124,20 @@ describe('Avatar', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards attrs to AvatarImage',
+      text: 'pasa los atributos a AvatarImage',
       id: '[data-test-avatar-image]',
       mount: (attrs) => mountAvatar({ props: { src: 'avatar.png' }, attrs }),
     })
 
     testAttrs({
-      text: 'forwards attrs to AvatarFallback',
+      text: 'pasa los atributos a AvatarFallback',
       id: '[data-test-avatar-fallback]',
       mount: (attrs) => mountAvatar({ props: { label: 'AL' }, attrs }),
     })
   })
 
   describe('slots', () => {
-    it('renders the fallback slot', () => {
+    it('renderiza el slot alternativo', () => {
       const avatar = mountAvatar({
         slots: { fallback: () => h('span', { 'data-test-avatar-slot': '' }, 'Custom fallback') },
       })

@@ -62,7 +62,7 @@ const casesSeverity = [
 describe('Kbd', () => {
   describe('props', () => {
     describe('label', () => {
-      it.each(casesLabel)('renders label=$input as "$expected"', ({ input, expected }) => {
+      it.each(casesLabel)('renderiza label=$input como "$expected"', ({ input, expected }) => {
         const root = mountKbd({ props: { label: input } }).get('[data-test-kbd-root]')
 
         expect(root.text()).toBe(expected)
@@ -70,7 +70,7 @@ describe('Kbd', () => {
     })
 
     describe('size', () => {
-      it.each(casesSize)('renders size=$input', ({ input, expected }) => {
+      it.each(casesSize)('renderiza size=$input', ({ input, expected }) => {
         const root = mountWithProp('size', input).get('[data-test-kbd-root]')
 
         expect(root.classes()).toEqual(expect.arrayContaining(expected))
@@ -78,7 +78,7 @@ describe('Kbd', () => {
     })
 
     describe('variant', () => {
-      it.each(casesVariant)('renders variant=$input', ({ input, expected }) => {
+      it.each(casesVariant)('renderiza variant=$input', ({ input, expected }) => {
         const root = mountWithProp('variant', input).get('[data-test-kbd-root]')
 
         expect(root.classes()).toEqual(expect.arrayContaining(expected))
@@ -86,7 +86,7 @@ describe('Kbd', () => {
     })
 
     describe('severity', () => {
-      it.each(casesSeverity)('renders severity=$input', ({ input, expected }) => {
+      it.each(casesSeverity)('renderiza severity=$input', ({ input, expected }) => {
         const root = mountKbd({
           props: { severity: input, variant: 'solid' },
         }).get('[data-test-kbd-root]')
@@ -97,7 +97,7 @@ describe('Kbd', () => {
 
     describe('color', () => {
       testColor({
-        text: 'renders color',
+        text: 'renderiza color',
         id: '[data-test-kbd-root]',
         varColor: '--kbd-color',
         mount: (color) => mountKbd({ props: { color } }),
@@ -107,7 +107,7 @@ describe('Kbd', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to root',
+      text: 'pasa los atributos arbitrarios, la clase y el estilo a la raíz',
       id: '[data-test-kbd-root]',
       mount: (attrs) => mountKbd({ attrs }),
     })
@@ -115,7 +115,7 @@ describe('Kbd', () => {
 
   describe('slots', () => {
     describe('default', () => {
-      it('renders the default slot and replaces the label fallback', () => {
+      it('renderiza el slot predeterminado y sustituye el label alternativo', () => {
         const kbd = mountKbd({
           props: { label: 'Fallback' },
           slots: {
@@ -128,5 +128,4 @@ describe('Kbd', () => {
       })
     })
   })
-
 })

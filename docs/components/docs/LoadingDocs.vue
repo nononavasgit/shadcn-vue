@@ -1,19 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import { Loading, type LoadingProps } from '@/components/ui/Loading'
 import { loadingDefaults } from '@/components/ui/Loading/defaults'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const loading = ref(true)
-const icon = ref('spinner')
-const content = ref('Contenido listo')
-
-const playgroundProps = computed<LoadingProps>(() => ({
-  loading: loading.value,
-  icon: icon.value ? { name: icon.value } : undefined,
-}))
 
 const propRows: ApiTableRow[] = [
   {
@@ -84,51 +71,6 @@ const contextRows: ApiTableRow[] = [
         Alterna entre un indicador de carga y el contenido final.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">Prueba el estado de carga, el icono y el slot.</p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <Loading v-bind="playgroundProps">
-              <template #default="context">
-                <span>{{ content }} · loading: {{ context.loading }}</span>
-              </template>
-            </Loading>
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">icon</span>
-            <input
-              v-model="icon"
-              type="text"
-              placeholder="spinner"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">content</span>
-            <input
-              v-model="content"
-              type="text"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="flex items-center gap-2 text-sm">
-            <input v-model="loading" type="checkbox" class="size-4 rounded border-input" />
-            <span class="font-medium">loading</span>
-          </label>
-        </div>
-      </div>
-    </section>
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />

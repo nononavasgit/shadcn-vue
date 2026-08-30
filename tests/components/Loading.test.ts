@@ -23,7 +23,7 @@ describe('Loading', () => {
         { input: true, expected: true },
         { input: false, expected: false },
         { input: undefined, expected: true },
-      ])('renders loading=$input as aria-busy=$expected', ({ input, expected }) => {
+      ])('renderiza loading=$input como aria-busy=$expected', ({ input, expected }) => {
         const loading = mountLoading({ props: { loading: input } })
 
         expect(loading.get('[data-test-loading-root]').attributes('aria-busy')).toBe(
@@ -36,7 +36,7 @@ describe('Loading', () => {
 
     describe('icon', () => {
       testIconProps({
-        text: 'passes icon props',
+        text: 'pasa las props del icono',
         id: '[data-test-loading-icon]',
         default: 'spinner',
         mount: (input) => mountLoading({ props: { loading: true, icon: input } }),
@@ -46,7 +46,7 @@ describe('Loading', () => {
     describe('ui', () => {
       describe('loading', () => {
         testAttrs({
-          text: 'renders ui.loading attributes',
+          text: 'renderiza los atributos de ui.loading',
           id: '[data-test-loading-loading]',
           mount: (attrs) =>
             mountLoading({
@@ -57,7 +57,7 @@ describe('Loading', () => {
 
       describe('content', () => {
         testAttrs({
-          text: 'renders ui.content attributes',
+          text: 'renderiza los atributos de ui.content',
           id: '[data-test-loading-content]',
           mount: (attrs) =>
             mountLoading({
@@ -70,7 +70,7 @@ describe('Loading', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to root',
+      text: 'reenvia atributos arbitrarios, class y style a la raiz',
       id: '[data-test-loading-root]',
       mount: (attrs) => mountLoading({ attrs }),
     })
@@ -81,7 +81,7 @@ describe('Loading', () => {
       { input: true, expected: true },
       { input: false, expected: false },
       { input: undefined, expected: true },
-    ])('passes loading=$input as $expected', ({ input, expected }) => {
+    ])('pasa loading=$input como $expected', ({ input, expected }) => {
       let context: LoadingContext | undefined
 
       mountLoading({
@@ -89,7 +89,7 @@ describe('Loading', () => {
         slots: {
           default: (slotContext: LoadingContext) => {
             context = slotContext
-            return h('span', 'Content')
+            return h('span', 'Contenido')
           },
         },
       })
@@ -99,7 +99,7 @@ describe('Loading', () => {
   })
 
   describe('slots', () => {
-    it('passes the context to the loading slot', () => {
+    it('pasa el contexto al slot loading', () => {
       const loading = mountLoading({
         props: { loading: true },
         slots: {
@@ -111,7 +111,7 @@ describe('Loading', () => {
       expect(loading.get('[data-test-loading-slot]').text()).toBe('loading:true')
     })
 
-    it('passes the context to the default slot', () => {
+    it('pasa el contexto al slot por defecto', () => {
       const loading = mountLoading({
         props: { loading: false },
         slots: {

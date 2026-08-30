@@ -1,23 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import { Empty, type EmptyProps } from '@/components/ui/Empty'
 import { emptyDefaults } from '@/components/ui/Empty/default'
-import { Icon } from '@/components/ui/Icon'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const playgroundLabel = ref('No hay resultados')
-const playgroundDescription = ref('Prueba a cambiar los filtros de búsqueda.')
-const playgroundMediaVariant = ref<NonNullable<EmptyProps['mediaVariant']>>(
-  emptyDefaults.mediaVariant,
-)
-
-const playgroundProps = computed<EmptyProps>(() => ({
-  label: playgroundLabel.value || undefined,
-  description: playgroundDescription.value || undefined,
-  mediaVariant: playgroundMediaVariant.value,
-}))
 
 const propRows: ApiTableRow[] = [
   {
@@ -87,64 +70,6 @@ const exposeRows: ApiTableRow[] = []
         Estado vacío compuesto con título, descripción, contenido y media opcionales.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">
-          Cambia el contenido y el estilo del estado vacío.
-        </p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <Empty v-bind="playgroundProps">
-              <template #media>
-                <Icon name="search" />
-              </template>
-              <button
-                type="button"
-                class="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground hover:bg-primary/90"
-              >
-                Limpiar filtros
-              </button>
-            </Empty>
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">label</span>
-            <input
-              v-model="playgroundLabel"
-              type="text"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">description</span>
-            <input
-              v-model="playgroundDescription"
-              type="text"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">mediaVariant</span>
-            <select
-              v-model="playgroundMediaVariant"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="default">default</option>
-              <option value="icon">icon</option>
-            </select>
-          </label>
-        </div>
-      </div>
-    </section>
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />

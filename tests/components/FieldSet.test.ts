@@ -9,14 +9,28 @@ function mountFieldSet(options: MountingOptions<FieldSetProps> = {}) {
   return mount(FieldSet, options)
 }
 
+const casesLegend = [
+  { input: 'Perfil', expected: 'Perfil' },
+  { input: '', expected: undefined },
+  { input: undefined, expected: undefined },
+]
+
+const casesDescription = [
+  { input: 'Datos de contacto', expected: 'Datos de contacto' },
+  { input: '', expected: undefined },
+  { input: undefined, expected: undefined },
+]
+
+const casesLegendVariant = [
+  { input: 'legend' as const, expected: 'text-base' },
+  { input: 'label' as const, expected: 'text-sm' },
+  { input: undefined, expected: 'text-base' },
+]
+
 describe('FieldSet', () => {
   describe('props', () => {
     describe('legend', () => {
-      it.each([
-        { input: 'Profile', expected: 'Profile' },
-        { input: '', expected: undefined },
-        { input: undefined, expected: undefined },
-      ])('renders legend=$input', ({ input, expected }) => {
+      it.each(casesLegend)('renderiza legend=$input', ({ input, expected }) => {
         const fieldSet = mountFieldSet({ props: { legend: input } })
 
         expect(fieldSet.find('[data-test-field-set-legend]').exists()).toBe(Boolean(expected))
@@ -25,11 +39,7 @@ describe('FieldSet', () => {
     })
 
     describe('description', () => {
-      it.each([
-        { input: 'Contact details', expected: 'Contact details' },
-        { input: '', expected: undefined },
-        { input: undefined, expected: undefined },
-      ])('renders description=$input', ({ input, expected }) => {
+      it.each(casesDescription)('renderiza description=$input', ({ input, expected }) => {
         const fieldSet = mountFieldSet({ props: { description: input } })
 
         expect(fieldSet.find('[data-test-field-set-description]').exists()).toBe(Boolean(expected))
@@ -40,12 +50,8 @@ describe('FieldSet', () => {
     })
 
     describe('legendVariant', () => {
-      it.each([
-        { input: 'legend' as const, expected: 'text-base' },
-        { input: 'label' as const, expected: 'text-sm' },
-        { input: undefined, expected: 'text-base' },
-      ])('renders legendVariant=$input', ({ input, expected }) => {
-        const legend = mountFieldSet({ props: { legend: 'Profile', legendVariant: input } }).get(
+      it.each(casesLegendVariant)('renderiza legendVariant=$input', ({ input, expected }) => {
+        const legend = mountFieldSet({ props: { legend: 'Perfil', legendVariant: input } }).get(
           '[data-test-field-set-legend]',
         )
 
@@ -56,29 +62,29 @@ describe('FieldSet', () => {
     describe('ui', () => {
       describe('legend', () => {
         testAttrs({
-          text: 'renders ui.legend attributes',
+          text: 'pasa los atributos de ui.legend',
           id: '[data-test-field-set-legend]',
           mount: (attrs) =>
             mountFieldSet({
-              props: { legend: 'Profile', ui: { legend: () => attrs } },
+              props: { legend: 'Perfil', ui: { legend: () => attrs } },
             }),
         })
       })
 
       describe('description', () => {
         testAttrs({
-          text: 'renders ui.description attributes',
+          text: 'pasa los atributos de ui.description',
           id: '[data-test-field-set-description]',
           mount: (attrs) =>
             mountFieldSet({
-              props: { description: 'Contact details', ui: { description: () => attrs } },
+              props: { description: 'Datos de contacto', ui: { description: () => attrs } },
             }),
         })
       })
 
       describe('group', () => {
         testAttrs({
-          text: 'renders ui.group attributes',
+          text: 'pasa los atributos de ui.group',
           id: '[data-test-field-set-group]',
           mount: (attrs) => mountFieldSet({ props: { ui: { group: () => attrs } } }),
         })
@@ -88,7 +94,7 @@ describe('FieldSet', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to root',
+      text: 'pasa los atributos arbitrarios, la clase y el estilo a la raíz',
       id: '[data-test-field-set-root]',
       mount: (attrs) => mountFieldSet({ attrs }),
     })
@@ -96,46 +102,54 @@ describe('FieldSet', () => {
 
   describe('slots', () => {
     describe('default', () => {
-      it('renders the default slot', () => {
+      it('renderiza el slot predeterminado', () => {
         const fieldSet = mountFieldSet({
           slots: {
-            default: () => h('span', { 'data-test-field-set-slot': 'default' }, 'Slot default'),
+            default: () =>
+              h('span', { 'data-test-field-set-slot': 'default' }, 'Slot predeterminado'),
           },
         })
 
-        expect(fieldSet.get('[data-test-field-set-slot="default"]').text()).toBe('Slot default')
+        expect(fieldSet.get('[data-test-field-set-slot="default"]').text()).toBe(
+          'Slot predeterminado',
+        )
       })
     })
 
     describe('legend', () => {
-      it('renders the legend slot and hides the legend fallback', () => {
+      it('renderiza el slot legend y oculta el valor alternativo', () => {
         const fieldSet = mountFieldSet({
-          props: { legend: 'Legend fallback' },
+          props: { legend: 'Leyenda alternativa' },
           slots: {
-            legend: () => h('span', { 'data-test-field-set-slot': 'legend' }, 'Slot legend'),
+            legend: () =>
+              h('span', { 'data-test-field-set-slot': 'legend' }, 'Leyenda personalizada'),
           },
         })
 
-        expect(fieldSet.get('[data-test-field-set-slot="legend"]').text()).toBe('Slot legend')
-        expect(fieldSet.get('[data-test-field-set-root]').text()).not.toContain('Legend fallback')
+        expect(fieldSet.get('[data-test-field-set-slot="legend"]').text()).toBe(
+          'Leyenda personalizada',
+        )
+        expect(fieldSet.get('[data-test-field-set-root]').text()).not.toContain(
+          'Leyenda alternativa',
+        )
       })
     })
 
     describe('description', () => {
-      it('renders the description slot and hides the description fallback', () => {
+      it('renderiza el slot description y oculta el valor alternativo', () => {
         const fieldSet = mountFieldSet({
-          props: { description: 'Description fallback' },
+          props: { description: 'Descripción alternativa' },
           slots: {
             description: () =>
-              h('span', { 'data-test-field-set-slot': 'description' }, 'Slot description'),
+              h('span', { 'data-test-field-set-slot': 'description' }, 'Descripción personalizada'),
           },
         })
 
         expect(fieldSet.get('[data-test-field-set-slot="description"]').text()).toBe(
-          'Slot description',
+          'Descripción personalizada',
         )
         expect(fieldSet.get('[data-test-field-set-root]').text()).not.toContain(
-          'Description fallback',
+          'Descripción alternativa',
         )
       })
     })

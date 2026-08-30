@@ -9,14 +9,28 @@ function mountEmpty(options: MountingOptions<EmptyProps> = {}) {
   return mount(Empty, options)
 }
 
+const casesLabel = [
+  { input: 'Sin resultados', expected: 'Sin resultados' },
+  { input: '', expected: undefined },
+  { input: undefined, expected: undefined },
+]
+
+const casesDescription = [
+  { input: 'Prueba otra búsqueda.', expected: 'Prueba otra búsqueda.' },
+  { input: '', expected: undefined },
+  { input: undefined, expected: undefined },
+]
+
+const casesMediaVariant = [
+  { input: 'default' as const, expected: 'default' as const },
+  { input: 'icon' as const, expected: 'icon' as const },
+  { input: undefined, expected: 'default' as const },
+]
+
 describe('Empty', () => {
   describe('props', () => {
     describe('label', () => {
-      it.each([
-        { input: 'No results', expected: 'No results' },
-        { input: '', expected: undefined },
-        { input: undefined, expected: undefined },
-      ])('renders label=$input', ({ input, expected }) => {
+      it.each(casesLabel)('renderiza label=$input', ({ input, expected }) => {
         const empty = mountEmpty({ props: { label: input } })
 
         expect(empty.find('[data-test-empty-label]').exists()).toBe(Boolean(expected))
@@ -25,11 +39,7 @@ describe('Empty', () => {
     })
 
     describe('description', () => {
-      it.each([
-        { input: 'Try another search.', expected: 'Try another search.' },
-        { input: '', expected: undefined },
-        { input: undefined, expected: undefined },
-      ])('renders description=$input', ({ input, expected }) => {
+      it.each(casesDescription)('renderiza description=$input', ({ input, expected }) => {
         const empty = mountEmpty({ props: { description: input } })
 
         expect(empty.find('[data-test-empty-description]').exists()).toBe(Boolean(expected))
@@ -38,14 +48,10 @@ describe('Empty', () => {
     })
 
     describe('mediaVariant', () => {
-      it.each([
-        { input: 'default' as const, expected: 'default' as const },
-        { input: 'icon' as const, expected: 'icon' as const },
-        { input: undefined, expected: 'default' as const },
-      ])('renders mediaVariant=$input', ({ input, expected }) => {
+      it.each(casesMediaVariant)('renderiza mediaVariant=$input', ({ input, expected }) => {
         const empty = mountEmpty({
           props: { mediaVariant: input },
-          slots: { media: () => h('span', 'Media') },
+          slots: { media: () => h('span', 'Contenido multimedia') },
         })
 
         const media = empty.get('[data-test-empty-media]')
@@ -60,42 +66,42 @@ describe('Empty', () => {
     describe('ui', () => {
       describe('header', () => {
         testAttrs({
-          text: 'renders ui.header attributes',
+          text: 'pasa los atributos de ui.header',
           id: '[data-test-empty-header]',
           mount: (attrs) =>
-            mountEmpty({ props: { label: 'No results', ui: { header: () => attrs } } }),
+            mountEmpty({ props: { label: 'Sin resultados', ui: { header: () => attrs } } }),
         })
       })
 
       describe('media', () => {
         testAttrs({
-          text: 'renders ui.media attributes',
+          text: 'pasa los atributos de ui.media',
           id: '[data-test-empty-media]',
           mount: (attrs) =>
             mountEmpty({
               props: { ui: { media: () => attrs } },
-              slots: { media: () => h('span', 'Media') },
+              slots: { media: () => h('span', 'Contenido multimedia') },
             }),
         })
       })
 
       describe('label', () => {
         testAttrs({
-          text: 'renders ui.label attributes',
+          text: 'pasa los atributos de ui.label',
           id: '[data-test-empty-label]',
           mount: (attrs) =>
-            mountEmpty({ props: { label: 'No results', ui: { label: () => attrs } } }),
+            mountEmpty({ props: { label: 'Sin resultados', ui: { label: () => attrs } } }),
         })
       })
 
       describe('description', () => {
         testAttrs({
-          text: 'renders ui.description attributes',
+          text: 'pasa los atributos de ui.description',
           id: '[data-test-empty-description]',
           mount: (attrs) =>
             mountEmpty({
               props: {
-                description: 'Try another search.',
+                description: 'Prueba otra búsqueda.',
                 ui: { description: () => attrs },
               },
             }),
@@ -104,12 +110,12 @@ describe('Empty', () => {
 
       describe('content', () => {
         testAttrs({
-          text: 'renders ui.content attributes',
+          text: 'pasa los atributos de ui.content',
           id: '[data-test-empty-content]',
           mount: (attrs) =>
             mountEmpty({
               props: { ui: { content: () => attrs } },
-              slots: { default: () => h('button', 'Action') },
+              slots: { default: () => h('button', 'Acción') },
             }),
         })
       })
@@ -118,6 +124,7 @@ describe('Empty', () => {
 
   describe('attrs', () => {
     testAttrs({
+      text: 'pasa los atributos arbitrarios, la clase y el estilo a la raíz',
       id: '[data-test-empty-root]',
       mount: (attrs) => mountEmpty({ attrs }),
     })
@@ -125,57 +132,59 @@ describe('Empty', () => {
 
   describe('slots', () => {
     describe('default', () => {
-      it('renders the default slot in content', () => {
+      it('renderiza el slot predeterminado dentro de content', () => {
         const empty = mountEmpty({
           slots: {
-            default: () => h('span', { 'data-test-empty-slot': 'default' }, 'Slot default'),
+            default: () => h('span', { 'data-test-empty-slot': 'default' }, 'Slot predeterminado'),
           },
         })
 
-        expect(empty.get('[data-test-empty-slot="default"]').text()).toBe('Slot default')
+        expect(empty.get('[data-test-empty-slot="default"]').text()).toBe('Slot predeterminado')
         expect(empty.get('[data-test-empty-content]')).toBeTruthy()
       })
     })
 
     describe('media', () => {
-      it('renders the media slot', () => {
+      it('renderiza el slot media', () => {
         const empty = mountEmpty({
           slots: {
-            media: () => h('span', { 'data-test-empty-slot': 'media' }, 'Slot media'),
+            media: () => h('span', { 'data-test-empty-slot': 'media' }, 'Contenido multimedia'),
           },
         })
 
-        expect(empty.get('[data-test-empty-slot="media"]').text()).toBe('Slot media')
+        expect(empty.get('[data-test-empty-slot="media"]').text()).toBe('Contenido multimedia')
         expect(empty.find('[data-test-empty-media]').exists()).toBe(true)
       })
     })
 
     describe('label', () => {
-      it('replaces the label prop', () => {
+      it('sustituye la prop label', () => {
         const empty = mountEmpty({
-          props: { label: 'Default label' },
+          props: { label: 'Etiqueta predeterminada' },
           slots: {
-            label: () => h('span', { 'data-test-empty-slot': 'label' }, 'Slot label'),
+            label: () => h('span', { 'data-test-empty-slot': 'label' }, 'Etiqueta personalizada'),
           },
         })
 
-        expect(empty.get('[data-test-empty-slot="label"]').text()).toBe('Slot label')
-        expect(empty.text()).not.toContain('Default label')
+        expect(empty.get('[data-test-empty-slot="label"]').text()).toBe('Etiqueta personalizada')
+        expect(empty.text()).not.toContain('Etiqueta predeterminada')
       })
     })
 
     describe('description', () => {
-      it('replaces the description prop', () => {
+      it('sustituye la prop description', () => {
         const empty = mountEmpty({
-          props: { description: 'Default description' },
+          props: { description: 'Descripción predeterminada' },
           slots: {
             description: () =>
-              h('span', { 'data-test-empty-slot': 'description' }, 'Slot description'),
+              h('span', { 'data-test-empty-slot': 'description' }, 'Descripción personalizada'),
           },
         })
 
-        expect(empty.get('[data-test-empty-slot="description"]').text()).toBe('Slot description')
-        expect(empty.text()).not.toContain('Default description')
+        expect(empty.get('[data-test-empty-slot="description"]').text()).toBe(
+          'Descripción personalizada',
+        )
+        expect(empty.text()).not.toContain('Descripción predeterminada')
       })
     })
   })

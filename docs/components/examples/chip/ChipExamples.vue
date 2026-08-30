@@ -16,16 +16,18 @@ import { Chip } from '@/components/ui/Chip'
       <div class="grid gap-3 rounded-lg border p-4">
         <div>
           <h3 class="font-medium">Sobre un elemento</h3>
-          <p class="text-sm text-muted-foreground">Coloca un valor sobre un avatar o tarjeta.</p>
+          <p class="text-sm text-muted-foreground">
+            Coloca un indicador sobre un avatar o tarjeta.
+          </p>
         </div>
         <div class="flex items-center gap-4">
           <div class="relative inline-flex">
-            <Chip text="3" color="#ef4444">
+            <Chip color="#ef4444" aria-label="Tres notificaciones">
               <Avatar label="JD" />
             </Chip>
           </div>
           <div class="relative inline-flex">
-            <Chip text="" color="#22c55e">
+            <Chip color="#22c55e" aria-label="En línea">
               <Avatar label="AB" />
             </Chip>
           </div>
@@ -40,22 +42,22 @@ import { Chip } from '@/components/ui/Chip'
           </p>
         </div>
         <div class="grid grid-cols-2 gap-3">
-          <Chip text="1" position="top-left" color="#3b82f6">
+          <Chip position="top-left" color="#3b82f6" aria-label="Estado superior izquierdo">
             <span class="flex size-10 items-center justify-center rounded-lg bg-muted text-xs"
               >TL</span
             >
           </Chip>
-          <Chip text="2" position="top-right" color="#64748b">
+          <Chip position="top-right" color="#64748b" aria-label="Estado superior derecho">
             <span class="flex size-10 items-center justify-center rounded-lg bg-muted text-xs"
               >TR</span
             >
           </Chip>
-          <Chip text="3" position="bottom-left" color="#f59e0b">
+          <Chip position="bottom-left" color="#f59e0b" aria-label="Estado inferior izquierdo">
             <span class="flex size-10 items-center justify-center rounded-lg bg-muted text-xs"
               >BL</span
             >
           </Chip>
-          <Chip text="4" position="bottom-right" color="#22c55e">
+          <Chip position="bottom-right" color="#22c55e" aria-label="Estado inferior derecho">
             <span class="flex size-10 items-center justify-center rounded-lg bg-muted text-xs"
               >BR</span
             >
@@ -69,11 +71,11 @@ import { Chip } from '@/components/ui/Chip'
           <p class="text-sm text-muted-foreground">Usa el tamaño adecuado para cada indicador.</p>
         </div>
         <div class="flex flex-wrap items-center gap-3">
-          <Chip text="1" size="3xs" standalone />
-          <Chip text="2" size="xs" standalone color="#22c55e" />
-          <Chip text="3" size="md" standalone color="#ef4444" />
-          <Chip text="4" size="xl" standalone color="#f59e0b" />
-          <Chip text="5" size="3xl" standalone color="#2563eb" />
+          <Chip size="3xs" standalone aria-label="Tamaño 3xs" />
+          <Chip size="xs" standalone color="#22c55e" aria-label="Tamaño xs" />
+          <Chip size="md" standalone color="#ef4444" aria-label="Tamaño md" />
+          <Chip size="xl" standalone color="#f59e0b" aria-label="Tamaño xl" />
+          <Chip size="3xl" standalone color="#2563eb" aria-label="Tamaño 3xl" />
         </div>
       </div>
 
@@ -83,10 +85,10 @@ import { Chip } from '@/components/ui/Chip'
           <p class="text-sm text-muted-foreground">También puede renderizarse sin overlay.</p>
         </div>
         <div class="flex flex-wrap items-center gap-3">
-          <Chip text="7" standalone color="#18181b" />
+          <Chip standalone color="#18181b" aria-label="Indicador independiente" />
           <div class="relative inline-flex">
             <Avatar label="IN" size="sm" />
-            <Chip text="8" inset position="bottom-right" color="#22c55e" />
+            <Chip inset position="bottom-right" color="#22c55e" aria-label="Indicador insertado" />
           </div>
           <Chip size="lg">
             <span class="flex size-3 items-center justify-center rounded-full bg-warning text-[8px]"

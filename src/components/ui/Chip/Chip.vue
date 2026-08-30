@@ -54,8 +54,6 @@ const baseProps = computed(() => {
   <div v-bind="rootProps" data-test-chip-root>
     <slot />
 
-    <span v-if="show" v-bind="baseProps" data-test-chip-base>
-      <slot name="content">{{ props.text }}</slot>
-    </span>
+    <span v-if="show" v-bind="baseProps" data-test-chip-base />
   </div>
 </template>

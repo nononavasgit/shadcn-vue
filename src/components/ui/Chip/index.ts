@@ -117,7 +117,6 @@ export type ChipSize = NonNullable<ChipBaseVariants['size']>
 export type ChipPosition = NonNullable<ChipRootVariants['position']>
 
 export interface ChipProps {
-  text?: string | number
   color?: string
   size?: ChipSize
   position?: ChipPosition
@@ -132,5 +131,4 @@ export interface ChipEmits {
 
 export interface ChipSlots {
   default?(): unknown
-  content?(): unknown
 }

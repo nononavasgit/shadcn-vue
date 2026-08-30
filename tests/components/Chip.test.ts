@@ -10,32 +10,47 @@ function mountChip(options: MountingOptions<ChipProps> = {}) {
   return mount(Chip, options)
 }
 
+const casesSize = [
+  { input: '3xs' as const, expected: ['h-1', 'min-w-1', 'text-[4px]'] },
+  { input: '2xs' as const, expected: ['h-1.5', 'min-w-1.5', 'text-[5px]'] },
+  { input: 'xs' as const, expected: ['h-1.5', 'min-w-1.5', 'text-[6px]'] },
+  { input: 'sm' as const, expected: ['h-2', 'min-w-2', 'text-[7px]'] },
+  { input: 'md' as const, expected: ['h-2', 'min-w-2', 'text-[8px]'] },
+  { input: 'lg' as const, expected: ['h-2.5', 'min-w-2.5', 'text-[9px]'] },
+  { input: 'xl' as const, expected: ['h-2.5', 'min-w-2.5', 'text-[10px]'] },
+  { input: '2xl' as const, expected: ['h-3', 'min-w-3', 'text-[11px]'] },
+  { input: '3xl' as const, expected: ['h-3', 'min-w-3', 'text-xs'] },
+]
+
+const casesPosition = [
+  {
+    input: 'top-right' as const,
+    expected: ['top-0', 'right-0', '-translate-y-1/2', 'translate-x-1/2'],
+  },
+  {
+    input: 'bottom-right' as const,
+    expected: ['bottom-0', 'right-0', 'translate-y-1/2', 'translate-x-1/2'],
+  },
+  {
+    input: 'top-left' as const,
+    expected: ['top-0', 'left-0', '-translate-y-1/2', '-translate-x-1/2'],
+  },
+  {
+    input: 'bottom-left' as const,
+    expected: ['bottom-0', 'left-0', 'translate-y-1/2', '-translate-x-1/2'],
+  },
+]
+
+const casesInset = [
+  { input: true, expectedTransform: false },
+  { input: false, expectedTransform: true },
+  { input: undefined, expectedTransform: true },
+]
+
 describe('Chip', () => {
   describe('props', () => {
-    describe('text', () => {
-      it.each([
-        { input: '5', expected: '5' },
-        { input: 0, expected: '0' },
-        { input: undefined, expected: '' },
-      ])('renders text=$input as "$expected"', ({ input, expected }) => {
-        const chip = mountChip({ props: { text: input } })
-
-        expect(chip.get('[data-test-chip-base]').text()).toBe(expected)
-      })
-    })
-
     describe('size', () => {
-      it.each([
-        { input: '3xs' as const, expected: ['h-1', 'min-w-1', 'text-[4px]'] },
-        { input: '2xs' as const, expected: ['h-1.5', 'min-w-1.5', 'text-[5px]'] },
-        { input: 'xs' as const, expected: ['h-1.5', 'min-w-1.5', 'text-[6px]'] },
-        { input: 'sm' as const, expected: ['h-2', 'min-w-2', 'text-[7px]'] },
-        { input: 'md' as const, expected: ['h-2', 'min-w-2', 'text-[8px]'] },
-        { input: 'lg' as const, expected: ['h-2.5', 'min-w-2.5', 'text-[9px]'] },
-        { input: 'xl' as const, expected: ['h-2.5', 'min-w-2.5', 'text-[10px]'] },
-        { input: '2xl' as const, expected: ['h-3', 'min-w-3', 'text-[11px]'] },
-        { input: '3xl' as const, expected: ['h-3', 'min-w-3', 'text-xs'] },
-      ])('renders size=$input', ({ input, expected }) => {
+      it.each(casesSize)('renderiza size=$input', ({ input, expected }) => {
         const base = mountChip({ props: { size: input } }).get('[data-test-chip-base]')
 
         expect(base.classes()).toEqual(expect.arrayContaining(expected))
@@ -43,24 +58,7 @@ describe('Chip', () => {
     })
 
     describe('position', () => {
-      it.each([
-        {
-          input: 'top-right' as const,
-          expected: ['top-0', 'right-0', '-translate-y-1/2', 'translate-x-1/2'],
-        },
-        {
-          input: 'bottom-right' as const,
-          expected: ['bottom-0', 'right-0', 'translate-y-1/2', 'translate-x-1/2'],
-        },
-        {
-          input: 'top-left' as const,
-          expected: ['top-0', 'left-0', '-translate-y-1/2', '-translate-x-1/2'],
-        },
-        {
-          input: 'bottom-left' as const,
-          expected: ['bottom-0', 'left-0', 'translate-y-1/2', '-translate-x-1/2'],
-        },
-      ])('renders position=$input', ({ input, expected }) => {
+      it.each(casesPosition)('renderiza position=$input', ({ input, expected }) => {
         const root = mountChip({ props: { position: input } }).get('[data-test-chip-root]')
 
         expect(root.classes()).toEqual(expect.arrayContaining(expected))
@@ -68,11 +66,7 @@ describe('Chip', () => {
     })
 
     describe('inset', () => {
-      it.each([
-        { input: true, expectedTransform: false },
-        { input: false, expectedTransform: true },
-        { input: undefined, expectedTransform: true },
-      ])('renders inset=$input', ({ input, expectedTransform }) => {
+      it.each(casesInset)('renderiza inset=$input', ({ input, expectedTransform }) => {
         const root = mountChip({ props: { inset: input } }).get('[data-test-chip-root]')
 
         expect(root.classes().includes('-translate-y-1/2')).toBe(expectedTransform)
@@ -80,7 +74,7 @@ describe('Chip', () => {
     })
 
     describe('standalone', () => {
-      it('does not position the chip absolutely when enabled', () => {
+      it('no posiciona el chip de forma absoluta cuando está activado', () => {
         const root = mountChip({ props: { standalone: true } }).get('[data-test-chip-root]')
 
         expect(root.classes()).not.toContain('absolute')
@@ -89,7 +83,7 @@ describe('Chip', () => {
 
     describe('color', () => {
       testColor({
-        text: 'passes color to Chip',
+        text: 'pasa color a Chip',
         id: '[data-test-chip-root]',
         varColor: '--chip-color',
         mount: (color) => mountChip({ props: { color } }),
@@ -97,7 +91,7 @@ describe('Chip', () => {
     })
 
     describe('show', () => {
-      it('shows the chip by default and supports v-model:show', async () => {
+      it('muestra el chip por defecto y admite v-model:show', async () => {
         const chip = mountChip({ props: { show: false } })
 
         expect(chip.find('[data-test-chip-base]').exists()).toBe(false)
@@ -111,7 +105,7 @@ describe('Chip', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to root',
+      text: 'pasa los atributos arbitrarios, la clase y el estilo a la raíz',
       id: '[data-test-chip-root]',
       mount: (attrs) => mountChip({ attrs }),
     })
@@ -119,15 +113,17 @@ describe('Chip', () => {
 
   describe('slots', () => {
     describe('default', () => {
-      it('renders the default slot inside the root', () => {
+      it('renderiza el slot predeterminado dentro de la raíz', () => {
         const chip = mountChip({
-          slots: { default: () => h('button', { 'data-test-chip-content': '' }, 'Inbox') },
+          slots: {
+            default: () => h('button', { 'data-test-chip-content': '' }, 'Bandeja de entrada'),
+          },
         })
 
-        expect(chip.get('[data-test-chip-content]').text()).toBe('Inbox')
+        expect(chip.get('[data-test-chip-content]').text()).toBe('Bandeja de entrada')
       })
 
-      it('uses the default slot as the positioning context for the chip', () => {
+      it('usa el slot predeterminado como contexto de posición del chip', () => {
         const chip = mountChip({
           slots: { default: () => h('div', { 'data-test-chip-content': '' }, 'Avatar') },
         })
@@ -139,18 +135,6 @@ describe('Chip', () => {
         expect(base.classes()).toEqual(
           expect.arrayContaining(['absolute', 'top-0', 'right-0', '-translate-y-1/2']),
         )
-      })
-    })
-
-    describe('content', () => {
-      it('renders the content slot and hides the text fallback', () => {
-        const chip = mountChip({
-          props: { text: 'Fallback' },
-          slots: { content: () => h('span', { 'data-test-chip-slot': '' }, 'Custom') },
-        })
-
-        expect(chip.get('[data-test-chip-slot]').text()).toBe('Custom')
-        expect(chip.get('[data-test-chip-base]').text()).not.toContain('Fallback')
       })
     })
   })

@@ -12,15 +12,15 @@ function mountKbdGroup(options: MountingOptions<KbdGroupProps> = {}) {
 const casesRootClasses = ['inline-flex', 'items-center', 'gap-1']
 
 describe('KbdGroup', () => {
-  describe('root', () => {
-    it.each(casesRootClasses)('renders the %s class', (className) => {
+  describe('raíz', () => {
+    it.each(casesRootClasses)('renderiza la clase %s', (className) => {
       expect(mountKbdGroup().get('[data-test-kbd-group-root]').classes()).toContain(className)
     })
   })
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to root',
+      text: 'pasa los atributos arbitrarios, la clase y el estilo a la raíz',
       id: '[data-test-kbd-group-root]',
       mount: (attrs) => mountKbdGroup({ attrs }),
     })
@@ -28,14 +28,14 @@ describe('KbdGroup', () => {
 
   describe('slots', () => {
     describe('default', () => {
-      it('renders the default slot', () => {
+      it('renderiza el slot predeterminado', () => {
         const group = mountKbdGroup({
           slots: {
-            default: () => h('span', { 'data-test-kbd-group-slot': '' }, 'Shortcut'),
+            default: () => h('span', { 'data-test-kbd-group-slot': '' }, 'Atajo'),
           },
         })
 
-        expect(group.get('[data-test-kbd-group-slot]').text()).toBe('Shortcut')
+        expect(group.get('[data-test-kbd-group-slot]').text()).toBe('Atajo')
       })
     })
   })

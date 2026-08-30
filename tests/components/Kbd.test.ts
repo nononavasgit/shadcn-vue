@@ -117,14 +117,14 @@ describe('Kbd', () => {
     describe('default', () => {
       it('renderiza el slot predeterminado y sustituye el label alternativo', () => {
         const kbd = mountKbd({
-          props: { label: 'Fallback' },
+          props: { label: 'Valor alternativo' },
           slots: {
             default: () => h('span', { 'data-test-kbd-slot': '' }, 'Ctrl+K'),
           },
         })
 
         expect(kbd.get('[data-test-kbd-slot]').text()).toBe('Ctrl+K')
-        expect(kbd.get('[data-test-kbd-root]').text()).not.toContain('Fallback')
+        expect(kbd.get('[data-test-kbd-root]').text()).not.toContain('Valor alternativo')
       })
     })
   })

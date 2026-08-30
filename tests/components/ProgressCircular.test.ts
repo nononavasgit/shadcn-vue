@@ -80,7 +80,7 @@ describe('ProgressCircular', () => {
   describe('props', () => {
     describe('value', () => {
       it.each(casesValue)(
-        'passes value=$input to ProgressRoot as $expected',
+        'pasa value=$input a ProgressRoot como $expected',
         ({ input, expected, percentage }) => {
           const wrapper = mountWithProp('value', input)
           const root = wrapper.getComponent(ProgressRoot)
@@ -99,7 +99,7 @@ describe('ProgressCircular', () => {
 
     describe('max', () => {
       it.each(casesMaxValues)(
-        'passes max=$input to ProgressRoot as $expected',
+        'pasa max=$input a ProgressRoot como $expected',
         ({ input, expected }) => {
           const root = mountWithProp('max', input).getComponent(ProgressRoot)
 
@@ -109,7 +109,7 @@ describe('ProgressCircular', () => {
     })
 
     describe('getValueLabel', () => {
-      it('passes the resolver to ProgressRoot', () => {
+      it('pasa el resolver a ProgressRoot', () => {
         const getValueLabel = vi.fn(() => '50%')
         const root = mountProgressCircular({ props: { getValueLabel } }).getComponent(ProgressRoot)
 
@@ -118,7 +118,7 @@ describe('ProgressCircular', () => {
     })
 
     describe('getValueText', () => {
-      it.each([vi.fn(() => '50 of 100')])('passes the resolver to ProgressRoot', (input) => {
+      it.each([vi.fn(() => '50 of 100')])('pasa el resolver a ProgressRoot', (input) => {
         const root = mountWithProp('getValueText', input).getComponent(ProgressRoot)
 
         expect(root.props('getValueText')).toBe(input)
@@ -126,7 +126,7 @@ describe('ProgressCircular', () => {
     })
 
     describe('label', () => {
-      it.each(casesLabels)('renders label=$input as $expected', ({ input, expected, visible }) => {
+      it.each(casesLabels)('renderiza label=$input como $expected', ({ input, expected, visible }) => {
         const wrapper = mountProgressCircular({ props: { label: input } })
         const label = wrapper.find('[data-test-progress-circular-label]')
 
@@ -137,7 +137,7 @@ describe('ProgressCircular', () => {
 
     describe('color', () => {
       testColor({
-        text: 'passes color to ProgressCircular',
+        text: 'pasa color a ProgressCircular',
         id: '[data-test-progress-circular-root]',
         varColor: '--progress-circular-color',
         mount: (color) => mountProgressCircular({ props: { color } }),
@@ -146,7 +146,7 @@ describe('ProgressCircular', () => {
 
     describe('trackColor', () => {
       testColor({
-        text: 'passes trackColor to ProgressCircular',
+        text: 'pasa trackColor a ProgressCircular',
         id: '[data-test-progress-circular-root]',
         varColor: '--progress-circular-track-color',
         mount: (trackColor) => mountProgressCircular({ props: { trackColor } }),
@@ -154,7 +154,7 @@ describe('ProgressCircular', () => {
     })
 
     describe('size', () => {
-      it.each(casesSizes)('renders size=$input as $expected', ({ input, expected }) => {
+      it.each(casesSizes)('renderiza size=$input como $expected', ({ input, expected }) => {
         const root = mountWithProp('size', input).get('[data-test-progress-circular-root]')
 
         expect(root.attributes('style')).toContain(`width: ${expected}`)
@@ -164,7 +164,7 @@ describe('ProgressCircular', () => {
 
     describe('thickness', () => {
       it.each(casesThickness)(
-        'renders thickness=$input on track and indicator',
+        'renderiza thickness=$input en el track y el indicador',
         ({ input, expected }) => {
           const wrapper = mountWithProp('thickness', input)
 
@@ -180,7 +180,7 @@ describe('ProgressCircular', () => {
 
     describe('dashOffset', () => {
       it.each(casesDashOffset)(
-        'calculates dashOffset with max=$max, value=$value and thickness=$thickness',
+        'calcula dashOffset con max=$max, value=$value y thickness=$thickness',
         ({ max, value, thickness }) => {
           const wrapper = mountProgressCircular({ props: { max, value, thickness } })
           const indicator = wrapper.get('[data-test-progress-circular-indicator]')
@@ -197,7 +197,7 @@ describe('ProgressCircular', () => {
 
     describe('ui', () => {
       testAttrs({
-        text: 'forwards attrs, class and style through ui.svg',
+        text: 'reenvia attrs, class y style mediante ui.svg',
         id: '[data-test-progress-circular-svg]',
         mount: (attrs) =>
           mountProgressCircular({
@@ -206,7 +206,7 @@ describe('ProgressCircular', () => {
       })
 
       testAttrs({
-        text: 'forwards attrs, class and style through ui.track',
+        text: 'reenvia attrs, class y style mediante ui.track',
         id: '[data-test-progress-circular-track]',
         mount: (attrs) =>
           mountProgressCircular({
@@ -215,7 +215,7 @@ describe('ProgressCircular', () => {
       })
 
       testAttrs({
-        text: 'forwards attrs, class and style through ui.indicator',
+        text: 'reenvia attrs, class y style mediante ui.indicator',
         id: '[data-test-progress-circular-indicator]',
         mount: (attrs) =>
           mountProgressCircular({
@@ -224,7 +224,7 @@ describe('ProgressCircular', () => {
       })
 
       testAttrs({
-        text: 'forwards attrs, class and style through ui.label',
+        text: 'reenvia attrs, class y style mediante ui.label',
         id: '[data-test-progress-circular-label]',
         mount: (attrs) =>
           mountProgressCircular({
@@ -243,7 +243,7 @@ describe('ProgressCircular', () => {
 
   describe('emits', () => {
     describe('update:value', () => {
-      it.each(casesEmittedValues)('forwards ProgressRoot value=$input', async ({ input }) => {
+      it.each(casesEmittedValues)('reenvia value=$input de ProgressRoot', async ({ input }) => {
         const wrapper = mountProgressCircular({ props: { value: 10 } })
 
         await wrapper.getComponent(ProgressRoot).vm.$emit('update:modelValue', input)
@@ -256,7 +256,7 @@ describe('ProgressCircular', () => {
 
   describe('context contract', () => {
     it.each(casesContext)(
-      'passes value=$value, max=$max and percentage=$percentage',
+      'pasa value=$value, max=$max y percentage=$percentage',
       ({ value, max, percentage }) => {
         let context: ProgressCircularContext | undefined
 
@@ -280,7 +280,7 @@ describe('ProgressCircular', () => {
 
   describe('slots', () => {
     describe('label', () => {
-      it('renders the label slot and replaces the label fallback', () => {
+      it('renderiza el slot label y sustituye el label alternativo', () => {
         const wrapper = mountProgressCircular({
           props: { label: 'Fallback', value: 40 },
           slots: {
@@ -293,21 +293,21 @@ describe('ProgressCircular', () => {
         expect(wrapper.get('[data-test-progress-circular-label]').text()).not.toContain('Fallback')
       })
 
-      it('renders the label slot without a label prop', () => {
+      it('renderiza el slot label sin la prop label', () => {
         const wrapper = mountProgressCircular({
           slots: {
-            label: () => h('span', { 'data-test-progress-circular-slot': 'label' }, 'Custom label'),
+            label: () => h('span', { 'data-test-progress-circular-slot': 'label' }, 'Label personalizado'),
           },
         })
 
         expect(wrapper.get('[data-test-progress-circular-slot="label"]').text()).toBe(
-          'Custom label',
+          'Label personalizado',
         )
         expect(wrapper.get('[data-test-progress-circular-label]').exists()).toBe(true)
       })
 
       it.each(casesContext)(
-        'passes value=$value, max=$max and percentage=$percentage as slotProps',
+        'pasa value=$value, max=$max y percentage=$percentage as slotProps',
         ({ value, max, percentage }) => {
           let context: ProgressCircularContext | undefined
 

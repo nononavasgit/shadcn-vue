@@ -54,7 +54,7 @@ describe('Progress', () => {
   describe('props', () => {
     describe('value', () => {
       it.each(casesValue)(
-        'passes value=$input to ProgressRoot as $expected',
+        'pasa value=$input a ProgressRoot como $expected',
         ({ input, expected, percentage }) => {
           const wrapper = mountWithProp('value', input)
           const root = wrapper.getComponent(ProgressRoot)
@@ -69,7 +69,7 @@ describe('Progress', () => {
 
     describe('max', () => {
       it.each(casesMaxValues)(
-        'passes max=$input to ProgressRoot as $expected',
+        'pasa max=$input a ProgressRoot como $expected',
         ({ input, expected }) => {
           const root = mountWithProp('max', input).getComponent(ProgressRoot)
 
@@ -79,7 +79,7 @@ describe('Progress', () => {
     })
 
     describe('getValueLabel', () => {
-      it('passes the resolver to ProgressRoot', () => {
+      it('pasa el resolver a ProgressRoot', () => {
         const getValueLabel = vi.fn(() => '50%')
         const root = mountProgress({ props: { getValueLabel } }).getComponent(ProgressRoot)
 
@@ -89,7 +89,7 @@ describe('Progress', () => {
 
     describe('getValueText', () => {
       it.each([vi.fn(() => '50 of 100')])(
-        'passes the resolver to ProgressRoot',
+        'pasa el resolver a ProgressRoot',
         (input) => {
           const root = mountWithProp('getValueText', input).getComponent(ProgressRoot)
 
@@ -103,7 +103,7 @@ describe('Progress', () => {
         { input: 'Uploading', expected: 'Uploading', visible: true },
         { input: '', expected: '', visible: false },
         { input: undefined, expected: undefined, visible: false },
-      ])('renders label=$input as $expected', ({ input, expected, visible }) => {
+      ])('renderiza label=$input como $expected', ({ input, expected, visible }) => {
         const wrapper = mountProgress({ props: { label: input } })
         const label = wrapper.find('[data-test-progress-label]')
 
@@ -122,7 +122,7 @@ describe('Progress', () => {
 
     describe('color', () => {
       testColor({
-        text: 'passes color to Progress',
+        text: 'pasa color a Progress',
         id: '[data-test-progress-root]',
         varColor: '--progress-color',
         mount: (color) => mountProgress({ props: { color } }),
@@ -131,7 +131,7 @@ describe('Progress', () => {
 
     describe('trackColor', () => {
       testColor({
-        text: 'passes trackColor to Progress',
+        text: 'pasa trackColor a Progress',
         id: '[data-test-progress-root]',
         varColor: '--progress-track-color',
         mount: (trackColor) => mountProgress({ props: { trackColor } }),
@@ -140,7 +140,7 @@ describe('Progress', () => {
 
     describe('ui', () => {
       testAttrs({
-        text: 'forwards attrs, class and style through ui.indicator',
+        text: 'reenvia attrs, class y style mediante ui.indicator',
         id: '[data-test-progress-indicator]',
         mount: (attrs) =>
           mountProgress({
@@ -149,7 +149,7 @@ describe('Progress', () => {
       })
 
       testAttrs({
-        text: 'forwards attrs, class and style through ui.label',
+        text: 'reenvia attrs, class y style mediante ui.label',
         id: '[data-test-progress-label]',
         mount: (attrs) =>
           mountProgress({
@@ -168,7 +168,7 @@ describe('Progress', () => {
 
   describe('emits', () => {
     describe('update:value', () => {
-      it.each(casesEmittedValues)('forwards ProgressRoot value=$input', async ({ input }) => {
+      it.each(casesEmittedValues)('reenvia value=$input de ProgressRoot', async ({ input }) => {
         const wrapper = mountProgress({ props: { value: 10 } })
 
         await wrapper.getComponent(ProgressRoot).vm.$emit('update:modelValue', input)
@@ -181,7 +181,7 @@ describe('Progress', () => {
 
   describe('context contract', () => {
     it.each(casesContext)(
-      'passes value=$value, max=$max and percentage=$percentage',
+      'pasa value=$value, max=$max y percentage=$percentage',
       ({ value, max, percentage }) => {
         let context: ProgressContext | undefined
 
@@ -205,7 +205,7 @@ describe('Progress', () => {
 
   describe('slots', () => {
     describe('label', () => {
-      it('renders the label slot and replaces the label fallback', () => {
+      it('renderiza el slot label y sustituye el label alternativo', () => {
         const wrapper = mountProgress({
           props: { label: 'Fallback', value: 40 },
           slots: {
@@ -218,14 +218,14 @@ describe('Progress', () => {
         expect(wrapper.get('[data-test-progress-label]').text()).not.toContain('Fallback')
       })
 
-      it('renders the label slot without a label prop', () => {
+      it('renderiza el slot label sin la prop label', () => {
         const wrapper = mountProgress({
           slots: {
-            label: () => h('span', { 'data-test-progress-slot': 'label' }, 'Custom label'),
+            label: () => h('span', { 'data-test-progress-slot': 'label' }, 'Label personalizado'),
           },
         })
 
-        expect(wrapper.get('[data-test-progress-slot="label"]').text()).toBe('Custom label')
+        expect(wrapper.get('[data-test-progress-slot="label"]').text()).toBe('Label personalizado')
         expect(wrapper.get('[data-test-progress-label]').exists()).toBe(true)
       })
     })

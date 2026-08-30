@@ -1,24 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import { ProgressCircular, type ProgressCircularProps } from '@/components/ui/ProgressCircular'
 import { progressCircularDefaults } from '@/components/ui/ProgressCircular/defaults'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const playgroundValue = ref<number | null>(40)
-const playgroundMax = ref(progressCircularDefaults.max)
-const playgroundSize = ref<number | string>(progressCircularDefaults.size)
-const playgroundThickness = ref(progressCircularDefaults.thickness)
-const playgroundColor = ref('#3b82f6')
-const playgroundIndeterminate = ref(false)
-
-const playgroundProps = computed<Omit<ProgressCircularProps, 'value'>>(() => ({
-  max: playgroundMax.value,
-  size: playgroundSize.value,
-  thickness: playgroundThickness.value,
-  color: playgroundColor.value || undefined,
-}))
 
 const propRows: ApiTableRow[] = [
   {
@@ -144,98 +126,6 @@ const contextRows: ApiTableRow[] = [
         Progreso circular accesible con valores controlados, estado indeterminado, colores y slots.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">
-          Ajusta el valor, el máximo, el tamaño, el grosor y el color.
-        </p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-64 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <div class="grid justify-items-center gap-4">
-              <ProgressCircular
-                :value="playgroundIndeterminate ? null : playgroundValue"
-                v-bind="playgroundProps"
-              />
-              <output class="text-center text-sm font-medium tabular-nums">
-                {{
-                  playgroundIndeterminate
-                    ? 'Indeterminado'
-                    : `${playgroundValue} / ${playgroundMax}`
-                }}
-              </output>
-            </div>
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">value</span>
-            <input
-              v-model.number="playgroundValue"
-              type="number"
-              min="0"
-              :max="playgroundMax"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">max</span>
-            <input
-              v-model.number="playgroundMax"
-              type="number"
-              min="1"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">size</span>
-            <input
-              v-model.number="playgroundSize"
-              type="number"
-              min="16"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">thickness</span>
-            <input
-              v-model.number="playgroundThickness"
-              type="number"
-              min="1"
-              max="40"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">color</span>
-            <input
-              v-model="playgroundColor"
-              type="text"
-              placeholder="#3b82f6"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="flex items-center gap-2 text-sm">
-            <input
-              v-model="playgroundIndeterminate"
-              type="checkbox"
-              class="size-4 rounded border-input"
-            />
-            <span class="font-medium">value = null</span>
-          </label>
-        </div>
-      </div>
-    </section>
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />

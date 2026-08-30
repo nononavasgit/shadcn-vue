@@ -1,25 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import { Popover, type PopoverProps } from '@/components/ui/Popover'
 import { popoverDefaults } from '@/components/ui/Popover/defaults'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const open = ref(false)
-const modal = ref(popoverDefaults.modal)
-const showArrow = ref(popoverDefaults.showArrow)
-const side = ref<NonNullable<PopoverProps['side']>>(popoverDefaults.side)
-const align = ref<NonNullable<PopoverProps['align']>>(popoverDefaults.align)
-const sideOffset = ref(popoverDefaults.sideOffset)
-
-const playgroundProps = computed<PopoverProps>(() => ({
-  modal: modal.value,
-  showArrow: showArrow.value,
-  side: side.value,
-  align: align.value,
-  sideOffset: sideOffset.value,
-}))
 
 const propRows: ApiTableRow[] = [
   {
@@ -279,76 +260,6 @@ const contextRows: ApiTableRow[] = [
         Contenido flotante contextual con props planas, posicionamiento y control accesible.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">Prueba el estado, la posición y la flecha.</p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <Popover v-model:open="open" v-bind="playgroundProps">
-              <button
-                type="button"
-                class="rounded-md border bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-accent"
-              >
-                {{ open ? 'Cerrar popover' : 'Abrir popover' }}
-              </button>
-              <template #content>
-                <div class="grid gap-2">
-                  <p class="font-medium">Contenido del popover</p>
-                  <p class="text-sm text-muted-foreground">
-                    Todas las props de contenido se configuran en la raíz.
-                  </p>
-                </div>
-              </template>
-            </Popover>
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">side</span>
-            <select v-model="side" class="h-9 rounded-md border bg-background px-3 text-sm">
-              <option value="top">top</option>
-              <option value="right">right</option>
-              <option value="bottom">bottom</option>
-              <option value="left">left</option>
-            </select>
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">align</span>
-            <select v-model="align" class="h-9 rounded-md border bg-background px-3 text-sm">
-              <option value="start">start</option>
-              <option value="center">center</option>
-              <option value="end">end</option>
-            </select>
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">sideOffset</span>
-            <input
-              v-model.number="sideOffset"
-              type="number"
-              class="h-9 rounded-md border bg-background px-3 text-sm"
-            />
-          </label>
-
-          <label class="flex items-center gap-2 text-sm">
-            <input v-model="modal" type="checkbox" class="size-4 rounded border-input" />
-            <span class="font-medium">modal</span>
-          </label>
-
-          <label class="flex items-center gap-2 text-sm">
-            <input v-model="showArrow" type="checkbox" class="size-4 rounded border-input" />
-            <span class="font-medium">showArrow</span>
-          </label>
-        </div>
-      </div>
-    </section>
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />

@@ -1,24 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import { Progress, type ProgressProps } from '@/components/ui/Progress'
 import { progressDefaults } from '@/components/ui/Progress/defaults'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const playgroundValue = ref<number | null>(40)
-const playgroundMax = ref(progressDefaults.max)
-const playgroundLabel = ref('')
-const playgroundColor = ref('#3b82f6')
-const playgroundTrackColor = ref('')
-const playgroundIndeterminate = ref(false)
-
-const playgroundProps = computed<Omit<ProgressProps, 'value'>>(() => ({
-  max: playgroundMax.value,
-  label: playgroundLabel.value || undefined,
-  color: playgroundColor.value || undefined,
-  trackColor: playgroundTrackColor.value || undefined,
-}))
 
 const propRows: ApiTableRow[] = [
   {
@@ -128,97 +110,6 @@ const contextRows: ApiTableRow[] = [
         Barra de progreso accesible con valores controlados, estado indeterminado, colores y slots.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">
-          Ajusta el valor, el máximo, la etiqueta y los colores del progreso.
-        </p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <div class="grid w-full max-w-md gap-4">
-              <Progress
-                :value="playgroundIndeterminate ? null : playgroundValue"
-                v-bind="playgroundProps"
-              />
-              <output class="text-center text-sm font-medium tabular-nums">
-                {{
-                  playgroundIndeterminate
-                    ? 'Indeterminado'
-                    : `${playgroundValue} / ${playgroundMax}`
-                }}
-              </output>
-            </div>
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">value</span>
-            <input
-              v-model.number="playgroundValue"
-              type="number"
-              min="0"
-              :max="playgroundMax"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">max</span>
-            <input
-              v-model.number="playgroundMax"
-              type="number"
-              min="1"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">label</span>
-            <input
-              v-model="playgroundLabel"
-              type="text"
-              placeholder="Opcional"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">color</span>
-            <input
-              v-model="playgroundColor"
-              type="text"
-              placeholder="#3b82f6"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">trackColor</span>
-            <input
-              v-model="playgroundTrackColor"
-              type="text"
-              placeholder="Opcional"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="flex items-center gap-2 text-sm">
-            <input
-              v-model="playgroundIndeterminate"
-              type="checkbox"
-              class="size-4 rounded border-input"
-            />
-            <span class="font-medium">value = null</span>
-          </label>
-        </div>
-      </div>
-    </section>
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />

@@ -47,7 +47,7 @@ describe('Popover', () => {
         { input: true, expected: true },
         { input: false, expected: false },
         { input: undefined, expected: false },
-      ])('passes open=$input to PopoverRoot as $expected', ({ input, expected }) => {
+      ])('pasa open=$input a PopoverRoot como $expected', ({ input, expected }) => {
         const wrapper = mountPopover({ props: { open: input } })
 
         expect(wrapper.getComponent(PopoverRoot).props('open')).toBe(expected)
@@ -59,7 +59,7 @@ describe('Popover', () => {
         { input: true, expected: true },
         { input: false, expected: false },
         { input: undefined, expected: false },
-      ])('passes modal=$input to PopoverRoot as $expected', ({ input, expected }) => {
+      ])('pasa modal=$input a PopoverRoot como $expected', ({ input, expected }) => {
         const wrapper = mountPopover({ props: { modal: input } })
 
         expect(wrapper.getComponent(PopoverRoot).props('modal')).toBe(expected)
@@ -71,20 +71,20 @@ describe('Popover', () => {
         { input: true, expected: true },
         { input: false, expected: false },
         { input: undefined, expected: false },
-      ])('renders showArrow=$input as $expected', async ({ input, expected }) => {
+      ])('renderiza showArrow=$input como $expected', async ({ input, expected }) => {
         const wrapper = mountPopover({
           props: { open: true, showArrow: input },
-          slots: { content: () => h('span', 'Content') },
+          slots: { content: () => h('span', 'Contenido') },
         })
         await nextTick()
 
         expect(wrapper.findComponent(PopoverArrow).exists()).toBe(expected)
       })
 
-      it('renders the arrow when showArrow changes to true', async () => {
+      it('renderiza la flecha cuando showArrow cambia a true', async () => {
         const wrapper = mountPopover({
           props: { open: true, showArrow: false },
-          slots: { content: () => h('span', 'Content') },
+          slots: { content: () => h('span', 'Contenido') },
         })
         await nextTick()
 
@@ -102,11 +102,11 @@ describe('Popover', () => {
     ) {
       describe(prop, () => {
         it.each(cases)(
-          'passes $input to PopoverContent as $expected',
+          'pasa $input a PopoverContent como $expected',
           async ({ input, expected }) => {
             const wrapper = mountPopover({
               props: { open: true, [prop]: input } as PopoverProps,
-              slots: { content: () => h('span', 'Content') },
+              slots: { content: () => h('span', 'Contenido') },
             })
             await nextTick()
 
@@ -223,11 +223,11 @@ describe('Popover', () => {
     ) {
       describe(prop, () => {
         it.each(cases)(
-          'passes $input to PopoverArrow as $expected',
+          'pasa $input a PopoverArrow como $expected',
           async ({ input, expected }) => {
             const wrapper = mountPopover({
               props: { open: true, showArrow: true, [prop]: input } as PopoverProps,
-              slots: { content: () => h('span', 'Content') },
+              slots: { content: () => h('span', 'Contenido') },
             })
             await nextTick()
 
@@ -259,25 +259,25 @@ describe('Popover', () => {
     describe('ui', () => {
       describe('content', () => {
         testAttrs({
-          text: 'renders ui.content attributes',
+          text: 'renderiza los atributos de ui.content',
           id: '[data-test-popover-content]',
           assertId: false,
           mount: (attrs) =>
             mountPopover({
               props: { open: true, ui: { content: () => attrs } },
-              slots: { content: () => h('span', 'Content') },
+              slots: { content: () => h('span', 'Contenido') },
             }),
         })
       })
 
       describe('arrow', () => {
         testAttrs({
-          text: 'renders ui.arrow attributes',
+          text: 'renderiza los atributos de ui.arrow',
           id: '[data-test-popover-arrow]',
           mount: (attrs) =>
             mountPopover({
               props: { open: true, showArrow: true, ui: { arrow: () => attrs } },
-              slots: { content: () => h('span', 'Content') },
+              slots: { content: () => h('span', 'Contenido') },
             }),
         })
       })
@@ -286,7 +286,7 @@ describe('Popover', () => {
 
   describe('portal', () => {
     it('points to the local target after the trigger in the DOM', async () => {
-      const wrapper = mountPopover({ slots: { default: () => h('button', 'Open') } })
+      const wrapper = mountPopover({ slots: { default: () => h('button', 'Abrir') } })
       await nextTick()
 
       const portal = wrapper.getComponent(PopoverPortal)
@@ -305,7 +305,7 @@ describe('Popover', () => {
       { input: undefined, expected: false },
       { input: false, expected: false },
       { input: true, expected: true },
-    ])('passes open=$input and close in the context', ({ input, expected }) => {
+    ])('pasa open=$input y close en el contexto', ({ input, expected }) => {
       let context: PopoverContext | undefined
 
       mountPopover({
@@ -313,7 +313,7 @@ describe('Popover', () => {
         slots: {
           default: (slotContext: PopoverContext) => {
             context = slotContext
-            return h('button', 'Trigger')
+            return h('button', 'Disparador')
           },
         },
       })
@@ -327,21 +327,21 @@ describe('Popover', () => {
       {
         name: 'default',
         selector: '[data-test-popover-slot="default"]',
-        text: 'Trigger',
+        text: 'Disparador',
         options: () => ({
           slots: {
-            default: () => h('span', { 'data-test-popover-slot': 'default' }, 'Trigger'),
+            default: () => h('span', { 'data-test-popover-slot': 'default' }, 'Disparador'),
           },
         }),
       },
       {
         name: 'content',
         selector: '[data-test-popover-slot="content"]',
-        text: 'Content',
+        text: 'Contenido',
         options: () => ({
           props: { open: true },
           slots: {
-            content: () => h('span', { 'data-test-popover-slot': 'content' }, 'Content'),
+            content: () => h('span', { 'data-test-popover-slot': 'content' }, 'Contenido'),
           },
         }),
       },
@@ -352,12 +352,12 @@ describe('Popover', () => {
         options: () => ({
           props: { open: true },
           slots: {
-            content: () => h('span', 'Content'),
+            content: () => h('span', 'Contenido'),
             arrow: () => h('span', { 'data-test-popover-slot': 'arrow' }, 'Arrow'),
           },
         }),
       },
-    ])('renders the $name slot', async ({ selector, text, options }) => {
+    ])('renderiza el slot $name', async ({ selector, text, options }) => {
       const wrapper = mountPopover(options())
       await nextTick()
 
@@ -367,7 +367,7 @@ describe('Popover', () => {
 
   describe('emits', () => {
     describe('show', () => {
-      it('emits when the popover opens', async () => {
+      it('emite cuando se abre el popover', async () => {
         const wrapper = mountPopover({ props: { open: false } })
 
         await wrapper.setProps({ open: true })
@@ -377,7 +377,7 @@ describe('Popover', () => {
     })
 
     describe('close', () => {
-      it('emits when the popover closes', async () => {
+      it('emite cuando se cierra el popover', async () => {
         const wrapper = mountPopover({ props: { open: true } })
 
         await wrapper.setProps({ open: false })
@@ -390,7 +390,7 @@ describe('Popover', () => {
       it.each([
         { initial: false, value: true },
         { initial: true, value: false },
-      ])('forwards value=$value from PopoverRoot', async ({ initial, value }) => {
+      ])('reenvia value=$value desde PopoverRoot', async ({ initial, value }) => {
         const wrapper = mountPopover({ props: { open: initial } })
 
         await wrapper.getComponent(PopoverRoot).vm.$emit('update:open', value)
@@ -401,10 +401,10 @@ describe('Popover', () => {
 
     function testContentEmit(event: string, input: Event) {
       describe(event, () => {
-        it('forwards the event from PopoverContent', async () => {
+        it('reenvia el evento desde PopoverContent', async () => {
           const wrapper = mountPopover({
             props: { open: true },
-            slots: { content: () => h('span', 'Content') },
+            slots: { content: () => h('span', 'Contenido') },
           })
           await nextTick()
 

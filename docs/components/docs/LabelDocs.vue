@@ -1,17 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import { Label, type LabelProps } from '@/components/ui/Label'
 import { labelDefaults } from '@/components/ui/Label/default'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const forValue = ref('email')
-const text = ref('Email address')
-
-const playgroundProps = computed<LabelProps>(() => ({
-  for: forValue.value || undefined,
-}))
 
 const propRows: ApiTableRow[] = [
   {
@@ -45,50 +34,6 @@ const exposeRows: ApiTableRow[] = []
         Etiqueta accesible asociada a un control de formulario.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">Cambia el texto y el control asociado.</p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <div class="grid w-full max-w-sm gap-2">
-              <Label v-bind="playgroundProps">{{ text }}</Label>
-              <input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">text</span>
-            <input
-              v-model="text"
-              type="text"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">for</span>
-            <input
-              v-model="forValue"
-              type="text"
-              placeholder="email"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-        </div>
-      </div>
-    </section>
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />

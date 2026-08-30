@@ -9,13 +9,15 @@ function mountLabel(options: MountingOptions<LabelProps> = {}) {
   return mount(Label, options)
 }
 
+const casesFor = [
+  { input: 'email', expected: 'email' },
+  { input: undefined, expected: undefined },
+]
+
 describe('Label', () => {
   describe('props', () => {
     describe('for', () => {
-      it.each([
-        { input: 'email', expected: 'email' },
-        { input: undefined, expected: undefined },
-      ])('renders for=$input as $expected', ({ input, expected }) => {
+      it.each(casesFor)('renderiza for=$input como $expected', ({ input, expected }) => {
         const root = mountLabel({ props: { for: input } }).get('[data-test-label-root]')
 
         expect(root.attributes('for')).toBe(expected)
@@ -25,21 +27,21 @@ describe('Label', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to root',
+      text: 'pasa los atributos arbitrarios, la clase y el estilo a la raíz',
       id: '[data-test-label-root]',
       mount: (attrs) => mountLabel({ attrs }),
     })
   })
 
   describe('slots', () => {
-    it('renders the default slot', () => {
+    it('renderiza el slot predeterminado', () => {
       const label = mountLabel({
         slots: {
-          default: () => h('span', { 'data-test-label-slot': '' }, 'Email address'),
+          default: () => h('span', { 'data-test-label-slot': '' }, 'Dirección de correo'),
         },
       })
 
-      expect(label.get('[data-test-label-slot]').text()).toBe('Email address')
+      expect(label.get('[data-test-label-slot]').text()).toBe('Dirección de correo')
     })
   })
 })

@@ -75,8 +75,6 @@ const styledDialogUi: DialogProps['ui'] = {
             <button type="button" class="rounded-md border px-3 py-2 text-sm hover:bg-accent">
               Abrir
             </button>
-            
-            <template>{{controlledOpen}}</template>
           </Dialog>
           <button
             type="button"
@@ -105,6 +103,29 @@ const styledDialogUi: DialogProps['ui'] = {
           </button>
           <template #content>
             <p class="text-sm text-muted-foreground">El contenido usa props planas.</p>
+          </template>
+        </Dialog>
+      </div>
+
+      <div class="grid gap-3 rounded-lg border p-4">
+        <div>
+          <h3 class="font-medium">Diálogo bloqueado</h3>
+          <p class="text-sm text-muted-foreground">
+            block impide cerrar el diálogo desde el botón o desde el exterior.
+          </p>
+        </div>
+        <Dialog
+          block
+          label="Confirmación necesaria"
+          description="Completa esta acción para continuar."
+        >
+          <button type="button" class="rounded-md border px-3 py-2 text-sm hover:bg-accent">
+            Abrir confirmación
+          </button>
+          <template #content>
+            <p class="text-sm text-muted-foreground">
+              El diálogo permanece abierto hasta completar la acción.
+            </p>
           </template>
         </Dialog>
       </div>

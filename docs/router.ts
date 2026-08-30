@@ -30,6 +30,7 @@ import PopoverPage from './components/pages/PopoverPage.vue'
 import PaginationPage from './components/pages/PaginationPage.vue'
 import ProgressPage from './components/pages/ProgressPage.vue'
 import ProgressCircularPage from './components/pages/ProgressCircularPage.vue'
+import RibbonPage from './components/pages/RibbonPage.vue'
 import ScrollAreaPage from './components/pages/ScrollAreaPage.vue'
 import SearchPage from './components/pages/SearchPage.vue'
 import SeparatorPage from './components/pages/SeparatorPage.vue'
@@ -131,6 +132,7 @@ export const router = createRouter({
       component: ProgressCircularPage,
       meta: { component: componentMetaBySlug['progress-circular'] },
     },
+    { path: '/ribbon', component: RibbonPage, meta: { component: componentMetaBySlug.ribbon } },
     {
       path: '/scroll-area',
       component: ScrollAreaPage,

@@ -45,7 +45,7 @@ describe('Tabs', () => {
         { input: undefined, expected: undefined },
         { input: 'settings', expected: 'settings' },
         { input: 2, expected: 2 },
-      ])('passes input=$input as expected=$expected to TabsRoot', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected a TabsRoot', ({ input, expected }) => {
         const wrapper = mountTabs({ props: { tabs, value: input } })
 
         expect(wrapper.getComponent(TabsRoot).props('modelValue')).toBe(expected)
@@ -57,7 +57,7 @@ describe('Tabs', () => {
         { input: undefined, expected: 'horizontal' },
         { input: 'horizontal', expected: 'horizontal' },
         { input: 'vertical', expected: 'vertical' },
-      ])('passes input=$input as expected=$expected', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected', ({ input, expected }) => {
         const wrapper = mountTabs({ props: { tabs, orientation: input } })
         const root = wrapper.getComponent(TabsRoot)
 
@@ -70,7 +70,7 @@ describe('Tabs', () => {
         { input: undefined, expected: 'automatic' },
         { input: 'automatic', expected: 'automatic' },
         { input: 'manual', expected: 'manual' },
-      ])('passes input=$input as expected=$expected', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected', ({ input, expected }) => {
         const wrapper = mountTabs({ props: { tabs, activationMode: input } })
 
         expect(wrapper.getComponent(TabsRoot).props('activationMode')).toBe(expected)
@@ -82,7 +82,7 @@ describe('Tabs', () => {
         { input: undefined, expected: true },
         { input: true, expected: true },
         { input: false, expected: false },
-      ])('passes input=$input as expected=$expected', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected', ({ input, expected }) => {
         const wrapper = mountTabs({ props: { tabs, unmountOnHide: input } })
 
         expect(wrapper.getComponent(TabsRoot).props('unmountOnHide')).toBe(expected)
@@ -94,7 +94,7 @@ describe('Tabs', () => {
         { input: undefined, expected: true },
         { input: true, expected: true },
         { input: false, expected: false },
-      ])('passes input=$input as expected=$expected to TabsList', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected to TabsList', ({ input, expected }) => {
         const wrapper = mountTabs({ props: { tabs, loop: input } })
 
         expect(wrapper.getComponent(TabsList).props('loop')).toBe(expected)
@@ -128,7 +128,7 @@ describe('Tabs', () => {
           ],
         },
       ])(
-        'passes input=$input with expected classes',
+        'pasa input=$input con las clases esperadas',
         ({ input, expectedListClasses, expectedTriggerClasses }) => {
           const wrapper = mountTabs({ props: { tabs, variant: input } })
           const list = wrapper.get('[data-test-tabs-list]')
@@ -145,7 +145,7 @@ describe('Tabs', () => {
         { input: [], expectedTriggers: 0, expectedContents: 0 },
         { input: tabs, expectedTriggers: 3, expectedContents: 3 },
       ])(
-        'renders input=$input with expected item counts',
+        'renderiza input=$input con el numero esperado de elementos',
         ({ input, expectedTriggers, expectedContents }) => {
           const wrapper = mountTabs({ props: { tabs: input } })
 
@@ -154,7 +154,7 @@ describe('Tabs', () => {
         },
       )
 
-      it('passes tab trigger state to TabsTrigger', () => {
+      it('pasa el estado del trigger a TabsTrigger', () => {
         const wrapper = mountTabs({ props: { tabs } })
         const trigger = wrapper.findAllComponents(TabsTrigger)[2]
 
@@ -162,7 +162,7 @@ describe('Tabs', () => {
         expect(trigger.props('disabled')).toBe(true)
       })
 
-      it('passes forceMount to TabsContent', () => {
+      it('pasa forceMount a TabsContent', () => {
         const input: TabItem[] = [
           {
             slot: 'one',
@@ -180,7 +180,7 @@ describe('Tabs', () => {
 
       describe('icon', () => {
         testIconProps({
-          text: 'renders icon',
+          text: 'renderiza el icono',
           id: '[data-test-tabs-trigger] [data-test-icon-root]',
           default: 'layoutDashboard',
           mount: (input) => mountTabs({ props: { tabs: [{ ...tabs[0], icon: input }] } }),
@@ -189,7 +189,7 @@ describe('Tabs', () => {
 
       describe('trailingIcon', () => {
         testIconProps({
-          text: 'renders trailingIcon',
+          text: 'renderiza trailingIcon',
           id: '[data-test-tabs-trigger] [data-test-icon-root]',
           default: 'check',
           mount: (input) =>
@@ -201,7 +201,7 @@ describe('Tabs', () => {
     describe('ui', () => {
       describe('root', () => {
         testAttrs({
-          text: 'forwards attrs through ui.root',
+          text: 'reenvia attrs mediante ui.root',
           id: '[data-test-tabs-root]',
           mount: (attrs) => mountTabs({ props: { ui: { root: () => attrs } } }),
         })
@@ -209,7 +209,7 @@ describe('Tabs', () => {
 
       describe('list', () => {
         testAttrs({
-          text: 'forwards attrs through ui.list',
+          text: 'reenvia attrs mediante ui.list',
           id: '[data-test-tabs-list]',
           mount: (attrs) => mountTabs({ props: { tabs, ui: { list: () => attrs } } }),
         })
@@ -217,7 +217,7 @@ describe('Tabs', () => {
 
       describe('contentWrapper', () => {
         testAttrs({
-          text: 'forwards attrs through ui.contentWrapper',
+          text: 'reenvia attrs mediante ui.contentWrapper',
           id: '[data-test-tabs-content-wrapper]',
           mount: (attrs) => mountTabs({ props: { tabs, ui: { contentWrapper: () => attrs } } }),
         })
@@ -225,7 +225,7 @@ describe('Tabs', () => {
 
       describe('trigger', () => {
         testAttrs({
-          text: 'forwards attrs through ui.trigger',
+          text: 'reenvia attrs mediante ui.trigger',
           id: '[data-test-tabs-trigger]',
           assertId: false,
           mount: (attrs) => mountTabs({ props: { tabs, ui: { trigger: () => attrs } } }),
@@ -234,7 +234,7 @@ describe('Tabs', () => {
 
       describe('label', () => {
         testAttrs({
-          text: 'forwards attrs through ui.label',
+          text: 'reenvia attrs mediante ui.label',
           id: '[data-test-tabs-trigger] span',
           assertId: false,
           mount: (attrs) => mountTabs({ props: { tabs, ui: { label: () => attrs } } }),
@@ -243,7 +243,7 @@ describe('Tabs', () => {
 
       describe('content', () => {
         testAttrs({
-          text: 'forwards attrs through ui.content',
+          text: 'reenvia attrs mediante ui.content',
           id: '[data-test-tabs-content]',
           assertId: false,
           mount: (attrs) => mountTabs({ props: { tabs, ui: { content: () => attrs } } }),
@@ -253,7 +253,7 @@ describe('Tabs', () => {
   })
 
   describe('root', () => {
-    it('keeps the root element fixed as div', () => {
+    it('mantiene el elemento raiz fijo como div', () => {
       const wrapper = mountTabs({ attrs: { as: 'section', asChild: true } })
       const root = wrapper.getComponent(TabsRoot)
 
@@ -264,7 +264,7 @@ describe('Tabs', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to root',
+      text: 'reenvia atributos arbitrarios, class y style a la raiz',
       id: '[data-test-tabs-root]',
       mount: (attrs) => mountTabs({ attrs }),
     })
@@ -272,7 +272,7 @@ describe('Tabs', () => {
 
   describe('emits', () => {
     describe('update:value', () => {
-      it('forwards TabsRoot model updates', async () => {
+      it('reenvia las actualizaciones del modelo de TabsRoot', async () => {
         const wrapper = mountTabs({ props: { tabs, value: 'overview' } })
 
         await wrapper.getComponent(TabsRoot).vm.$emit('update:modelValue', 'settings')
@@ -285,7 +285,7 @@ describe('Tabs', () => {
 
   describe('slots', () => {
     describe('trigger', () => {
-      it('renders the slot and replaces the default trigger content', () => {
+      it('renderiza el slot y sustituye el contenido del trigger por defecto', () => {
         const wrapper = mountTabs({
           props: { tabs },
           slots: {
@@ -300,7 +300,7 @@ describe('Tabs', () => {
         ).toBe(true)
       })
 
-      it('passes TabsContext as slotProps', () => {
+      it('pasa TabsContext como slotProps', () => {
         let slotProps: TabsContext | undefined
 
         mountTabs({
@@ -318,7 +318,7 @@ describe('Tabs', () => {
     })
 
     describe('leading', () => {
-      it('renders the slot and replaces the default leading content', () => {
+      it('renderiza el slot y sustituye el contenido leading por defecto', () => {
         const wrapper = mountTabs({
           props: { tabs },
           slots: { leading: () => h('span', { 'data-test-tabs-slot': 'leading' }, 'Leading') },
@@ -327,7 +327,7 @@ describe('Tabs', () => {
         expect(wrapper.get('[data-test-tabs-slot="leading"]').text()).toBe('Leading')
       })
 
-      it('passes TabsContext as slotProps', () => {
+      it('pasa TabsContext como slotProps', () => {
         let slotProps: TabsContext | undefined
 
         mountTabs({
@@ -345,16 +345,16 @@ describe('Tabs', () => {
     })
 
     describe('label', () => {
-      it('renders the slot and replaces the default label', () => {
+      it('renderiza el slot y sustituye el label por defecto', () => {
         const wrapper = mountTabs({
           props: { tabs },
-          slots: { label: () => h('span', { 'data-test-tabs-slot': 'label' }, 'Custom label') },
+          slots: { label: () => h('span', { 'data-test-tabs-slot': 'label' }, 'Label personalizado') },
         })
 
-        expect(wrapper.get('[data-test-tabs-slot="label"]').text()).toBe('Custom label')
+        expect(wrapper.get('[data-test-tabs-slot="label"]').text()).toBe('Label personalizado')
       })
 
-      it('passes TabsContext as slotProps', () => {
+      it('pasa TabsContext como slotProps', () => {
         let slotProps: TabsContext | undefined
 
         mountTabs({
@@ -372,7 +372,7 @@ describe('Tabs', () => {
     })
 
     describe('trailing', () => {
-      it('renders the slot and replaces the default trailing content', () => {
+      it('renderiza el slot y sustituye el contenido trailing por defecto', () => {
         const wrapper = mountTabs({
           props: { tabs },
           slots: { trailing: () => h('span', { 'data-test-tabs-slot': 'trailing' }, 'Trailing') },
@@ -381,7 +381,7 @@ describe('Tabs', () => {
         expect(wrapper.get('[data-test-tabs-slot="trailing"]').text()).toBe('Trailing')
       })
 
-      it('passes TabsContext as slotProps', () => {
+      it('pasa TabsContext como slotProps', () => {
         let slotProps: TabsContext | undefined
 
         mountTabs({
@@ -399,18 +399,18 @@ describe('Tabs', () => {
     })
 
     describe('content', () => {
-      it('renders the slot and replaces default content', () => {
+      it('renderiza el slot y sustituye el contenido por defecto', () => {
         const wrapper = mountTabs({
           props: { tabs, value: 'overview' },
           slots: {
-            content: () => h('span', { 'data-test-tabs-slot': 'content' }, 'Custom content'),
+            content: () => h('span', { 'data-test-tabs-slot': 'content' }, 'Contenido personalizado'),
           },
         })
 
-        expect(wrapper.get('[data-test-tabs-slot="content"]').text()).toBe('Custom content')
+        expect(wrapper.get('[data-test-tabs-slot="content"]').text()).toBe('Contenido personalizado')
       })
 
-      it('passes TabsContext as slotProps', () => {
+      it('pasa TabsContext como slotProps', () => {
         let slotProps: TabsContext | undefined
 
         mountTabs({
@@ -428,7 +428,7 @@ describe('Tabs', () => {
     })
 
     describe('trigger-{slot}', () => {
-      it('renders the item-specific trigger slot before the generic slot', () => {
+      it('renderiza el slot trigger especifico antes del slot generico', () => {
         const wrapper = mountTabs({
           props: { tabs },
           slots: {
@@ -443,7 +443,7 @@ describe('Tabs', () => {
         )
       })
 
-      it('passes TabsItemContext as slotProps', () => {
+      it('pasa TabsItemContext como slotProps', () => {
         let slotProps: TabsItemContext | undefined
 
         mountTabs({
@@ -461,7 +461,7 @@ describe('Tabs', () => {
     })
 
     describe('leading-{slot}', () => {
-      it('renders the item-specific leading slot', () => {
+      it('renderiza el slot leading especifico', () => {
         const wrapper = mountTabs({
           props: { tabs },
           slots: {
@@ -475,7 +475,7 @@ describe('Tabs', () => {
         )
       })
 
-      it('passes TabsItemContext as slotProps', () => {
+      it('pasa TabsItemContext como slotProps', () => {
         let slotProps: TabsItemContext | undefined
 
         mountTabs({
@@ -493,7 +493,7 @@ describe('Tabs', () => {
     })
 
     describe('label-{slot}', () => {
-      it('renders the item-specific label slot', () => {
+      it('renderiza el slot label especifico', () => {
         const wrapper = mountTabs({
           props: { tabs },
           slots: {
@@ -505,7 +505,7 @@ describe('Tabs', () => {
         expect(wrapper.get('[data-test-tabs-slot="label-settings"]').text()).toBe('Specific label')
       })
 
-      it('passes TabsItemContext as slotProps', () => {
+      it('pasa TabsItemContext como slotProps', () => {
         let slotProps: TabsItemContext | undefined
 
         mountTabs({
@@ -523,7 +523,7 @@ describe('Tabs', () => {
     })
 
     describe('trailing-{slot}', () => {
-      it('renders the item-specific trailing slot', () => {
+      it('renderiza el slot trailing especifico', () => {
         const wrapper = mountTabs({
           props: { tabs },
           slots: {
@@ -537,7 +537,7 @@ describe('Tabs', () => {
         )
       })
 
-      it('passes TabsItemContext as slotProps', () => {
+      it('pasa TabsItemContext como slotProps', () => {
         let slotProps: TabsItemContext | undefined
 
         mountTabs({
@@ -555,7 +555,7 @@ describe('Tabs', () => {
     })
 
     describe('content-{slot}', () => {
-      it('renders the item-specific content slot', () => {
+      it('renderiza el slot content especifico', () => {
         const wrapper = mountTabs({
           props: { tabs, value: 'settings' },
           slots: {
@@ -569,7 +569,7 @@ describe('Tabs', () => {
         )
       })
 
-      it('passes TabsItemContext as slotProps', () => {
+      it('pasa TabsItemContext como slotProps', () => {
         let slotProps: TabsItemContext | undefined
 
         mountTabs({
@@ -621,7 +621,7 @@ describe('Tabs', () => {
           input: { value: 'settings', slot: 'disabled' },
           expected: { tab: tabs[2], index: 2, active: false, first: false, last: true },
         },
-      ])('passes input=$input as expected=$expected', ({ input, expected }) => {
+      ])('pasa input=$input como expected=$expected', ({ input, expected }) => {
         let itemContext: TabsItemContext | undefined
 
         mountTabs({

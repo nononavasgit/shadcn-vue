@@ -26,7 +26,7 @@ describe('Switch', () => {
       ]
 
       it.each(valueCases)(
-        'renders value=$input expected modelValue=$input / trueValue=$trueValue / falseValue=$falseValue',
+        'renderiza value=$input con modelValue=$input / trueValue=$trueValue / falseValue=$falseValue',
         ({ input, expected, trueValue, falseValue }) => {
           const root = mountSwitch({
             props: { value: input, trueValue, falseValue },
@@ -57,7 +57,7 @@ describe('Switch', () => {
 
     describe('ui', () => {
       testAttrs({
-        text: 'renders ui.thumb attributes',
+        text: 'renderiza los atributos de ui.thumb',
         id: '[data-test-switch-thumb]',
         mount: (attrs) =>
           mountSwitch({
@@ -71,13 +71,13 @@ describe('Switch', () => {
   })
 
   describe('root configuration', () => {
-    it('always passes as=button', () => {
+    it('siempre pasa as=button', () => {
       const root = mountSwitch().getComponent(SwitchRoot)
 
       expect(root.props('as')).toBe('button')
     })
 
-    it('always passes asChild=false', () => {
+    it('siempre pasa asChild=false', () => {
       const root = mountSwitch().getComponent(SwitchRoot)
 
       expect(root.props('asChild')).toBe(false)
@@ -86,7 +86,7 @@ describe('Switch', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to root',
+      text: 'reenvia atributos arbitrarios, class y style a la raiz',
       id: '[data-test-switch-root]',
       mount: (attrs) => mountSwitch({ attrs }),
     })
@@ -99,7 +99,7 @@ describe('Switch', () => {
         { value: true, trueValue: true, falseValue: false, expected: false },
         { value: 'off', trueValue: 'on', falseValue: 'off', expected: 'on' },
       ])(
-        'emits the next value from the root interaction',
+        'emite el siguiente valor desde la interaccion de la raiz',
         async ({ value, trueValue, falseValue, expected }) => {
           const switchWrapper = mountSwitch({ props: { value, trueValue, falseValue } })
 
@@ -116,7 +116,7 @@ describe('Switch', () => {
       it.each([
         { value: true, expected: 'true' },
         { value: false, expected: 'false' },
-      ])('renders the state context for value=$value', ({ value, expected }) => {
+      ])('renderiza el contexto de estado para value=$value', ({ value, expected }) => {
         const switchWrapper = mountSwitch({
           props: { value },
           slots: {

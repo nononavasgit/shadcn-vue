@@ -52,7 +52,7 @@ describe('Time', () => {
   describe('props', () => {
     describe('datetime', () => {
       it.each(casesDatetime)(
-        'renders datetime=$input as datetime=$expected',
+        'renderiza datetime=$input como datetime=$expected',
         ({ input, expected }) => {
           const root = mountTime({ props: { datetime: input } }).get('[data-test-time-root]')
 
@@ -88,7 +88,7 @@ describe('Time', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to root',
+      text: 'reenvia atributos arbitrarios, class y style a la raiz',
       id: '[data-test-time-root]',
       mount: (attrs) => mountTime({ attrs }),
     })
@@ -96,7 +96,7 @@ describe('Time', () => {
 
   describe('context contract', () => {
     it.each(casesContext)(
-      'creates the formatted date context for "$input"',
+      'crea el contexto de fecha formateada para "$input"',
       ({ input, expected }) => {
         expect(createTimeContext(input)).toEqual(expected satisfies TimeContext)
       },
@@ -104,7 +104,7 @@ describe('Time', () => {
   })
 
   describe('slots', () => {
-    it('renders the default slot with the formatted date context', () => {
+    it('renderiza el slot por defecto con el contexto de fecha formateada', () => {
       const time = mountTime({
         props: {
           locale: 'en-US',
@@ -119,7 +119,7 @@ describe('Time', () => {
       expect(time.get('[data-test-time-slot]').text()).toBe('Year: 2024')
     })
 
-    it('renders the formatted date when the default slot is absent', () => {
+    it('renderiza la fecha formateada cuando falta el slot por defecto', () => {
       const root = mountTime({
         props: { locale: 'en-US', format: { year: 'numeric' } },
       }).get('[data-test-time-root]')

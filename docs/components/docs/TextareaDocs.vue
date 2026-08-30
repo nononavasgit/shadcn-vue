@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-
-import { Textarea } from '@/components/ui/Textarea'
 import { textareaDefaults } from '@/components/ui/Textarea/defaults'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const value = ref('Una nota editable desde el playground.')
 
 const propRows: ApiTableRow[] = [
   {
@@ -39,39 +33,6 @@ const exposeRows: ApiTableRow[] = []
         Campo de texto multilínea controlado para introducir contenido largo.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">
-          Edita el valor mediante el modelo controlado del componente.
-        </p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <Textarea
-              v-model:value="value"
-              rows="5"
-              placeholder="Escribe una nota"
-              aria-label="Textarea playground"
-            />
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">value</span>
-            <textarea
-              v-model="value"
-              rows="5"
-              class="rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-        </div>
-      </div>
-    </section>
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />

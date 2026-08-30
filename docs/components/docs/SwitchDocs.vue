@@ -1,20 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import { Switch, type SwitchProps, type SwitchValue } from '@/components/ui/Switch'
 import { switchDefaults } from '@/components/ui/Switch/default'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-type PlaygroundState = 'false' | 'true'
-
-const playgroundState = ref<PlaygroundState>('false')
-
-const playgroundValue = computed<SwitchValue>(() => playgroundState.value === 'true')
-
-const playgroundProps = computed<SwitchProps>(() => ({
-  value: playgroundValue.value,
-}))
 
 const propRows: ApiTableRow[] = [
   {
@@ -88,34 +74,6 @@ const contextRows: ApiTableRow[] = [
         Control binario con valores personalizados y contexto para su thumb.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">Cambia el estado del switch.</p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <Switch v-bind="playgroundProps" aria-label="Switch playground" />
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">value</span>
-            <select
-              v-model="playgroundState"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="false">false</option>
-              <option value="true">true</option>
-            </select>
-          </label>
-        </div>
-      </div>
-    </section>
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />

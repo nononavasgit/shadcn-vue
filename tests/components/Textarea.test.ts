@@ -17,7 +17,7 @@ const casesValue = [
 describe('Textarea', () => {
   describe('props', () => {
     describe('value', () => {
-      it.each(casesValue)('renders value=$input as "$expected"', ({ input, expected }) => {
+      it.each(casesValue)('renderiza value=$input como "$expected"', ({ input, expected }) => {
         const root = mountTextarea({ props: { value: input } }).get('[data-test-textarea-root]')
 
         expect(root.element.value).toBe(expected)
@@ -27,7 +27,7 @@ describe('Textarea', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to root',
+      text: 'reenvia atributos arbitrarios, class y style a la raiz',
       id: '[data-test-textarea-root]',
       mount: (attrs) => mountTextarea({ attrs }),
     })
@@ -35,7 +35,7 @@ describe('Textarea', () => {
 
   describe('emits', () => {
     describe('update:value', () => {
-      it('emits the updated value when the user edits the textarea', async () => {
+      it('emite el valor actualizado cuando el usuario edita el textarea', async () => {
         const wrapper = mountTextarea({ props: { value: '' } })
 
         await wrapper.get('[data-test-textarea-root]').setValue('Updated value')

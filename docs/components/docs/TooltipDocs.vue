@@ -1,24 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-
-import { Tooltip, type TooltipProps } from '@/components/ui/Tooltip'
 import { tooltipDefaults } from '@/components/ui/Tooltip/default'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
-import Playground from '../Playground.vue'
-
-const playgroundLabel = ref('Información adicional')
-const playgroundSide = ref<TooltipProps['side']>('top')
-const playgroundAlign = ref<TooltipProps['align']>('center')
-const playgroundOpen = ref(false)
-const playgroundWithArrow = ref(tooltipDefaults.withArrow)
-
-const playgroundProps = computed<TooltipProps>(() => ({
-  label: playgroundLabel.value,
-  side: playgroundSide.value,
-  align: playgroundAlign.value,
-  open: playgroundOpen.value,
-  withArrow: playgroundWithArrow.value,
-}))
 
 const typeRows: ApiTableRow[] = [
   {
@@ -232,78 +214,6 @@ const exposeRows: ApiTableRow[] = []
         Mensajes contextuales con props planas, posiciones y contenido personalizable.
       </p>
     </header>
-
-    <section class="grid gap-4">
-      <div>
-        <h3 class="text-lg font-medium">Playground</h3>
-        <p class="text-sm text-muted-foreground">Prueba el contenido y el posicionamiento.</p>
-      </div>
-
-      <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_280px]">
-        <div class="grid min-h-52 place-items-center rounded-lg border bg-muted/20 p-8">
-          <Playground>
-            <Tooltip v-bind="playgroundProps" v-model:open="playgroundOpen">
-              <button
-                type="button"
-                class="rounded-md border bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-accent"
-              >
-                Pasa el cursor por aquí
-              </button>
-            </Tooltip>
-          </Playground>
-        </div>
-
-        <div class="grid content-start gap-4 rounded-lg border p-4">
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">label</span>
-            <input
-              v-model="playgroundLabel"
-              type="text"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">side</span>
-            <select
-              v-model="playgroundSide"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="top">top</option>
-              <option value="right">right</option>
-              <option value="bottom">bottom</option>
-              <option value="left">left</option>
-            </select>
-          </label>
-
-          <label class="grid gap-1.5 text-sm">
-            <span class="font-medium">align</span>
-            <select
-              v-model="playgroundAlign"
-              class="h-9 rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="start">start</option>
-              <option value="center">center</option>
-              <option value="end">end</option>
-            </select>
-          </label>
-
-          <label class="flex items-center gap-2 text-sm">
-            <input v-model="playgroundOpen" type="checkbox" class="size-4 rounded border-input" />
-            <span class="font-medium">open</span>
-          </label>
-
-          <label class="flex items-center gap-2 text-sm">
-            <input
-              v-model="playgroundWithArrow"
-              type="checkbox"
-              class="size-4 rounded border-input"
-            />
-            <span class="font-medium">withArrow</span>
-          </label>
-        </div>
-      </div>
-    </section>
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />

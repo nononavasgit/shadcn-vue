@@ -72,7 +72,7 @@ const casesEmittedValues = [
 describe('Toggle', () => {
   describe('props', () => {
     describe('label', () => {
-      it.each(casesLabel)('renders label=$input as "$expected"', ({ input, expected }) => {
+      it.each(casesLabel)('renderiza label=$input como "$expected"', ({ input, expected }) => {
         const root = mountToggle({ props: { label: input } }).get('[data-test-toggle-root]')
         expect(root.text()).toBe(expected)
       })
@@ -80,7 +80,7 @@ describe('Toggle', () => {
 
     //** Reka Props */
     describe('value', () => {
-      it.each(casesValue)('passes value=$input as modelValue=$expected', ({ input, expected }) => {
+      it.each(casesValue)('pasa value=$input como modelValue=$expected', ({ input, expected }) => {
         const root = mountToggle({ props: { value: input } }).getComponent(
           '[data-test-toggle-root]',
         )
@@ -90,7 +90,7 @@ describe('Toggle', () => {
     })
 
     describe('variant', () => {
-      it.each(casesVariant)('renders variant=$input', ({ input, expected }) => {
+      it.each(casesVariant)('renderiza variant=$input', ({ input, expected }) => {
         const root = mountToggle({ props: { variant: input } }).get('[data-test-toggle-root]')
 
         expect(root.classes()).toEqual(expect.arrayContaining(expected))
@@ -98,7 +98,7 @@ describe('Toggle', () => {
     })
 
     describe('severity', () => {
-      it.each(casesSeverity)('renders severity=$input', ({ input, expected }) => {
+      it.each(casesSeverity)('renderiza severity=$input', ({ input, expected }) => {
         const root = mountToggle({ props: { severity: input } }).get('[data-test-toggle-root]')
 
         expect(root.classes()).toContain(expected)
@@ -106,7 +106,7 @@ describe('Toggle', () => {
     })
 
     describe('size', () => {
-      it.each(casesSize)('renders size=$input', ({ input, expected }) => {
+      it.each(casesSize)('renderiza size=$input', ({ input, expected }) => {
         const root = mountToggle({ props: { size: input } }).get('[data-test-toggle-root]')
 
         expect(root.classes()).toEqual(expect.arrayContaining(expected))
@@ -115,7 +115,7 @@ describe('Toggle', () => {
 
     /** Reka prop */
     describe('disabled', () => {
-      it.each(casesDisabled)('renders disabled=$input as $expected', ({ input, expected }) => {
+      it.each(casesDisabled)('renderiza disabled=$input como $expected', ({ input, expected }) => {
         const root = mountToggle({ props: { disabled: input } }).getComponent(
           '[data-test-toggle-root]',
         )
@@ -126,13 +126,13 @@ describe('Toggle', () => {
 
     describe('icon', () => {
       testIconProps({
-        text: 'passes icon props',
+        text: 'pasa las props del icono',
         id: '[data-test-toggle-icon]',
         mount: (input) => mountToggle({ props: { icon: input } }),
       })
 
       testIconSize({
-        text: 'passes Toggle size to icon',
+        text: 'pasa el tamaño de Toggle al icono',
         id: '[data-test-toggle-icon]',
         mount: (size) => mountToggle({ props: { size, icon: { name: 'check' } } }),
       })
@@ -140,13 +140,13 @@ describe('Toggle', () => {
 
     describe('trailingIcon', () => {
       testIconProps({
-        text: 'passes trailingIcon props',
+        text: 'pasa las props de trailingIcon',
         id: '[data-test-toggle-trailing-icon]',
         mount: (input) => mountToggle({ props: { trailingIcon: input } }),
       })
 
       testIconSize({
-        text: 'passes Toggle size to trailing icon',
+        text: 'pasa el tamaño de Toggle al icono trailing',
         id: '[data-test-toggle-trailing-icon]',
         mount: (size) => mountToggle({ props: { size, trailingIcon: { name: 'check' } } }),
       })
@@ -154,7 +154,7 @@ describe('Toggle', () => {
 
     describe('color', () => {
       testColor({
-        text: 'renders color',
+        text: 'renderiza color',
         id: '[data-test-toggle-root]',
         varColor: '--toggle-color',
         mount: (color) => mountToggle({ props: { color } }),
@@ -163,13 +163,13 @@ describe('Toggle', () => {
   })
 
   describe('root configuration', () => {
-    it('always passes as=button', () => {
+    it('siempre pasa as=button', () => {
       const root = mountToggle().getComponent('[data-test-toggle-root]')
 
       expect(root.vm.$parent?.$props.as).toBe('button')
     })
 
-    it('always passes asChild=false', () => {
+    it('siempre pasa asChild=false', () => {
       const root = mountToggle().getComponent('[data-test-toggle-root]')
 
       expect(root.vm.$parent?.$props.asChild).toBe(false)
@@ -178,7 +178,7 @@ describe('Toggle', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to root',
+      text: 'reenvia atributos arbitrarios, class y style a la raiz',
       id: '[data-test-toggle-root]',
       mount: (attrs) => mountToggle({ attrs }),
     })
@@ -187,7 +187,7 @@ describe('Toggle', () => {
   describe('emits', () => {
     describe('update:value', () => {
       it.each(casesEmittedValues)(
-        'forwards ToggleRoot value=$input',
+        'reenvia value=$input de ToggleRoot',
         async ({ input, initial }) => {
           const wrapper = mountToggle({ props: { value: initial } })
 
@@ -201,14 +201,14 @@ describe('Toggle', () => {
   })
 
   describe('context contract', () => {
-    it.each(casesContext)('creates value=$input context', ({ input, expected }) => {
+    it.each(casesContext)('crea el contexto para value=$input', ({ input, expected }) => {
       expect(createToggleContext(input)).toEqual(expected)
     })
   })
 
   describe('slots', () => {
     describe('default', () => {
-      it('renders the default slot and replaces the label fallback', () => {
+      it('renderiza el slot por defecto y sustituye el label alternativo', () => {
         const toggle = mountToggle({
           props: { label: 'Fallback', value: true },
           slots: {
@@ -220,7 +220,7 @@ describe('Toggle', () => {
         expect(toggle.get('[data-test-toggle-root]').text()).not.toContain('Fallback')
       })
 
-      it('passes context to the default slot', () => {
+      it('pasa el contexto al slot por defecto', () => {
         let context: ToggleContext | undefined
 
         mountToggle({
@@ -238,7 +238,7 @@ describe('Toggle', () => {
     })
 
     describe('leading', () => {
-      it('renders the leading slot and replaces the icon fallback', () => {
+      it('renderiza el slot leading y sustituye el icono alternativo', () => {
         const toggle = mountToggle({
           props: { icon: { name: 'check' } },
           slots: {
@@ -250,7 +250,7 @@ describe('Toggle', () => {
         expect(toggle.find('[data-test-toggle-icon]').exists()).toBe(false)
       })
 
-      it('passes context to the leading slot', () => {
+      it('pasa el contexto al slot leading', () => {
         let context: ToggleContext | undefined
 
         mountToggle({
@@ -268,7 +268,7 @@ describe('Toggle', () => {
     })
 
     describe('trailing', () => {
-      it('renders the trailing slot and replaces the trailing icon fallback', () => {
+      it('renderiza el slot trailing y sustituye el icono trailing alternativo', () => {
         const toggle = mountToggle({
           props: { trailingIcon: { name: 'chevronRight' } },
           slots: {
@@ -280,7 +280,7 @@ describe('Toggle', () => {
         expect(toggle.find('[data-test-toggle-trailing-icon]').exists()).toBe(false)
       })
 
-      it('passes context to the trailing slot', () => {
+      it('pasa el contexto al slot trailing', () => {
         let context: ToggleContext | undefined
 
         mountToggle({

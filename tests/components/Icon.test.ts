@@ -15,7 +15,7 @@ describe('Icon', () => {
         { input: 'check' as const, expected: 'lucide-check' },
         { input: 'chevronRight' as const, expected: 'lucide-chevron-right' },
         { input: 'error' as const, expected: 'lucide-circle-alert' },
-      ])('renders name=$input', ({ input, expected }) => {
+      ])('renderiza name=$input', ({ input, expected }) => {
         const root = mountIcon({ props: { name: input } }).get('[data-test-icon-root]')
 
         expect(root.classes()).toContain(expected)
@@ -29,7 +29,7 @@ describe('Icon', () => {
         { input: 'md' as const, expected: 'size-5' },
         { input: 'lg' as const, expected: 'size-6' },
         { input: undefined, expected: 'size-5' },
-      ])('renders size=$input', ({ input, expected }) => {
+      ])('renderiza size=$input', ({ input, expected }) => {
         const root = mountIcon({ props: { name: 'check', size: input } }).get(
           '[data-test-icon-root]',
         )
@@ -43,7 +43,7 @@ describe('Icon', () => {
         { input: '#ff0000', expected: 'color: rgb(255, 0, 0)' },
         { input: 'currentColor', expected: 'color: currentcolor' },
         { input: undefined, expected: 'color: currentcolor' },
-      ])('renders color=$input', ({ input, expected }) => {
+      ])('renderiza color=$input', ({ input, expected }) => {
         const root = mountIcon({ props: { name: 'check', color: input } }).get(
           '[data-test-icon-root]',
         )
@@ -55,7 +55,7 @@ describe('Icon', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards attrs, class and style to root',
+      text: 'pasa los atributos, la clase y el estilo a la raíz',
       id: '[data-test-icon-root]',
       mount: (attrs) => mountIcon({ attrs }),
     })

@@ -12,7 +12,7 @@ function mountSearch(options: MountingOptions<SearchProps> = {}) {
 describe('Search', () => {
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to the root form',
+      text: 'reenvia atributos arbitrarios, class y style al formulario raiz',
       id: '[data-test-search-root]',
       mount: (attrs) => mountSearch({ attrs }),
     })
@@ -20,7 +20,7 @@ describe('Search', () => {
 
   describe('slots', () => {
     describe('default', () => {
-      it('renders the default slot without slot props', () => {
+      it('renderiza el slot por defecto sin slot props', () => {
         const search = mountSearch({
           slots: {
             default: () => h('span', { 'data-test-search-slot': '' }, 'Search content'),
@@ -33,7 +33,7 @@ describe('Search', () => {
   })
 
   describe('form behavior', () => {
-    it('renders a semantic search form and forwards native submit listeners', async () => {
+    it('renderiza un formulario de busqueda semantico y reenvia los listeners submit nativos', async () => {
       const onSubmit = vi.fn((event: SubmitEvent) => event.preventDefault())
       const search = mountSearch({
         attrs: {

@@ -28,7 +28,7 @@ function mountWithUi(ui: ScrollAreaUI) {
     },
     attrs: { style: 'height: 100px; width: 100px' },
     slots: {
-      default: () => h('div', { style: 'height: 1000px; width: 1000px' }, 'Content'),
+      default: () => h('div', { style: 'height: 1000px; width: 1000px' }, 'Contenido'),
     },
     global: {
       stubs: {
@@ -92,7 +92,7 @@ describe('ScrollArea', () => {
   describe('props', () => {
     describe('type', () => {
       it.each(casesType)(
-        'passes type=$input to ScrollAreaRoot as $expected',
+        'pasa type=$input a ScrollAreaRoot como $expected',
         ({ input, expected }) => {
           const wrapper = mountWithProp('type', input)
 
@@ -103,7 +103,7 @@ describe('ScrollArea', () => {
 
     describe('scrollHideDelay', () => {
       it.each(casesScrollHideDelay)(
-        'passes scrollHideDelay=$input to ScrollAreaRoot as $expected',
+        'pasa scrollHideDelay=$input a ScrollAreaRoot como $expected',
         ({ input, expected }) => {
           const wrapper = mountWithProp('scrollHideDelay', input)
 
@@ -114,13 +114,13 @@ describe('ScrollArea', () => {
 
     describe('orientation', () => {
       it.each(casesOrientation)(
-        'renders orientation=$input',
+        'renderiza orientation=$input',
         ({ input, expectedScrollbars, expectedOrientations, expectedCorner }) => {
           const wrapper = mountScrollArea({
             props: { orientation: input, forceMount: true },
             attrs: { style: 'height: 100px; width: 100px' },
             slots: {
-              default: () => h('div', { style: 'height: 1000px; width: 1000px' }, 'Content'),
+              default: () => h('div', { style: 'height: 1000px; width: 1000px' }, 'Contenido'),
             },
           })
 
@@ -137,7 +137,7 @@ describe('ScrollArea', () => {
 
     describe('forceMount', () => {
       it.each(casesForceMount)(
-        'passes forceMount=$input to ScrollAreaScrollbar as $expected',
+        'pasa forceMount=$input a ScrollAreaScrollbar como $expected',
         ({ input, expected }) => {
           const wrapper = mountScrollArea({ props: { orientation: 'both', forceMount: input } })
           const scrollbars = wrapper.findAllComponents(ScrollAreaScrollbar)
@@ -152,37 +152,37 @@ describe('ScrollArea', () => {
 
     describe('ui', () => {
       testAttrs({
-        text: 'forwards attrs through ui.viewport',
+        text: 'reenvia attrs mediante ui.viewport',
         id: '[data-test-scroll-area-viewport]',
         mount: (attrs) => mountWithUi({ viewport: () => attrs }),
       })
 
       testAttrs({
-        text: 'forwards attrs through ui.verticalScrollbar',
+        text: 'reenvia attrs mediante ui.verticalScrollbar',
         id: '[data-test-scroll-area-vertical-scrollbar]',
         mount: (attrs) => mountWithUi({ verticalScrollbar: () => attrs }),
       })
 
       testAttrs({
-        text: 'forwards attrs through ui.horizontalScrollbar',
+        text: 'reenvia attrs mediante ui.horizontalScrollbar',
         id: '[data-test-scroll-area-horizontal-scrollbar]',
         mount: (attrs) => mountWithUi({ horizontalScrollbar: () => attrs }),
       })
 
       testAttrs({
-        text: 'forwards attrs through ui.thumbVertical',
+        text: 'reenvia attrs mediante ui.thumbVertical',
         id: '[data-test-scroll-area-vertical-thumb]',
         mount: (attrs) => mountWithUi({ thumbVertical: () => attrs }),
       })
 
       testAttrs({
-        text: 'forwards attrs through ui.thumbHorizontal',
+        text: 'reenvia attrs mediante ui.thumbHorizontal',
         id: '[data-test-scroll-area-horizontal-thumb]',
         mount: (attrs) => mountWithUi({ thumbHorizontal: () => attrs }),
       })
 
       testAttrs({
-        text: 'forwards attrs through ui.corner',
+        text: 'reenvia attrs mediante ui.corner',
         id: '[data-test-scroll-area-corner]',
         mount: (attrs) => mountWithUi({ corner: () => attrs }),
       })
@@ -191,19 +191,19 @@ describe('ScrollArea', () => {
 
   describe('attrs', () => {
     testAttrs({
-      text: 'forwards arbitrary attrs, class and style to the root',
+      text: 'reenvia atributos arbitrarios, class y style a la raiz',
       id: '[data-test-scroll-area-root]',
       mount: (attrs) => mountScrollArea({ attrs }),
     })
   })
 
   describe('slots', () => {
-    it('renders the default slot', () => {
+    it('renderiza el slot por defecto', () => {
       const wrapper = mountScrollArea({
-        slots: { default: () => h('span', { 'data-test-scroll-area-slot': '' }, 'Content') },
+        slots: { default: () => h('span', { 'data-test-scroll-area-slot': '' }, 'Contenido') },
       })
 
-      expect(wrapper.get('[data-test-scroll-area-slot]').text()).toBe('Content')
+      expect(wrapper.get('[data-test-scroll-area-slot]').text()).toBe('Contenido')
     })
   })
 })

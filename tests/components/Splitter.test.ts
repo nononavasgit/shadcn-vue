@@ -32,7 +32,7 @@ describe('Splitter', () => {
         { input: 'horizontal' as const, expected: 'horizontal' },
         { input: 'vertical' as const, expected: 'vertical' },
         { input: undefined, expected: 'horizontal' },
-      ])('passes direction=$input to Reka SplitterGroup as $expected', ({ input, expected }) => {
+      ])('pasa direction=$input al SplitterGroup de Reka como $expected', ({ input, expected }) => {
         const wrapper = mountSplitter({ props: { direction: input } })
 
         expect(wrapper.getComponent(SplitterGroup).props('direction')).toBe(expected)
@@ -43,7 +43,7 @@ describe('Splitter', () => {
       it.each([
         { input: 'splitter-group', expected: 'splitter-group' },
         { input: undefined, expected: undefined },
-      ])('passes id=$input to SplitterGroup', ({ input, expected }) => {
+      ])('pasa id=$input a SplitterGroup', ({ input, expected }) => {
         const group = mountSplitter({ props: { id: input } }).getComponent(SplitterGroup)
 
         expect(group.props('id')).toBe(expected)
@@ -55,7 +55,7 @@ describe('Splitter', () => {
         { input: 'splitter-layout', expected: 'splitter-layout' },
         { input: null, expected: null },
         { input: undefined, expected: null },
-      ])('passes autoSaveId=$input to SplitterGroup', ({ input, expected }) => {
+      ])('pasa autoSaveId=$input a SplitterGroup', ({ input, expected }) => {
         const group = mountSplitter({ props: { autoSaveId: input } }).getComponent(SplitterGroup)
 
         expect(group.props('autoSaveId')).toBe(expected)
@@ -67,7 +67,7 @@ describe('Splitter', () => {
         { input: 7, expected: 7 },
         { input: null, expected: null },
         { input: undefined, expected: 10 },
-      ])('passes keyboardResizeBy=$input to SplitterGroup', ({ input, expected }) => {
+      ])('pasa keyboardResizeBy=$input a SplitterGroup', ({ input, expected }) => {
         const group = mountSplitter({ props: { keyboardResizeBy: input } }).getComponent(
           SplitterGroup,
         )
@@ -77,7 +77,7 @@ describe('Splitter', () => {
     })
 
     describe('storage', () => {
-      it('passes the custom storage API to SplitterGroup', () => {
+      it('pasa la API de almacenamiento personalizada a SplitterGroup', () => {
         const storage = {
           getItem: vi.fn(() => null),
           setItem: vi.fn(),
@@ -89,14 +89,14 @@ describe('Splitter', () => {
     })
 
     describe('items', () => {
-      it('renders no panels when items is undefined', () => {
+      it('no renderiza paneles cuando items es undefined', () => {
         const wrapper = mountSplitter()
 
         expect(wrapper.findAllComponents(SplitterPanel)).toHaveLength(0)
         expect(wrapper.findAllComponents(SplitterResizeHandle)).toHaveLength(0)
       })
 
-      it('renders one panel and one handle for each adjacent pair of items', () => {
+      it('renderiza un panel por elemento y un manejador por cada par adyacente', () => {
         const wrapper = mountSplitter({
           props: {
             items: [makeItem(), makeItem({ id: 'right', slot: 'right' })],
@@ -108,7 +108,7 @@ describe('Splitter', () => {
       })
 
       describe('slot', () => {
-        it('uses the item slot to resolve the panel slot name', () => {
+        it('usa el slot del elemento para resolver el nombre del slot del panel', () => {
           const wrapper = mountSplitter({
             props: { items: [makeItem({ slot: 'files' })] },
             slots: {
@@ -121,7 +121,7 @@ describe('Splitter', () => {
       })
 
       describe('id', () => {
-        it('passes the item id to SplitterPanel', () => {
+        it('pasa el id del elemento a SplitterPanel', () => {
           const panel = mountSplitter({
             props: { items: [makeItem({ id: 'panel-id' })] },
           }).getComponent(SplitterPanel)
@@ -131,7 +131,7 @@ describe('Splitter', () => {
       })
 
       describe('collapsedSize', () => {
-        it('passes collapsedSize to SplitterPanel', () => {
+        it('pasa collapsedSize a SplitterPanel', () => {
           const panel = mountSplitter({
             props: { items: [makeItem({ collapsedSize: 5 })] },
           }).getComponent(SplitterPanel)
@@ -141,7 +141,7 @@ describe('Splitter', () => {
       })
 
       describe('collapsible', () => {
-        it.each([true, false, undefined])('passes collapsible=%s to SplitterPanel', (value) => {
+        it.each([true, false, undefined])('pasa collapsible=%s a SplitterPanel', (value) => {
           const panel = mountSplitter({
             props: { items: [makeItem({ collapsible: value })] },
           }).getComponent(SplitterPanel)
@@ -151,7 +151,7 @@ describe('Splitter', () => {
       })
 
       describe('defaultSize', () => {
-        it('passes defaultSize to SplitterPanel', () => {
+        it('pasa defaultSize a SplitterPanel', () => {
           const panel = mountSplitter({
             props: { items: [makeItem({ defaultSize: 35 })] },
           }).getComponent(SplitterPanel)
@@ -161,7 +161,7 @@ describe('Splitter', () => {
       })
 
       describe('maxSize', () => {
-        it('passes maxSize to SplitterPanel', () => {
+        it('pasa maxSize a SplitterPanel', () => {
           const panel = mountSplitter({
             props: { items: [makeItem({ maxSize: 70 })] },
           }).getComponent(SplitterPanel)
@@ -171,7 +171,7 @@ describe('Splitter', () => {
       })
 
       describe('minSize', () => {
-        it('passes minSize to SplitterPanel', () => {
+        it('pasa minSize a SplitterPanel', () => {
           const panel = mountSplitter({
             props: { items: [makeItem({ minSize: 20 })] },
           }).getComponent(SplitterPanel)
@@ -181,7 +181,7 @@ describe('Splitter', () => {
       })
 
       describe('order', () => {
-        it('passes order to SplitterPanel', () => {
+        it('pasa order a SplitterPanel', () => {
           const panel = mountSplitter({
             props: { items: [makeItem({ order: 2 })] },
           }).getComponent(SplitterPanel)
@@ -191,7 +191,7 @@ describe('Splitter', () => {
       })
 
       describe('sizeUnit', () => {
-        it.each(['%', 'px'] as const)('passes sizeUnit=%s to SplitterPanel', (value) => {
+        it.each(['%', 'px'] as const)('pasa sizeUnit=%s a SplitterPanel', (value) => {
           const panel = mountSplitter({
             props: { items: [makeItem({ sizeUnit: value })] },
           }).getComponent(SplitterPanel)
@@ -201,7 +201,7 @@ describe('Splitter', () => {
       })
 
       describe('class', () => {
-        it('passes the item class to SplitterPanel', () => {
+        it('pasa la class del elemento a SplitterPanel', () => {
           const panel = mountSplitter({
             props: { items: [makeItem({ class: 'panel-custom' })] },
           }).getComponent(SplitterPanel)
@@ -211,7 +211,7 @@ describe('Splitter', () => {
       })
 
       describe('style', () => {
-        it('passes the item style to SplitterPanel', () => {
+        it('pasa el style del elemento a SplitterPanel', () => {
           const panel = mountSplitter({
             props: { items: [makeItem({ style: 'background: red' })] },
           }).getComponent(SplitterPanel)
@@ -222,7 +222,7 @@ describe('Splitter', () => {
     })
 
     describe('hitAreaMargins', () => {
-      it('passes hitAreaMargins to every SplitterResizeHandle', () => {
+      it('pasa hitAreaMargins a cada SplitterResizeHandle', () => {
         const hitAreaMargins = { mouse: 12, touch: 24 }
         const wrapper = mountSplitter({
           props: {
@@ -238,7 +238,7 @@ describe('Splitter', () => {
     })
 
     describe('tabindex', () => {
-      it('passes tabindex to every SplitterResizeHandle', () => {
+      it('pasa tabindex a cada SplitterResizeHandle', () => {
         const wrapper = mountSplitter({
           props: {
             tabindex: 0,
@@ -251,7 +251,7 @@ describe('Splitter', () => {
     })
 
     describe('disabled', () => {
-      it.each([true, false, undefined])('passes disabled=%s to every handle', (value) => {
+      it.each([true, false, undefined])('pasa disabled=%s a cada manejador', (value) => {
         const wrapper = mountSplitter({
           props: {
             disabled: value,
@@ -264,7 +264,7 @@ describe('Splitter', () => {
     })
 
     describe('nonce', () => {
-      it('passes nonce to every SplitterResizeHandle', () => {
+      it('pasa nonce a cada SplitterResizeHandle', () => {
         const wrapper = mountSplitter({
           props: {
             nonce: 'splitter-nonce',
@@ -319,7 +319,7 @@ describe('Splitter', () => {
 
   describe('emits', () => {
     describe('layout', () => {
-      it('forwards the layout emitted by SplitterGroup', async () => {
+      it('reenvia el layout emitido por SplitterGroup', async () => {
         const wrapper = mountSplitter()
         const layout = [35, 65]
 
@@ -332,7 +332,7 @@ describe('Splitter', () => {
 
     describe('collapse and expand', () => {
       it.each(['collapse', 'expand'] as const)(
-        'forwards the %s event from SplitterPanel',
+        'reenvia el evento %s de SplitterPanel',
         async (event) => {
           const wrapper = mountSplitter({ props: { items: [makeItem()] } })
           wrapper.getComponent(SplitterPanel).vm.$emit(event)
@@ -344,7 +344,7 @@ describe('Splitter', () => {
     })
 
     describe('resize', () => {
-      it('forwards the size and previous size from SplitterPanel', async () => {
+      it('reenvia el tamaño y el tamaño anterior de SplitterPanel', async () => {
         const wrapper = mountSplitter({ props: { items: [makeItem()] } })
         await nextTick()
         wrapper.emitted('resize')?.splice(0)
@@ -359,7 +359,7 @@ describe('Splitter', () => {
 
   describe('slots', () => {
     describe('default', () => {
-      it('renders the default panel slot when an item has no slot name', () => {
+      it('renderiza el slot de panel por defecto cuando un elemento no tiene nombre de slot', () => {
         const wrapper = mountSplitter({
           props: { items: [makeItem({ slot: undefined })] },
           slots: {
@@ -372,7 +372,7 @@ describe('Splitter', () => {
     })
 
     describe('handle', () => {
-      it('renders the global handle slot when an item has no slot name', () => {
+      it('renderiza el slot global del manejador cuando un elemento no tiene nombre de slot', () => {
         const wrapper = mountSplitter({
           props: {
             items: [makeItem({ slot: undefined }), makeItem({ id: 'right', slot: undefined })],
@@ -387,7 +387,7 @@ describe('Splitter', () => {
     })
 
     describe('panel-{slot}', () => {
-      it('renders the panel slot calculated from the item slot', () => {
+      it('renderiza el slot del panel calculado a partir del slot del elemento', () => {
         const wrapper = mountSplitter({
           props: { items: [makeItem({ slot: 'files' })] },
           slots: {
@@ -400,7 +400,7 @@ describe('Splitter', () => {
     })
 
     describe('handle-{slot}', () => {
-      it('renders the handle slot calculated from the item slot', () => {
+      it('renderiza el slot del manejador calculado a partir del slot del elemento', () => {
         const wrapper = mountSplitter({
           props: {
             items: [makeItem({ slot: 'files' }), makeItem({ id: 'right', slot: 'right' })],
@@ -416,7 +416,7 @@ describe('Splitter', () => {
   })
 
   describe('context contract', () => {
-    it('passes the six shared context fields to panel and handle slots', () => {
+    it('pasa los seis campos de contexto compartidos a los slots de panel y manejador', () => {
       const items = [makeItem(), makeItem({ id: 'right', slot: 'right' })]
       const panelContexts: SplitterItemContext[] = []
       const handleContexts: SplitterItemContext[] = []

@@ -24,4 +24,6 @@ export interface Messages {
   fileUploadLimitTitle: string
   fileUploadMaxFiles: string
   fileUploadMaxSize: string
+  tagInputRemove: string
+  tagInputClear: string
 }

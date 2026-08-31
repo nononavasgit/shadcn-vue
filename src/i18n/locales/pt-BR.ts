@@ -26,4 +26,6 @@ export default {
   fileUploadLimitTitle: 'Não foi possível adicionar alguns arquivos',
   fileUploadMaxFiles: 'Você pode enviar no máximo {count} arquivos.',
   fileUploadMaxSize: 'O tamanho total não pode exceder {size}.',
+  tagInputRemove: 'Remover etiqueta',
+  tagInputClear: 'Limpar etiquetas',
 } satisfies Messages

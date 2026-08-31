@@ -38,6 +38,7 @@ import SliderPage from './components/pages/SliderPage.vue'
 import SplitterPage from './components/pages/SplitterPage.vue'
 import SwitchPage from './components/pages/SwitchPage.vue'
 import TabsPage from './components/pages/TabsPage.vue'
+import TagInputPage from './components/pages/TagInputPage.vue'
 import TimePage from './components/pages/TimePage.vue'
 import TogglePage from './components/pages/TogglePage.vue'
 import TextareaPage from './components/pages/TextareaPage.vue'
@@ -158,6 +159,11 @@ export const router = createRouter({
     },
     { path: '/switch', component: SwitchPage, meta: { component: componentMetaBySlug.switch } },
     { path: '/tabs', component: TabsPage, meta: { component: componentMetaBySlug.tabs } },
+    {
+      path: '/tag-input',
+      component: TagInputPage,
+      meta: { component: componentMetaBySlug['tag-input'] },
+    },
     { path: '/time', component: TimePage, meta: { component: componentMetaBySlug.time } },
     { path: '/toggle', component: TogglePage, meta: { component: componentMetaBySlug.toggle } },
     {

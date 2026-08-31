@@ -214,6 +214,11 @@ export const componentMeta = [
     description: 'Campo de texto multilínea controlado para introducir contenido largo.',
   },
   {
+    slug: 'tag-input',
+    title: 'TagInput',
+    description: 'Campo accesible para introducir y gestionar varias etiquetas.',
+  },
+  {
     slug: 'time',
     title: 'Time',
     description: 'Representa una fecha semantica con formato localizado y contexto para el slot.',

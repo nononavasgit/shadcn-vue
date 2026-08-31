@@ -26,4 +26,6 @@ export default {
   fileUploadLimitTitle: 'Some files could not be added',
   fileUploadMaxFiles: 'You can upload a maximum of {count} files.',
   fileUploadMaxSize: 'The total size cannot exceed {size}.',
+  tagInputRemove: 'Remove tag',
+  tagInputClear: 'Clear tags',
 } satisfies Messages

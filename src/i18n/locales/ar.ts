@@ -26,4 +26,6 @@ export default {
   fileUploadLimitTitle: 'تعذرت إضافة بعض الملفات',
   fileUploadMaxFiles: 'يمكنك تحميل {count} ملفات كحد أقصى.',
   fileUploadMaxSize: 'لا يمكن أن يتجاوز الحجم الإجمالي {size}.',
+  tagInputRemove: 'إزالة الوسم',
+  tagInputClear: 'مسح الوسوم',
 } satisfies Messages

@@ -36,6 +36,7 @@ import SearchPage from './components/pages/SearchPage.vue'
 import SeparatorPage from './components/pages/SeparatorPage.vue'
 import SliderPage from './components/pages/SliderPage.vue'
 import SplitterPage from './components/pages/SplitterPage.vue'
+import StepperPage from './components/pages/StepperPage.vue'
 import SwitchPage from './components/pages/SwitchPage.vue'
 import TabsPage from './components/pages/TabsPage.vue'
 import TagInputPage from './components/pages/TagInputPage.vue'
@@ -150,6 +151,11 @@ export const router = createRouter({
       path: '/splitter',
       component: SplitterPage,
       meta: { component: componentMetaBySlug.splitter },
+    },
+    {
+      path: '/stepper',
+      component: StepperPage,
+      meta: { component: componentMetaBySlug.stepper },
     },
     { path: '/kbd', component: KbdPage, meta: { component: componentMetaBySlug.kbd } },
     {

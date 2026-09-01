@@ -177,6 +177,12 @@ export const componentMeta = [
     description: 'Contenedor de desplazamiento con barras verticales, horizontales o ambas.',
   },
   {
+    slug: 'select',
+    title: 'Select',
+    description:
+      'Selector accesible basado en Reka UI con items, grupos, placeholder y slots contextuales.',
+  },
+  {
     slug: 'search',
     title: 'Search',
     description: 'Formulario semántico para agrupar controles y acciones de búsqueda.',

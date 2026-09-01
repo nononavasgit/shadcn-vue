@@ -204,6 +204,12 @@ export const componentMeta = [
       'Divide una zona en paneles redimensionables, con orientación horizontal o vertical y contenido personalizado mediante slots.',
   },
   {
+    slug: 'stepper',
+    title: 'Stepper',
+    description:
+      'Flujo de pasos accesible con navegación lineal, orientación vertical, contenido y slots contextuales.',
+  },
+  {
     slug: 'switch',
     title: 'Switch',
     description: 'Control binario con valores personalizados y contexto para su thumb.',

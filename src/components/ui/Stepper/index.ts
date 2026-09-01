@@ -3,7 +3,6 @@ import type {
   StepperDescriptionProps as RekaStepperDescriptionProps,
   StepperIndicatorProps as RekaStepperIndicatorProps,
   StepperItemProps as RekaStepperItemProps,
-  StepperRootEmits as RekaStepperRootEmits,
   StepperRootProps as RekaStepperRootProps,
   StepperSeparatorProps as RekaStepperSeparatorProps,
   StepperTitleProps as RekaStepperTitleProps,
@@ -13,15 +12,8 @@ import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Stepper } from './Stepper.vue'
 
-export type StepperState = 'completed' | 'active' | 'inactive'
-export type StepperRootProps = Pick<
-  RekaStepperRootProps,
-  'as' | 'asChild' | 'modelValue' | 'defaultValue' | 'orientation' | 'dir' | 'linear'
->
-export type StepperItemProps = Pick<
-  RekaStepperItemProps,
-  'as' | 'asChild' | 'step' | 'disabled' | 'completed'
->
+export type StepperRootProps = Pick<RekaStepperRootProps, 'orientation' | 'linear'>
+export type StepperItemProps = Pick<RekaStepperItemProps, 'step' | 'disabled' | 'completed'>
 export type StepperTriggerProps = Pick<RekaStepperTriggerProps, 'as' | 'asChild'>
 export type StepperIndicatorProps = Pick<RekaStepperIndicatorProps, 'as' | 'asChild'>
 export type StepperLabelProps = Pick<RekaStepperTitleProps, 'as' | 'asChild'>
@@ -35,13 +27,13 @@ export function normalizeStepperRootProps(
   source: StepperRootProps | null | undefined,
 ): StepperRootProps | undefined {
   if (!source) return undefined
-  const { as, asChild, modelValue, defaultValue, orientation, dir, linear } = source
-  return { as, asChild, modelValue, defaultValue, orientation, dir, linear }
+  const { orientation, linear } = source
+  return { orientation, linear }
 }
 
 export function normalizeStepperItemProps(source: StepperItemProps): StepperItemProps {
-  const { as, asChild, step, disabled, completed } = source
-  return { as, asChild, step, disabled, completed }
+  const { step, disabled, completed } = source
+  return { step, disabled, completed }
 }
 
 export function normalizeStepperTriggerProps(
@@ -85,7 +77,7 @@ export function normalizeStepperSeparatorProps(
 }
 
 export interface StepperStep extends StepperItemProps {
-  key?: string | number
+  slot?: string | number
   label?: string
   description?: string
   icon?: IconConfig
@@ -98,6 +90,7 @@ export interface StepperStep extends StepperItemProps {
 }
 
 export interface StepperProps extends StepperRootProps {
+  value?: number
   steps?: StepperStep[]
   color?: string
   ui?: StepperUI
@@ -112,7 +105,7 @@ export interface StepperUI {
   item?: StepperItemFn<HTMLAttributes>
   trigger?: StepperItemFn<HTMLAttributes>
   indicator?: StepperItemFn<HTMLAttributes>
-  header?: StepperItemFn<HTMLAttributes>
+  wrapper?: StepperItemFn<HTMLAttributes>
   label?: StepperItemFn<HTMLAttributes>
   description?: StepperItemFn<HTMLAttributes>
   separator?: StepperItemFn<HTMLAttributes>
@@ -120,7 +113,6 @@ export interface StepperUI {
 }
 
 export interface StepperContext {
-  props: Omit<StepperProps, 'ui'>
   value: number | undefined
   totalSteps: number
   isNextDisabled: boolean
@@ -137,31 +129,25 @@ export interface StepperContext {
 export interface StepperItemContext extends StepperContext {
   item: StepperStep
   index: number
-  state: StepperState
+  completed: boolean
   active: boolean
   first: boolean
   last: boolean
 }
 
-export type StepperEmits = RekaStepperRootEmits
+export interface StepperEmits {
+  'update:value': [value: number | undefined]
+}
 
 export type StepperSlots = {
   default?(props: StepperItemContext): unknown
-  item?(props: StepperItemContext): unknown
-  header?(props: StepperItemContext): unknown
   indicator?(props: StepperItemContext): unknown
-  icon?(props: StepperItemContext): unknown
   label?(props: StepperItemContext): unknown
   description?(props: StepperItemContext): unknown
-  separator?(props: StepperItemContext): unknown
   content?(props: StepperItemContext): unknown
 } & {
-  [name: `item-${string}`]: ((props: StepperItemContext) => unknown) | undefined
-  [name: `header-${string}`]: ((props: StepperItemContext) => unknown) | undefined
   [name: `indicator-${string}`]: ((props: StepperItemContext) => unknown) | undefined
-  [name: `icon-${string}`]: ((props: StepperItemContext) => unknown) | undefined
   [name: `label-${string}`]: ((props: StepperItemContext) => unknown) | undefined
   [name: `description-${string}`]: ((props: StepperItemContext) => unknown) | undefined
-  [name: `separator-${string}`]: ((props: StepperItemContext) => unknown) | undefined
   [name: `content-${string}`]: ((props: StepperItemContext) => unknown) | undefined
 }

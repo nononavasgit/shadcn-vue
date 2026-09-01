@@ -8,23 +8,16 @@ import dts from 'vite-plugin-dts'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const sourceRoot = path.resolve(__dirname, 'src')
+const uiRoot = path.join(sourceRoot, 'components/ui')
 const entries = {
   index: path.join(sourceRoot, 'index.js'),
   'components/provider/index': path.join(sourceRoot, 'components/provider/index.ts'),
   ...Object.fromEntries(
-    readdirSync(path.join(sourceRoot, 'components/primitives'), { withFileTypes: true })
-      .filter((entry) => entry.isDirectory())
-      .map((entry) => [
-        `components/primitives/${entry.name}/index`,
-        path.join(sourceRoot, 'components/primitives', entry.name, 'index.ts'),
-      ]),
-  ),
-  ...Object.fromEntries(
-    readdirSync(path.join(sourceRoot, 'components/ui'), { withFileTypes: true })
+    readdirSync(uiRoot, { withFileTypes: true })
       .filter((entry) => entry.isDirectory())
       .map((entry) => [
         `components/ui/${entry.name}/index`,
-        path.join(sourceRoot, 'components/ui', entry.name, 'index.ts'),
+        path.join(uiRoot, entry.name, 'index.ts'),
       ]),
   ),
   ...Object.fromEntries(
@@ -46,7 +39,6 @@ export default defineConfig({
     dts({
       tsconfigPath: './tsconfig.app.json',
       include: [
-        'src/components/primitives/**/*',
         'src/components/provider/**/*',
         'src/components/ui/**/*',
         'src/composables/**/*.ts',

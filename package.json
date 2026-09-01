@@ -23,10 +23,6 @@
       "import": "./dist/index.js"
     },
     "./style.css": "./dist/style.css",
-    "./components/primitives/*": {
-      "types": "./dist/components/primitives/*/index.d.ts",
-      "import": "./dist/components/primitives/*/index.js"
-    },
     "./components/ui/*": {
       "types": "./dist/components/ui/*/index.d.ts",
       "import": "./dist/components/ui/*/index.js"

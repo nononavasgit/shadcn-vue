@@ -3,6 +3,7 @@ import type { HTMLAttributes } from 'vue'
 import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Timeline } from './Timeline.vue'
+export { timelineDefaults } from './defaults'
 
 export type TimelineValue = string | number
 export type TimelineAlign = 'left' | 'right' | 'alternate'
@@ -213,6 +214,7 @@ export type TimelineSeparatorVariants = VariantProps<typeof timelineSeparatorVar
 // Item
 export interface TimelineItem {
   value: TimelineValue
+  slot?: string
   label?: string
   description?: string
   icon?: IconConfig
@@ -279,5 +281,5 @@ export type TimelineSlots = {
 }
 
 export type TimelineEmits = {
-  valueChange: [value: TimelineValue]
+  'update:value': [value: TimelineValue]
 }

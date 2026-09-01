@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { computed, useAttrs, watch } from 'vue'
+import { computed, useAttrs } from 'vue'
 import { Icon } from '@/components/ui/Icon'
 import { useColor } from '@/composables'
 import { cn } from '@/lib/utils'
 import type {
   TimelineContext,
-  TimelineEmits,
   TimelineItemContext,
   TimelineProps,
   TimelineSlots,
@@ -20,22 +19,13 @@ import {
 } from '.'
 import { Primitive } from 'reka-ui'
 import { useUi } from '@/composables/useUi'
+import { timelineDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<TimelineProps>(), {
-  value: undefined,
-  orientation: 'vertical',
-  align: 'right',
-  sizeIndicator: 'md',
-  color: undefined,
-  severity: 'primary',
-  reverse: false,
-  ui: undefined,
-})
+const props = withDefaults(defineProps<TimelineProps>(), timelineDefaults)
 
 defineSlots<TimelineSlots>()
-const emit = defineEmits<TimelineEmits>()
 const attrs = useAttrs()
 const model = defineModel<TimelineValue>('value')
 const { colorStyle } = useColor(
@@ -47,10 +37,6 @@ const timelineItems = computed(() => (props.reverse ? [...props.items].reverse()
 const activeIndex = computed(() =>
   timelineItems.value.findIndex((item) => Object.is(item.value, model.value)),
 )
-
-watch(model, (value, previousValue) => {
-  if (value !== undefined && value !== previousValue) emit('valueChange', value)
-})
 
 const timelineContext = computed<TimelineContext>(() => {
   const { ui, ...timelineProps } = props
@@ -178,7 +164,6 @@ function getDescriptionProps(context: TimelineItemContext) {
 function getIndicatorProps(context: TimelineItemContext) {
   const ui = useUi(props.ui?.indicator, context)
   return {
-    'aria-hidden': true,
     ...ui,
     class: cn(
       timelineIndicatorVariants({
@@ -192,6 +177,7 @@ function getIndicatorProps(context: TimelineItemContext) {
       context.completed ? undefined : 'border-border bg-background text-muted-foreground',
       ui.class,
     ),
+    'aria-hidden': true,
     'data-completed': context.completed || undefined,
     'data-slot': 'timeline-indicator',
     style: [colorStyle.value, ui.style],
@@ -210,7 +196,7 @@ function getSlots(context: TimelineItemContext) {
 }
 
 function getKeyItem(context: TimelineItemContext) {
-  return String(context.item?.value)
+  return String(context.item.slot ?? context.item.value)
 }
 const itemContexts = computed(() => timelineItems.value.map(getItemContext))
 
@@ -220,27 +206,30 @@ function getIconProps(context: TimelineItemContext) {
 </script>
 
 <template>
-  <Primitive role="list" v-bind="rootProps">
+  <Primitive v-bind="rootProps" role="list" data-test-timeline-root>
     <div
       v-for="context in itemContexts"
       :key="getKeyItem(context)"
       v-bind="getItemProps(context)"
       role="listitem"
+      data-test-timeline-item
     >
-      <div v-bind="getContentProps(context)">
-        <div v-bind="getHeaderProps(context)">
+      <div v-bind="getContentProps(context)" data-test-timeline-content>
+        <div v-bind="getHeaderProps(context)" data-test-timeline-header>
           <slot :name="getSlots(context).header" v-bind="context">
             <slot name="header" v-bind="context">
               <slot :name="getSlots(context).label" v-bind="context">
                 <slot name="label" v-bind="context">
-                  <div v-bind="getLabelProps(context)">{{ context.item.label }}</div>
+                  <div v-bind="getLabelProps(context)" data-test-timeline-label>
+                    {{ context.item.label }}
+                  </div>
                 </slot>
               </slot>
             </slot>
           </slot>
         </div>
 
-        <div v-bind="getDescriptionProps(context)">
+        <div v-bind="getDescriptionProps(context)" data-test-timeline-description>
           <slot :name="getSlots(context).description" v-bind="context">
             <slot name="description" v-bind="context">
               {{ context.item.description }}
@@ -249,19 +238,20 @@ function getIconProps(context: TimelineItemContext) {
         </div>
       </div>
 
-      <div v-bind="getIndicatorProps(context)">
+      <div v-bind="getIndicatorProps(context)" data-test-timeline-indicator>
         <slot :name="getSlots(context).indicator" v-bind="context">
           <slot name="indicator" v-bind="context">
             <Icon
               v-if="getIconProps(context)?.name"
               v-bind="getIconProps(context)!"
               data-slot="timeline-indicator-icon"
+              data-test-timeline-indicator-icon
             />
           </slot>
         </slot>
       </div>
 
-      <div v-bind="getSeparatorProps(context)">
+      <div v-bind="getSeparatorProps(context)" data-test-timeline-separator>
         <slot :name="getSlots(context).separator" v-bind="context">
           <slot name="separator" v-bind="context" />
         </slot>

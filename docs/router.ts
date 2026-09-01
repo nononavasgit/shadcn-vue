@@ -41,6 +41,7 @@ import SwitchPage from './components/pages/SwitchPage.vue'
 import TabsPage from './components/pages/TabsPage.vue'
 import TagInputPage from './components/pages/TagInputPage.vue'
 import TimePage from './components/pages/TimePage.vue'
+import TimelinePage from './components/pages/TimelinePage.vue'
 import TogglePage from './components/pages/TogglePage.vue'
 import TextareaPage from './components/pages/TextareaPage.vue'
 import TooltipPage from './components/pages/TooltipPage.vue'
@@ -167,6 +168,11 @@ export const router = createRouter({
       meta: { component: componentMetaBySlug['tag-input'] },
     },
     { path: '/time', component: TimePage, meta: { component: componentMetaBySlug.time } },
+    {
+      path: '/timeline',
+      component: TimelinePage,
+      meta: { component: componentMetaBySlug.timeline },
+    },
     { path: '/toggle', component: TogglePage, meta: { component: componentMetaBySlug.toggle } },
     {
       path: '/textarea',

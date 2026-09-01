@@ -230,6 +230,11 @@ export const componentMeta = [
     description: 'Representa una fecha semantica con formato localizado y contexto para el slot.',
   },
   {
+    slug: 'timeline',
+    title: 'Timeline',
+    description: 'Muestra una secuencia de eventos con estados, orientación y slots contextuales.',
+  },
+  {
     slug: 'toggle',
     title: 'Toggle',
     description: 'Control binario con variantes, iconos y contexto de estado para sus slots.',

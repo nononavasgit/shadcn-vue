@@ -21,7 +21,7 @@ export interface TreeItem extends Pick<RekaTreeItemProps<TreeItem>, 'disabled'> 
 
 export type TreeRootProps = Pick<
   RekaTreeRootProps<TreeItem, TreeItem>,
-  'dir' | 'disabled' | 'multiple' | 'propagateSelect' | 'bubbleSelect' | 'selectionBehavior'
+  'disabled' | 'multiple' | 'propagateSelect' | 'bubbleSelect' | 'selectionBehavior'
 >
 
 export type TreeVirtualizerConfig = Pick<
@@ -41,7 +41,7 @@ export interface TreeProps extends TreeRootProps {
   ui?: TreeUI
 }
 
-export type TreeFn<T> = (context: TreeContext) => T
+export type TreeFn<T> = () => T
 export type TreeItemFn<T> = (context: TreeItemContext) => T
 
 export interface TreeUI {
@@ -85,7 +85,6 @@ export interface TreeEmits {
 }
 
 export type TreeSlots = {
-  default?(props: TreeItemContext): unknown
   item?(props: TreeItemContext): unknown
   leading?(props: TreeItemContext): unknown
   chevron?(props: TreeItemContext): unknown
@@ -100,7 +99,7 @@ export type TreeSlots = {
 }
 
 export function normalizeTreeRootProps(source: TreeRootProps): TreeRootProps {
-  const { dir, disabled, multiple, propagateSelect, bubbleSelect, selectionBehavior } = source
+  const { disabled, multiple, propagateSelect, bubbleSelect, selectionBehavior } = source
 
-  return { dir, disabled, multiple, propagateSelect, bubbleSelect, selectionBehavior }
+  return { disabled, multiple, propagateSelect, bubbleSelect, selectionBehavior }
 }

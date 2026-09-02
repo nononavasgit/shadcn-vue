@@ -46,7 +46,7 @@ const itemProps = computed(() => {
     'data-slot': 'tree-item',
     'data-test-tree-item': props.context.key,
     class: cn(
-      'group relative block w-full rounded-md text-left outline-none transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[selected]:bg-accent data-[selected]:text-accent-foreground',
+      'group relative block w-full cursor-default rounded-md border border-transparent text-left outline-none transition-colors focus-visible:border-primary focus-visible:ring-3 focus-visible:ring-primary/50 hover:bg-muted data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[selected]:bg-accent data-[selected]:text-accent-foreground',
       ui.class,
     ),
     style: ui.style,
@@ -119,7 +119,7 @@ function getLabelProps(context: TreeItemContext) {
     ...ui,
     'data-slot': 'tree-label',
     'data-test-tree-label': context.key,
-    class: cn('min-w-0 flex-1 truncate', ui.class),
+    class: cn('min-w-0 flex-1 truncate group-data-[selected]:text-primary', ui.class),
     style: ui.style,
   }
 }
@@ -142,10 +142,14 @@ function getContext(state: {
     handleSelect: state.handleSelect,
   }
 }
+
+function handleSelect(event: Event) {
+  if (props.checkbox || hasSlot('checkbox', slotNames.value.checkbox)) event.preventDefault()
+}
 </script>
 
 <template>
-  <RekaTreeItem v-bind="itemProps">
+  <RekaTreeItem v-bind="itemProps" @select="handleSelect">
     <template #default="state">
       <div v-if="hasSlot('item', slotNames.item)" v-bind="getContentProps(getContext(state))">
         <slot :name="slotNames.item" v-bind="getContext(state)">
@@ -224,9 +228,7 @@ function getContext(state: {
           <span v-bind="getLabelProps(getContext(state))">
             <slot :name="slotNames.label" v-bind="getContext(state)">
               <slot name="label" v-bind="getContext(state)">
-                <slot name="default" v-bind="getContext(state)">
-                  {{ props.flattenedItem.value.label }}
-                </slot>
+                {{ props.flattenedItem.value.label }}
               </slot>
             </slot>
           </span>

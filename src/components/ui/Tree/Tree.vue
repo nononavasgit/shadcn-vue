@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, useAttrs, useSlots } from 'vue'
+import { computed, useAttrs } from 'vue'
 import { TreeRoot, TreeVirtualizer, type FlattenedItem } from 'reka-ui'
-import { useUi } from '@/composables/useUi'
+import { normalizeHTMLAttributes } from '@/composables/useNormalize'
 import { cn } from '@/lib/utils'
 import { treeDefaults } from './defaults'
 import TreeItemRenderer from './TreeItem.vue'
@@ -24,7 +24,6 @@ defineSlots<TreeSlots>()
 defineEmits<TreeEmits>()
 
 const attrs = useAttrs()
-const slots = useSlots()
 const valueModel = defineModel<TreeModelValue>('value')
 const expandedModel = defineModel<TreeKey[]>('expanded')
 
@@ -91,7 +90,7 @@ const treeContext = computed<TreeContext>(() => ({
 }))
 
 const rootProps = computed(() => {
-  const ui = useUi(props.ui?.root, treeContext.value)
+  const ui = normalizeHTMLAttributes(props.ui?.root?.())
 
   return {
     ...attrs,

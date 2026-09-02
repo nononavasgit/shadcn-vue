@@ -13,12 +13,16 @@ import ButtonGroupPage from './components/pages/ButtonGroupPage.vue'
 import CardPage from './components/pages/CardPage.vue'
 import CheckboxPage from './components/pages/CheckboxPage.vue'
 import ChipPage from './components/pages/ChipPage.vue'
+import ComponentsPage from './components/pages/ComponentsPage.vue'
+import CssVariablesPage from './components/pages/CssVariablesPage.vue'
+import DesignSystemPage from './components/pages/DesignSystemPage.vue'
 import DialogPage from './components/pages/DialogPage.vue'
 import EmptyPage from './components/pages/EmptyPage.vue'
 import FieldSetPage from './components/pages/FieldSetPage.vue'
 import IconPage from './components/pages/IconPage.vue'
 import InputPage from './components/pages/InputPage.vue'
 import InputTimePage from './components/pages/InputTimePage.vue'
+import IconsPage from './components/pages/IconsPage.vue'
 import IndexPage from './components/pages/IndexPage.vue'
 import KbdPage from './components/pages/KbdPage.vue'
 import KbdGroupPage from './components/pages/KbdGroupPage.vue'
@@ -53,6 +57,19 @@ export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', component: IndexPage },
+    { path: '/components', component: ComponentsPage },
+    {
+      path: '/getting-started/theme/design-system',
+      component: DesignSystemPage,
+    },
+    {
+      path: '/getting-started/theme/css-variables',
+      component: CssVariablesPage,
+    },
+    {
+      path: '/getting-started/integrations/icons',
+      component: IconsPage,
+    },
     {
       path: '/accordion',
       component: AccordionPage,

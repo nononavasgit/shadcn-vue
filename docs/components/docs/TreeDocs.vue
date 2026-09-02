@@ -50,7 +50,7 @@ const propRows: ApiTableRow[] = [
     name: 'checkbox',
     type: 'boolean',
     default: 'false',
-    description: 'Muestra nuestro componente Checkbox en cada nodo.',
+    description: 'Muestra un Checkbox por nodo; la selección se realiza desde el Checkbox.',
   },
   {
     name: 'getKey',
@@ -79,11 +79,9 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: '{ root?: (context: TreeContext) => HTMLAttributes; item?: (context: TreeItemContext) => HTMLAttributes; content?: (context: TreeItemContext) => HTMLAttributes; chevron?: (context: TreeItemContext) => HTMLAttributes; leading?: (context: TreeItemContext) => HTMLAttributes; checkbox?: (context: TreeItemContext) => HTMLAttributes; label?: (context: TreeItemContext) => HTMLAttributes }',
+    type: '{ root?: () => HTMLAttributes; item?: (context: TreeItemContext) => HTMLAttributes; content?: (context: TreeItemContext) => HTMLAttributes; chevron?: (context: TreeItemContext) => HTMLAttributes; leading?: (context: TreeItemContext) => HTMLAttributes; checkbox?: (context: TreeItemContext) => HTMLAttributes; label?: (context: TreeItemContext) => HTMLAttributes }',
     typeParts: [
-      { text: '{ root?: (context: ' },
-      { text: 'TreeContext', link: '#tree-context' },
-      { text: ') => HTMLAttributes; item?: (context: ' },
+      { text: '{ root?: () => HTMLAttributes; item?: (context: ' },
       { text: 'TreeItemContext', link: '#tree-item-context' },
       { text: ') => HTMLAttributes; content?: (context: ' },
       { text: 'TreeItemContext', link: '#tree-item-context' },
@@ -177,27 +175,6 @@ const slotRows: ApiTableRow[] = [
     typeLink: '#tree-item-context',
     description: 'Personaliza el texto del nodo.',
   },
-  {
-    name: 'default',
-    type: 'TreeItemContext',
-    typeLink: '#tree-item-context',
-    description: 'Personaliza el label por defecto.',
-  },
-]
-
-const contextRows: ApiTableRow[] = [
-  {
-    name: 'value / expanded',
-    type: 'TreeModelValue / TreeKey[]',
-    description: 'Estado actual de selección y expansión.',
-  },
-  {
-    name: 'items',
-    type: 'TreeItem[]',
-    typeLink: '#tree-item',
-    description: 'Nodos raíz del árbol.',
-  },
-  { name: 'multiple / disabled', type: 'boolean', description: 'Configuración activa del árbol.' },
 ]
 
 const itemContextRows: ApiTableRow[] = [
@@ -263,17 +240,16 @@ const virtualizerRows: ApiTableRow[] = [
 
     <div class="grid gap-4">
       <ApiTable title="Props" :rows="propRows" />
-      <ApiTable id="tree-item" title="TreeItem" :rows="itemRows" />
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :rows="slotRows" />
-      <ApiTable id="tree-context" title="TreeContext" :rows="contextRows" />
+      <ApiTable title="Expose" :rows="[]" empty-text="Este componente no expone métodos." />
+      <ApiTable id="tree-item" title="TreeItem" :rows="itemRows" />
       <ApiTable id="tree-item-context" title="TreeItemContext" :rows="itemContextRows" />
       <ApiTable
         id="tree-virtualizer-config"
         title="TreeVirtualizerConfig"
         :rows="virtualizerRows"
       />
-      <ApiTable title="Expose" :rows="[]" empty-text="Este componente no expone métodos." />
     </div>
   </section>
 </template>

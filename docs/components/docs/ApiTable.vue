@@ -1,21 +1,12 @@
 <script setup lang="ts">
+import { inject, toRefs } from 'vue'
 import { RouterLink } from 'vue-router'
 import ApiType from './ApiType.vue'
+import { apiRegistryKey, type ApiTableRow } from './apiRegistry'
 
-export interface ApiTableRow {
-  name: string
-  type: string
-  typeLink?: string
-  typeParts?: Array<{
-    text: string
-    link?: string
-  }>
-  default?: string
-  description: string
-  required?: boolean
-}
+export type { ApiTableRow } from './apiRegistry'
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     title: string
     id?: string
@@ -30,6 +21,14 @@ withDefaults(
     showDefault: true,
   },
 )
+
+const { title, id, rows, emptyText, typeLabel, showDefault } = toRefs(props)
+const apiRegistry = inject(apiRegistryKey)
+const section = props.title.toLowerCase()
+
+if (apiRegistry && (section === 'props' || section === 'emits' || section === 'slots')) {
+  apiRegistry[section].value.push(...props.rows)
+}
 </script>
 
 <template>

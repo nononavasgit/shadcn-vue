@@ -6,7 +6,7 @@
           <p class="font-mono text-xs tracking-wide text-muted-foreground uppercase">
             @nononavas/shadcn-vue
           </p>
-          <h1 class="text-3xl font-semibold">Primeros pasos</h1>
+          <h1 class="text-3xl font-semibold">Instalación</h1>
           <p class="max-w-2xl text-sm text-muted-foreground">
             Instala la librería, configura el provider y empieza a utilizar los componentes.
           </p>
@@ -123,32 +123,11 @@ setLocale('es')</code></pre>
 }</code></pre>
           </article>
         </section>
-
-        <section class="grid gap-4">
-          <header class="grid gap-2">
-            <h2 class="text-2xl font-semibold">Componentes</h2>
-            <p class="text-sm text-muted-foreground">API, tipos y playgrounds interactivos.</p>
-          </header>
-
-          <nav aria-label="Componentes" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            <RouterLink
-              v-for="component in componentMeta"
-              :key="component.slug"
-              :to="`/${component.slug}`"
-              class="grid gap-2 rounded-lg border bg-card p-5 text-card-foreground transition-colors hover:border-primary"
-            >
-              <h2 class="font-medium">{{ component.title }}</h2>
-              <p class="text-sm text-muted-foreground">{{ component.description }}</p>
-            </RouterLink>
-          </nav>
-        </section>
       </div>
     </main>
   </DocsLayout>
 </template>
 
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
-import { componentMeta } from '../../config/components'
 import DocsLayout from '../DocsLayout.vue'
 </script>

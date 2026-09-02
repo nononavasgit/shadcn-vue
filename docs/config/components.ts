@@ -241,6 +241,12 @@ export const componentMeta = [
     description: 'Muestra una secuencia de eventos con estados, orientación y slots contextuales.',
   },
   {
+    slug: 'tree',
+    title: 'Tree',
+    description:
+      'Árbol accesible con selección, expansión, checkboxes, esquemas personalizados y virtualización.',
+  },
+  {
     slug: 'toggle',
     title: 'Toggle',
     description: 'Control binario con variantes, iconos y contexto de estado para sus slots.',

@@ -44,6 +44,7 @@ import TagInputPage from './components/pages/TagInputPage.vue'
 import TimePage from './components/pages/TimePage.vue'
 import TimelinePage from './components/pages/TimelinePage.vue'
 import TogglePage from './components/pages/TogglePage.vue'
+import TreePage from './components/pages/TreePage.vue'
 import TextareaPage from './components/pages/TextareaPage.vue'
 import TooltipPage from './components/pages/TooltipPage.vue'
 import { componentMetaBySlug } from './config/components'
@@ -179,6 +180,7 @@ export const router = createRouter({
       component: TimelinePage,
       meta: { component: componentMetaBySlug.timeline },
     },
+    { path: '/tree', component: TreePage, meta: { component: componentMetaBySlug.tree } },
     { path: '/toggle', component: TogglePage, meta: { component: componentMetaBySlug.toggle } },
     {
       path: '/textarea',

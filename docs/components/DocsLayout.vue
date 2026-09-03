@@ -64,7 +64,7 @@ const installationRows = computed<ApiTableRow[]>(() => {
     <slot />
 
     <ComponentApiExamples
-      v-if="component"
+      v-if="component && component.slug !== 'linear-chart'"
       :component-name="component.title"
       :import-path="importPath"
     />

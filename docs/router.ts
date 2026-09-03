@@ -29,6 +29,7 @@ import KbdGroupPage from './components/pages/KbdGroupPage.vue'
 import LabelPage from './components/pages/LabelPage.vue'
 import LinkPage from './components/pages/LinkPage.vue'
 import LoadingPage from './components/pages/LoadingPage.vue'
+import LinearChartPage from './components/pages/LinearChartPage.vue'
 import MeterGroupPage from './components/pages/MeterGroupPage.vue'
 import PopoverPage from './components/pages/PopoverPage.vue'
 import PaginationPage from './components/pages/PaginationPage.vue'
@@ -133,6 +134,11 @@ export const router = createRouter({
     { path: '/label', component: LabelPage, meta: { component: componentMetaBySlug.label } },
     { path: '/link', component: LinkPage, meta: { component: componentMetaBySlug.link } },
     { path: '/loading', component: LoadingPage, meta: { component: componentMetaBySlug.loading } },
+    {
+      path: '/linear-chart',
+      component: LinearChartPage,
+      meta: { component: componentMetaBySlug['linear-chart'] },
+    },
     {
       path: '/meter-group',
       component: MeterGroupPage,

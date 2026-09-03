@@ -79,6 +79,8 @@
   "dependencies": {
     "@internationalized/date": "^3.12.3",
     "@lucide/vue": "^1.25.0",
+    "@unovis/ts": "1.6.7",
+    "@unovis/vue": "1.6.7",
     "@vue/shared": "^3.5.39",
     "@vueuse/core": "^14.4.0",
     "class-variance-authority": "^0.7.1",

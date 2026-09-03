@@ -71,6 +71,8 @@ export default defineConfig({
         'vue-router',
         'vue-i18n',
         '@vueuse/core',
+        '@unovis/ts',
+        '@unovis/vue',
       ],
       output: {
         preserveModules: true,

@@ -137,6 +137,11 @@ export const componentMeta = [
     description: 'Alterna entre un indicador de carga y el contenido final.',
   },
   {
+    slug: 'linear-chart',
+    title: 'LinearChart',
+    description: 'Chart lineal reutilizable con datos genéricos, ejes y accessors tipados.',
+  },
+  {
     slug: 'meter-group',
     title: 'MeterGroup',
     description:

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { Check, Clipboard, Play, RotateCcw } from '@lucide/vue'
-import { computed, ref } from 'vue'
+import { format } from 'prettier/standalone'
+import babelPlugin from 'prettier/plugins/babel'
+import estreePlugin from 'prettier/plugins/estree'
+import htmlPlugin from 'prettier/plugins/html'
+import { computed, ref, watch } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -27,13 +31,49 @@ const emit = defineEmits<{
 }>()
 
 const copied = ref(false)
+const formattedCode = ref(props.code)
+let editingCode = false
+
+watch(
+  () => props.code,
+  (value) => {
+    if (editingCode) {
+      formattedCode.value = value
+      editingCode = false
+      return
+    }
+
+    void formatPlaygroundCode(value)
+  },
+  { immediate: true },
+)
+
+async function formatPlaygroundCode(value: string) {
+  try {
+    formattedCode.value = await format(value, {
+      parser: 'vue',
+      plugins: [htmlPlugin, babelPlugin, estreePlugin],
+      printWidth: 100,
+      semi: false,
+      singleQuote: true,
+      trailingComma: 'all',
+    })
+  } catch {
+    formattedCode.value = value
+  }
+}
+
 const editableCode = computed({
-  get: () => props.code,
-  set: (value: string) => emit('update:code', value),
+  get: () => formattedCode.value,
+  set: (value: string) => {
+    editingCode = true
+    formattedCode.value = value
+    emit('update:code', value)
+  },
 })
 
 async function copyCode() {
-  await navigator.clipboard.writeText(props.code)
+  await navigator.clipboard.writeText(formattedCode.value)
   copied.value = true
   window.setTimeout(() => (copied.value = false), 1500)
 }
@@ -93,7 +133,9 @@ async function copyCode() {
         <div
           class="pointer-events-none absolute inset-y-0 left-0 w-12 border-r border-white/10 bg-[#0d1117] py-4 text-right font-mono text-xs leading-6 text-[#6e7681]"
         >
-          <div v-for="line in code.split('\n').length" :key="line" class="pr-3">{{ line }}</div>
+          <div v-for="line in formattedCode.split('\n').length" :key="line" class="pr-3">
+            {{ line }}
+          </div>
         </div>
         <textarea
           v-model="editableCode"

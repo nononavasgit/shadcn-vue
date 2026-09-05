@@ -20,20 +20,8 @@ defineSlots<TreeSlots>()
 
 const slots = useSlots()
 
-const slotNames = computed(() => {
-  const slot = String(props.context.item.slot ?? props.context.key)
-
-  return {
-    item: `item-${slot}` as `item-${string}`,
-    leading: `leading-${slot}` as `leading-${string}`,
-    chevron: `chevron-${slot}` as `chevron-${string}`,
-    checkbox: `checkbox-${slot}` as `checkbox-${string}`,
-    label: `label-${slot}` as `label-${string}`,
-  }
-})
-
-function hasSlot(name: keyof TreeSlots, dynamicName: string) {
-  return Boolean(slots[name] || slots[dynamicName])
+function hasSlot(name: keyof TreeSlots) {
+  return Boolean(slots[name])
 }
 
 const itemProps = computed(() => {
@@ -144,92 +132,82 @@ function getContext(state: {
 }
 
 function handleSelect(event: Event) {
-  if (props.checkbox || hasSlot('checkbox', slotNames.value.checkbox)) event.preventDefault()
+  if (props.checkbox || hasSlot('checkbox')) event.preventDefault()
 }
 </script>
 
 <template>
   <RekaTreeItem v-bind="itemProps" @select="handleSelect">
     <template #default="state">
-      <div v-if="hasSlot('item', slotNames.item)" v-bind="getContentProps(getContext(state))">
-        <slot :name="slotNames.item" v-bind="getContext(state)">
-          <slot name="item" v-bind="getContext(state)" />
-        </slot>
+      <div v-if="hasSlot('item')" v-bind="getContentProps(getContext(state))">
+        <slot name="item" v-bind="getContext(state)" />
       </div>
 
       <template v-else>
         <div v-bind="getContentProps(getContext(state))">
-          <slot :name="slotNames.chevron" v-bind="getContext(state)">
-            <slot name="chevron" v-bind="getContext(state)">
-              <button
-                v-if="state.isExpanded || props.flattenedItem.hasChildren"
-                v-bind="getChevronProps(getContext(state))"
-                @click.stop.prevent="state.handleToggle"
-              >
-                <Icon
-                  :name="state.isExpanded ? 'chevronDown' : 'chevronRight'"
-                  class="size-4"
-                  aria-hidden="true"
-                />
-              </button>
-              <span v-else class="size-5 shrink-0" aria-hidden="true" />
-            </slot>
+          <slot name="chevron" v-bind="getContext(state)">
+            <button
+              v-if="state.isExpanded || props.flattenedItem.hasChildren"
+              v-bind="getChevronProps(getContext(state))"
+              @click.stop.prevent="state.handleToggle"
+            >
+              <Icon
+                :name="state.isExpanded ? 'chevronDown' : 'chevronRight'"
+                class="size-4"
+                aria-hidden="true"
+              />
+            </button>
+            <span v-else class="size-5 shrink-0" aria-hidden="true" />
           </slot>
 
           <span
-            v-if="props.checkbox || hasSlot('checkbox', slotNames.checkbox)"
+            v-if="props.checkbox || hasSlot('checkbox')"
             v-bind="getCheckboxProps(getContext(state))"
           >
-            <slot :name="slotNames.checkbox" v-bind="getContext(state)">
-              <slot name="checkbox" v-bind="getContext(state)">
-                <Checkbox
-                  v-bind="getCheckboxProps(getContext(state))"
-                  :value="state.isIndeterminate ? 'indeterminate' : state.isSelected"
-                  aria-label="Seleccionar nodo"
-                  tabindex="-1"
-                  @click.stop="state.handleSelect"
-                >
-                  <template #indicator="{ state: checkboxState }">
-                    <Icon
-                      :name="checkboxState === 'indeterminate' ? 'minus' : 'check'"
-                      class="size-3.5"
-                    />
-                  </template>
-                </Checkbox>
-              </slot>
+            <slot name="checkbox" v-bind="getContext(state)">
+              <Checkbox
+                v-bind="getCheckboxProps(getContext(state))"
+                :value="state.isIndeterminate ? 'indeterminate' : state.isSelected"
+                aria-label="Seleccionar nodo"
+                tabindex="-1"
+                @click.stop="state.handleSelect"
+              >
+                <template #indicator="{ state: checkboxState }">
+                  <Icon
+                    :name="checkboxState === 'indeterminate' ? 'minus' : 'check'"
+                    class="size-3.5"
+                  />
+                </template>
+              </Checkbox>
             </slot>
           </span>
 
-          <slot :name="slotNames.leading" v-bind="getContext(state)">
-            <slot name="leading" v-bind="getContext(state)">
-              <span v-bind="getLeadingProps(getContext(state))">
-                <Icon
-                  v-if="props.flattenedItem.value.icon"
-                  v-bind="props.flattenedItem.value.icon"
-                  class="size-4"
-                  aria-hidden="true"
-                />
-                <Icon
-                  v-else
-                  :name="
-                    state.isExpanded
-                      ? 'folderOpen'
-                      : props.flattenedItem.hasChildren
-                        ? 'folder'
-                        : 'file'
-                  "
-                  class="size-4"
-                  aria-hidden="true"
-                />
-              </span>
-            </slot>
+          <slot name="item-leading" v-bind="getContext(state)">
+            <span v-bind="getLeadingProps(getContext(state))">
+              <Icon
+                v-if="props.flattenedItem.value.icon"
+                v-bind="props.flattenedItem.value.icon"
+                class="size-4"
+                aria-hidden="true"
+              />
+              <Icon
+                v-else
+                :name="
+                  state.isExpanded
+                    ? 'folderOpen'
+                    : props.flattenedItem.hasChildren
+                      ? 'folder'
+                      : 'file'
+                "
+                class="size-4"
+                aria-hidden="true"
+              />
+            </span>
           </slot>
 
           <span v-bind="getLabelProps(getContext(state))">
-            <slot :name="slotNames.label" v-bind="getContext(state)">
-              <slot name="label" v-bind="getContext(state)">
-                {{ props.flattenedItem.value.label }}
-              </slot>
+            <slot name="item-label" v-bind="getContext(state)">
+              {{ props.flattenedItem.value.label }}
             </slot>
           </span>
         </div>

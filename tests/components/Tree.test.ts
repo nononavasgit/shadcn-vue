@@ -482,10 +482,10 @@ describe('Tree', () => {
   describe('slots', () => {
     const slotCases = [
       { name: 'item', props: {} },
-      { name: 'leading', props: {} },
+      { name: 'item-leading', props: {} },
       { name: 'chevron', props: {} },
       { name: 'checkbox', props: { checkbox: true } },
-      { name: 'label', props: {} },
+      { name: 'item-label', props: {} },
     ] as const
 
     it.each(slotCases)('renderiza el slot $name', ({ name, props }) => {
@@ -497,35 +497,6 @@ describe('Tree', () => {
       })
 
       expect(wrapper.get(`[data-test-tree-slot="${name}"]`).text()).toBe(`Custom ${name}`)
-    })
-
-    it.each([
-      { name: 'item', props: {} },
-      { name: 'leading', props: {} },
-      { name: 'chevron', props: {} },
-      { name: 'checkbox', props: { checkbox: true } },
-      { name: 'label', props: {} },
-    ])('renderiza el slot dinámico $name-src', ({ name, props }) => {
-      const wrapper = mountTree({
-        props,
-        slots: {
-          [`${name}-src`]: () => h('span', { 'data-test-tree-slot': name }, `Dynamic ${name}`),
-        },
-      })
-
-      expect(wrapper.get(`[data-test-tree-slot="${name}"]`).text()).toBe(`Dynamic ${name}`)
-    })
-
-    it('da prioridad al slot dinámico sobre el slot global', () => {
-      const wrapper = mountTree({
-        slots: {
-          label: () => h('span', { 'data-test-tree-slot': 'global' }, 'Global'),
-          'label-src': () => h('span', { 'data-test-tree-slot': 'dynamic' }, 'Dynamic'),
-        },
-      })
-
-      expect(wrapper.get('[data-test-tree-slot="dynamic"]').text()).toBe('Dynamic')
-      expect(wrapper.findAll('[data-test-tree-slot="global"]')).toHaveLength(2)
     })
 
     it('renderiza el contenido alternativo cuando no hay slots', () => {
@@ -550,7 +521,7 @@ describe('Tree', () => {
       let context: TreeItemContext | undefined
       const wrapper = mountTree({
         slots: {
-          label: (input: TreeItemContext) => {
+          'item-label': (input: TreeItemContext) => {
             context ??= input
             return h('span')
           },

@@ -104,12 +104,6 @@ const itemRows: ApiTableRow[] = [
   { name: 'value', type: 'string | number', required: true, description: 'ID único del nodo.' },
   { name: 'label', type: 'string', required: true, description: 'Texto visible del nodo.' },
   {
-    name: 'slot',
-    type: 'string | number',
-    default: 'value',
-    description: 'Clave para resolver slots dinámicos del nodo.',
-  },
-  {
     name: 'icon',
     type: 'IconConfig',
     typeLink: '/icon#icon-config',
@@ -146,31 +140,31 @@ const emitRows: ApiTableRow[] = [
 
 const slotRows: ApiTableRow[] = [
   {
-    name: 'item / item-{slot}',
+    name: 'item',
     type: 'TreeItemContext',
     typeLink: '#tree-item-context',
     description: 'Reemplaza el contenido completo de un nodo.',
   },
   {
-    name: 'leading / leading-{slot}',
+    name: 'item-leading',
     type: 'TreeItemContext',
     typeLink: '#tree-item-context',
     description: 'Personaliza el icono del nodo.',
   },
   {
-    name: 'chevron / chevron-{slot}',
+    name: 'chevron',
     type: 'TreeItemContext',
     typeLink: '#tree-item-context',
     description: 'Personaliza el control de expansión.',
   },
   {
-    name: 'checkbox / checkbox-{slot}',
+    name: 'checkbox',
     type: 'TreeItemContext',
     typeLink: '#tree-item-context',
     description: 'Personaliza o sustituye el Checkbox integrado.',
   },
   {
-    name: 'label / label-{slot}',
+    name: 'item-label',
     type: 'TreeItemContext',
     typeLink: '#tree-item-context',
     description: 'Personaliza el texto del nodo.',

@@ -14,7 +14,6 @@ export type TreeModelValue = TreeKey | TreeKey[] | undefined
 export interface TreeItem extends Pick<RekaTreeItemProps<TreeItem>, 'disabled'> {
   value: TreeKey
   label: string
-  slot?: string | number
   icon?: IconConfig
   children?: TreeItem[]
 }
@@ -84,18 +83,12 @@ export interface TreeEmits {
   'update:expanded': [value: TreeKey[]]
 }
 
-export type TreeSlots = {
+export interface TreeSlots {
   item?(props: TreeItemContext): unknown
-  leading?(props: TreeItemContext): unknown
+  'item-leading'?(props: TreeItemContext): unknown
   chevron?(props: TreeItemContext): unknown
   checkbox?(props: TreeItemContext): unknown
-  label?(props: TreeItemContext): unknown
-} & {
-  [name: `item-${string}`]: ((props: TreeItemContext) => unknown) | undefined
-  [name: `leading-${string}`]: ((props: TreeItemContext) => unknown) | undefined
-  [name: `chevron-${string}`]: ((props: TreeItemContext) => unknown) | undefined
-  [name: `checkbox-${string}`]: ((props: TreeItemContext) => unknown) | undefined
-  [name: `label-${string}`]: ((props: TreeItemContext) => unknown) | undefined
+  'item-label'?(props: TreeItemContext): unknown
 }
 
 export function normalizeTreeRootProps(source: TreeRootProps): TreeRootProps {

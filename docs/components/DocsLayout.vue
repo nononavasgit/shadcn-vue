@@ -76,6 +76,8 @@ const installationRows = computed<ApiTableRow[]>(() => {
           'breadcrumb',
           'dialog',
           'input-time',
+          'kbd',
+          'kbd-group',
           'toast',
           'icon',
           'badge',

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DocsLayout from '../DocsLayout.vue'
-import LoadingExamples from '../examples/loading/LoadingExamples.vue'
+import LoadingPlayground from '../examples/loading/LoadingPlayground.vue'
 import LoadingDocs from '../docs/LoadingDocs.vue'
 </script>
 
@@ -9,7 +9,7 @@ import LoadingDocs from '../docs/LoadingDocs.vue'
     <main class="min-h-screen bg-background p-4 text-foreground sm:p-8">
       <div class="mx-auto grid max-w-5xl gap-6">
         <LoadingDocs />
-        <LoadingExamples />
+        <LoadingPlayground />
       </div>
     </main>
   </DocsLayout>

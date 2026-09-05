@@ -70,6 +70,7 @@ const installationRows = computed<ApiTableRow[]>(() => {
           'linear-chart',
           'meter-group',
           'pagination',
+          'select',
           'accordion',
           'alert-dialog',
           'announcer',

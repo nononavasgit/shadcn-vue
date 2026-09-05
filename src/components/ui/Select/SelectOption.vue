@@ -44,22 +44,16 @@ const indicatorProps = computed(() => {
 })
 
 const iconProps = computed<IconProps>(() => props.context.item.icon!)
-
-const key = computed(() => props.context.item.slot ?? String(props.context.item.value))
-const itemSlot = computed(() => `item-${key.value}` as `item-${string}`)
-const leadingSlot = computed(() => `item-leading-${key.value}` as `item-leading-${string}`)
 </script>
 
 <template>
   <RekaSelectItem v-bind="itemProps" data-slot="select-item">
-    <slot :name="leadingSlot" v-bind="context">
-      <slot name="item-leading" v-bind="context">
-        <Icon v-if="context.item.icon" v-bind="iconProps" data-slot="select-item-icon" />
-      </slot>
+    <slot name="item-leading" v-bind="context">
+      <Icon v-if="context.item.icon" v-bind="iconProps" data-slot="select-item-icon" />
     </slot>
 
     <SelectItemText v-bind="itemTextProps" data-slot="select-item-text">
-      <slot :name="itemSlot" v-bind="context">
+      <slot name="item-label" v-bind="context">
         <slot name="item" v-bind="context">
           {{ context.item.label }}
         </slot>

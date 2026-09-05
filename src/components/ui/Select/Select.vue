@@ -179,14 +179,6 @@ function getGroupLabelProps(context: SelectGroupContext) {
     style: ui.style,
   }
 }
-
-function getGroupSlotName(context: SelectGroupContext) {
-  return `group-${context.group.slot}` as `group-${string}`
-}
-
-function getGroupLabelSlotName(context: SelectGroupContext) {
-  return `group-label-${context.group.slot}` as `group-label-${string}`
-}
 </script>
 
 <template>
@@ -227,43 +219,37 @@ function getGroupLabelSlotName(context: SelectGroupContext) {
             <template v-if="usesGroups">
               <SelectGroup
                 v-for="groupContext in groupContexts"
-                :key="groupContext.group.slot"
+                :key="groupContext.index"
                 v-bind="getGroupProps(groupContext)"
                 data-slot="select-group"
               >
-                <slot :name="getGroupSlotName(groupContext)" v-bind="groupContext">
-                  <slot name="group" v-bind="groupContext">
-                    <SelectLabel
-                      v-if="groupContext.group.label"
-                      v-bind="getGroupLabelProps(groupContext)"
-                      data-slot="select-group-label"
-                    >
-                      <slot :name="getGroupLabelSlotName(groupContext)" v-bind="groupContext">
-                        <slot name="group-label" v-bind="groupContext">
-                          {{ groupContext.group.label }}
-                        </slot>
-                      </slot>
-                    </SelectLabel>
-
-                    <SelectOption
-                      v-for="itemContext in getGroupItemContexts(groupContext)"
-                      :key="itemContext.item.slot ?? String(itemContext.item.value)"
-                      :context="itemContext"
-                      :ui="props.ui"
-                    >
-                      <template v-for="(_, name) in $slots" #[name]="slotProps">
-                        <slot :name="name" v-bind="slotProps" />
-                      </template>
-                    </SelectOption>
+                <SelectLabel
+                  v-if="groupContext.group.label"
+                  v-bind="getGroupLabelProps(groupContext)"
+                  data-slot="select-group-label"
+                >
+                  <slot name="group-label" v-bind="groupContext">
+                    {{ groupContext.group.label }}
                   </slot>
-                </slot>
+                </SelectLabel>
+
+                <SelectOption
+                  v-for="itemContext in getGroupItemContexts(groupContext)"
+                  :key="String(itemContext.item.value)"
+                  :context="itemContext"
+                  :ui="props.ui"
+                >
+                  <template v-for="(_, name) in $slots" #[name]="slotProps">
+                    <slot :name="name" v-bind="slotProps" />
+                  </template>
+                </SelectOption>
               </SelectGroup>
             </template>
 
             <template v-else>
               <SelectOption
                 v-for="itemContext in itemContexts"
-                :key="itemContext.item.slot ?? String(itemContext.item.value)"
+                :key="String(itemContext.item.value)"
                 :context="itemContext"
                 :ui="props.ui"
               >

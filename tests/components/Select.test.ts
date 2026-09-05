@@ -26,30 +26,28 @@ import { Icon } from '@/components/ui/Icon'
 import { testAttrs } from '../utils/testAttrs'
 
 const items: SelectItem[] = [
-  { slot: 'apple', value: 'apple', label: 'Manzana', icon: { name: 'info' } },
-  { slot: 'banana', value: 'banana', label: 'Plátano' },
-  { slot: 'disabled', value: 'disabled', label: 'Deshabilitado', disabled: true },
+  { value: 'apple', label: 'Manzana', icon: { name: 'info' } },
+  { value: 'banana', label: 'Plátano' },
+  { value: 'disabled', label: 'Deshabilitado', disabled: true },
 ]
 
 const groups: SelectGroup[] = [
   {
-    slot: 'fruits',
     label: 'Frutas',
     items: [
-      { slot: 'apple', value: 'apple', label: 'Manzana' },
-      { slot: 'banana', value: 'banana', label: 'Plátano' },
+      { value: 'apple', label: 'Manzana' },
+      { value: 'banana', label: 'Plátano' },
     ],
   },
   {
-    slot: 'vegetables',
     label: 'Verduras',
-    items: [{ slot: 'carrot', value: 'carrot', label: 'Zanahoria' }],
+    items: [{ value: 'carrot', label: 'Zanahoria' }],
   },
 ]
 
 const emptyGroups: SelectGroup[] = [
-  { slot: 'empty', label: 'Vacío', items: [] },
-  { slot: 'also-empty', label: 'También vacío', items: [] },
+  { label: 'Vacío', items: [] },
+  { label: 'También vacío', items: [] },
 ]
 
 const casesValue = [
@@ -150,19 +148,19 @@ const casesSlot = [
     open: true,
   },
   {
+    name: 'item-label',
+    slot: 'item-label',
+    selector: '[data-test-select-slot="item-label"]',
+    text: 'Label personalizado',
+    props: { items },
+    open: true,
+  },
+  {
     name: 'indicator',
     slot: 'indicator',
     selector: '[data-test-select-slot="indicator"]',
     text: 'Indicador personalizado',
     props: { items, value: 'apple' },
-    open: true,
-  },
-  {
-    name: 'group',
-    slot: 'group',
-    selector: '[data-test-select-slot="group"]',
-    text: 'Grupo personalizado',
-    props: { groups },
     open: true,
   },
   {
@@ -191,30 +189,6 @@ const casesSlot = [
   },
 ] as const
 
-const dynamicSlotCases = [
-  {
-    name: 'item-{slot}',
-    slot: 'item-apple',
-    selector: '[data-test-select-slot="item-specific"]',
-    text: 'Item específico',
-    props: { items },
-  },
-  {
-    name: 'item-leading-{slot}',
-    slot: 'item-leading-apple',
-    selector: '[data-test-select-slot="leading-specific"]',
-    text: 'Leading específico',
-    props: { items },
-  },
-  {
-    name: 'group-{slot}',
-    slot: 'group-fruits',
-    selector: '[data-test-select-slot="group-specific"]',
-    text: 'Grupo específico',
-    props: { groups },
-  },
-] as const
-
 const casesSelectContext = [
   {
     name: 'sin valor y cerrado',
@@ -234,13 +208,13 @@ const casesItemContext = [
   {
     name: 'item no seleccionado',
     value: 'banana' as SelectProps['value'],
-    slot: 'apple',
+    itemValue: 'apple',
     expected: { value: 'banana', open: true, item: items[0], index: 0, selected: false },
   },
   {
     name: 'item seleccionado',
     value: 'banana' as SelectProps['value'],
-    slot: 'banana',
+    itemValue: 'banana',
     expected: { value: 'banana', open: true, item: items[1], index: 1, selected: true },
   },
 ]
@@ -248,12 +222,12 @@ const casesItemContext = [
 const casesGroupContext = [
   {
     name: 'primer grupo',
-    slot: 'fruits',
+    label: 'Frutas',
     expected: { value: 'apple', open: true, group: groups[0], index: 0 },
   },
   {
     name: 'último grupo',
-    slot: 'vegetables',
+    label: 'Verduras',
     expected: { value: 'apple', open: true, group: groups[1], index: 1 },
   },
 ]
@@ -720,37 +694,6 @@ describe('Select', () => {
       expect(wrapper.get(selector).text()).toBe(text)
     })
 
-    it.each(dynamicSlotCases)(
-      'renderiza el slot dinámico $name',
-      async ({ slot, selector, text, props }) => {
-        const wrapper = mountSelectInline({
-          props,
-          slots: {
-            [slot]: () =>
-              h('span', { 'data-test-select-slot': selector.match(/"([^"]+)"/)?.[1] }, text),
-          },
-        })
-
-        await openSelect(wrapper)
-
-        expect(wrapper.get(selector).text()).toBe(text)
-      },
-    )
-
-    it('da prioridad al slot item-{slot} sobre item', async () => {
-      const wrapper = mountSelectInline({
-        props: { items },
-        slots: {
-          item: () => h('span', { 'data-test-select-slot': 'item-generic' }, 'Genérico'),
-          'item-apple': () => h('span', { 'data-test-select-slot': 'item-specific' }, 'Específico'),
-        },
-      })
-      await openSelect(wrapper)
-
-      expect(wrapper.get('[data-test-select-slot="item-specific"]').text()).toBe('Específico')
-      expect(wrapper.findAll('[data-test-select-slot="item-generic"]')).toHaveLength(2)
-    })
-
     it('pasa SelectContext al slot value', () => {
       let context: SelectContext | undefined
 
@@ -795,7 +738,7 @@ describe('Select', () => {
     describe('SelectItemContext', () => {
       it.each(casesItemContext)(
         'crea el contrato para $name',
-        async ({ value, slot, expected }) => {
+        async ({ value, itemValue, expected }) => {
           let context: SelectItemContext | undefined
           const wrapper = mountSelectInline({
             props: {
@@ -803,7 +746,7 @@ describe('Select', () => {
               value,
               ui: {
                 item: (itemContext) => {
-                  if (itemContext.item.slot === slot) context = itemContext
+                  if (itemContext.item.value === itemValue) context = itemContext
                   return {}
                 },
               },
@@ -825,7 +768,7 @@ describe('Select', () => {
             value: 'apple',
             ui: {
               item: (itemContext) => {
-                if (itemContext.item.slot === 'carrot') context = itemContext
+                if (itemContext.item.value === 'carrot') context = itemContext
                 return {}
               },
             },
@@ -846,7 +789,7 @@ describe('Select', () => {
     })
 
     describe('SelectGroupContext', () => {
-      it.each(casesGroupContext)('crea el contrato para $name', async ({ slot, expected }) => {
+      it.each(casesGroupContext)('crea el contrato para $name', async ({ label, expected }) => {
         let context: SelectGroupContext | undefined
         const wrapper = mountSelectInline({
           props: {
@@ -854,7 +797,7 @@ describe('Select', () => {
             value: expected.value,
             ui: {
               group: (groupContext) => {
-                if (groupContext.group.slot === slot) context = groupContext
+                if (groupContext.group.label === label) context = groupContext
                 return {}
               },
             },

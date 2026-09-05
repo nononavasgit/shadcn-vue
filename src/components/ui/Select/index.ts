@@ -8,7 +8,6 @@ export type SelectValue = string | number
 export type SelectModelValue = SelectValue | undefined
 
 export interface SelectItem {
-  slot?: string
   value: SelectValue
   label: string
   icon?: IconConfig
@@ -17,7 +16,6 @@ export interface SelectItem {
 }
 
 export interface SelectGroup {
-  slot: string
   label: string
   items: SelectItem[]
 }
@@ -80,12 +78,9 @@ export interface SelectSlots {
   icon?(props: SelectContext): unknown
   item?(props: SelectItemContext): unknown
   'item-leading'?(props: SelectItemContext): unknown
+  'item-label'?(props: SelectItemContext): unknown
   indicator?(props: SelectItemContext): unknown
-  group?(props: SelectGroupContext): unknown
   'group-label'?(props: SelectGroupContext): unknown
   'scroll-up'?(props: SelectContext): unknown
   'scroll-down'?(props: SelectContext): unknown
-  [name: `item-${string}`]: ((props: SelectItemContext) => unknown) | undefined
-  [name: `item-leading-${string}`]: ((props: SelectItemContext) => unknown) | undefined
-  [name: `group-${string}`]: ((props: SelectGroupContext) => unknown) | undefined
 }

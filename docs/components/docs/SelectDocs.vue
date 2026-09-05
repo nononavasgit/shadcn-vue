@@ -43,7 +43,7 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'ui',
-    type: '{ root?: () => HTMLAttributes; trigger?: (context: SelectContext) => HTMLAttributes; value?: (context: SelectContext) => HTMLAttributes; icon?: (context: SelectContext) => HTMLAttributes; content?: (context: SelectContext) => HTMLAttributes; viewport?: (context: SelectContext) => HTMLAttributes; item?: (context: SelectItemContext) => HTMLAttributes; itemText?: (context: SelectItemContext) => HTMLAttributes; indicator?: (context: SelectItemContext) => HTMLAttributes }',
+    type: '{ root?: () => HTMLAttributes; trigger?: (context: SelectContext) => HTMLAttributes; value?: (context: SelectContext) => HTMLAttributes; icon?: (context: SelectContext) => HTMLAttributes; content?: (context: SelectContext) => HTMLAttributes; viewport?: (context: SelectContext) => HTMLAttributes; scrollUpButton?: (context: SelectContext) => HTMLAttributes; scrollDownButton?: (context: SelectContext) => HTMLAttributes; group?: (context: SelectGroupContext) => HTMLAttributes; groupLabel?: (context: SelectGroupContext) => HTMLAttributes; item?: (context: SelectItemContext) => HTMLAttributes; itemText?: (context: SelectItemContext) => HTMLAttributes; indicator?: (context: SelectItemContext) => HTMLAttributes }',
     typeParts: [
       { text: '{ root?: () => HTMLAttributes; trigger?: (context: ' },
       { text: 'SelectContext', link: '#select-context' },
@@ -51,7 +51,21 @@ const propRows: ApiTableRow[] = [
       { text: 'SelectContext', link: '#select-context' },
       { text: ') => HTMLAttributes; content?: (context: ' },
       { text: 'SelectContext', link: '#select-context' },
+      { text: ') => HTMLAttributes; viewport?: (context: ' },
+      { text: 'SelectContext', link: '#select-context' },
+      { text: ') => HTMLAttributes; scrollUpButton?: (context: ' },
+      { text: 'SelectContext', link: '#select-context' },
+      { text: ') => HTMLAttributes; scrollDownButton?: (context: ' },
+      { text: 'SelectContext', link: '#select-context' },
+      { text: ') => HTMLAttributes; group?: (context: ' },
+      { text: 'SelectGroupContext', link: '#select-group-context' },
+      { text: ') => HTMLAttributes; groupLabel?: (context: ' },
+      { text: 'SelectGroupContext', link: '#select-group-context' },
       { text: ') => HTMLAttributes; item?: (context: ' },
+      { text: 'SelectItemContext', link: '#select-item-context' },
+      { text: ') => HTMLAttributes; itemText?: (context: ' },
+      { text: 'SelectItemContext', link: '#select-item-context' },
+      { text: ') => HTMLAttributes; indicator?: (context: ' },
       { text: 'SelectItemContext', link: '#select-item-context' },
       { text: ') => HTMLAttributes }' },
     ],
@@ -72,12 +86,6 @@ const itemRows: ApiTableRow[] = [
     type: 'string',
     required: true,
     description: 'Texto visible de la opción y del trigger seleccionado.',
-  },
-  {
-    name: 'slot',
-    type: 'string',
-    default: 'undefined',
-    description: 'Nombre base para las claves y slots dinámicos.',
   },
   {
     name: 'icon',
@@ -101,12 +109,6 @@ const itemRows: ApiTableRow[] = [
 ]
 
 const groupRows: ApiTableRow[] = [
-  {
-    name: 'slot',
-    type: 'string',
-    required: true,
-    description: 'Nombre base del grupo y de sus slots dinámicos.',
-  },
   {
     name: 'label',
     type: 'string',
@@ -169,16 +171,16 @@ const slotRows: ApiTableRow[] = [
     description: 'Añade contenido antes del texto de todas las opciones.',
   },
   {
+    name: 'item-label',
+    type: 'SelectItemContext',
+    typeLink: '#select-item-context',
+    description: 'Personaliza la etiqueta de todas las opciones.',
+  },
+  {
     name: 'indicator',
     type: 'SelectItemContext',
     typeLink: '#select-item-context',
     description: 'Personaliza el indicador de selección.',
-  },
-  {
-    name: 'group',
-    type: 'SelectGroupContext',
-    typeLink: '#select-group-context',
-    description: 'Personaliza el contenido de todos los grupos.',
   },
   {
     name: 'group-label',
@@ -191,24 +193,6 @@ const slotRows: ApiTableRow[] = [
     type: 'SelectContext',
     typeLink: '#select-context',
     description: 'Personaliza los botones de scroll del viewport.',
-  },
-  {
-    name: 'item-{slot}',
-    type: 'SelectItemContext',
-    typeLink: '#select-item-context',
-    description: 'Personaliza el texto de una opción concreta.',
-  },
-  {
-    name: 'item-leading-{slot}',
-    type: 'SelectItemContext',
-    typeLink: '#select-item-context',
-    description: 'Personaliza el contenido leading de una opción concreta.',
-  },
-  {
-    name: 'group-{slot}',
-    type: 'SelectGroupContext',
-    typeLink: '#select-group-context',
-    description: 'Personaliza el contenido de un grupo concreto.',
   },
 ]
 

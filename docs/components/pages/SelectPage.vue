@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import SelectDocs from '../docs/SelectDocs.vue'
-import SelectExamples from '../examples/select/SelectExamples.vue'
+import SelectPlayground from '../examples/select/SelectPlayground.vue'
 import DocsLayout from '../DocsLayout.vue'
 </script>
 
@@ -9,7 +9,7 @@ import DocsLayout from '../DocsLayout.vue'
     <main class="min-h-screen bg-background p-4 text-foreground sm:p-8">
       <div class="mx-auto grid max-w-5xl gap-6">
         <SelectDocs />
-        <SelectExamples />
+        <SelectPlayground />
       </div>
     </main>
   </DocsLayout>

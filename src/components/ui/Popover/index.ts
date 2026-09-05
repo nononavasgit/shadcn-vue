@@ -70,5 +70,4 @@ export type PopoverEmits = RekaPopoverRootEmits &
 export interface PopoverSlots {
   default?(props: PopoverContext): unknown
   content?(props: PopoverContext): unknown
-  arrow?(props: PopoverContext): unknown
 }

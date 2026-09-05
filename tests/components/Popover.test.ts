@@ -222,18 +222,15 @@ describe('Popover', () => {
       cases: ReadonlyArray<{ input: unknown; expected: unknown }>,
     ) {
       describe(prop, () => {
-        it.each(cases)(
-          'pasa $input a PopoverArrow como $expected',
-          async ({ input, expected }) => {
-            const wrapper = mountPopover({
-              props: { open: true, showArrow: true, [prop]: input } as PopoverProps,
-              slots: { content: () => h('span', 'Contenido') },
-            })
-            await nextTick()
+        it.each(cases)('pasa $input a PopoverArrow como $expected', async ({ input, expected }) => {
+          const wrapper = mountPopover({
+            props: { open: true, showArrow: true, [prop]: input } as PopoverProps,
+            slots: { content: () => h('span', 'Contenido') },
+          })
+          await nextTick()
 
-            expect(wrapper.getComponent(PopoverArrow).props(rekaProp)).toEqual(expected)
-          },
-        )
+          expect(wrapper.getComponent(PopoverArrow).props(rekaProp)).toEqual(expected)
+        })
       })
     }
 
@@ -342,18 +339,6 @@ describe('Popover', () => {
           props: { open: true },
           slots: {
             content: () => h('span', { 'data-test-popover-slot': 'content' }, 'Contenido'),
-          },
-        }),
-      },
-      {
-        name: 'arrow',
-        selector: '[data-test-popover-slot="arrow"]',
-        text: 'Arrow',
-        options: () => ({
-          props: { open: true },
-          slots: {
-            content: () => h('span', 'Contenido'),
-            arrow: () => h('span', { 'data-test-popover-slot': 'arrow' }, 'Arrow'),
           },
         }),
       },

@@ -99,9 +99,7 @@ const arrowProps = computed(() => {
       <PopoverPortal :to="portalTarget">
         <PopoverContent v-if="slots.content" v-bind="contentProps" data-test-popover-content>
           <slot name="content" v-bind="popoverContext" />
-          <slot v-if="props.showArrow || slots.arrow" name="arrow" v-bind="popoverContext">
-            <PopoverArrow v-bind="arrowProps" data-test-popover-arrow />
-          </slot>
+          <PopoverArrow v-if="props.showArrow" v-bind="arrowProps" data-test-popover-arrow />
         </PopoverContent>
       </PopoverPortal>
     </PopoverRoot>

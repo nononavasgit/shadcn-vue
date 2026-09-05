@@ -224,13 +224,6 @@ const slotRows: ApiTableRow[] = [
     default: '-',
     description: 'Contenido del popover.',
   },
-  {
-    name: 'arrow',
-    type: 'PopoverContext',
-    typeLink: '#popover-context',
-    default: '-',
-    description: 'Personaliza la flecha.',
-  },
 ]
 
 const exposeRows: ApiTableRow[] = []

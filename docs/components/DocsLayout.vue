@@ -94,6 +94,7 @@ const installationRows = computed<ApiTableRow[]>(() => {
           'textarea',
           'progress',
           'progress-circular',
+          'popover',
         ].includes(component.slug)
       "
       :component-name="component.title"

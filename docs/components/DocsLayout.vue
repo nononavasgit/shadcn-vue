@@ -76,7 +76,7 @@ const installationRows = computed<ApiTableRow[]>(() => {
           'separator',
           'alert',
           'chip',
-          'alert',
+          'button-group',
         ].includes(component.slug)
       "
       :component-name="component.title"

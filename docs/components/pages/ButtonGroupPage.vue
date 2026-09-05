@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ButtonGroupDocs from '../docs/ButtonGroupDocs.vue'
-import ButtonGroupExamples from '../examples/button-group/ButtonGroupExamples.vue'
+import ButtonGroupPlayground from '../examples/button-group/ButtonGroupPlayground.vue'
 import DocsLayout from '../DocsLayout.vue'
 </script>
 
@@ -9,7 +9,7 @@ import DocsLayout from '../DocsLayout.vue'
     <main class="min-h-screen bg-background p-4 text-foreground sm:p-8">
       <div class="mx-auto grid max-w-5xl gap-6">
         <ButtonGroupDocs />
-        <ButtonGroupExamples />
+        <ButtonGroupPlayground />
       </div>
     </main>
   </DocsLayout>

@@ -1,3 +1,4 @@
+import ToastPage from './components/pages/ToastPage.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import AvatarPage from './components/pages/AvatarPage.vue'
 import AnnouncerPage from './components/pages/AnnouncerPage.vue'
@@ -57,6 +58,7 @@ import { componentMetaBySlug } from './config/components'
 export const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    { path: '/toast', component: ToastPage, meta: { component: componentMetaBySlug['toast'] } },
     { path: '/', component: IndexPage },
     { path: '/components', component: ComponentsPage },
     {

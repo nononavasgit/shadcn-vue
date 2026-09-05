@@ -6,6 +6,11 @@ export interface ComponentMeta {
 
 export const componentMeta = [
   {
+    slug: 'toast',
+    title: 'Toast',
+    description: 'Avisos temporales con severidad, color y posicion.',
+  },
+  {
     slug: 'accordion',
     title: 'Accordion',
     description:

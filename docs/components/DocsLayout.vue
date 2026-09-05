@@ -81,6 +81,7 @@ const installationRows = computed<ApiTableRow[]>(() => {
           'checkbox',
           'aspect-ratio',
           'empty',
+          'field-set',
         ].includes(component.slug)
       "
       :component-name="component.title"

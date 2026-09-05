@@ -13,14 +13,14 @@ const propRows: ApiTableRow[] = [
   {
     name: 'icon',
     type: 'IconConfig',
-    typeLink: '/icon',
+    typeLink: '/icon#icon-config',
     default: 'undefined',
     description: 'Icono al inicio cuando no se usa el slot leading.',
   },
   {
     name: 'trailingIcon',
     type: 'IconConfig',
-    typeLink: '/icon',
+    typeLink: '/icon#icon-config',
     default: 'undefined',
     description: 'Icono al final cuando no se usa el slot trailing.',
   },

@@ -71,6 +71,7 @@ const installationRows = computed<ApiTableRow[]>(() => {
           'meter-group',
           'pagination',
           'select',
+          'time',
           'accordion',
           'alert-dialog',
           'announcer',

@@ -10,12 +10,7 @@ import {
 import { Icon } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
-import type {
-  AccordionItemContext,
-  AccordionProps,
-  AccordionSlots,
-  AccordionValue,
-} from '.'
+import type { AccordionItemContext, AccordionProps, AccordionSlots, AccordionValue } from '.'
 import { createAccordionItemContext } from '.'
 import { accordionDefaults } from './default'
 
@@ -125,18 +120,24 @@ function getIconDropdownProps(context: AccordionItemContext) {
           :data-test-accordion-trigger="context.item.value"
         >
           <span class="flex min-w-0 flex-1 items-start gap-2">
-            <slot :name="getSlots(context).trigger || 'trigger'" v-bind="context">
-              <slot :name="getSlots(context).leading || 'leading'" v-bind="context">
-                <Icon
-                  v-if="getIconProps(context)"
-                  v-bind="getIconProps(context)!"
-                  :data-test-accordion-icon="context.item.value"
-                />
-              </slot>
-              <slot :name="getSlots(context).label || 'label'" v-bind="context">
-                <span :data-test-accordion-label="context.item.value">
-                  {{ context.item.label }}
-                </span>
+            <slot :name="getSlots(context).trigger" v-bind="context">
+              <slot name="trigger" v-bind="context">
+                <slot :name="getSlots(context).leading" v-bind="context">
+                  <slot name="leading" v-bind="context">
+                    <Icon
+                      v-if="getIconProps(context)"
+                      v-bind="getIconProps(context)!"
+                      :data-test-accordion-icon="context.item.value"
+                    />
+                  </slot>
+                </slot>
+                <slot :name="getSlots(context).label" v-bind="context">
+                  <slot name="label" v-bind="context">
+                    <span :data-test-accordion-label="context.item.value">
+                      {{ context.item.label }}
+                    </span>
+                  </slot>
+                </slot>
               </slot>
             </slot>
           </span>
@@ -154,10 +155,12 @@ function getIconDropdownProps(context: AccordionItemContext) {
         v-bind="getContentProps(context)"
         :data-test-accordion-content="context.item.value"
       >
-        <slot :name="getSlots(context).content || 'content'" v-bind="context">
-          <span :data-test-accordion-description="context.item.value">
-            {{ context.item.description }}
-          </span>
+        <slot :name="getSlots(context).content" v-bind="context">
+          <slot name="content" v-bind="context">
+            <span :data-test-accordion-description="context.item.value">
+              {{ context.item.description }}
+            </span>
+          </slot>
         </slot>
       </AccordionContent>
     </AccordionItem>

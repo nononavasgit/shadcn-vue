@@ -68,6 +68,7 @@ const installationRows = computed<ApiTableRow[]>(() => {
         component &&
         ![
           'linear-chart',
+          'accordion',
           'toast',
           'icon',
           'badge',

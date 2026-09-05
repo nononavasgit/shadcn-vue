@@ -533,6 +533,17 @@ describe('Accordion', () => {
           `Slot ${expected}`,
         )
       })
+
+      it('prioriza el slot global cuando el item también tiene slot', () => {
+        const accordion = mountAccordion({
+          props: { value: 'item', items: [{ value: 'item', slot: 'custom' }] },
+          slots: {
+            trigger: () => h('span', { 'data-test-accordion-slot': 'trigger' }, 'Trigger global'),
+          },
+        })
+
+        expect(accordion.get('[data-test-accordion-slot="trigger"]').text()).toBe('Trigger global')
+      })
     })
 
     describe('item-specific', () => {

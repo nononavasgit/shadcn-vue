@@ -31,6 +31,12 @@ const getBandClass = (ribbon: RibbonItem) =>
 
 const getBandStyle = (ribbon: RibbonItem, index: number): CSSProperties => ({
   ...getColorStyle(ribbon.color, 'ribbon'),
+  ...(ribbon.color
+    ? {
+        '--ribbon-background': 'var(--ribbon-color)',
+        '--ribbon-foreground': 'var(--ribbon-color-foreground)',
+      }
+    : {}),
   zIndex: ribbon.zIndex ?? 20 + index,
   transform: `rotate(${ribbon.rotate ?? ribbonRotations[getBandPosition(ribbon)]}deg)`,
 })

@@ -113,8 +113,12 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             >Color<input
               v-model="state.color"
               placeholder="#7c3aed"
-              class="rounded-md border bg-background px-3 py-2 text-sm" /></label
-          ><label class="grid gap-1 text-xs"
+              class="rounded-md border bg-background px-3 py-2 text-sm"
+          /></label>
+          <p v-if="state.color" class="text-xs text-muted-foreground">
+            El color personalizado tiene prioridad sobre severity.
+          </p>
+          <label class="grid gap-1 text-xs"
             >Position<select
               v-model="state.position"
               class="rounded-md border bg-background px-2 py-2 text-sm"

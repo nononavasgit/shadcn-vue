@@ -110,6 +110,10 @@ describe('Ribbon', () => {
           ]),
         )
         expect(band.attributes('style')).toContain('--ribbon-color: #ffffff')
+        expect(band.attributes('style')).toContain('--ribbon-background: var(--ribbon-color)')
+        expect(band.attributes('style')).toContain(
+          '--ribbon-foreground: var(--ribbon-color-foreground)',
+        )
       })
     })
 

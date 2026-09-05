@@ -69,6 +69,7 @@ const installationRows = computed<ApiTableRow[]>(() => {
         ![
           'linear-chart',
           'accordion',
+          'alert-dialog',
           'toast',
           'icon',
           'badge',

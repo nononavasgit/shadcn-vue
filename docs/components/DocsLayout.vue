@@ -88,6 +88,7 @@ const installationRows = computed<ApiTableRow[]>(() => {
           'ribbon',
           'search',
           'switch',
+          'slider',
         ].includes(component.slug)
       "
       :component-name="component.title"

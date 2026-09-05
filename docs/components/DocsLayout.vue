@@ -79,6 +79,7 @@ const installationRows = computed<ApiTableRow[]>(() => {
           'button-group',
           'card',
           'checkbox',
+          'aspect-ratio',
         ].includes(component.slug)
       "
       :component-name="component.title"

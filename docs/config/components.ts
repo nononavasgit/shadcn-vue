@@ -6,11 +6,6 @@ export interface ComponentMeta {
 
 export const componentMeta = [
   {
-    slug: 'toast',
-    title: 'Toast',
-    description: 'Avisos temporales con severidad, color y posicion.',
-  },
-  {
     slug: 'accordion',
     title: 'Accordion',
     description:
@@ -249,6 +244,11 @@ export const componentMeta = [
     slug: 'timeline',
     title: 'Timeline',
     description: 'Muestra una secuencia de eventos con estados, orientación y slots contextuales.',
+  },
+  {
+    slug: 'toast',
+    title: 'Toast',
+    description: 'Avisos temporales con severidad, color y posicion.',
   },
   {
     slug: 'tree',

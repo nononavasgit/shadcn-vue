@@ -82,6 +82,7 @@ const installationRows = computed<ApiTableRow[]>(() => {
           'aspect-ratio',
           'empty',
           'field-set',
+          'input',
         ].includes(component.slug)
       "
       :component-name="component.title"

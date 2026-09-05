@@ -91,6 +91,7 @@ const installationRows = computed<ApiTableRow[]>(() => {
           'slider',
           'splitter',
           'tabs',
+          'textarea',
         ].includes(component.slug)
       "
       :component-name="component.title"

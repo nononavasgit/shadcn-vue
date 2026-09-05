@@ -271,12 +271,10 @@ export type TimelineSlots = {
   label?(props: TimelineItemContext): unknown
   description?(props: TimelineItemContext): unknown
   indicator?(props: TimelineItemContext): unknown
-  separator?(props: TimelineItemContext): unknown
 } & {
   [name: `header-${string}`]: ((props: TimelineItemContext) => unknown) | undefined
   [name: `label-${string}`]: ((props: TimelineItemContext) => unknown) | undefined
   [name: `indicator-${string}`]: ((props: TimelineItemContext) => unknown) | undefined
-  [name: `separator-${string}`]: ((props: TimelineItemContext) => unknown) | undefined
   [name: `description-${string}`]: ((props: TimelineItemContext) => unknown) | undefined
 }
 

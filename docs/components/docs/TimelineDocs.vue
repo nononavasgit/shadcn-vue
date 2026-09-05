@@ -118,13 +118,6 @@ const slotRows: ApiTableRow[] = [
     description: 'Personaliza el indicador y sustituye su icono alternativo.',
   },
   {
-    name: 'separator',
-    type: 'TimelineItemContext',
-    typeLink: '#timeline-item-context',
-    default: 'vacío',
-    description: 'Añade contenido dentro del separador.',
-  },
-  {
     name: 'header-{slot}',
     type: 'TimelineItemContext',
     typeLink: '#timeline-item-context',
@@ -151,13 +144,6 @@ const slotRows: ApiTableRow[] = [
     typeLink: '#timeline-item-context',
     default: 'slot indicator',
     description: 'Personaliza el indicador de un único item usando su slot.',
-  },
-  {
-    name: 'separator-{slot}',
-    type: 'TimelineItemContext',
-    typeLink: '#timeline-item-context',
-    default: 'slot separator',
-    description: 'Personaliza el separador de un único item usando su slot.',
   },
 ]
 

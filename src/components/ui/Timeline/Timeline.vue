@@ -191,7 +191,6 @@ function getSlots(context: TimelineItemContext) {
     label: `label-${key}` as `label-${string}`,
     description: `description-${key}` as `description-${string}`,
     indicator: `indicator-${key}` as `indicator-${string}`,
-    separator: `separator-${key}` as `separator-${string}`,
   }
 }
 
@@ -251,11 +250,7 @@ function getIconProps(context: TimelineItemContext) {
         </slot>
       </div>
 
-      <div v-bind="getSeparatorProps(context)" data-test-timeline-separator>
-        <slot :name="getSlots(context).separator" v-bind="context">
-          <slot name="separator" v-bind="context" />
-        </slot>
-      </div>
+      <div v-bind="getSeparatorProps(context)" data-test-timeline-separator />
     </div>
   </Primitive>
 </template>

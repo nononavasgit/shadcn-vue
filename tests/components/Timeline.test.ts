@@ -400,18 +400,6 @@ describe('Timeline', () => {
       })
     })
 
-    describe('separator', () => {
-      it('renderiza contenido personalizado dentro del separador', () => {
-        const wrapper = mountTimeline({
-          slots: {
-            separator: () => h('span', { 'data-test-timeline-separator-slot': true }, '|'),
-          },
-        })
-
-        expect(wrapper.findAll('[data-test-timeline-separator-slot]')).toHaveLength(3)
-      })
-    })
-
     describe('slots dinámicos', () => {
       it('prioriza los slots con sufijo value para un único item', () => {
         const wrapper = mountTimeline({
@@ -421,7 +409,6 @@ describe('Timeline', () => {
             'description-review': () =>
               h('span', { 'data-test-dynamic-description': true }, 'Description review'),
             'indicator-review': () => h('span', { 'data-test-dynamic-indicator': true }, '2'),
-            'separator-review': () => h('span', { 'data-test-dynamic-separator': true }, '|'),
           },
         })
 
@@ -429,7 +416,6 @@ describe('Timeline', () => {
         expect(wrapper.get('[data-test-dynamic-description]').text()).toBe('Description review')
         expect(wrapper.get('[data-test-dynamic-indicator]').text()).toBe('2')
         expect(wrapper.find('[data-test-dynamic-label]').exists()).toBe(false)
-        expect(wrapper.get('[data-test-dynamic-separator]').text()).toBe('|')
       })
     })
   })

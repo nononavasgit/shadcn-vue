@@ -97,6 +97,7 @@ const installationRows = computed<ApiTableRow[]>(() => {
           'popover',
           'stepper',
           'tag-input',
+          'timeline',
         ].includes(component.slug)
       "
       :component-name="component.title"

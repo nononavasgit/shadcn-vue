@@ -91,6 +91,14 @@ describe('Stepper', () => {
           expect(wrapper.get('[data-test-stepper-separator="first"]').classes()).toContain(
             '-bottom-5',
           )
+        } else {
+          expect(wrapper.get('[data-test-stepper-item="first"]').classes()).toEqual(
+            expect.arrayContaining(['min-w-0', 'flex-1', 'basis-0']),
+          )
+          expect(wrapper.get('[data-test-stepper-trigger="first"]').classes()).toContain('w-full')
+          expect(wrapper.get('[data-test-stepper-title="first"]').classes()).toEqual(
+            expect.arrayContaining(['break-words', 'whitespace-normal', 'text-center']),
+          )
         }
       })
     })
@@ -321,15 +329,6 @@ describe('Stepper', () => {
       })
 
       expect(wrapper.get(selector).text()).toBe(`Custom ${name}`)
-    })
-
-    it('renderiza el slot default como contenido del paso activo', () => {
-      const wrapper = mountStepper({
-        props: { steps },
-        slots: { default: () => h('span', { 'data-test-stepper-slot': 'default' }, 'Default') },
-      })
-
-      expect(wrapper.get('[data-test-stepper-slot="default"]').text()).toBe('Default')
     })
 
     it('prioriza el slot dinámico sobre el slot global', () => {

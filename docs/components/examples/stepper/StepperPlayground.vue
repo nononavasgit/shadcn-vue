@@ -7,7 +7,7 @@ import ComponentPlayground from '../../ComponentPlayground.vue'
 const orientations = ['horizontal', 'vertical']
 const icons = ['', 'check', 'file', 'save', 'user']
 const slotModes = ['none', 'general', 'individual']
-const contentModes = ['none', 'default', 'general', 'individual']
+const contentModes = ['none', 'general', 'individual']
 
 function createSteps() {
   return [
@@ -131,11 +131,7 @@ function generateSlots() {
   </template>`)
   }
 
-  if (state.value.contentMode === 'default') {
-    slots.push(`  <template #default="{ item }">
-    <div class="rounded-md bg-muted/40 p-3 text-sm">Contenido default: {{ item.content }}</div>
-  </template>`)
-  } else if (state.value.contentMode === 'general') {
+  if (state.value.contentMode === 'general') {
     slots.push(`  <template #content="{ item, prevStep, nextStep, isFirstStep, isLastStep }">
     <div class="grid gap-3 rounded-lg border bg-muted/20 p-4">
       <p class="text-sm">{{ item.content }}</p>

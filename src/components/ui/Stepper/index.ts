@@ -140,7 +140,6 @@ export interface StepperEmits {
 }
 
 export type StepperSlots = {
-  default?(props: StepperItemContext): unknown
   indicator?(props: StepperItemContext): unknown
   label?(props: StepperItemContext): unknown
   description?(props: StepperItemContext): unknown

@@ -138,11 +138,7 @@ const listProps = computed(() => {
     ...listUI,
     'data-slot': 'stepper-list',
     'data-test-stepper-list': '',
-    class: cn(
-      'flex w-full',
-      isVertical.value ? 'flex-col' : 'items-start gap-2',
-      listUI.class,
-    ),
+    class: cn('flex w-full', isVertical.value ? 'flex-col' : 'items-start gap-2', listUI.class),
     style: listUI.style,
   }
 })
@@ -212,7 +208,7 @@ function getItemProps(context: StepperItemContext) {
       'group flex items-center gap-2 data-[disabled]:pointer-events-none',
       isVertical.value
         ? 'relative flex w-full items-start gap-4 pb-6 last:pb-0'
-        : 'relative flex w-full flex-col items-center justify-center',
+        : 'relative flex min-w-0 flex-1 basis-0 flex-col items-center justify-start',
       ui.class,
     ),
     style: ui.style,
@@ -227,8 +223,9 @@ function getTriggerProps(context: StepperItemContext) {
     'data-slot': 'stepper-trigger',
     'data-test-stepper-trigger': context.item.slot ?? context.item.step,
     class: cn(
-      'flex flex-col items-center gap-1 rounded-md p-1 text-center',
+      'flex min-w-0 flex-col items-center gap-1 rounded-md p-1 text-center',
       triggerClass.value,
+      !isVertical.value && 'w-full',
       ui.class,
     ),
     style: ui.style,
@@ -257,7 +254,7 @@ function getWrapperProps(context: StepperItemContext) {
     ...ui,
     'data-slot': 'stepper-wrapper',
     'data-test-stepper-wrapper': context.item.slot ?? context.item.step,
-    class: cn('flex min-w-0 flex-1 flex-col', ui.class),
+    class: cn('flex min-w-0 flex-1 flex-col', !isVertical.value && 'w-full items-center', ui.class),
     style: ui.style,
   }
 }
@@ -271,7 +268,7 @@ function getLabelProps(context: StepperItemContext) {
     'data-test-stepper-title': context.item.slot ?? context.item.step,
     class: cn(
       'text-base font-semibold',
-      isVertical.value ? 'whitespace-normal' : 'whitespace-nowrap',
+      isVertical.value ? 'whitespace-normal' : 'w-full break-words whitespace-normal text-center',
       ui.class,
     ),
     style: ui.style,
@@ -285,7 +282,11 @@ function getDescriptionProps(context: StepperItemContext) {
     ...normalizeStepperDescriptionProps(context.item.descriptionProps),
     'data-slot': 'stepper-description',
     'data-test-stepper-description': context.item.slot ?? context.item.step,
-    class: cn('text-sm text-muted-foreground', ui.class),
+    class: cn(
+      'text-sm text-muted-foreground',
+      !isVertical.value && 'w-full break-words text-center',
+      ui.class,
+    ),
     style: ui.style,
   }
 }
@@ -341,9 +342,7 @@ function showDescription(context: StepperItemContext) {
 }
 
 function showContent(context: StepperItemContext) {
-  return Boolean(
-    context.item.content || slots.default || slots.content || slots[getSlotNames(context).content],
-  )
+  return Boolean(context.item.content || slots.content || slots[getSlotNames(context).content])
 }
 
 function getKey(context: StepperItemContext) {
@@ -415,9 +414,7 @@ const stepContexts = computed(() => props.steps.map(getStepContext))
       >
         <slot :name="getSlotNames(context).content" v-bind="context">
           <slot name="content" v-bind="context">
-            <slot v-bind="context">
-              {{ context.item.content }}
-            </slot>
+            {{ context.item.content }}
           </slot>
         </slot>
       </div>

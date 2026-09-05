@@ -115,7 +115,6 @@ const emitRows: ApiTableRow[] = [
 ]
 
 const slotRows: ApiTableRow[] = [
-  { name: 'default', type: 'StepperItemContext', description: 'Contenido del paso activo.' },
   { name: 'indicator', type: 'StepperItemContext', description: 'Reemplaza el indicador.' },
   {
     name: 'indicator-{slot}',

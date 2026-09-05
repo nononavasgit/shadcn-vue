@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import RibbonDocs from '../docs/RibbonDocs.vue'
-import RibbonExamples from '../examples/ribbon/RibbonExamples.vue'
+import RibbonPlayground from '../examples/ribbon/RibbonPlayground.vue'
 import DocsLayout from '../DocsLayout.vue'
 </script>
 
@@ -9,7 +9,7 @@ import DocsLayout from '../DocsLayout.vue'
     <main class="min-h-screen bg-background p-4 text-foreground sm:p-8">
       <div class="mx-auto grid max-w-5xl gap-6">
         <RibbonDocs />
-        <RibbonExamples />
+        <RibbonPlayground />
       </div>
     </main>
   </DocsLayout>

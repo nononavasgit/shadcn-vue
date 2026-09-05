@@ -13,7 +13,13 @@ export default defineConfig({
   base,
   plugins: [vue(), tailwindcss()],
   resolve: {
-    alias: { '@': path.resolve(__dirname, 'src') },
+    alias: [
+      {
+        find: /^vue$/,
+        replacement: path.resolve(__dirname, 'node_modules/vue/dist/vue.esm-bundler.js'),
+      },
+      { find: '@', replacement: path.resolve(__dirname, 'src') },
+    ],
   },
   build: {
     outDir: path.resolve(__dirname, 'docs-dist'),

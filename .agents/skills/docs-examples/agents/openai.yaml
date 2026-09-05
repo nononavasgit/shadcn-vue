@@ -1,0 +1,4 @@
+interface:
+  display_name: "Docs and Examples"
+  short_description: "Documenta componentes y crea ejemplos copiables"
+  default_prompt: "Usa $docs-examples para documentar este componente con ejemplos copiables."

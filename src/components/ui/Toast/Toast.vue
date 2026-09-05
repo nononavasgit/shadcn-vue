@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, useAttrs, useSlots, watch } from 'vue'
 import {
-  ToastAction,
   ToastClose,
   ToastDescription,
   ToastPortal,
@@ -12,9 +11,12 @@ import {
 } from 'reka-ui'
 import { Button } from '@/components/ui/Button'
 import { Icon } from '@/components/ui/Icon'
+import { useColor } from '@/composables'
 import { useUi } from '@/composables/useUi'
 import { useI18n } from '@/i18n'
 import { cn } from '@/lib/utils'
+import { toastDefaults } from './defaults'
+import { toastVariants, toastViewportVariants } from '.'
 import type { ToastContext, ToastEmits, ToastProps, ToastSlots } from '.'
 
 defineOptions({ inheritAttrs: false })
@@ -22,25 +24,16 @@ defineOptions({ inheritAttrs: false })
 defineSlots<ToastSlots>()
 const emit = defineEmits<ToastEmits>()
 
-const props = withDefaults(defineProps<ToastProps>(), {
-  type: 'foreground',
-  label: undefined,
-  description: undefined,
-  icon: undefined,
-  actionButton: undefined,
-  closeButton: undefined,
-  closable: true,
-  disableSwipe: false,
-  swipeDirection: 'right',
-  swipeThreshold: 50,
-  viewport: undefined,
-  ui: undefined,
-})
+const props = withDefaults(defineProps<ToastProps>(), toastDefaults)
 
 const attrs = useAttrs()
 const slots = useSlots()
-const open = defineModel<boolean>('open', { default: false })
+const open = defineModel<boolean>('open', { default: true })
 const { t } = useI18n()
+const { colorStyle } = useColor(
+  computed(() => props.color),
+  'toast',
+)
 
 watch(open, (value, previousValue) => {
   if (previousValue && !value) emit('close')
@@ -51,11 +44,7 @@ function close() {
 }
 
 const toastContext = computed<ToastContext>(() => {
-  const { ui, ...toastProps } = props
-  void ui
-
   return {
-    props: toastProps,
     open: open.value,
     close,
   }
@@ -66,19 +55,21 @@ const rootProps = computed(() => {
 
   return {
     ...attrs,
-    as: props.as,
-    asChild: props.asChild,
     type: props.type,
     duration: props.duration,
-    defaultOpen: props.defaultOpen,
-    forceMount: props.forceMount,
     ...rootUI,
     class: cn(
-      'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-80 data-[state=open]:slide-in-from-top-full data-[state=closed]:slide-out-to-right-full data-[swipe=move]:translate-x-(--reka-toast-swipe-move-x) data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-transform data-[swipe=end]:animate-out data-[swipe=end]:slide-out-to-right-full pointer-events-auto relative grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-3 gap-y-1 overflow-hidden rounded-lg border bg-background p-4 pr-10 text-foreground shadow-lg duration-200 sm:data-[state=open]:slide-in-from-bottom-full',
+      'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-80 data-[state=open]:fade-in-0 data-[swipe=move]:translate-x-(--reka-toast-swipe-move-x) data-[swipe=move]:translate-y-(--reka-toast-swipe-move-y) data-[swipe=cancel]:translate-y-0 data-[swipe=cancel]:translate-x-0 data-[swipe=cancel]:transition-transform data-[swipe=end]:animate-out data-[swipe=end]:fade-out-0 pointer-events-auto relative grid w-full grid-cols-[0_minmax(0,1fr)] items-start gap-x-3 gap-y-1 overflow-hidden rounded-lg border bg-background p-4 pr-10 text-foreground shadow-lg duration-200',
+      (props.icon || slots.icon) && 'grid-cols-[auto_minmax(0,1fr)]',
+      toastVariants({
+        variant: props.variant,
+        severity: props.severity,
+        color: Boolean(props.color),
+      }),
       attrs.class,
       rootUI.class,
     ),
-    style: [attrs.style, rootUI.style],
+    style: [colorStyle.value, attrs.style, rootUI.style],
   }
 })
 
@@ -101,49 +92,52 @@ const labelProps = computed(() => {
 
 const descriptionProps = computed(() => {
   const ui = useUi(props.ui?.description, toastContext.value)
-  return { ...ui, class: cn('text-sm text-muted-foreground', ui.class) }
+  return { ...ui, class: cn('text-sm text-current/80', ui.class) }
 })
-
-const actionProps = computed(() => {
-  const ui = useUi(props.ui?.action, toastContext.value)
-  return { ...ui, class: cn('col-start-3 row-span-2 self-center', ui.class) }
-})
-
-const actionButtonProps = computed(() => ({
-  variant: 'outline' as const,
-  severity: 'secondary' as const,
-  size: 'sm' as const,
-  ...props.actionButton,
-}))
 
 const closeProps = computed(() => {
   const ui = useUi(props.ui?.close, toastContext.value)
   return {
     ...ui,
+    'aria-label': ui['aria-label'] ?? t('close'),
     class: cn('absolute top-2 right-2', ui.class),
   }
 })
 
-const closeButtonProps = computed(() => ({
-  size: 'xs' as const,
-  square: true,
-  rounded: true,
-  variant: 'plain' as const,
-  severity: 'secondary' as const,
-  icon: { name: 'x' as const },
-  ...props.closeButton,
-}))
+const closeButtonProps = computed(() => {
+  const button = props.closeButton
+  return {
+    ...button,
+    size: button?.size ?? ('xs' as const),
+    square: button?.square ?? true,
+    rounded: button?.rounded ?? true,
+    variant: button?.variant ?? props.variant,
+    severity: button?.severity ?? props.severity,
+    color: button?.color ?? props.color,
+    icon: button?.icon ?? { name: 'x' as const },
+  }
+})
+
+const progressProps = computed(() => {
+  const ui = useUi(props.ui?.progress, toastContext.value)
+  return {
+    ...ui,
+    role: 'progressbar',
+    'aria-label': ui['aria-label'] ?? 'Toast timeout',
+    class: cn('col-span-2 mt-1 h-1 w-full overflow-hidden rounded-full bg-current/20', ui.class),
+    style: ui.style,
+  }
+})
 
 const viewportProps = computed(() => {
   const ui = useUi(props.ui?.viewport, toastContext.value)
   return {
-    as: props.viewport?.as,
-    asChild: props.viewport?.asChild,
-    hotkey: props.viewport?.hotkey,
-    label: props.viewport?.label,
+    hotkey: props.hotkey,
+    label: props.labelHotkey,
     ...ui,
     class: cn(
-      'fixed top-0 z-100 flex max-h-screen w-full flex-col-reverse gap-2 p-4 sm:right-0 sm:bottom-0 sm:top-auto sm:max-w-sm sm:flex-col',
+      'fixed z-100 flex max-h-screen w-full max-w-sm flex-col gap-2 p-4',
+      toastViewportVariants({ position: props.position }),
       ui.class,
     ),
     style: ui.style,
@@ -155,19 +149,16 @@ const providerProps = computed(() => ({
   swipeDirection: props.swipeDirection,
   swipeThreshold: props.swipeThreshold,
 }))
-
-function onAction(event: PointerEvent) {
-  emit('action', event)
-}
 </script>
 
 <template>
   <ToastProvider v-bind="providerProps">
     <ToastPortal>
       <ToastRoot
+        v-slot="{ remaining, duration: toastDuration }"
         v-bind="rootProps"
         v-model:open="open"
-        data-slot="toast"
+        data-test-toast-root
         @escape-key-down="emit('escapeKeyDown', $event)"
         @pause="emit('pause')"
         @resume="emit('resume')"
@@ -180,55 +171,50 @@ function onAction(event: PointerEvent) {
           <div
             v-if="iconProps?.name || slots.icon"
             v-bind="iconContainerProps"
-            data-slot="toast-icon"
+            data-test-toast-icon
           >
             <slot name="icon" v-bind="toastContext">
               <Icon v-if="iconProps?.name" v-bind="iconProps" />
             </slot>
           </div>
 
-          <div v-bind="contentProps" data-slot="toast-content">
-            <ToastTitle
-              v-if="props.label || slots.label"
-              v-bind="labelProps"
-              data-slot="toast-title"
-            >
+          <div v-bind="contentProps" data-test-toast-content>
+            <ToastTitle v-if="props.label || slots.label" v-bind="labelProps" data-test-toast-title>
               <slot name="label" v-bind="toastContext">{{ props.label }}</slot>
             </ToastTitle>
 
             <ToastDescription
               v-if="props.description || slots.description"
               v-bind="descriptionProps"
-              data-slot="toast-description"
+              data-test-toast-description
             >
               <slot name="description" v-bind="toastContext">{{ props.description }}</slot>
             </ToastDescription>
           </div>
 
-          <ToastAction
-            v-if="props.actionButton || slots.action"
-            v-bind="actionProps"
-            :alt-text="props.actionButton?.label ?? 'Action'"
-            as-child
-            data-slot="toast-action"
-            @click="onAction"
-          >
-            <slot name="action" v-bind="toastContext">
-              <Button v-bind="actionButtonProps" />
-            </slot>
-          </ToastAction>
-
-          <ToastClose v-if="props.closable" v-bind="closeProps" as-child data-slot="toast-close">
+          <ToastClose v-if="props.closable" v-bind="closeProps" as-child data-test-toast-close>
             <slot name="close" v-bind="toastContext">
-              <Button v-bind="closeButtonProps" :aria-label="t('close')" />
+              <Button v-bind="closeButtonProps" />
             </slot>
           </ToastClose>
         </slot>
+
+        <div
+          v-if="props.progress && toastDuration > 0 && toastDuration !== Infinity"
+          v-bind="progressProps"
+          data-test-toast-progress
+          aria-valuemin="0"
+          :aria-valuemax="toastDuration"
+          :aria-valuenow="remaining"
+        >
+          <div
+            class="h-full rounded-full bg-current transition-[width] duration-100"
+            :style="{ width: `${Math.max(0, Math.min(100, (remaining / toastDuration) * 100))}%` }"
+          />
+        </div>
       </ToastRoot>
 
-      <slot name="viewport" v-bind="toastContext">
-        <ToastViewport v-bind="viewportProps" data-slot="toast-viewport" />
-      </slot>
+      <ToastViewport v-bind="viewportProps" data-test-toast-viewport />
     </ToastPortal>
   </ToastProvider>
 </template>

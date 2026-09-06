@@ -50,6 +50,7 @@ const options = [
 ]
 
 const props = defineProps<AutocompleteProps>()
+const value = defineModel<AutocompleteProps['value']>('value')
 
 const rootProps = computed(() => {
   const ui = useUi(props.ui?.root, undefined)
@@ -144,7 +145,7 @@ const labelProps = computed(() => {
 </script>
 
 <template>
-  <AutocompleteRoot v-model="v" v-bind="rootProps" data-test-autocomplete-root>
+  <AutocompleteRoot v-model="value" v-bind="rootProps" data-test-autocomplete-root>
     <AutocompleteAnchor v-bind="anchorProps" data-test-autocomplete-anchor>
       <AutocompleteInput
         v-bind="inputProps"

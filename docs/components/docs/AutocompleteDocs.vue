@@ -3,6 +3,12 @@ import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 
 const propRows: ApiTableRow[] = [
   {
+    name: 'value',
+    type: 'string | undefined',
+    default: 'undefined',
+    description: 'Valor controlado mediante v-model:value y sincronizado con AutocompleteRoot.',
+  },
+  {
     name: 'ui',
     type: '{ root?: () => HTMLAttributes; anchor?: () => HTMLAttributes; input?: () => HTMLAttributes; trigger?: () => HTMLAttributes; content?: () => HTMLAttributes; viewport?: () => HTMLAttributes; empty?: () => HTMLAttributes; separator?: () => HTMLAttributes; item?: () => HTMLAttributes; group?: () => HTMLAttributes; label?: () => HTMLAttributes }',
     default: 'undefined',

@@ -2,6 +2,7 @@ import { mount, type MountingOptions } from '@vue/test-utils'
 import { beforeAll, describe, expect, it } from 'vitest'
 
 import { Autocomplete, type AutocompleteProps } from '@/components/ui/Autocomplete'
+import { AutocompleteRoot } from 'reka-ui'
 import { testAttrs } from '../utils/testAttrs'
 
 function mountAutocomplete(options: MountingOptions<AutocompleteProps> = {}) {
@@ -21,11 +22,20 @@ async function mountOpenWithNoResults(options: MountingOptions<AutocompleteProps
 }
 
 describe('Autocomplete', () => {
+  const caseValues: AutocompleteProps['value'][] = [undefined, 'Apple']
+
   beforeAll(() => {
     HTMLElement.prototype.scrollIntoView = () => undefined
   })
 
   describe('props', () => {
+    describe('value', () => {
+      it.each(caseValues)('pasa el valor %s a AutocompleteRoot', (caseValue) => {
+        const wrapper = mountAutocomplete({ props: { value: caseValue } })
+        expect(wrapper.findComponent(AutocompleteRoot).props('modelValue')).toBe(caseValue)
+      })
+    })
+
     describe('ui', () => {
       testAttrs({
         text: 'aplica ui.root',

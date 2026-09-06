@@ -20,5 +20,8 @@ export interface AutocompleteUI {
 }
 
 export interface AutocompleteProps {
+  value?: AutocompleteValue
   ui?: AutocompleteUI
 }
+
+export type AutocompleteValue = string | undefined

@@ -26,11 +26,13 @@ export interface AutocompleteProps {
   placeholder?: string
   disabled?: boolean
   icon?: IconConfig
+  trailingIcon?: IconConfig
   ui?: AutocompleteUI
 }
 
 export interface AutocompleteSlots {
-  icon?(): unknown
+  leading?(): unknown
+  trailing?(): unknown
 }
 
 export type AutocompleteValue = string | undefined

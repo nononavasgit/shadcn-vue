@@ -89,7 +89,7 @@ const inputProps = computed(() => {
 
 const triggerProps = computed(() => {
   const ui = useUi(props.ui?.trigger, undefined)
-  return { ...ui, style: ui.style }
+  return { ...ui, disabled: props.disabled, style: ui.style }
 })
 
 const contentProps = computed(() => {
@@ -153,13 +153,20 @@ const labelProps = computed(() => {
 <template>
   <AutocompleteRoot v-model="value" v-bind="rootProps" data-test-autocomplete-root>
     <AutocompleteAnchor v-bind="anchorProps" data-test-autocomplete-anchor>
-      <slot name="icon">
+      <slot name="leading">
         <Icon v-if="props.icon" v-bind="props.icon" data-test-autocomplete-icon />
       </slot>
       <AutocompleteInput v-bind="inputProps" data-test-autocomplete-input />
-      <AutocompleteTrigger v-bind="triggerProps" data-test-autocomplete-trigger
-        ><Icon name="chevronDown" size="sm" class="text-grass11"
-      /></AutocompleteTrigger>
+      <AutocompleteTrigger v-bind="triggerProps" data-test-autocomplete-trigger>
+        <slot name="trailing">
+          <Icon
+            v-if="props.trailingIcon"
+            v-bind="props.trailingIcon"
+            data-test-autocomplete-trailing-icon
+          />
+          <Icon v-else name="chevronDown" />
+        </slot>
+      </AutocompleteTrigger>
     </AutocompleteAnchor>
     <AutocompleteContent v-bind="contentProps" data-test-autocomplete-content>
       <AutocompleteViewport v-bind="viewportProps" data-test-autocomplete-viewport>

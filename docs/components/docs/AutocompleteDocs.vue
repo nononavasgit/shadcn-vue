@@ -3,6 +3,13 @@ import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 
 const propRows: ApiTableRow[] = [
   {
+    name: 'trailingIcon',
+    type: 'IconConfig',
+    typeLink: '/icon#icon-config',
+    default: 'undefined',
+    description: 'Icono mostrado dentro del trigger, después del input.',
+  },
+  {
     name: 'icon',
     type: 'IconConfig',
     typeLink: '/icon#icon-config',
@@ -67,9 +74,14 @@ const propRows: ApiTableRow[] = [
         :show-default="false"
         :rows="[
           {
-            name: 'icon',
+            name: 'leading',
             type: '-',
             description: 'Reemplaza el icono anterior al input sin recibir contexto.',
+          },
+          {
+            name: 'trailing',
+            type: '-',
+            description: 'Reemplaza el icono del trigger sin recibir contexto.',
           },
         ]"
       />

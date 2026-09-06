@@ -2,7 +2,7 @@ import { mount, type MountingOptions } from '@vue/test-utils'
 import { beforeAll, describe, expect, it } from 'vitest'
 
 import { Autocomplete, type AutocompleteProps } from '@/components/ui/Autocomplete'
-import { AutocompleteRoot } from 'reka-ui'
+import { AutocompleteRoot, AutocompleteTrigger } from 'reka-ui'
 import { testAttrs } from '../utils/testAttrs'
 import { testIconProps } from '../utils/testIconProps'
 
@@ -37,7 +37,7 @@ describe('Autocomplete', () => {
   })
 
   describe('props', () => {
-    describe('props.icon', () => {
+    describe('icon', () => {
       testIconProps({
         text: 'pasa las props de icon',
         id: '[data-test-autocomplete-icon]',
@@ -49,7 +49,15 @@ describe('Autocomplete', () => {
       })
     })
 
-    describe('props.autoFocus', () => {
+    describe('trailingIcon', () => {
+      testIconProps({
+        text: 'pasa las props de trailingIcon',
+        id: '[data-test-autocomplete-trailing-icon]',
+        mount: (trailingIcon) => mountAutocomplete({ props: { trailingIcon } }),
+      })
+    })
+
+    describe('autoFocus', () => {
       it.each(autoFocusCases)('pasa autoFocus=%s a AutocompleteInput', (autoFocus) => {
         const wrapper = mountAutocomplete({ props: { autoFocus } })
         expect(wrapper.get('[data-test-autocomplete-input]').attributes('autofocus')).toBe(
@@ -58,16 +66,18 @@ describe('Autocomplete', () => {
       })
     })
 
-    describe('props.disabled', () => {
+    describe('disabled', () => {
       it.each(disabledCases)('pasa disabled=%s a AutocompleteInput', (disabled) => {
         const wrapper = mountAutocomplete({ props: { disabled } })
         expect(wrapper.get('[data-test-autocomplete-input]').attributes('disabled')).toBe(
           disabled ? '' : undefined,
         )
+        expect(wrapper.findComponent(AutocompleteRoot).props('disabled')).toBe(disabled)
+        expect(wrapper.findComponent(AutocompleteTrigger).props('disabled')).toBe(disabled)
       })
     })
 
-    describe('props.placeholder', () => {
+    describe('placeholder', () => {
       it.each(placeholderCases)('pasa placeholder=%s a AutocompleteInput', (placeholder) => {
         const wrapper = mountAutocomplete({ props: { placeholder } })
         expect(wrapper.get('[data-test-autocomplete-input]').attributes('placeholder')).toBe(
@@ -151,11 +161,16 @@ describe('Autocomplete', () => {
     it('permite reemplazar el icono mediante el slot icon', () => {
       const wrapper = mountAutocomplete({
         props: { icon: { name: 'search' } },
-        slots: { icon: '<span data-test-custom-icon>Custom icon</span>' },
+        slots: {
+          leading: '<span data-test-custom-icon>Custom icon</span>',
+          trailing: '<span data-test-custom-trailing-icon>Custom trailing icon</span>',
+        },
       })
 
       expect(wrapper.get('[data-test-custom-icon]').text()).toBe('Custom icon')
       expect(wrapper.find('[data-test-autocomplete-icon]').exists()).toBe(false)
+      expect(wrapper.get('[data-test-custom-trailing-icon]').text()).toBe('Custom trailing icon')
+      expect(wrapper.find('[data-test-autocomplete-trailing-icon]').exists()).toBe(false)
     })
   })
 })

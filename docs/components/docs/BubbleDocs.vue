@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 
+const bubbleConfigRows: ApiTableRow[] = [
+  {
+    name: 'BubbleConfig',
+    type: 'BubbleProps',
+    typeLink: '#bubble-props',
+    description: 'Configuracion completa de la burbuja.',
+  },
+]
+
 const propRows: ApiTableRow[] = [
   {
     name: 'as',
@@ -98,6 +107,7 @@ const exposeRows: ApiTableRow[] = []
         :show-default="false"
       />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="bubble-config" title="BubbleConfig" :rows="bubbleConfigRows" />
     </div>
   </section>
 </template>

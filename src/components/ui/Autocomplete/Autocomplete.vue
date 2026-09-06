@@ -12,15 +12,13 @@ import {
   AutocompleteTrigger,
   AutocompleteViewport,
 } from 'reka-ui'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { Icon } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { AutocompleteProps } from '.'
 import type { AutocompleteSlots } from '.'
 import { autocompleteDefaults } from './defaults'
-
-const v = ref('')
 
 const options = [
   {
@@ -182,11 +180,11 @@ const labelProps = computed(() => {
               group.name
             }}</AutocompleteLabel>
             <AutocompleteItem
-              v-bind="itemProps"
-              data-test-autocomplete-item
               v-for="option in group.children"
+              v-bind="itemProps"
               :key="option.name"
               :value="option.name"
+              data-test-autocomplete-item
             >
               <span>{{ option.name }}</span>
             </AutocompleteItem>

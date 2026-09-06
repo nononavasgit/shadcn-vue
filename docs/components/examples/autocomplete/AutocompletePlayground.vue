@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { compile, defineComponent, markRaw, ref, shallowRef } from 'vue'
+import { compile, defineComponent, markRaw, ref, shallowRef, watch } from 'vue'
 import { Autocomplete as BaseAutocomplete } from '@/components/ui/Autocomplete'
 import ComponentPlayground from '../../ComponentPlayground.vue'
 
-const initialCode = `<Autocomplete\n  v-model:value="value"\n  :icon="iconEnabled ? { name: 'search' } : undefined"\n  :trailing-icon="trailingIconEnabled ? { name: 'chevronDown' } : undefined"\n  :auto-focus="autoFocus"\n  :placeholder="placeholder"\n  :disabled="disabled"\n/>`
-const uiCode = `  :ui="{ anchor: () => ({ class: 'border-primary' }), item: () => ({ class: 'font-medium' }) }"`
-const editorCode = ref(initialCode)
+const editorCode = ref('')
 const value = ref('Apple')
 const autoFocus = ref(false)
 const placeholder = ref('')
@@ -48,8 +46,33 @@ function applyCode() {
   }
 }
 
+function generateCode() {
+  const lines = [
+    '<Autocomplete',
+    '  v-model:value="value"',
+    '  :icon="iconEnabled ? { name: \'search\' } : undefined"',
+    '  :trailing-icon="trailingIconEnabled ? { name: \'chevronDown\' } : undefined"',
+    '  :auto-focus="autoFocus"',
+    '  :placeholder="placeholder"',
+    '  :disabled="disabled"',
+  ]
+
+  if (uiEnabled.value) {
+    lines.push(
+      `  :ui="{ anchor: () => ({ class: 'border-primary' }), item: () => ({ class: 'font-medium' }) }"`,
+    )
+  }
+
+  lines.push('/>')
+  return lines.join('\n')
+}
+
+function syncFromControls() {
+  editorCode.value = generateCode()
+  applyCode()
+}
+
 function reset() {
-  editorCode.value = initialCode
   value.value = 'Apple'
   autoFocus.value = false
   placeholder.value = ''
@@ -57,17 +80,14 @@ function reset() {
   iconEnabled.value = false
   trailingIconEnabled.value = false
   uiEnabled.value = false
-  applyCode()
+  syncFromControls()
 }
 
-function toggleUi() {
-  const lines = editorCode.value.split('\n').filter((line) => !line.includes(':ui='))
-  if (uiEnabled.value) lines.splice(lines.length - 1, 0, uiCode)
-  editorCode.value = lines.join('\n')
-  applyCode()
-}
-
-applyCode()
+watch(
+  [value, autoFocus, placeholder, disabled, iconEnabled, trailingIconEnabled, uiEnabled],
+  syncFromControls,
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -97,7 +117,7 @@ applyCode()
           </select>
         </label>
         <label class="flex items-center gap-2 text-sm">
-          <input v-model="uiEnabled" type="checkbox" @change="toggleUi" />
+          <input v-model="uiEnabled" type="checkbox" />
           Personalizar <code>ui</code>
         </label>
         <label class="grid gap-1 text-sm">

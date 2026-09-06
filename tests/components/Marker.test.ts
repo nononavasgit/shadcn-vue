@@ -2,8 +2,10 @@ import { h } from 'vue'
 import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
+import { Icon } from '@/components/ui/Icon'
 import { Marker, type MarkerProps } from '@/components/ui/Marker'
 import { testAttrs } from '../utils/testAttrs'
+import { testIconProps } from '../utils/testIconProps'
 
 function mountMarker(options: MountingOptions<MarkerProps> = {}) {
   return mount(Marker, options)
@@ -12,9 +14,10 @@ function mountMarker(options: MountingOptions<MarkerProps> = {}) {
 describe('Marker', () => {
   describe('props', () => {
     describe('icon', () => {
-      it('renderiza el icono a la izquierda del contenido', () => {
-        const wrapper = mountMarker({ props: { icon: { name: 'check' } } })
-        expect(wrapper.get('[data-test-marker-icon]').attributes('aria-hidden')).toBe('true')
+      testIconProps({
+        text: 'pasa la configuración del icono',
+        id: Icon,
+        mount: (icon) => mountMarker({ props: { icon } }),
       })
     })
 
@@ -67,16 +70,20 @@ describe('Marker', () => {
   })
 
   describe('slots', () => {
-    it('permite personalizar el icono', () => {
-      const wrapper = mountMarker({
-        slots: { icon: () => h('span', { 'data-test-custom-icon': '' }) },
+    describe('default', () => {
+      it('renderiza el contenido del slot', () => {
+        expect(mountMarker({ slots: { default: 'Contenido' } }).text()).toBe('Contenido')
       })
-      expect(wrapper.get('[data-test-custom-icon]').exists()).toBe(true)
-      expect(wrapper.find('[data-test-marker-icon]').exists()).toBe(false)
     })
 
-    it('renderiza el slot default', () => {
-      expect(mountMarker({ slots: { default: 'Contenido' } }).text()).toBe('Contenido')
+    describe('icon', () => {
+      it('permite personalizar el icono', () => {
+        const wrapper = mountMarker({
+          slots: { icon: () => h('span', { 'data-test-custom-icon': '' }) },
+        })
+        expect(wrapper.get('[data-test-custom-icon]').exists()).toBe(true)
+        expect(wrapper.find('[data-test-marker-icon]').exists()).toBe(false)
+      })
     })
   })
 })

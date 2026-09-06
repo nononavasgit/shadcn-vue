@@ -3,6 +3,13 @@ import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 
 const propRows: ApiTableRow[] = [
   {
+    name: 'avatar',
+    type: 'AvatarConfig',
+    typeLink: '/avatar#avatar-config',
+    default: 'undefined',
+    description: 'Configuracion del avatar que acompana al mensaje.',
+  },
+  {
     name: 'align',
     type: "'start' | 'end'",
     default: "'start'",
@@ -19,6 +26,7 @@ const propRows: ApiTableRow[] = [
 
 const slotRows: ApiTableRow[] = [
   { name: 'header', type: '-', description: 'Contenido situado encima de la burbuja.' },
+  { name: 'avatar', type: '-', description: 'Personaliza el avatar del mensaje.' },
   { name: 'default', type: '-', description: 'Contenido principal de la burbuja.' },
   { name: 'reaction', type: '-', description: 'Contenido de las reacciones de Bubble.' },
   { name: 'footer', type: '-', description: 'Contenido situado debajo de la burbuja.' },

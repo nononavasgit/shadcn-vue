@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 
+const avatarConfigRows: ApiTableRow[] = [
+  {
+    name: 'AvatarConfig',
+    type: 'AvatarProps',
+    typeLink: '#avatar-props',
+    description: 'Configuracion completa del avatar.',
+  },
+]
+
 const propRows: ApiTableRow[] = [
   {
     name: 'src',
@@ -75,6 +84,7 @@ const exposeRows: ApiTableRow[] = []
       />
       <ApiTable id="avatar-slots" title="Slots" type-label="slotProps" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="avatar-config" title="AvatarConfig" :rows="avatarConfigRows" />
     </div>
   </section>
 </template>

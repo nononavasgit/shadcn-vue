@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { compile, defineComponent, markRaw, ref, shallowRef, watch } from 'vue'
 import { Message } from '@/components/ui/Message'
 import ComponentPlayground from '../../ComponentPlayground.vue'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
 const state = ref({
   messageAlign: 'start',
@@ -10,43 +11,72 @@ const state = ref({
   sideReaction: 'bottom',
   alignReaction: 'end',
 })
-const bubble = computed(() => {
-  return {
-    variant: state.value.variant,
-    severity: state.value.severity,
-    sideReaction: state.value.sideReaction,
-    alignReaction: state.value.alignReaction,
-  }
-})
+const bubbleCode = computed(
+  () =>
+    `{ variant: '${state.value.variant}', severity: '${state.value.severity}', sideReaction: '${state.value.sideReaction}', alignReaction: '${state.value.alignReaction}' }`,
+)
 
 const playgroundCode = computed(
-  () => `<Message align="${state.value.messageAlign}" :bubble="${JSON.stringify(bubble.value)}">
+  () => `<Message align="${state.value.messageAlign}" :avatar="{ label: 'AL', size: 'sm' }" :bubble="${bubbleCode.value}">
   <template #header>Asistente</template>
   Mensaje de ejemplo
   <template #reaction>👍</template>
   <template #footer>Hace un momento</template>
 </Message>`,
 )
+const editorCode = ref(playgroundCode.value)
+const appliedCode = ref(playgroundCode.value)
+const editorError = ref('')
+const Preview = shallowRef()
+
+function applyCode() {
+  editorError.value = ''
+  try {
+    const render = compile(editorCode.value)
+    Preview.value = markRaw(
+      defineComponent({ name: 'MessagePlaygroundPreview', components: { Message }, render }),
+    )
+    appliedCode.value = editorCode.value
+  } catch (error) {
+    editorError.value = error instanceof Error ? error.message : String(error)
+  }
+}
+
+function reset() {
+  state.value = {
+    messageAlign: 'start',
+    variant: 'soft',
+    severity: 'secondary',
+    sideReaction: 'bottom',
+    alignReaction: 'end',
+  }
+  editorCode.value = playgroundCode.value
+  applyCode()
+}
+
+watch(
+  playgroundCode,
+  (value) => {
+    editorCode.value = value
+    applyCode()
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
   <ComponentPlayground
+    v-model:code="editorCode"
     filename="MessagePlayground.vue"
     description="Prueba los slots default, reaction y footer de Message."
-    :code="playgroundCode"
+    :applied-code="appliedCode"
+    :error="editorError"
+    @apply="applyCode"
+    @reset="reset"
   >
     <template #preview>
       <div class="grid min-h-48 place-items-center p-8">
-        <Message class="w-full max-w-md" :align="state.messageAlign" :bubble="bubble">
-          <template #header>
-            <span class="mb-2 block text-xs font-medium text-muted-foreground">Asistente</span>
-          </template>
-          Mensaje de ejemplo
-          <template #reaction>👍</template>
-          <template #footer>
-            <span class="mt-2 block text-xs text-muted-foreground">Hace un momento</span>
-          </template>
-        </Message>
+        <component :is="Preview" v-if="Preview" />
       </div>
     </template>
     <template #controls>

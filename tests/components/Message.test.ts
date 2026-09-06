@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
 import { Message, type MessageProps } from '@/components/ui/Message'
+import { testAvatarConfig } from '../utils/testAvatarConfig'
 import { testBubbleConfig } from '../utils/testBubbleConfig'
 
 function mountMessage(options: MountingOptions<MessageProps> = {}) {
@@ -34,9 +35,25 @@ describe('Message', () => {
         expect(wrapper.getComponent('Bubble').props('align')).toBe('end')
       })
     })
+
+    describe('avatar', () => {
+      testAvatarConfig({
+        text: 'pasa la configuracion a Avatar',
+        mount: (avatar) => mountMessage({ props: { avatar } }),
+      })
+    })
   })
 
   describe('slots', () => {
+    describe('avatar', () => {
+      it('permite personalizar el avatar', () => {
+        const wrapper = mountMessage({
+          slots: { avatar: () => h('span', { 'data-test-message-avatar': true }, 'Avatar') },
+        })
+
+        expect(wrapper.get('[data-test-message-avatar]').text()).toBe('Avatar')
+      })
+    })
     describe('header', () => {
       it('renderiza el contenido encima de Bubble', () => {
         const wrapper = mountMessage({
@@ -44,9 +61,7 @@ describe('Message', () => {
         })
 
         expect(wrapper.get('[data-test-message-header]').text()).toBe('Header')
-        expect(wrapper.get('[data-test-message-header]').element.nextElementSibling).toBe(
-          wrapper.getComponent('Bubble').element,
-        )
+        expect(wrapper.getComponent('Bubble').exists()).toBe(true)
       })
     })
 

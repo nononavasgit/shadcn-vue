@@ -49,6 +49,11 @@ export const componentMeta = [
     description: 'Etiqueta compacta para estados, categorias y metadatos.',
   },
   {
+    slug: 'bubble',
+    title: 'Bubble',
+    description: 'Contenido conversacional dentro de una burbuja alineable y configurable.',
+  },
+  {
     slug: 'breadcrumb',
     title: 'Breadcrumb',
     description:

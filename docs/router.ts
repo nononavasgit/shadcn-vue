@@ -29,6 +29,7 @@ import IndexPage from './components/pages/IndexPage.vue'
 import KbdPage from './components/pages/KbdPage.vue'
 import KbdGroupPage from './components/pages/KbdGroupPage.vue'
 import LabelPage from './components/pages/LabelPage.vue'
+import MarkerPage from './components/pages/MarkerPage.vue'
 import LinkPage from './components/pages/LinkPage.vue'
 import LoadingPage from './components/pages/LoadingPage.vue'
 import LinearChartPage from './components/pages/LinearChartPage.vue'
@@ -136,6 +137,7 @@ export const router = createRouter({
       meta: { component: componentMetaBySlug['input-time'] },
     },
     { path: '/label', component: LabelPage, meta: { component: componentMetaBySlug.label } },
+    { path: '/marker', component: MarkerPage, meta: { component: componentMetaBySlug.marker } },
     { path: '/link', component: LinkPage, meta: { component: componentMetaBySlug.link } },
     { path: '/loading', component: LoadingPage, meta: { component: componentMetaBySlug.loading } },
     {

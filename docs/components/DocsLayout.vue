@@ -119,6 +119,7 @@ const installationRows = computed<ApiTableRow[]>(() => {
           'tooltip',
           'marker',
           'message',
+          'autocomplete',
         ].includes(component.slug)
       "
       :component-name="component.title"

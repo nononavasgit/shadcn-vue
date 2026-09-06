@@ -12,8 +12,11 @@ import {
   AutocompleteTrigger,
   AutocompleteViewport,
 } from 'reka-ui'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { Icon } from '@/components/ui/Icon'
+import { useUi } from '@/composables/useUi'
+import { cn } from '@/lib/utils'
+import type { AutocompleteProps } from '.'
 
 const v = ref('')
 
@@ -45,37 +48,132 @@ const options = [
     ],
   },
 ]
+
+const props = defineProps<AutocompleteProps>()
+
+const rootProps = computed(() => {
+  const ui = useUi(props.ui?.root, undefined)
+  return { ...ui, class: cn('relative', ui.class), style: ui.style }
+})
+
+const anchorProps = computed(() => {
+  const ui = useUi(props.ui?.anchor, undefined)
+  return {
+    ...ui,
+    class: cn(
+      'text-grass11 data-[placeholder]:text-grass9 inline-flex h-[35px] min-w-[160px] items-center justify-between gap-[5px] rounded-lg border bg-white px-[15px] text-xs leading-none shadow-sm outline-none hover:bg-stone-50 focus:shadow-[0_0_0_2px] focus:shadow-black',
+      ui.class,
+    ),
+    style: ui.style,
+  }
+})
+
+const inputProps = computed(() => {
+  const ui = useUi(props.ui?.input, undefined)
+  return {
+    ...ui,
+    class: cn(
+      'text-grass11 selection:bg-grass5 h-full !bg-transparent placeholder-stone-400 outline-none',
+      ui.class,
+    ),
+    style: ui.style,
+  }
+})
+
+const triggerProps = computed(() => {
+  const ui = useUi(props.ui?.trigger, undefined)
+  return { ...ui, style: ui.style }
+})
+
+const contentProps = computed(() => {
+  const ui = useUi(props.ui?.content, undefined)
+  return {
+    ...ui,
+    class: cn(
+      'absolute z-10 mt-1 w-full min-w-[160px] overflow-hidden rounded-lg border bg-white shadow-sm will-change-[opacity,transform]',
+      ui.class,
+    ),
+    style: ui.style,
+  }
+})
+
+const viewportProps = computed(() => {
+  const ui = useUi(props.ui?.viewport, undefined)
+  return { ...ui, class: cn('p-[5px]', ui.class), style: ui.style }
+})
+
+const emptyProps = computed(() => {
+  const ui = useUi(props.ui?.empty, undefined)
+  return {
+    ...ui,
+    class: cn('text-mauve8 py-2 text-center text-xs font-medium', ui.class),
+    style: ui.style,
+  }
+})
+
+const separatorProps = computed(() => {
+  const ui = useUi(props.ui?.separator, undefined)
+  return { ...ui, class: cn('bg-grass6 m-[5px] h-[1px]', ui.class), style: ui.style }
+})
+
+const itemProps = computed(() => {
+  const ui = useUi(props.ui?.item, undefined)
+  return {
+    ...ui,
+    class: cn(
+      'text-grass11 data-[disabled]:text-mauve8 data-[highlighted]:bg-grass9 data-[highlighted]:text-grass1 relative flex h-[25px] items-center rounded-[3px] pr-[35px] pl-[25px] text-xs leading-none select-none data-[disabled]:pointer-events-none data-[highlighted]:outline-none',
+      ui.class,
+    ),
+    style: ui.style,
+  }
+})
+
+const groupProps = computed(() => {
+  const ui = useUi(props.ui?.group, undefined)
+  return { ...ui, style: ui.style }
+})
+
+const labelProps = computed(() => {
+  const ui = useUi(props.ui?.label, undefined)
+  return {
+    ...ui,
+    class: cn('text-mauve11 px-[25px] text-xs leading-[25px]', ui.class),
+    style: ui.style,
+  }
+})
 </script>
 
 <template>
-  <AutocompleteRoot v-model="v" class="relative">
-    <AutocompleteAnchor
-      class="text-grass11 data-[placeholder]:text-grass9 inline-flex h-[35px] min-w-[160px] items-center justify-between gap-[5px] rounded-lg border bg-white px-[15px] text-xs leading-none shadow-sm outline-none hover:bg-stone-50 focus:shadow-[0_0_0_2px] focus:shadow-black"
-    >
+  <AutocompleteRoot v-model="v" v-bind="rootProps" data-test-autocomplete-root>
+    <AutocompleteAnchor v-bind="anchorProps" data-test-autocomplete-anchor>
       <AutocompleteInput
-        class="text-grass11 selection:bg-grass5 h-full !bg-transparent placeholder-stone-400 outline-none"
+        v-bind="inputProps"
         placeholder="Type or select an option..."
+        data-test-autocomplete-input
       />
-      <AutocompleteTrigger
+      <AutocompleteTrigger v-bind="triggerProps" data-test-autocomplete-trigger
         ><Icon name="chevronDown" size="sm" class="text-grass11"
       /></AutocompleteTrigger>
     </AutocompleteAnchor>
-    <AutocompleteContent
-      class="absolute z-10 mt-1 w-full min-w-[160px] overflow-hidden rounded-lg border bg-white shadow-sm will-change-[opacity,transform]"
-    >
-      <AutocompleteViewport class="p-[5px]">
-        <AutocompleteEmpty class="text-mauve8 py-2 text-center text-xs font-medium" />
+    <AutocompleteContent v-bind="contentProps" data-test-autocomplete-content>
+      <AutocompleteViewport v-bind="viewportProps" data-test-autocomplete-viewport>
+        <AutocompleteEmpty v-bind="emptyProps" data-test-autocomplete-empty />
         <template v-for="(group, index) in options" :key="group.name">
-          <AutocompleteGroup>
-            <AutocompleteSeparator v-if="index !== 0" class="bg-grass6 m-[5px] h-[1px]" />
-            <AutocompleteLabel class="text-mauve11 px-[25px] text-xs leading-[25px]">{{
+          <AutocompleteGroup v-bind="groupProps" data-test-autocomplete-group>
+            <AutocompleteSeparator
+              v-if="index !== 0"
+              v-bind="separatorProps"
+              data-test-autocomplete-separator
+            />
+            <AutocompleteLabel v-bind="labelProps" data-test-autocomplete-label>{{
               group.name
             }}</AutocompleteLabel>
             <AutocompleteItem
+              v-bind="itemProps"
+              data-test-autocomplete-item
               v-for="option in group.children"
               :key="option.name"
               :value="option.name"
-              class="text-grass11 data-[disabled]:text-mauve8 data-[highlighted]:bg-grass9 data-[highlighted]:text-grass1 relative flex h-[25px] items-center rounded-[3px] pr-[35px] pl-[25px] text-xs leading-none select-none data-[disabled]:pointer-events-none data-[highlighted]:outline-none"
             >
               <span>{{ option.name }}</span>
             </AutocompleteItem>

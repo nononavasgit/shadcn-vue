@@ -43,6 +43,14 @@ describe('Message', () => {
         mount: (avatar) => mountMessage({ props: { avatar } }),
       })
     })
+
+    describe('message', () => {
+      it('renderiza el contenido cuando no existe el slot default', () => {
+        expect(mountMessage({ props: { message: 'Mensaje por defecto' } }).text()).toContain(
+          'Mensaje por defecto',
+        )
+      })
+    })
   })
 
   describe('slots', () => {

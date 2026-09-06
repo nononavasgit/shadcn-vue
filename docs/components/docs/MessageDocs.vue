@@ -16,6 +16,12 @@ const propRows: ApiTableRow[] = [
     description: 'Resolvers de atributos para los contenedores de header y footer.',
   },
   {
+    name: 'message',
+    type: 'string',
+    default: 'undefined',
+    description: 'Contenido mostrado cuando no se proporciona el slot default.',
+  },
+  {
     name: 'align',
     type: "'start' | 'end'",
     default: "'start'",

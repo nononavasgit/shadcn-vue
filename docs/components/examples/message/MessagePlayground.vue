@@ -6,6 +6,7 @@ import { computed } from 'vue'
 
 const state = ref({
   messageAlign: 'start',
+  message: 'Mensaje de ejemplo',
   variant: 'soft',
   severity: 'secondary',
   sideReaction: 'bottom',
@@ -17,9 +18,8 @@ const bubbleCode = computed(
 )
 
 const playgroundCode = computed(
-  () => `<Message align="${state.value.messageAlign}" :avatar="{ label: 'AL', size: 'sm' }" :bubble="${bubbleCode.value}">
+  () => `<Message align="${state.value.messageAlign}" message="${state.value.message}" :avatar="{ label: 'AL', size: 'sm' }" :bubble="${bubbleCode.value}">
   <template #header>Asistente</template>
-  Mensaje de ejemplo
   <template #reaction>👍</template>
   <template #footer>Hace un momento</template>
 </Message>`,
@@ -45,6 +45,7 @@ function applyCode() {
 function reset() {
   state.value = {
     messageAlign: 'start',
+    message: 'Mensaje de ejemplo',
     variant: 'soft',
     severity: 'secondary',
     sideReaction: 'bottom',
@@ -82,6 +83,13 @@ watch(
     <template #controls>
       <div class="grid gap-4">
         <h3 class="text-sm font-semibold">Message / Bubble</h3>
+        <label class="grid gap-1 text-xs"
+          >Message
+          <input
+            v-model="state.message"
+            class="rounded-md border bg-background px-3 py-2 text-sm"
+          />
+        </label>
         <label class="grid gap-1 text-xs"
           >Message align
           <select

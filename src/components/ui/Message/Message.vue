@@ -38,7 +38,7 @@ const footerProps = computed(() => {
         </div>
         <div :class="props.align === 'end' ? 'order-1' : 'order-2'" class="flex flex-col">
           <Bubble v-bind="bubbleProps">
-            <slot />
+            <slot>{{ props.message }}</slot>
             <template v-if="$slots.reaction" #reactions>
               <slot name="reaction" />
             </template>

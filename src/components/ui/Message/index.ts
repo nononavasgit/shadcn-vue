@@ -19,6 +19,7 @@ export interface MessageProps {
   align?: MessageAlign
   avatar?: AvatarConfig
   bubble?: BubbleConfig
+  message?: string
   ui?: MessageUI
 }
 

@@ -10,6 +10,12 @@ const propRows: ApiTableRow[] = [
     description: 'Configuracion del avatar que acompana al mensaje.',
   },
   {
+    name: 'ui',
+    type: '{ header?: () => HTMLAttributes; footer?: () => HTMLAttributes }',
+    default: 'undefined',
+    description: 'Resolvers de atributos para los contenedores de header y footer.',
+  },
+  {
     name: 'align',
     type: "'start' | 'end'",
     default: "'start'",

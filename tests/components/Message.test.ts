@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
 import { Message, type MessageProps } from '@/components/ui/Message'
+import { testAttrs } from '../utils/testAttrs'
 import { testAvatarConfig } from '../utils/testAvatarConfig'
 import { testBubbleConfig } from '../utils/testBubbleConfig'
 
@@ -93,6 +94,32 @@ describe('Message', () => {
         expect(wrapper.get('[data-test-message-footer]').element.parentElement).toBe(
           wrapper.element,
         )
+      })
+    })
+  })
+
+  describe('props.ui', () => {
+    describe('header', () => {
+      testAttrs({
+        text: 'aplica ui.header al contenedor del slot',
+        id: '#test-component',
+        mount: (attrs) =>
+          mountMessage({
+            props: { ui: { header: () => attrs } },
+            slots: { header: () => h('span', 'Header') },
+          }),
+      })
+    })
+
+    describe('footer', () => {
+      testAttrs({
+        text: 'aplica ui.footer al contenedor del slot',
+        id: '#test-component',
+        mount: (attrs) =>
+          mountMessage({
+            props: { ui: { footer: () => attrs } },
+            slots: { footer: () => h('span', 'Footer') },
+          }),
       })
     })
   })

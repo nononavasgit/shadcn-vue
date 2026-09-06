@@ -4,6 +4,13 @@ import { markerDefaults } from '@/components/ui/Marker/default'
 
 const propRows: ApiTableRow[] = [
   {
+    name: 'icon',
+    type: 'IconConfig',
+    typeLink: '/icon#icon-config',
+    default: '-',
+    description: 'Icono decorativo que se muestra a la izquierda del contenido.',
+  },
+  {
     name: 'variant',
     type: '"default" | "border" | "separator"',
     default: markerDefaults.variant,
@@ -29,6 +36,12 @@ const slotRows: ApiTableRow[] = [
     type: 'Record<string, never>',
     default: '-',
     description: 'Contenido del marcador.',
+  },
+  {
+    name: 'icon',
+    type: 'Record<string, never>',
+    default: '-',
+    description: 'Permite personalizar el icono mostrado a la izquierda.',
   },
 ]
 const exposeRows: ApiTableRow[] = []

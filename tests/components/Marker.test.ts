@@ -11,6 +11,13 @@ function mountMarker(options: MountingOptions<MarkerProps> = {}) {
 
 describe('Marker', () => {
   describe('props', () => {
+    describe('icon', () => {
+      it('renderiza el icono a la izquierda del contenido', () => {
+        const wrapper = mountMarker({ props: { icon: { name: 'check' } } })
+        expect(wrapper.get('[data-test-marker-icon]').attributes('aria-hidden')).toBe('true')
+      })
+    })
+
     describe('variant', () => {
       it.each([
         ['default', false],
@@ -60,6 +67,14 @@ describe('Marker', () => {
   })
 
   describe('slots', () => {
+    it('permite personalizar el icono', () => {
+      const wrapper = mountMarker({
+        slots: { icon: () => h('span', { 'data-test-custom-icon': '' }) },
+      })
+      expect(wrapper.get('[data-test-custom-icon]').exists()).toBe(true)
+      expect(wrapper.find('[data-test-marker-icon]').exists()).toBe(false)
+    })
+
     it('renderiza el slot default', () => {
       expect(mountMarker({ slots: { default: 'Contenido' } }).text()).toBe('Contenido')
     })

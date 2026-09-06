@@ -1,5 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { PrimitiveProps } from 'reka-ui'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Marker } from './Marker.vue'
 
@@ -19,8 +20,10 @@ export type MarkerVariant = NonNullable<VariantProps<typeof markerVariants>['var
 
 export interface MarkerProps extends Pick<PrimitiveProps, 'as' | 'asChild'> {
   variant?: MarkerVariant
+  icon?: IconConfig
 }
 
 export interface MarkerSlots {
   default?(): unknown
+  icon?(): unknown
 }

@@ -3,7 +3,7 @@ import { compile, defineComponent, markRaw, ref, shallowRef, watch } from 'vue'
 import { Marker } from '@/components/ui/Marker'
 import ComponentPlayground from '../../ComponentPlayground.vue'
 
-const state = ref({ as: 'div', asChild: false, variant: 'default' })
+const state = ref({ as: 'div', asChild: false, variant: 'default', icon: false })
 const editorCode = ref('')
 const appliedCode = ref('')
 const editorError = ref('')
@@ -15,6 +15,7 @@ function generateCode() {
     state.value.as !== 'div' && `as="${state.value.as}"`,
     state.value.asChild && ':as-child="true"',
     state.value.variant !== 'default' && `variant="${state.value.variant}"`,
+    state.value.icon && ':icon="{ name: \'check\' }"',
   ]
     .filter(Boolean)
     .join(' ')
@@ -41,7 +42,7 @@ function syncFromControls() {
 }
 
 function reset() {
-  state.value = { as: 'div', asChild: false, variant: 'default' }
+  state.value = { as: 'div', asChild: false, variant: 'default', icon: false }
   syncFromControls()
 }
 
@@ -71,6 +72,9 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             <option>section</option>
             <option>article</option>
           </select></label
+        >
+        <label class="flex items-center gap-2 text-sm"
+          ><input v-model="state.icon" type="checkbox" /> Icono</label
         >
         <label class="flex items-center gap-2 text-sm"
           ><input v-model="state.asChild" type="checkbox" /> asChild</label

@@ -6,6 +6,7 @@ import AccordionPage from './components/pages/AccordionPage.vue'
 import AlertPage from './components/pages/AlertPage.vue'
 import AlertDialogPage from './components/pages/AlertDialogPage.vue'
 import AspectRatioPage from './components/pages/AspectRatioPage.vue'
+import AutocompletePage from './components/pages/AutocompletePage.vue'
 import AttachmentPage from './components/pages/AttachmentPage.vue'
 import BadgePage from './components/pages/BadgePage.vue'
 import BubblePage from './components/pages/BubblePage.vue'
@@ -82,6 +83,11 @@ export const router = createRouter({
       meta: { component: componentMetaBySlug.accordion },
     },
     { path: '/avatar', component: AvatarPage, meta: { component: componentMetaBySlug.avatar } },
+    {
+      path: '/autocomplete',
+      component: AutocompletePage,
+      meta: { component: componentMetaBySlug.autocomplete },
+    },
     {
       path: '/announcer',
       component: AnnouncerPage,

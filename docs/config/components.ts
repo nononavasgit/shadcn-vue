@@ -6,6 +6,12 @@ export interface ComponentMeta {
 
 export const componentMeta = [
   {
+    slug: 'autocomplete',
+    title: 'Autocomplete',
+    description:
+      'Autocomplete basado en las primitivas de Reka UI con una API mínima y composable.',
+  },
+  {
     slug: 'accordion',
     title: 'Accordion',
     description:

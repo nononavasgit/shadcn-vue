@@ -158,6 +158,11 @@ export const componentMeta = [
       'Medidor segmentado para representar cómo se distribuye un total entre varias categorías.',
   },
   {
+    slug: 'message',
+    title: 'Message',
+    description: 'Composicion de una burbuja con reacciones y contenido de pie.',
+  },
+  {
     slug: 'pagination',
     title: 'Pagination',
     description:

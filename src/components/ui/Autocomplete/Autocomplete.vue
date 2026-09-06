@@ -17,6 +17,7 @@ import { Icon } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { AutocompleteProps } from '.'
+import type { AutocompleteSlots } from '.'
 import { autocompleteDefaults } from './defaults'
 
 const v = ref('')
@@ -51,6 +52,7 @@ const options = [
 ]
 
 const props = withDefaults(defineProps<AutocompleteProps>(), autocompleteDefaults)
+defineSlots<AutocompleteSlots>()
 const value = defineModel<AutocompleteProps['value']>('value')
 
 const rootProps = computed(() => {
@@ -151,6 +153,9 @@ const labelProps = computed(() => {
 <template>
   <AutocompleteRoot v-model="value" v-bind="rootProps" data-test-autocomplete-root>
     <AutocompleteAnchor v-bind="anchorProps" data-test-autocomplete-anchor>
+      <slot name="icon">
+        <Icon v-if="props.icon" v-bind="props.icon" data-test-autocomplete-icon />
+      </slot>
       <AutocompleteInput v-bind="inputProps" data-test-autocomplete-input />
       <AutocompleteTrigger v-bind="triggerProps" data-test-autocomplete-trigger
         ><Icon name="chevronDown" size="sm" class="text-grass11"

@@ -3,6 +3,13 @@ import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 
 const propRows: ApiTableRow[] = [
   {
+    name: 'icon',
+    type: 'IconConfig',
+    typeLink: '/icon#icon-config',
+    default: 'undefined',
+    description: 'Icono mostrado antes del input.',
+  },
+  {
     name: 'autoFocus',
     type: 'boolean',
     default: 'false',
@@ -58,8 +65,13 @@ const propRows: ApiTableRow[] = [
         title="Slots"
         type-label="slotProps"
         :show-default="false"
-        :rows="[]"
-        empty-text="No tiene slots propios."
+        :rows="[
+          {
+            name: 'icon',
+            type: '-',
+            description: 'Reemplaza el icono anterior al input sin recibir contexto.',
+          },
+        ]"
       />
       <ApiTable title="Expose" :rows="[]" empty-text="No expone métodos." />
     </div>

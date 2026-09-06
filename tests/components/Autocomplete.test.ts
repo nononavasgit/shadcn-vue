@@ -4,6 +4,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { Autocomplete, type AutocompleteProps } from '@/components/ui/Autocomplete'
 import { AutocompleteRoot } from 'reka-ui'
 import { testAttrs } from '../utils/testAttrs'
+import { testIconProps } from '../utils/testIconProps'
 
 function mountAutocomplete(options: MountingOptions<AutocompleteProps> = {}) {
   return mount(Autocomplete, options)
@@ -36,6 +37,18 @@ describe('Autocomplete', () => {
   })
 
   describe('props', () => {
+    describe('props.icon', () => {
+      testIconProps({
+        text: 'pasa las props de icon',
+        id: '[data-test-autocomplete-icon]',
+        mount: (icon) => mountAutocomplete({ props: { icon } }),
+      })
+
+      it('no renderiza icono cuando no se proporciona', () => {
+        expect(mountAutocomplete().find('[data-test-autocomplete-icon]').exists()).toBe(false)
+      })
+    })
+
     describe('props.autoFocus', () => {
       it.each(autoFocusCases)('pasa autoFocus=%s a AutocompleteInput', (autoFocus) => {
         const wrapper = mountAutocomplete({ props: { autoFocus } })
@@ -131,6 +144,18 @@ describe('Autocomplete', () => {
       it('no requiere ui', () => {
         expect(() => mountAutocomplete()).not.toThrow()
       })
+    })
+  })
+
+  describe('slots', () => {
+    it('permite reemplazar el icono mediante el slot icon', () => {
+      const wrapper = mountAutocomplete({
+        props: { icon: { name: 'search' } },
+        slots: { icon: '<span data-test-custom-icon>Custom icon</span>' },
+      })
+
+      expect(wrapper.get('[data-test-custom-icon]').text()).toBe('Custom icon')
+      expect(wrapper.find('[data-test-autocomplete-icon]').exists()).toBe(false)
     })
   })
 })

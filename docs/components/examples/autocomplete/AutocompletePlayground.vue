@@ -3,13 +3,14 @@ import { compile, defineComponent, markRaw, ref, shallowRef } from 'vue'
 import { Autocomplete as BaseAutocomplete } from '@/components/ui/Autocomplete'
 import ComponentPlayground from '../../ComponentPlayground.vue'
 
-const initialCode = `<Autocomplete\n  v-model:value="value"\n  :auto-focus="autoFocus"\n  :placeholder="placeholder"\n  :disabled="disabled"\n/>`
+const initialCode = `<Autocomplete\n  v-model:value="value"\n  :icon="iconEnabled ? { name: 'search' } : undefined"\n  :auto-focus="autoFocus"\n  :placeholder="placeholder"\n  :disabled="disabled"\n/>`
 const uiCode = `  :ui="{ anchor: () => ({ class: 'border-primary' }), item: () => ({ class: 'font-medium' }) }"`
 const editorCode = ref(initialCode)
 const value = ref('Apple')
 const autoFocus = ref(false)
 const placeholder = ref('')
 const disabled = ref(false)
+const iconEnabled = ref(false)
 const uiEnabled = ref(false)
 const appliedCode = ref('')
 const editorError = ref('')
@@ -28,7 +29,7 @@ function applyCode() {
       defineComponent({
         name: 'AutocompletePlaygroundPreview',
         components: { PlaygroundAutocomplete: BaseAutocomplete },
-        setup: () => ({ value, autoFocus, placeholder, disabled }),
+        setup: () => ({ value, autoFocus, placeholder, disabled, iconEnabled }),
         render,
       }),
     )
@@ -45,6 +46,7 @@ function reset() {
   autoFocus.value = false
   placeholder.value = ''
   disabled.value = false
+  iconEnabled.value = false
   uiEnabled.value = false
   applyCode()
 }
@@ -98,6 +100,9 @@ applyCode()
         </label>
         <label class="flex items-center gap-2 text-sm">
           <input v-model="disabled" type="checkbox" /> Disabled
+        </label>
+        <label class="flex items-center gap-2 text-sm">
+          <input v-model="iconEnabled" type="checkbox" /> Icono
         </label>
         <p class="text-sm text-muted-foreground">
           Edita el código para probar los resolvers de <code>ui</code>.

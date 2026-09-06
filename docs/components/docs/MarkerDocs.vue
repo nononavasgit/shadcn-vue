@@ -4,6 +4,25 @@ import { markerDefaults } from '@/components/ui/Marker/default'
 
 const propRows: ApiTableRow[] = [
   {
+    name: 'shimmer',
+    type: 'boolean',
+    default: String(markerDefaults.shimmer),
+    description: 'Aplica un efecto de brillo animado al texto del marcador.',
+  },
+  {
+    name: 'label',
+    type: 'string',
+    default: '-',
+    description:
+      'Texto visible del marcador cuando no se proporciona contenido en el slot default.',
+  },
+  {
+    name: 'status',
+    type: 'boolean',
+    default: String(markerDefaults.status),
+    description: 'Añade role="status" al elemento raíz del marcador.',
+  },
+  {
     name: 'icon',
     type: 'IconConfig',
     typeLink: '/icon#icon-config',
@@ -15,18 +34,6 @@ const propRows: ApiTableRow[] = [
     type: '"default" | "border" | "separator"',
     default: markerDefaults.variant,
     description: 'Diseño del marcador: inline, con borde inferior o separador etiquetado.',
-  },
-  {
-    name: 'as',
-    type: 'string',
-    default: markerDefaults.as,
-    description: 'Elemento HTML que renderiza Marker.',
-  },
-  {
-    name: 'asChild',
-    type: 'boolean',
-    default: String(markerDefaults.asChild),
-    description: 'Fusiona los atributos de Marker con el elemento del slot default.',
   },
 ]
 const emitRows: ApiTableRow[] = []

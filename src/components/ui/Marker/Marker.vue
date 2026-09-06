@@ -14,24 +14,13 @@ defineSlots<MarkerSlots>()
 <template>
   <Primitive
     v-bind="$attrs"
-    :as="props.as"
-    :as-child="props.asChild"
-    :class="cn(markerVariants({ variant: props.variant }), $attrs.class)"
+    :role="props.status ? 'status' : $attrs.role"
+    :class="cn(markerVariants({ variant: props.variant, shimmer: props.shimmer }), $attrs.class)"
     data-test-marker-root
   >
-    <template v-if="props.asChild">
-      <slot />
-    </template>
-    <template v-else>
-      <slot name="icon">
-        <Icon
-          v-if="props.icon?.name"
-          v-bind="props.icon"
-          aria-hidden="true"
-          data-test-marker-icon
-        />
-      </slot>
-      <slot />
-    </template>
+    <slot name="icon">
+      <Icon v-if="props.icon?.name" v-bind="props.icon" aria-hidden="true" data-test-marker-icon />
+    </slot>
+    <slot>{{ props.label }}</slot>
   </Primitive>
 </template>

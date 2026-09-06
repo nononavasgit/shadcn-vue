@@ -12,15 +12,19 @@ export const markerVariants = cva('flex w-full items-center gap-2 text-sm text-m
       separator:
         'gap-2 py-3 before:h-px before:flex-1 before:bg-border after:h-px after:flex-1 after:bg-border',
     },
+    shimmer: { true: 'animate-pulse', false: '' },
   },
-  defaultVariants: { variant: 'default' },
+  defaultVariants: { variant: 'default', shimmer: false },
 })
 
 export type MarkerVariant = NonNullable<VariantProps<typeof markerVariants>['variant']>
 
-export interface MarkerProps extends Pick<PrimitiveProps, 'as' | 'asChild'> {
+export type MarkerProps = Omit<PrimitiveProps, 'as' | 'asChild'> & {
   variant?: MarkerVariant
   icon?: IconConfig
+  label?: string
+  status?: boolean
+  shimmer?: boolean
 }
 
 export interface MarkerSlots {

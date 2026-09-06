@@ -13,6 +13,21 @@ function mountMarker(options: MountingOptions<MarkerProps> = {}) {
 
 describe('Marker', () => {
   describe('props', () => {
+    describe('label', () => {
+      it('renderiza la etiqueta cuando no hay slot default', () => {
+        expect(mountMarker({ props: { label: 'Procesando' } }).text()).toBe('Procesando')
+      })
+    })
+
+    describe('status', () => {
+      it.each([
+        [false, undefined],
+        [true, 'status'],
+      ] as const)('usa role=%s', (status, role) => {
+        expect(mountMarker({ props: { status } }).attributes('role')).toBe(role)
+      })
+    })
+
     describe('icon', () => {
       testIconProps({
         text: 'pasa la configuración del icono',
@@ -34,29 +49,13 @@ describe('Marker', () => {
       })
     })
 
-    describe('as', () => {
-      it.each(['div', 'section', 'article'] as const)('renderiza as=%s', (as) => {
-        expect(
-          mountMarker({ props: { as } })
-            .get('[data-test-marker-root]')
-            .element.tagName.toLowerCase(),
-        ).toBe(as)
-      })
-    })
-
-    describe('asChild', () => {
-      it('usa div y false por defecto', () => {
-        const root = mountMarker().get('[data-test-marker-root]')
-        expect(root.element.tagName.toLowerCase()).toBe('div')
-      })
-
-      it('fusiona los atributos con el elemento hijo', () => {
-        const wrapper = mountMarker({
-          props: { asChild: true },
-          slots: { default: () => h('a', { href: '/marker' }, 'Marker') },
-        })
-        expect(wrapper.get('[data-test-marker-root]').element.tagName.toLowerCase()).toBe('a')
-        expect(wrapper.get('[data-test-marker-root]').attributes('href')).toBe('/marker')
+    describe('shimmer', () => {
+      it.each([
+        [false, false],
+        [true, true],
+      ] as const)('aplica el brillo=%s', (shimmer, hasClass) => {
+        const classes = mountMarker({ props: { shimmer } }).classes()
+        expect(classes.includes('animate-pulse')).toBe(hasClass)
       })
     })
   })

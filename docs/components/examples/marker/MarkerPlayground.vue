@@ -3,7 +3,14 @@ import { compile, defineComponent, markRaw, ref, shallowRef, watch } from 'vue'
 import { Marker } from '@/components/ui/Marker'
 import ComponentPlayground from '../../ComponentPlayground.vue'
 
-const state = ref({ as: 'div', asChild: false, variant: 'default', icon: false })
+const state = ref({
+  variant: 'default',
+  icon: false,
+  status: false,
+  shimmer: false,
+  label: 'Marker content',
+  useSlot: false,
+})
 const editorCode = ref('')
 const appliedCode = ref('')
 const editorError = ref('')
@@ -12,14 +19,17 @@ const Preview = shallowRef()
 
 function generateCode() {
   const props = [
-    state.value.as !== 'div' && `as="${state.value.as}"`,
-    state.value.asChild && ':as-child="true"',
     state.value.variant !== 'default' && `variant="${state.value.variant}"`,
     state.value.icon && ':icon="{ name: \'check\' }"',
+    state.value.status && ':status="true"',
+    state.value.shimmer && ':shimmer="true"',
+    !state.value.useSlot && `label="${state.value.label}"`,
   ]
     .filter(Boolean)
     .join(' ')
-  return `<Marker${props ? ` ${props}` : ''}>Marker content</Marker>`
+  return state.value.useSlot
+    ? `<Marker${props ? ` ${props}` : ''}>${state.value.label}</Marker>`
+    : `<Marker${props ? ` ${props}` : ''} />`
 }
 
 function applyCode() {
@@ -42,7 +52,14 @@ function syncFromControls() {
 }
 
 function reset() {
-  state.value = { as: 'div', asChild: false, variant: 'default', icon: false }
+  state.value = {
+    variant: 'default',
+    icon: false,
+    status: false,
+    shimmer: false,
+    label: 'Marker content',
+    useSlot: false,
+  }
   syncFromControls()
 }
 
@@ -55,7 +72,7 @@ watch(state, syncFromControls, { deep: true, immediate: true })
     :applied-code="appliedCode"
     :error="editorError"
     filename="MarkerPlayground.vue"
-    description="Prueba el elemento raíz y la composición asChild de Marker."
+    description="Prueba el elemento raíz, sus variantes y el efecto shimmer de Marker."
     @apply="applyCode"
     @reset="reset"
   >
@@ -67,17 +84,21 @@ watch(state, syncFromControls, { deep: true, immediate: true })
     <template #controls>
       <div class="grid gap-4">
         <label class="grid gap-1 text-xs"
-          >As<select v-model="state.as" class="rounded-md border bg-background px-2 py-2 text-sm">
-            <option>div</option>
-            <option>section</option>
-            <option>article</option>
-          </select></label
-        >
+          >Label<input
+            v-model="state.label"
+            class="rounded-md border bg-background px-3 py-2 text-sm"
+        /></label>
         <label class="flex items-center gap-2 text-sm"
           ><input v-model="state.icon" type="checkbox" /> Icono</label
         >
         <label class="flex items-center gap-2 text-sm"
-          ><input v-model="state.asChild" type="checkbox" /> asChild</label
+          ><input v-model="state.status" type="checkbox" /> Status</label
+        >
+        <label class="flex items-center gap-2 text-sm"
+          ><input v-model="state.shimmer" type="checkbox" /> Shimmer</label
+        >
+        <label class="flex items-center gap-2 text-sm"
+          ><input v-model="state.useSlot" type="checkbox" /> Usar slot default</label
         >
         <label class="grid gap-1 text-xs"
           >Variant<select

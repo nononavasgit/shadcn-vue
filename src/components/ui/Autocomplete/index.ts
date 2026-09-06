@@ -21,6 +21,9 @@ export interface AutocompleteUI {
 
 export interface AutocompleteProps {
   value?: AutocompleteValue
+  autoFocus?: boolean
+  placeholder?: string
+  disabled?: boolean
   ui?: AutocompleteUI
 }
 

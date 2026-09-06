@@ -3,10 +3,13 @@ import { compile, defineComponent, markRaw, ref, shallowRef } from 'vue'
 import { Autocomplete as BaseAutocomplete } from '@/components/ui/Autocomplete'
 import ComponentPlayground from '../../ComponentPlayground.vue'
 
-const initialCode = `<Autocomplete\n  v-model:value="value"\n/>`
+const initialCode = `<Autocomplete\n  v-model:value="value"\n  :auto-focus="autoFocus"\n  :placeholder="placeholder"\n  :disabled="disabled"\n/>`
 const uiCode = `  :ui="{ anchor: () => ({ class: 'border-primary' }), item: () => ({ class: 'font-medium' }) }"`
 const editorCode = ref(initialCode)
 const value = ref('Apple')
+const autoFocus = ref(false)
+const placeholder = ref('')
+const disabled = ref(false)
 const uiEnabled = ref(false)
 const appliedCode = ref('')
 const editorError = ref('')
@@ -25,7 +28,7 @@ function applyCode() {
       defineComponent({
         name: 'AutocompletePlaygroundPreview',
         components: { PlaygroundAutocomplete: BaseAutocomplete },
-        setup: () => ({ value }),
+        setup: () => ({ value, autoFocus, placeholder, disabled }),
         render,
       }),
     )
@@ -39,6 +42,9 @@ function applyCode() {
 function reset() {
   editorCode.value = initialCode
   value.value = 'Apple'
+  autoFocus.value = false
+  placeholder.value = ''
+  disabled.value = false
   uiEnabled.value = false
   applyCode()
 }
@@ -82,6 +88,16 @@ applyCode()
         <label class="flex items-center gap-2 text-sm">
           <input v-model="uiEnabled" type="checkbox" @change="toggleUi" />
           Personalizar <code>ui</code>
+        </label>
+        <label class="grid gap-1 text-sm">
+          Placeholder
+          <input v-model="placeholder" class="rounded-md border bg-background px-3 py-2" />
+        </label>
+        <label class="flex items-center gap-2 text-sm">
+          <input v-model="autoFocus" type="checkbox" /> Auto focus
+        </label>
+        <label class="flex items-center gap-2 text-sm">
+          <input v-model="disabled" type="checkbox" /> Disabled
         </label>
         <p class="text-sm text-muted-foreground">
           Edita el código para probar los resolvers de <code>ui</code>.

@@ -23,12 +23,46 @@ async function mountOpenWithNoResults(options: MountingOptions<AutocompleteProps
 
 describe('Autocomplete', () => {
   const caseValues: AutocompleteProps['value'][] = [undefined, 'Apple']
+  const autoFocusCases = [false, true] as const
+  const disabledCases = [false, true] as const
+  const placeholderCases = [
+    '',
+    'Buscar',
+    'Una búsqueda bastante larga para probar el límite',
+  ] as const
 
   beforeAll(() => {
     HTMLElement.prototype.scrollIntoView = () => undefined
   })
 
   describe('props', () => {
+    describe('props.autoFocus', () => {
+      it.each(autoFocusCases)('pasa autoFocus=%s a AutocompleteInput', (autoFocus) => {
+        const wrapper = mountAutocomplete({ props: { autoFocus } })
+        expect(wrapper.get('[data-test-autocomplete-input]').attributes('autofocus')).toBe(
+          autoFocus ? '' : undefined,
+        )
+      })
+    })
+
+    describe('props.disabled', () => {
+      it.each(disabledCases)('pasa disabled=%s a AutocompleteInput', (disabled) => {
+        const wrapper = mountAutocomplete({ props: { disabled } })
+        expect(wrapper.get('[data-test-autocomplete-input]').attributes('disabled')).toBe(
+          disabled ? '' : undefined,
+        )
+      })
+    })
+
+    describe('props.placeholder', () => {
+      it.each(placeholderCases)('pasa placeholder=%s a AutocompleteInput', (placeholder) => {
+        const wrapper = mountAutocomplete({ props: { placeholder } })
+        expect(wrapper.get('[data-test-autocomplete-input]').attributes('placeholder')).toBe(
+          placeholder,
+        )
+      })
+    })
+
     describe('value', () => {
       it.each(caseValues)('pasa el valor %s a AutocompleteRoot', (caseValue) => {
         const wrapper = mountAutocomplete({ props: { value: caseValue } })

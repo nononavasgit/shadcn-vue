@@ -1,1 +1,5 @@
-export const autocompleteDefaults = {} as const
+export const autocompleteDefaults = {
+  autoFocus: false,
+  placeholder: '',
+  disabled: false,
+} as const

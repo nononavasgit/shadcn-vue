@@ -3,6 +3,24 @@ import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 
 const propRows: ApiTableRow[] = [
   {
+    name: 'autoFocus',
+    type: 'boolean',
+    default: 'false',
+    description: 'Enfoca automáticamente el input al montarse.',
+  },
+  {
+    name: 'placeholder',
+    type: 'string',
+    default: "''",
+    description: 'Texto mostrado cuando el input está vacío.',
+  },
+  {
+    name: 'disabled',
+    type: 'boolean',
+    default: 'false',
+    description: 'Deshabilita el input y la interacción del Autocomplete.',
+  },
+  {
     name: 'value',
     type: 'string | undefined',
     default: 'undefined',

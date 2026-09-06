@@ -17,6 +17,7 @@ import { Icon } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { AutocompleteProps } from '.'
+import { autocompleteDefaults } from './defaults'
 
 const v = ref('')
 
@@ -49,12 +50,12 @@ const options = [
   },
 ]
 
-const props = defineProps<AutocompleteProps>()
+const props = withDefaults(defineProps<AutocompleteProps>(), autocompleteDefaults)
 const value = defineModel<AutocompleteProps['value']>('value')
 
 const rootProps = computed(() => {
   const ui = useUi(props.ui?.root, undefined)
-  return { ...ui, class: cn('relative', ui.class), style: ui.style }
+  return { ...ui, disabled: props.disabled, class: cn('relative', ui.class), style: ui.style }
 })
 
 const anchorProps = computed(() => {
@@ -62,7 +63,7 @@ const anchorProps = computed(() => {
   return {
     ...ui,
     class: cn(
-      'text-grass11 data-[placeholder]:text-grass9 inline-flex h-[35px] min-w-[160px] items-center justify-between gap-[5px] rounded-lg border bg-white px-[15px] text-xs leading-none shadow-sm outline-none hover:bg-stone-50 focus:shadow-[0_0_0_2px] focus:shadow-black',
+      'text-grass11 data-[placeholder]:text-grass9 data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50 inline-flex h-[35px] min-w-[160px] items-center justify-between gap-[5px] rounded-lg border bg-white px-[15px] text-xs leading-none shadow-sm outline-none hover:bg-stone-50 focus:shadow-[0_0_0_2px] focus:shadow-black',
       ui.class,
     ),
     style: ui.style,
@@ -73,6 +74,9 @@ const inputProps = computed(() => {
   const ui = useUi(props.ui?.input, undefined)
   return {
     ...ui,
+    autofocus: props.autoFocus,
+    placeholder: props.placeholder,
+    disabled: props.disabled,
     class: cn(
       'text-grass11 selection:bg-grass5 h-full !bg-transparent placeholder-stone-400 outline-none',
       ui.class,
@@ -147,11 +151,7 @@ const labelProps = computed(() => {
 <template>
   <AutocompleteRoot v-model="value" v-bind="rootProps" data-test-autocomplete-root>
     <AutocompleteAnchor v-bind="anchorProps" data-test-autocomplete-anchor>
-      <AutocompleteInput
-        v-bind="inputProps"
-        placeholder="Type or select an option..."
-        data-test-autocomplete-input
-      />
+      <AutocompleteInput v-bind="inputProps" data-test-autocomplete-input />
       <AutocompleteTrigger v-bind="triggerProps" data-test-autocomplete-trigger
         ><Icon name="chevronDown" size="sm" class="text-grass11"
       /></AutocompleteTrigger>

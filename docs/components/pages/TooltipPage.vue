@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DocsLayout from '../DocsLayout.vue'
 import TooltipDocs from '../docs/TooltipDocs.vue'
-import TooltipExamples from '../examples/tooltip/TooltipExamples.vue'
+import TooltipPlayground from '../examples/tooltip/TooltipPlayground.vue'
 </script>
 
 <template>
@@ -9,7 +9,7 @@ import TooltipExamples from '../examples/tooltip/TooltipExamples.vue'
     <main class="min-h-screen bg-background p-4 text-foreground sm:p-8">
       <div class="mx-auto grid max-w-5xl gap-6">
         <TooltipDocs />
-        <TooltipExamples />
+        <TooltipPlayground />
       </div>
     </main>
   </DocsLayout>

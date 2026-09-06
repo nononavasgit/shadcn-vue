@@ -8,6 +8,7 @@ import AlertDialogPage from './components/pages/AlertDialogPage.vue'
 import AspectRatioPage from './components/pages/AspectRatioPage.vue'
 import AttachmentPage from './components/pages/AttachmentPage.vue'
 import BadgePage from './components/pages/BadgePage.vue'
+import BubblePage from './components/pages/BubblePage.vue'
 import BreadcrumbPage from './components/pages/BreadcrumbPage.vue'
 import ButtonPage from './components/pages/ButtonPage.vue'
 import ButtonGroupPage from './components/pages/ButtonGroupPage.vue'
@@ -101,6 +102,7 @@ export const router = createRouter({
       meta: { component: componentMetaBySlug.attachment },
     },
     { path: '/badge', component: BadgePage, meta: { component: componentMetaBySlug.badge } },
+    { path: '/bubble', component: BubblePage, meta: { component: componentMetaBySlug.bubble } },
     {
       path: '/breadcrumb',
       component: BreadcrumbPage,

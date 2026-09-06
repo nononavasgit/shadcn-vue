@@ -20,6 +20,19 @@ describe('Message', () => {
   })
 
   describe('slots', () => {
+    describe('header', () => {
+      it('renderiza el contenido encima de Bubble', () => {
+        const wrapper = mountMessage({
+          slots: { header: () => h('span', { 'data-test-message-header': true }, 'Header') },
+        })
+
+        expect(wrapper.get('[data-test-message-header]').text()).toBe('Header')
+        expect(wrapper.get('[data-test-message-header]').element.nextElementSibling).toBe(
+          wrapper.getComponent('Bubble').element,
+        )
+      })
+    })
+
     describe('default', () => {
       it('reenvia el contenido a Bubble', () => {
         const wrapper = mountMessage({

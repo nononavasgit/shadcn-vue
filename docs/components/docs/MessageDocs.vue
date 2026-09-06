@@ -12,6 +12,7 @@ const propRows: ApiTableRow[] = [
 ]
 
 const slotRows: ApiTableRow[] = [
+  { name: 'header', type: '-', description: 'Contenido situado encima de la burbuja.' },
   { name: 'default', type: '-', description: 'Contenido principal de la burbuja.' },
   { name: 'reaction', type: '-', description: 'Contenido de las reacciones de Bubble.' },
   { name: 'footer', type: '-', description: 'Contenido situado debajo de la burbuja.' },

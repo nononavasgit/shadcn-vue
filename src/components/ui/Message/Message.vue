@@ -9,6 +9,7 @@ defineSlots<MessageSlots>()
 
 <template>
   <div>
+    <slot name="header" />
     <Bubble v-bind="props.bubble">
       <slot />
       <template v-if="$slots.reaction" #reactions>

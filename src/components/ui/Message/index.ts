@@ -9,6 +9,7 @@ export interface MessageProps {
 }
 
 export interface MessageSlots {
+  header?(): unknown
   default?(): unknown
   reaction?(): unknown
   footer?(): unknown

@@ -14,6 +14,7 @@ const bubble = computed(() => ({ ...state.value }))
 
 const playgroundCode = computed(
   () => `<Message :bubble="${JSON.stringify(state.value)}">
+  <template #header>Asistente</template>
   Mensaje de ejemplo
   <template #reaction>👍</template>
   <template #footer>Hace un momento</template>
@@ -30,6 +31,9 @@ const playgroundCode = computed(
     <template #preview>
       <div class="grid min-h-48 place-items-center p-8">
         <Message class="w-full max-w-md" :bubble="bubble">
+          <template #header>
+            <span class="mb-2 block text-xs font-medium text-muted-foreground">Asistente</span>
+          </template>
           Mensaje de ejemplo
           <template #reaction>👍</template>
           <template #footer>

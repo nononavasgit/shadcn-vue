@@ -11,10 +11,27 @@ function mountMessage(options: MountingOptions<MessageProps> = {}) {
 
 describe('Message', () => {
   describe('props', () => {
+    describe('align', () => {
+      it.each([
+        ['start', 'items-start'],
+        ['end', 'items-end'],
+      ] as const)('alinea el mensaje a %s', (align, expected) => {
+        expect(mountMessage({ props: { align } }).classes()).toContain(expected)
+      })
+    })
+
     describe('bubble', () => {
       testBubbleConfig({
         text: 'pasa la configuracion a Bubble',
-        mount: (bubble) => mountMessage({ props: { bubble } }),
+        mount: (bubble) => mountMessage({ props: { align: bubble.align, bubble } }),
+      })
+
+      it('usa la misma alineacion en Message y Bubble', () => {
+        const wrapper = mountMessage({
+          props: { align: 'end', bubble: { align: 'start' } },
+        })
+
+        expect(wrapper.getComponent('Bubble').props('align')).toBe('end')
       })
     })
   })

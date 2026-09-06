@@ -3,6 +3,12 @@ import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 
 const propRows: ApiTableRow[] = [
   {
+    name: 'align',
+    type: "'start' | 'end'",
+    default: "'start'",
+    description: 'Alineacion horizontal del mensaje.',
+  },
+  {
     name: 'bubble',
     type: 'BubbleConfig',
     typeLink: '/bubble#bubble-config',

@@ -4,16 +4,23 @@ import ComponentPlayground from '../../ComponentPlayground.vue'
 import { computed, ref } from 'vue'
 
 const state = ref({
-  align: 'start',
+  messageAlign: 'start',
   variant: 'soft',
   severity: 'secondary',
   sideReaction: 'bottom',
   alignReaction: 'end',
 })
-const bubble = computed(() => ({ ...state.value }))
+const bubble = computed(() => {
+  return {
+    variant: state.value.variant,
+    severity: state.value.severity,
+    sideReaction: state.value.sideReaction,
+    alignReaction: state.value.alignReaction,
+  }
+})
 
 const playgroundCode = computed(
-  () => `<Message :bubble="${JSON.stringify(state.value)}">
+  () => `<Message align="${state.value.messageAlign}" :bubble="${JSON.stringify(bubble.value)}">
   <template #header>Asistente</template>
   Mensaje de ejemplo
   <template #reaction>👍</template>
@@ -30,7 +37,7 @@ const playgroundCode = computed(
   >
     <template #preview>
       <div class="grid min-h-48 place-items-center p-8">
-        <Message class="w-full max-w-md" :bubble="bubble">
+        <Message class="w-full max-w-md" :align="state.messageAlign" :bubble="bubble">
           <template #header>
             <span class="mb-2 block text-xs font-medium text-muted-foreground">Asistente</span>
           </template>
@@ -44,10 +51,13 @@ const playgroundCode = computed(
     </template>
     <template #controls>
       <div class="grid gap-4">
-        <h3 class="text-sm font-semibold">Bubble</h3>
+        <h3 class="text-sm font-semibold">Message / Bubble</h3>
         <label class="grid gap-1 text-xs"
-          >Align
-          <select v-model="state.align" class="rounded-md border bg-background px-2 py-2 text-sm">
+          >Message align
+          <select
+            v-model="state.messageAlign"
+            class="rounded-md border bg-background px-2 py-2 text-sm"
+          >
             <option value="start">start</option>
             <option value="end">end</option>
           </select></label

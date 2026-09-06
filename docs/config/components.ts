@@ -131,6 +131,11 @@ export const componentMeta = [
     description: 'Etiqueta accesible asociada a un control de formulario.',
   },
   {
+    slug: 'marker',
+    title: 'Marker',
+    description: 'Contenedor base para marcadores de estado y separadores de contenido.',
+  },
+  {
     slug: 'link',
     title: 'Link',
     description:

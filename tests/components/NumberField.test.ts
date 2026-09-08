@@ -20,7 +20,7 @@ const casesMin = [
 ]
 
 const casesMax = [
-  { input: undefined, expected: undefined },
+  { input: undefined, expected: 1 },
   { input: 100, expected: 100 },
   { input: 200, expected: 200 },
   { input: -5, expected: -5 },
@@ -86,6 +86,13 @@ const casesRequired = [
   { input: undefined, expected: undefined },
   { input: true, expected: true },
   { input: false, expected: false },
+]
+
+const casesStep = [
+  { input: undefined, expected: 1 },
+  { input: 1, expected: 1 },
+  { input: 0.5, expected: 0.5 },
+  { input: 10, expected: 10 },
 ]
 
 const casesValue = [
@@ -229,6 +236,17 @@ describe('NumberField', () => {
         const wrapper = mountNumberField({ props: { required: input } })
 
         expect(wrapper.getComponent(NumberFieldRoot).props('required')).toBe(expected)
+      },
+    )
+  })
+
+  describe('step', () => {
+    it.each(casesStep)(
+      'pasa step=$input a NumberFieldRoot como $expected',
+      ({ input, expected }) => {
+        const wrapper = mountNumberField({ props: { step: input } })
+
+        expect(wrapper.getComponent(NumberFieldRoot).props('step')).toBe(expected)
       },
     )
   })

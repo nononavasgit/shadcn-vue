@@ -75,6 +75,12 @@ const propRows: ApiTableRow[] = [
     default: 'false',
     description: 'Indica que el campo es obligatorio al enviarse el formulario.',
   },
+  {
+    name: 'step',
+    type: 'number',
+    default: String(numberFieldDefaults.step),
+    description: 'Cantidad que cambia el valor en cada incremento o decremento.',
+  },
 ]
 
 const emitRows: ApiTableRow[] = [

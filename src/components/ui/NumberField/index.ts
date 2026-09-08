@@ -16,6 +16,7 @@ export type NumberFieldProps = Pick<
   | 'name'
   | 'readonly'
   | 'required'
+  | 'step'
 >
 
 export type NumberFieldValue = RekaNumberFieldRootProps['modelValue']

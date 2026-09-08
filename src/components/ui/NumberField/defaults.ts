@@ -3,4 +3,5 @@ export const numberFieldDefaults = {
   disabled: false,
   disableWheelChange: false,
   focusOnChange: true,
+  step: 1,
 } as const

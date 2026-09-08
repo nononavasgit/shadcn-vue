@@ -60,6 +60,12 @@ const casesId = [
   { input: '', expected: '' },
 ]
 
+const casesLocale = [
+  { input: undefined, expected: undefined },
+  { input: 'en-US', expected: 'en-US' },
+  { input: 'es-ES', expected: 'es-ES' },
+]
+
 describe('NumberField', () => {
   describe('props', () => {
     describe('min', () => {
@@ -134,6 +140,17 @@ describe('NumberField', () => {
 
         expect(wrapper.getComponent(NumberFieldRoot).props('id')).toBe(expected)
       })
+    })
+
+    describe('locale', () => {
+      it.each(casesLocale)(
+        'pasa locale=$input a NumberFieldRoot como $expected',
+        ({ input, expected }) => {
+          const wrapper = mountNumberField({ props: { locale: input } })
+
+          expect(wrapper.getComponent(NumberFieldRoot).props('locale')).toBe(expected)
+        },
+      )
     })
   })
 })

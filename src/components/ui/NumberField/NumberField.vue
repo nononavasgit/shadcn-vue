@@ -24,6 +24,7 @@ const rootProps = computed(() => ({
   disableWheelChange: props.disableWheelChange,
   focusOnChange: props.focusOnChange,
   formatOptions: props.formatOptions,
+  locale: props.locale,
 }))
 </script>
 

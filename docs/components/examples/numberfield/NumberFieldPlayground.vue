@@ -6,6 +6,7 @@ import ComponentPlayground from '../../ComponentPlayground.vue'
 
 type NumberFieldState = {
   id: string | undefined
+  locale: string
   min: number
   max: number
   disabled: boolean
@@ -16,6 +17,7 @@ type NumberFieldState = {
 
 const initialState = (): NumberFieldState => ({
   id: undefined,
+  locale: 'en-US',
   min: numberFieldDefaults.min,
   max: 100,
   disabled: numberFieldDefaults.disabled,
@@ -40,6 +42,8 @@ function generateCode() {
   return [
     '<NumberField',
     state.value.id && `  id="${state.value.id.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
+    state.value.locale &&
+      `  locale="${state.value.locale.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
     `  :min="${state.value.min}"`,
     `  :max="${state.value.max}"`,
     `  :disabled="${state.value.disabled}"`,
@@ -111,6 +115,12 @@ watch(state, syncFromControls, { deep: true, immediate: true })
         <legend class="mb-1 text-sm font-semibold">Props</legend>
         <label class="grid gap-1 text-xs"
           >ID<input v-model="state.id" class="rounded-md border bg-background px-3 py-2 text-sm"
+        /></label>
+        <label class="grid gap-1 text-xs"
+          >Locale<input
+            v-model="state.locale"
+            class="rounded-md border bg-background px-3 py-2 text-sm"
+            placeholder="en-US"
         /></label>
         <label class="grid gap-1 text-xs"
           >Min<input

@@ -40,6 +40,12 @@ const propRows: ApiTableRow[] = [
     description: 'Opciones de Intl.NumberFormat para formatear el valor mostrado.',
   },
   {
+    name: 'locale',
+    type: 'string',
+    default: 'locale del navegador',
+    description: 'Locale usado por Intl.NumberFormat para formatear el valor mostrado.',
+  },
+  {
     name: 'id',
     type: 'string',
     default: 'undefined',

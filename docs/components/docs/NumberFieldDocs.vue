@@ -15,6 +15,12 @@ const propRows: ApiTableRow[] = [
     default: 'undefined',
     description: 'Valor máximo permitido para el campo numérico.',
   },
+  {
+    name: 'disabled',
+    type: 'boolean',
+    default: String(numberFieldDefaults.disabled),
+    description: 'Deshabilita la interacción del campo numérico.',
+  },
 ]
 
 const emitRows: ApiTableRow[] = []

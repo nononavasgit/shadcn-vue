@@ -22,6 +22,12 @@ const casesMax = [
   { input: -5, expected: -5 },
 ]
 
+const casesDisabled = [
+  { input: undefined, expected: false },
+  { input: true, expected: true },
+  { input: false, expected: false },
+]
+
 describe('NumberField', () => {
   describe('props', () => {
     describe('min', () => {
@@ -42,6 +48,17 @@ describe('NumberField', () => {
           const wrapper = mountNumberField({ props: { max: input } })
 
           expect(wrapper.getComponent(NumberFieldRoot).props('max')).toBe(expected)
+        },
+      )
+    })
+
+    describe('disabled', () => {
+      it.each(casesDisabled)(
+        'pasa disabled=$input a NumberFieldRoot como $expected',
+        ({ input, expected }) => {
+          const wrapper = mountNumberField({ props: { disabled: input } })
+
+          expect(wrapper.getComponent(NumberFieldRoot).props('disabled')).toBe(expected)
         },
       )
     })

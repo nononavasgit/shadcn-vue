@@ -7,11 +7,13 @@ import ComponentPlayground from '../../ComponentPlayground.vue'
 type NumberFieldState = {
   min: number
   max: number
+  disabled: boolean
 }
 
 const initialState = (): NumberFieldState => ({
   min: numberFieldDefaults.min,
   max: 100,
+  disabled: numberFieldDefaults.disabled,
 })
 
 const state = ref<NumberFieldState>(initialState())
@@ -22,7 +24,7 @@ const previewKey = ref(0)
 const Preview = shallowRef()
 
 function generateCode() {
-  return `<NumberField\n  :min="${state.value.min}"\n  :max="${state.value.max}"\n/>`
+  return `<NumberField\n  :min="${state.value.min}"\n  :max="${state.value.max}"\n  :disabled="${state.value.disabled}"\n/>`
 }
 
 function applyCode() {
@@ -93,6 +95,9 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             type="number"
             class="rounded-md border bg-background px-3 py-2 text-sm"
         /></label>
+        <label class="flex items-center gap-2 text-sm"
+          ><input v-model="state.disabled" type="checkbox" /> Disabled</label
+        >
       </fieldset>
     </template>
   </ComponentPlayground>

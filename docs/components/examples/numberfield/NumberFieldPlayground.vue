@@ -18,6 +18,7 @@ type NumberFieldState = {
   disabled: boolean
   disableWheelChange: boolean
   focusOnChange: boolean
+  ui: boolean
   formatOptions: 'default' | 'currency' | 'percent'
 }
 
@@ -35,6 +36,7 @@ const initialState = (): NumberFieldState => ({
   disabled: numberFieldDefaults.disabled,
   disableWheelChange: numberFieldDefaults.disableWheelChange,
   focusOnChange: numberFieldDefaults.focusOnChange,
+  ui: false,
   formatOptions: 'default',
 })
 
@@ -68,6 +70,8 @@ function generateCode() {
     `  :disabled="${state.value.disabled}"`,
     `  :disable-wheel-change="${state.value.disableWheelChange}"`,
     `  :focus-on-change="${state.value.focusOnChange}"`,
+    state.value.ui &&
+      `  :ui="{ input: () => ({ class: 'text-primary' }), increment: () => ({ class: 'text-primary' }), decrement: () => ({ class: 'text-primary' }) }"`,
     state.value.formatOptions !== 'default' &&
       `  :format-options='${JSON.stringify(formatOptionsPresets[state.value.formatOptions])}'`,
     '/>',
@@ -191,6 +195,9 @@ watch(state, syncFromControls, { deep: true, immediate: true })
         >
         <label class="flex items-center gap-2 text-sm"
           ><input v-model="state.focusOnChange" type="checkbox" /> Focus on change</label
+        >
+        <label class="flex items-center gap-2 text-sm"
+          ><input v-model="state.ui" type="checkbox" /> UI personalizada</label
         >
         <label class="grid gap-1 text-xs"
           >Format options

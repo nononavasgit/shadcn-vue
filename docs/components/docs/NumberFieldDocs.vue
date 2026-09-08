@@ -18,7 +18,7 @@ const propRows: ApiTableRow[] = [
   {
     name: 'max',
     type: 'number',
-    default: 'undefined',
+    default: String(numberFieldDefaults.max),
     description: 'Valor máximo permitido para el campo numérico.',
   },
   {
@@ -100,6 +100,13 @@ const propRows: ApiTableRow[] = [
     type: 'boolean',
     default: String(numberFieldDefaults.stepSnapping),
     description: 'Determina si el valor se ajusta al incremento más cercano de step.',
+  },
+  {
+    name: 'ui',
+    type: '{ input?: () => HTMLAttributes; increment?: () => HTMLAttributes; decrement?: () => HTMLAttributes }',
+    default: 'undefined',
+    description:
+      'Personaliza input, increment y decrement mediante resolvers de atributos HTML. El disabled de increment y decrement siempre depende de disabled.',
   },
 ]
 

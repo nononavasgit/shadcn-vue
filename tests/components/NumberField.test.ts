@@ -1,17 +1,30 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
-import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldRoot } from 'reka-ui'
+import {
+  NumberFieldDecrement,
+  NumberFieldIncrement,
+  NumberFieldInput,
+  NumberFieldRoot,
+} from 'reka-ui'
 
 import {
   NumberField,
   type NumberFieldProps,
   type NumberFieldValue,
 } from '@/components/ui/NumberField'
+import { i18n } from '@/i18n'
 import { testIconProps } from '../utils/testIconProps'
+import { testAttrs } from '../utils/testAttrs'
 
 function mountNumberField(options: MountingOptions<NumberFieldProps> = {}) {
-  return mount(NumberField, options)
+  return mount(NumberField, {
+    ...options,
+    global: {
+      plugins: [i18n],
+      ...options.global,
+    },
+  })
 }
 
 const casesMin = [
@@ -22,7 +35,7 @@ const casesMin = [
 ]
 
 const casesMax = [
-  { input: undefined, expected: 1 },
+  { input: undefined, expected: 100 },
   { input: 100, expected: 100 },
   { input: 200, expected: 200 },
   { input: -5, expected: -5 },
@@ -223,6 +236,95 @@ describe('NumberField', () => {
         },
       )
     })
+    describe('readonly', () => {
+      it.each(casesReadonly)(
+        'pasa readonly=$input a NumberFieldRoot como $expected',
+        ({ input, expected }) => {
+          const wrapper = mountNumberField({ props: { readonly: input } })
+
+          expect(wrapper.getComponent(NumberFieldRoot).props('readonly')).toBe(expected)
+        },
+      )
+    })
+
+    describe('required', () => {
+      it.each(casesRequired)(
+        'pasa required=$input a NumberFieldRoot como $expected',
+        ({ input, expected }) => {
+          const wrapper = mountNumberField({ props: { required: input } })
+
+          expect(wrapper.getComponent(NumberFieldRoot).props('required')).toBe(expected)
+        },
+      )
+    })
+
+    describe('step', () => {
+      it.each(casesStep)(
+        'pasa step=$input a NumberFieldRoot como $expected',
+        ({ input, expected }) => {
+          const wrapper = mountNumberField({ props: { step: input } })
+
+          expect(wrapper.getComponent(NumberFieldRoot).props('step')).toBe(expected)
+        },
+      )
+    })
+
+    describe('stepSnapping', () => {
+      it.each(casesStepSnapping)(
+        'pasa stepSnapping=$input a NumberFieldRoot como $expected',
+        ({ input, expected }) => {
+          const wrapper = mountNumberField({ props: { stepSnapping: input } })
+
+          expect(wrapper.getComponent(NumberFieldRoot).props('stepSnapping')).toBe(expected)
+        },
+      )
+    })
+
+    describe('ui', () => {
+      testAttrs({
+        text: 'aplica ui.input al input',
+        id: '[data-test-ui-input]',
+        mount: (attrs) =>
+          mountNumberField({
+            props: { ui: { input: () => ({ ...attrs, 'data-test-ui-input': '' }) } },
+          }),
+      })
+
+      testAttrs({
+        text: 'aplica ui.increment al increment',
+        id: '[data-test-ui-increment]',
+        mount: (attrs) =>
+          mountNumberField({
+            props: {
+              disabled: true,
+              ui: {
+                increment: () => ({ ...attrs, 'data-test-ui-increment': '', disabled: false }),
+              },
+            },
+          }),
+      })
+
+      testAttrs({
+        text: 'aplica ui.decrement al decrement',
+        id: '[data-test-ui-decrement]',
+        mount: (attrs) =>
+          mountNumberField({
+            props: {
+              disabled: true,
+              ui: {
+                decrement: () => ({ ...attrs, 'data-test-ui-decrement': '', disabled: false }),
+              },
+            },
+          }),
+      })
+
+      it('mantiene props.disabled en increment y decrement', () => {
+        const wrapper = mountNumberField({ props: { disabled: true } })
+
+        expect(wrapper.getComponent(NumberFieldIncrement).props('disabled')).toBe(true)
+        expect(wrapper.getComponent(NumberFieldDecrement).props('disabled')).toBe(true)
+      })
+    })
   })
 
   describe('emits', () => {
@@ -236,48 +338,16 @@ describe('NumberField', () => {
     })
   })
 
-  describe('readonly', () => {
-    it.each(casesReadonly)(
-      'pasa readonly=$input a NumberFieldRoot como $expected',
-      ({ input, expected }) => {
-        const wrapper = mountNumberField({ props: { readonly: input } })
-
-        expect(wrapper.getComponent(NumberFieldRoot).props('readonly')).toBe(expected)
-      },
-    )
-  })
-
-  describe('required', () => {
-    it.each(casesRequired)(
-      'pasa required=$input a NumberFieldRoot como $expected',
-      ({ input, expected }) => {
-        const wrapper = mountNumberField({ props: { required: input } })
-
-        expect(wrapper.getComponent(NumberFieldRoot).props('required')).toBe(expected)
-      },
-    )
-  })
-
-  describe('step', () => {
-    it.each(casesStep)(
-      'pasa step=$input a NumberFieldRoot como $expected',
-      ({ input, expected }) => {
-        const wrapper = mountNumberField({ props: { step: input } })
-
-        expect(wrapper.getComponent(NumberFieldRoot).props('step')).toBe(expected)
-      },
-    )
-  })
-
-  describe('stepSnapping', () => {
-    it.each(casesStepSnapping)(
-      'pasa stepSnapping=$input a NumberFieldRoot como $expected',
-      ({ input, expected }) => {
-        const wrapper = mountNumberField({ props: { stepSnapping: input } })
-
-        expect(wrapper.getComponent(NumberFieldRoot).props('stepSnapping')).toBe(expected)
-      },
-    )
+  describe('attrs', () => {
+    testAttrs({
+      text: 'reenvía attrs arbitrarios al root',
+      id: '[data-test-number-field-attrs]',
+      assertId: false,
+      mount: (attrs) =>
+        mountNumberField({
+          attrs: { ...attrs, 'data-test-number-field-attrs': '' },
+        }),
+    })
   })
 
   describe('iconDecrement', () => {

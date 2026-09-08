@@ -57,6 +57,12 @@ const propRows: ApiTableRow[] = [
     default: 'undefined',
     description: 'Identificador del campo numérico y asociación con elementos externos.',
   },
+  {
+    name: 'name',
+    type: 'string',
+    default: 'undefined',
+    description: 'Nombre usado para identificar el campo en formularios.',
+  },
 ]
 
 const emitRows: ApiTableRow[] = [

@@ -13,6 +13,7 @@ export type NumberFieldProps = Pick<
   | 'formatOptions'
   | 'id'
   | 'locale'
+  | 'name'
 >
 
 export type NumberFieldValue = RekaNumberFieldRootProps['modelValue']

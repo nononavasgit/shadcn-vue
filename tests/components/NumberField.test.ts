@@ -70,6 +70,12 @@ const casesLocale = [
   { input: 'es-ES', expected: 'es-ES' },
 ]
 
+const casesName = [
+  { input: undefined, expected: undefined },
+  { input: 'quantity', expected: 'quantity' },
+  { input: 'amount', expected: 'amount' },
+]
+
 const casesValue = [
   { input: undefined, expected: undefined },
   { input: null, expected: null },
@@ -166,6 +172,17 @@ describe('NumberField', () => {
           const wrapper = mountNumberField({ props: { locale: input } })
 
           expect(wrapper.getComponent(NumberFieldRoot).props('locale')).toBe(expected)
+        },
+      )
+    })
+
+    describe('name', () => {
+      it.each(casesName)(
+        'pasa name=$input a NumberFieldRoot como $expected',
+        ({ input, expected }) => {
+          const wrapper = mountNumberField({ props: { name: input } })
+
+          expect(wrapper.getComponent(NumberFieldRoot).props('name')).toBe(expected)
         },
       )
     })

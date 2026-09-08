@@ -26,6 +26,7 @@ const rootProps = computed(() => ({
   focusOnChange: props.focusOnChange,
   formatOptions: props.formatOptions,
   locale: props.locale,
+  name: props.name,
 }))
 </script>
 

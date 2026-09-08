@@ -6,6 +6,7 @@ import ComponentPlayground from '../../ComponentPlayground.vue'
 
 type NumberFieldState = {
   id: string | undefined
+  name: string | undefined
   value: number | null
   locale: string
   min: number
@@ -18,6 +19,7 @@ type NumberFieldState = {
 
 const initialState = (): NumberFieldState => ({
   id: undefined,
+  name: 'quantity',
   value: 25,
   locale: 'en-US',
   min: numberFieldDefaults.min,
@@ -45,6 +47,8 @@ function generateCode() {
     '<NumberField',
     '  v-model:value="value"',
     state.value.id && `  id="${state.value.id.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
+    state.value.name &&
+      `  name="${state.value.name.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
     state.value.locale &&
       `  locale="${state.value.locale.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
     `  :min="${state.value.min}"`,
@@ -119,6 +123,12 @@ watch(state, syncFromControls, { deep: true, immediate: true })
         <legend class="mb-1 text-sm font-semibold">Props</legend>
         <label class="grid gap-1 text-xs"
           >ID<input v-model="state.id" class="rounded-md border bg-background px-3 py-2 text-sm"
+        /></label>
+        <label class="grid gap-1 text-xs"
+          >Name<input
+            v-model="state.name"
+            class="rounded-md border bg-background px-3 py-2 text-sm"
+            placeholder="quantity"
         /></label>
         <label class="grid gap-1 text-xs"
           >Value<input

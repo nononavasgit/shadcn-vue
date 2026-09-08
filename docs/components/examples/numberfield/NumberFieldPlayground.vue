@@ -10,6 +10,7 @@ type NumberFieldState = {
   disabled: boolean
   disableWheelChange: boolean
   focusOnChange: boolean
+  formatOptions: 'default' | 'currency' | 'percent'
 }
 
 const initialState = (): NumberFieldState => ({
@@ -18,7 +19,13 @@ const initialState = (): NumberFieldState => ({
   disabled: numberFieldDefaults.disabled,
   disableWheelChange: numberFieldDefaults.disableWheelChange,
   focusOnChange: numberFieldDefaults.focusOnChange,
+  formatOptions: 'default',
 })
+
+const formatOptionsPresets = {
+  currency: { style: 'currency', currency: 'EUR' },
+  percent: { style: 'percent', maximumFractionDigits: 2 },
+} as const
 
 const state = ref<NumberFieldState>(initialState())
 const editorCode = ref('')
@@ -28,7 +35,19 @@ const previewKey = ref(0)
 const Preview = shallowRef()
 
 function generateCode() {
-  return `<NumberField\n  :min="${state.value.min}"\n  :max="${state.value.max}"\n  :disabled="${state.value.disabled}"\n  :disable-wheel-change="${state.value.disableWheelChange}"\n  :focus-on-change="${state.value.focusOnChange}"\n/>`
+  return [
+    '<NumberField',
+    `  :min="${state.value.min}"`,
+    `  :max="${state.value.max}"`,
+    `  :disabled="${state.value.disabled}"`,
+    `  :disable-wheel-change="${state.value.disableWheelChange}"`,
+    `  :focus-on-change="${state.value.focusOnChange}"`,
+    state.value.formatOptions !== 'default' &&
+      `  :format-options='${JSON.stringify(formatOptionsPresets[state.value.formatOptions])}'`,
+    '/>',
+  ]
+    .filter(Boolean)
+    .join('\n')
 }
 
 function applyCode() {
@@ -74,7 +93,7 @@ watch(state, syncFromControls, { deep: true, immediate: true })
     :applied-code="appliedCode"
     :error="editorError"
     filename="NumberFieldPlayground.vue"
-    description="Configura los valores mínimo y máximo o edita directamente su template."
+    description="Configura los límites, el formato y el comportamiento del campo numérico."
     @apply="applyCode"
     @reset="reset"
   >
@@ -108,6 +127,17 @@ watch(state, syncFromControls, { deep: true, immediate: true })
         <label class="flex items-center gap-2 text-sm"
           ><input v-model="state.focusOnChange" type="checkbox" /> Focus on change</label
         >
+        <label class="grid gap-1 text-xs"
+          >Format options
+          <select
+            v-model="state.formatOptions"
+            class="rounded-md border bg-background px-3 py-2 text-sm"
+          >
+            <option value="default">Por defecto</option>
+            <option value="currency">Moneda (EUR)</option>
+            <option value="percent">Porcentaje</option>
+          </select>
+        </label>
       </fieldset>
     </template>
   </ComponentPlayground>

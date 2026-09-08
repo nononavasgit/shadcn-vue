@@ -23,6 +23,7 @@ const rootProps = computed(() => ({
   disabled: props.disabled,
   disableWheelChange: props.disableWheelChange,
   focusOnChange: props.focusOnChange,
+  formatOptions: props.formatOptions,
 }))
 </script>
 

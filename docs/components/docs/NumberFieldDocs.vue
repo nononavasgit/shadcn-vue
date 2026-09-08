@@ -33,6 +33,12 @@ const propRows: ApiTableRow[] = [
     default: String(numberFieldDefaults.focusOnChange),
     description: 'Enfoca el campo cuando cambia su valor.',
   },
+  {
+    name: 'formatOptions',
+    type: 'Intl.NumberFormatOptions',
+    default: 'undefined',
+    description: 'Opciones de Intl.NumberFormat para formatear el valor mostrado.',
+  },
 ]
 
 const emitRows: ApiTableRow[] = []

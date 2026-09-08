@@ -40,6 +40,19 @@ const casesFocusOnChange = [
   { input: false, expected: false },
 ]
 
+const casesFormatOptions = [
+  { input: undefined, expected: undefined },
+  { input: {}, expected: {} },
+  {
+    input: { style: 'currency', currency: 'EUR' },
+    expected: { style: 'currency', currency: 'EUR' },
+  },
+  {
+    input: { style: 'percent', maximumFractionDigits: 2 },
+    expected: { style: 'percent', maximumFractionDigits: 2 },
+  },
+]
+
 describe('NumberField', () => {
   describe('props', () => {
     describe('min', () => {
@@ -93,6 +106,17 @@ describe('NumberField', () => {
           const wrapper = mountNumberField({ props: { focusOnChange: input } })
 
           expect(wrapper.getComponent(NumberFieldRoot).props('focusOnChange')).toBe(expected)
+        },
+      )
+    })
+
+    describe('formatOptions', () => {
+      it.each(casesFormatOptions)(
+        'pasa formatOptions=$input a NumberFieldRoot como $expected',
+        ({ input, expected }) => {
+          const wrapper = mountNumberField({ props: { formatOptions: input } })
+
+          expect(wrapper.getComponent(NumberFieldRoot).props('formatOptions')).toEqual(expected)
         },
       )
     })

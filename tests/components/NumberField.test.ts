@@ -15,6 +15,13 @@ const casesMin = [
   { input: -5, expected: -5 },
 ]
 
+const casesMax = [
+  { input: undefined, expected: undefined },
+  { input: 100, expected: 100 },
+  { input: 200, expected: 200 },
+  { input: -5, expected: -5 },
+]
+
 describe('NumberField', () => {
   describe('props', () => {
     describe('min', () => {
@@ -24,6 +31,17 @@ describe('NumberField', () => {
           const wrapper = mountNumberField({ props: { min: input } })
 
           expect(wrapper.getComponent(NumberFieldRoot).props('min')).toBe(expected)
+        },
+      )
+    })
+
+    describe('max', () => {
+      it.each(casesMax)(
+        'pasa max=$input a NumberFieldRoot como $expected',
+        ({ input, expected }) => {
+          const wrapper = mountNumberField({ props: { max: input } })
+
+          expect(wrapper.getComponent(NumberFieldRoot).props('max')).toBe(expected)
         },
       )
     })

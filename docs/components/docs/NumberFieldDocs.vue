@@ -9,6 +9,12 @@ const propRows: ApiTableRow[] = [
     default: String(numberFieldDefaults.min),
     description: 'Valor mínimo permitido para el campo numérico.',
   },
+  {
+    name: 'max',
+    type: 'number',
+    default: 'undefined',
+    description: 'Valor máximo permitido para el campo numérico.',
+  },
 ]
 
 const emitRows: ApiTableRow[] = []

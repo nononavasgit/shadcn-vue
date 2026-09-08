@@ -6,10 +6,12 @@ import ComponentPlayground from '../../ComponentPlayground.vue'
 
 type NumberFieldState = {
   min: number
+  max: number
 }
 
 const initialState = (): NumberFieldState => ({
   min: numberFieldDefaults.min,
+  max: 100,
 })
 
 const state = ref<NumberFieldState>(initialState())
@@ -20,7 +22,7 @@ const previewKey = ref(0)
 const Preview = shallowRef()
 
 function generateCode() {
-  return `<NumberField\n  :min="${state.value.min}"\n/>`
+  return `<NumberField\n  :min="${state.value.min}"\n  :max="${state.value.max}"\n/>`
 }
 
 function applyCode() {
@@ -66,7 +68,7 @@ watch(state, syncFromControls, { deep: true, immediate: true })
     :applied-code="appliedCode"
     :error="editorError"
     filename="NumberFieldPlayground.vue"
-    description="Configura el valor mínimo o edita directamente su template."
+    description="Configura los valores mínimo y máximo o edita directamente su template."
     @apply="applyCode"
     @reset="reset"
   >
@@ -82,6 +84,12 @@ watch(state, syncFromControls, { deep: true, immediate: true })
         <label class="grid gap-1 text-xs"
           >Min<input
             v-model.number="state.min"
+            type="number"
+            class="rounded-md border bg-background px-3 py-2 text-sm"
+        /></label>
+        <label class="grid gap-1 text-xs"
+          >Max<input
+            v-model.number="state.max"
             type="number"
             class="rounded-md border bg-background px-3 py-2 text-sm"
         /></label>

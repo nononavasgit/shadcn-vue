@@ -3,4 +3,7 @@ import type { NumberFieldRootProps as RekaNumberFieldRootProps } from 'reka-ui'
 export { default as NumberField } from './NumberField.vue'
 export { numberFieldDefaults } from './defaults'
 
-export type NumberFieldProps = Pick<RekaNumberFieldRootProps, 'min' | 'max' | 'disabled'>
+export type NumberFieldProps = Pick<
+  RekaNumberFieldRootProps,
+  'min' | 'max' | 'disabled' | 'disableWheelChange'
+>

@@ -28,6 +28,12 @@ const casesDisabled = [
   { input: false, expected: false },
 ]
 
+const casesDisableWheelChange = [
+  { input: undefined, expected: false },
+  { input: true, expected: true },
+  { input: false, expected: false },
+]
+
 describe('NumberField', () => {
   describe('props', () => {
     describe('min', () => {
@@ -59,6 +65,17 @@ describe('NumberField', () => {
           const wrapper = mountNumberField({ props: { disabled: input } })
 
           expect(wrapper.getComponent(NumberFieldRoot).props('disabled')).toBe(expected)
+        },
+      )
+    })
+
+    describe('disableWheelChange', () => {
+      it.each(casesDisableWheelChange)(
+        'pasa disableWheelChange=$input a NumberFieldRoot como $expected',
+        ({ input, expected }) => {
+          const wrapper = mountNumberField({ props: { disableWheelChange: input } })
+
+          expect(wrapper.getComponent(NumberFieldRoot).props('disableWheelChange')).toBe(expected)
         },
       )
     })

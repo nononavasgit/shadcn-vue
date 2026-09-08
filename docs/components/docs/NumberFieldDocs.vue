@@ -21,6 +21,12 @@ const propRows: ApiTableRow[] = [
     default: String(numberFieldDefaults.disabled),
     description: 'Deshabilita la interacción del campo numérico.',
   },
+  {
+    name: 'disableWheelChange',
+    type: 'boolean',
+    default: String(numberFieldDefaults.disableWheelChange),
+    description: 'Impide cambiar el valor usando la rueda del ratón.',
+  },
 ]
 
 const emitRows: ApiTableRow[] = []

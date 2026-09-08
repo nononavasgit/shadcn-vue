@@ -95,6 +95,12 @@ const casesStep = [
   { input: 10, expected: 10 },
 ]
 
+const casesStepSnapping = [
+  { input: undefined, expected: true },
+  { input: true, expected: true },
+  { input: false, expected: false },
+]
+
 const casesValue = [
   { input: undefined, expected: undefined },
   { input: null, expected: null },
@@ -247,6 +253,17 @@ describe('NumberField', () => {
         const wrapper = mountNumberField({ props: { step: input } })
 
         expect(wrapper.getComponent(NumberFieldRoot).props('step')).toBe(expected)
+      },
+    )
+  })
+
+  describe('stepSnapping', () => {
+    it.each(casesStepSnapping)(
+      'pasa stepSnapping=$input a NumberFieldRoot como $expected',
+      ({ input, expected }) => {
+        const wrapper = mountNumberField({ props: { stepSnapping: input } })
+
+        expect(wrapper.getComponent(NumberFieldRoot).props('stepSnapping')).toBe(expected)
       },
     )
   })

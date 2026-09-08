@@ -81,6 +81,12 @@ const propRows: ApiTableRow[] = [
     default: String(numberFieldDefaults.step),
     description: 'Cantidad que cambia el valor en cada incremento o decremento.',
   },
+  {
+    name: 'stepSnapping',
+    type: 'boolean',
+    default: String(numberFieldDefaults.stepSnapping),
+    description: 'Determina si el valor se ajusta al incremento más cercano de step.',
+  },
 ]
 
 const emitRows: ApiTableRow[] = [

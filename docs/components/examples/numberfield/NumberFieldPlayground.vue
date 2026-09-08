@@ -10,6 +10,7 @@ type NumberFieldState = {
   readonly: boolean
   required: boolean
   step: number
+  stepSnapping: boolean
   value: number | null
   locale: string
   min: number
@@ -26,6 +27,7 @@ const initialState = (): NumberFieldState => ({
   readonly: false,
   required: false,
   step: 1,
+  stepSnapping: true,
   value: 25,
   locale: 'en-US',
   min: numberFieldDefaults.min,
@@ -58,6 +60,7 @@ function generateCode() {
     `  :readonly="${state.value.readonly}"`,
     `  :required="${state.value.required}"`,
     `  :step="${state.value.step}"`,
+    `  :step-snapping="${state.value.stepSnapping}"`,
     state.value.locale &&
       `  locale="${state.value.locale.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
     `  :min="${state.value.min}"`,
@@ -153,6 +156,9 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             step="0.01"
             class="rounded-md border bg-background px-3 py-2 text-sm"
         /></label>
+        <label class="flex items-center gap-2 text-sm"
+          ><input v-model="state.stepSnapping" type="checkbox" /> Step snapping</label
+        >
         <label class="grid gap-1 text-xs"
           >Value<input
             v-model.number="state.value"

@@ -30,6 +30,7 @@ const rootProps = computed(() => ({
   readonly: props.readonly,
   required: props.required,
   step: props.step,
+  stepSnapping: props.stepSnapping,
 }))
 </script>
 

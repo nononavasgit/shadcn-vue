@@ -63,6 +63,12 @@ const propRows: ApiTableRow[] = [
     default: 'undefined',
     description: 'Nombre usado para identificar el campo en formularios.',
   },
+  {
+    name: 'readonly',
+    type: 'boolean',
+    default: 'false',
+    description: 'Impide modificar el valor del campo.',
+  },
 ]
 
 const emitRows: ApiTableRow[] = [

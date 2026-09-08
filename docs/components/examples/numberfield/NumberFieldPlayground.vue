@@ -7,6 +7,7 @@ import ComponentPlayground from '../../ComponentPlayground.vue'
 type NumberFieldState = {
   id: string | undefined
   name: string | undefined
+  readonly: boolean
   value: number | null
   locale: string
   min: number
@@ -20,6 +21,7 @@ type NumberFieldState = {
 const initialState = (): NumberFieldState => ({
   id: undefined,
   name: 'quantity',
+  readonly: false,
   value: 25,
   locale: 'en-US',
   min: numberFieldDefaults.min,
@@ -49,6 +51,7 @@ function generateCode() {
     state.value.id && `  id="${state.value.id.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
     state.value.name &&
       `  name="${state.value.name.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
+    `  :readonly="${state.value.readonly}"`,
     state.value.locale &&
       `  locale="${state.value.locale.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
     `  :min="${state.value.min}"`,
@@ -130,6 +133,9 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             class="rounded-md border bg-background px-3 py-2 text-sm"
             placeholder="quantity"
         /></label>
+        <label class="flex items-center gap-2 text-sm"
+          ><input v-model="state.readonly" type="checkbox" /> Readonly</label
+        >
         <label class="grid gap-1 text-xs"
           >Value<input
             v-model.number="state.value"

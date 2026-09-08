@@ -76,6 +76,12 @@ const casesName = [
   { input: 'amount', expected: 'amount' },
 ]
 
+const casesReadonly = [
+  { input: undefined, expected: undefined },
+  { input: true, expected: true },
+  { input: false, expected: false },
+]
+
 const casesValue = [
   { input: undefined, expected: undefined },
   { input: null, expected: null },
@@ -197,5 +203,16 @@ describe('NumberField', () => {
 
       expect(wrapper.emitted('update:value')).toEqual([[25]])
     })
+  })
+
+  describe('readonly', () => {
+    it.each(casesReadonly)(
+      'pasa readonly=$input a NumberFieldRoot como $expected',
+      ({ input, expected }) => {
+        const wrapper = mountNumberField({ props: { readonly: input } })
+
+        expect(wrapper.getComponent(NumberFieldRoot).props('readonly')).toBe(expected)
+      },
+    )
   })
 })

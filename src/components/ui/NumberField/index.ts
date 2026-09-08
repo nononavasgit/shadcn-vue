@@ -5,5 +5,5 @@ export { numberFieldDefaults } from './defaults'
 
 export type NumberFieldProps = Pick<
   RekaNumberFieldRootProps,
-  'min' | 'max' | 'disabled' | 'disableWheelChange' | 'focusOnChange' | 'formatOptions'
+  'min' | 'max' | 'disabled' | 'disableWheelChange' | 'focusOnChange' | 'formatOptions' | 'id'
 >

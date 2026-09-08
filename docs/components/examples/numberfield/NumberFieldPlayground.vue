@@ -5,6 +5,7 @@ import { NumberField as BaseNumberField, numberFieldDefaults } from '@/component
 import ComponentPlayground from '../../ComponentPlayground.vue'
 
 type NumberFieldState = {
+  id: string | undefined
   min: number
   max: number
   disabled: boolean
@@ -14,6 +15,7 @@ type NumberFieldState = {
 }
 
 const initialState = (): NumberFieldState => ({
+  id: undefined,
   min: numberFieldDefaults.min,
   max: 100,
   disabled: numberFieldDefaults.disabled,
@@ -37,6 +39,7 @@ const Preview = shallowRef()
 function generateCode() {
   return [
     '<NumberField',
+    state.value.id && `  id="${state.value.id.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
     `  :min="${state.value.min}"`,
     `  :max="${state.value.max}"`,
     `  :disabled="${state.value.disabled}"`,
@@ -106,6 +109,9 @@ watch(state, syncFromControls, { deep: true, immediate: true })
     <template #controls>
       <fieldset class="grid gap-3">
         <legend class="mb-1 text-sm font-semibold">Props</legend>
+        <label class="grid gap-1 text-xs"
+          >ID<input v-model="state.id" class="rounded-md border bg-background px-3 py-2 text-sm"
+        /></label>
         <label class="grid gap-1 text-xs"
           >Min<input
             v-model.number="state.min"

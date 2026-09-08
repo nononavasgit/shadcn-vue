@@ -39,6 +39,12 @@ const propRows: ApiTableRow[] = [
     default: 'undefined',
     description: 'Opciones de Intl.NumberFormat para formatear el valor mostrado.',
   },
+  {
+    name: 'id',
+    type: 'string',
+    default: 'undefined',
+    description: 'Identificador del campo numérico y asociación con elementos externos.',
+  },
 ]
 
 const emitRows: ApiTableRow[] = []

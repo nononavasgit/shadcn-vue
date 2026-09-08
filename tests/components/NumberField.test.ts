@@ -53,6 +53,13 @@ const casesFormatOptions = [
   },
 ]
 
+const casesId = [
+  { input: undefined, expected: undefined },
+  { input: 'quantity', expected: 'quantity' },
+  { input: 'custom-number-field', expected: 'custom-number-field' },
+  { input: '', expected: '' },
+]
+
 describe('NumberField', () => {
   describe('props', () => {
     describe('min', () => {
@@ -119,6 +126,14 @@ describe('NumberField', () => {
           expect(wrapper.getComponent(NumberFieldRoot).props('formatOptions')).toEqual(expected)
         },
       )
+    })
+
+    describe('id', () => {
+      it.each(casesId)('pasa id=$input a NumberFieldRoot como $expected', ({ input, expected }) => {
+        const wrapper = mountNumberField({ props: { id: input } })
+
+        expect(wrapper.getComponent(NumberFieldRoot).props('id')).toBe(expected)
+      })
     })
   })
 })

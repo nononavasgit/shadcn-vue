@@ -17,7 +17,7 @@ const attrs = useAttrs()
 
 const rootProps = computed(() => ({
   ...attrs,
-  id: 'age',
+  id: props.id,
   min: props.min,
   max: props.max,
   disabled: props.disabled,

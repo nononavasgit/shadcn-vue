@@ -1,5 +1,6 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { h } from 'vue'
 import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldRoot } from 'reka-ui'
 
 import {
@@ -7,6 +8,7 @@ import {
   type NumberFieldProps,
   type NumberFieldValue,
 } from '@/components/ui/NumberField'
+import { testIconProps } from '../utils/testIconProps'
 
 function mountNumberField(options: MountingOptions<NumberFieldProps> = {}) {
   return mount(NumberField, options)
@@ -276,5 +278,47 @@ describe('NumberField', () => {
         expect(wrapper.getComponent(NumberFieldRoot).props('stepSnapping')).toBe(expected)
       },
     )
+  })
+
+  describe('iconDecrement', () => {
+    testIconProps({
+      text: 'pasa las props de iconDecrement',
+      id: '[data-test-icon-root]',
+      mount: (input) =>
+        mountNumberField({
+          props: { iconDecrement: input },
+          slots: { increment: () => h('span') },
+        }),
+    })
+  })
+
+  describe('iconIncrement', () => {
+    testIconProps({
+      text: 'pasa las props de iconIncrement',
+      id: '[data-test-icon-root]',
+      mount: (input) =>
+        mountNumberField({
+          props: { iconIncrement: input },
+          slots: { decrement: () => h('span') },
+        }),
+    })
+  })
+
+  describe('slots', () => {
+    it('renders the decrement slot', () => {
+      const wrapper = mountNumberField({
+        slots: { decrement: () => h('span', { 'data-test-decrement-slot': true }) },
+      })
+
+      expect(wrapper.find('[data-test-decrement-slot]').exists()).toBe(true)
+    })
+
+    it('renders the increment slot', () => {
+      const wrapper = mountNumberField({
+        slots: { increment: () => h('span', { 'data-test-increment-slot': true }) },
+      })
+
+      expect(wrapper.find('[data-test-increment-slot]').exists()).toBe(true)
+    })
   })
 })

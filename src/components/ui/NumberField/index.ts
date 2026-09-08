@@ -1,9 +1,12 @@
 import type { NumberFieldRootProps as RekaNumberFieldRootProps } from 'reka-ui'
+import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as NumberField } from './NumberField.vue'
 export { numberFieldDefaults } from './defaults'
 
-export type NumberFieldProps = Pick<
+export type NumberFieldValue = RekaNumberFieldRootProps['modelValue']
+
+export interface NumberFieldProps extends Pick<
   RekaNumberFieldRootProps,
   | 'min'
   | 'max'
@@ -18,6 +21,12 @@ export type NumberFieldProps = Pick<
   | 'required'
   | 'step'
   | 'stepSnapping'
->
+> {
+  iconDecrement?: IconConfig
+  iconIncrement?: IconConfig
+}
 
-export type NumberFieldValue = RekaNumberFieldRootProps['modelValue']
+export interface NumberFieldSlots {
+  decrement?(): unknown
+  increment?(): unknown
+}

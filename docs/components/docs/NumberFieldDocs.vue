@@ -76,6 +76,20 @@ const propRows: ApiTableRow[] = [
     description: 'Indica que el campo es obligatorio al enviarse el formulario.',
   },
   {
+    name: 'iconDecrement',
+    type: 'IconConfig',
+    default: "{ name: 'minus' }",
+    description: 'Configura el icono del control para decrementar.',
+    typeLink: '/icon#icon-config',
+  },
+  {
+    name: 'iconIncrement',
+    type: 'IconConfig',
+    default: "{ name: 'plus' }",
+    description: 'Configura el icono del control para incrementar.',
+    typeLink: '/icon#icon-config',
+  },
+  {
     name: 'step',
     type: 'number',
     default: String(numberFieldDefaults.step),
@@ -97,7 +111,20 @@ const emitRows: ApiTableRow[] = [
     description: 'Actualiza el valor controlado mediante v-model:value.',
   },
 ]
-const slotRows: ApiTableRow[] = []
+const slotRows: ApiTableRow[] = [
+  {
+    name: 'decrement',
+    type: 'unknown',
+    default: '-',
+    description: 'Contenido del control decrement.',
+  },
+  {
+    name: 'increment',
+    type: 'unknown',
+    default: '-',
+    description: 'Contenido del control increment.',
+  },
+]
 const exposeRows: ApiTableRow[] = []
 </script>
 

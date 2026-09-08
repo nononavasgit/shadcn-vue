@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed, useAttrs } from 'vue'
 import {
   NumberFieldDecrement,
   NumberFieldIncrement,
@@ -9,17 +10,24 @@ import { Icon } from '@/components/ui/Icon'
 import type { NumberFieldProps } from '.'
 import { numberFieldDefaults } from './defaults'
 
+defineOptions({ inheritAttrs: false })
+
 const props = withDefaults(defineProps<NumberFieldProps>(), numberFieldDefaults)
+const attrs = useAttrs()
+
+const rootProps = computed(() => ({
+  ...attrs,
+  id: 'age',
+  min: props.min,
+  max: props.max,
+  disabled: props.disabled,
+  disableWheelChange: props.disableWheelChange,
+  focusOnChange: props.focusOnChange,
+}))
 </script>
 
 <template>
-  <NumberFieldRoot
-    id="age"
-    :min="props.min"
-    :max="props.max"
-    :disabled="props.disabled"
-    :disable-wheel-change="props.disableWheelChange"
-  >
+  <NumberFieldRoot v-bind="rootProps">
     <div
       class="mt-1 flex h-9 items-center rounded-lg border bg-white shadow-sm focus-within:shadow-[0_0_0_2px] focus-within:shadow-stone-800 hover:bg-stone-50"
     >

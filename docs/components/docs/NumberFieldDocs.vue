@@ -27,6 +27,12 @@ const propRows: ApiTableRow[] = [
     default: String(numberFieldDefaults.disableWheelChange),
     description: 'Impide cambiar el valor usando la rueda del ratón.',
   },
+  {
+    name: 'focusOnChange',
+    type: 'boolean',
+    default: String(numberFieldDefaults.focusOnChange),
+    description: 'Enfoca el campo cuando cambia su valor.',
+  },
 ]
 
 const emitRows: ApiTableRow[] = []

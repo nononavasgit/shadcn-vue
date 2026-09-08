@@ -34,6 +34,12 @@ const casesDisableWheelChange = [
   { input: false, expected: false },
 ]
 
+const casesFocusOnChange = [
+  { input: undefined, expected: true },
+  { input: true, expected: true },
+  { input: false, expected: false },
+]
+
 describe('NumberField', () => {
   describe('props', () => {
     describe('min', () => {
@@ -76,6 +82,17 @@ describe('NumberField', () => {
           const wrapper = mountNumberField({ props: { disableWheelChange: input } })
 
           expect(wrapper.getComponent(NumberFieldRoot).props('disableWheelChange')).toBe(expected)
+        },
+      )
+    })
+
+    describe('focusOnChange', () => {
+      it.each(casesFocusOnChange)(
+        'pasa focusOnChange=$input a NumberFieldRoot como $expected',
+        ({ input, expected }) => {
+          const wrapper = mountNumberField({ props: { focusOnChange: input } })
+
+          expect(wrapper.getComponent(NumberFieldRoot).props('focusOnChange')).toBe(expected)
         },
       )
     })

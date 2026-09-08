@@ -9,6 +9,7 @@ type NumberFieldState = {
   max: number
   disabled: boolean
   disableWheelChange: boolean
+  focusOnChange: boolean
 }
 
 const initialState = (): NumberFieldState => ({
@@ -16,6 +17,7 @@ const initialState = (): NumberFieldState => ({
   max: 100,
   disabled: numberFieldDefaults.disabled,
   disableWheelChange: numberFieldDefaults.disableWheelChange,
+  focusOnChange: numberFieldDefaults.focusOnChange,
 })
 
 const state = ref<NumberFieldState>(initialState())
@@ -26,7 +28,7 @@ const previewKey = ref(0)
 const Preview = shallowRef()
 
 function generateCode() {
-  return `<NumberField\n  :min="${state.value.min}"\n  :max="${state.value.max}"\n  :disabled="${state.value.disabled}"\n  :disable-wheel-change="${state.value.disableWheelChange}"\n/>`
+  return `<NumberField\n  :min="${state.value.min}"\n  :max="${state.value.max}"\n  :disabled="${state.value.disabled}"\n  :disable-wheel-change="${state.value.disableWheelChange}"\n  :focus-on-change="${state.value.focusOnChange}"\n/>`
 }
 
 function applyCode() {
@@ -102,6 +104,9 @@ watch(state, syncFromControls, { deep: true, immediate: true })
         >
         <label class="flex items-center gap-2 text-sm"
           ><input v-model="state.disableWheelChange" type="checkbox" /> Disable wheel change</label
+        >
+        <label class="flex items-center gap-2 text-sm"
+          ><input v-model="state.focusOnChange" type="checkbox" /> Focus on change</label
         >
       </fieldset>
     </template>

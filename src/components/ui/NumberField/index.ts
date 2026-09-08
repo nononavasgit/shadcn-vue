@@ -14,3 +14,5 @@ export type NumberFieldProps = Pick<
   | 'id'
   | 'locale'
 >
+
+export type NumberFieldValue = RekaNumberFieldRootProps['modelValue']

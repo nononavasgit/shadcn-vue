@@ -4,6 +4,12 @@ import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 
 const propRows: ApiTableRow[] = [
   {
+    name: 'value',
+    type: 'number | null',
+    default: 'undefined',
+    description: 'Valor controlado mediante v-model:value.',
+  },
+  {
     name: 'min',
     type: 'number',
     default: String(numberFieldDefaults.min),
@@ -53,7 +59,14 @@ const propRows: ApiTableRow[] = [
   },
 ]
 
-const emitRows: ApiTableRow[] = []
+const emitRows: ApiTableRow[] = [
+  {
+    name: 'update:value',
+    type: '[value: number]',
+    default: '-',
+    description: 'Actualiza el valor controlado mediante v-model:value.',
+  },
+]
 const slotRows: ApiTableRow[] = []
 const exposeRows: ApiTableRow[] = []
 </script>

@@ -7,13 +7,14 @@ import {
   NumberFieldRoot,
 } from 'reka-ui'
 import { Icon } from '@/components/ui/Icon'
-import type { NumberFieldProps } from '.'
+import type { NumberFieldProps, NumberFieldValue } from '.'
 import { numberFieldDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<NumberFieldProps>(), numberFieldDefaults)
 const attrs = useAttrs()
+const value = defineModel<NumberFieldValue>('value')
 
 const rootProps = computed(() => ({
   ...attrs,
@@ -29,7 +30,7 @@ const rootProps = computed(() => ({
 </script>
 
 <template>
-  <NumberFieldRoot v-bind="rootProps">
+  <NumberFieldRoot v-bind="rootProps" v-model="value">
     <div
       class="mt-1 flex h-9 items-center rounded-lg border bg-white shadow-sm focus-within:shadow-[0_0_0_2px] focus-within:shadow-stone-800 hover:bg-stone-50"
     >

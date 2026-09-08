@@ -2,7 +2,11 @@ import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { NumberFieldRoot } from 'reka-ui'
 
-import { NumberField, type NumberFieldProps } from '@/components/ui/NumberField'
+import {
+  NumberField,
+  type NumberFieldProps,
+  type NumberFieldValue,
+} from '@/components/ui/NumberField'
 
 function mountNumberField(options: MountingOptions<NumberFieldProps> = {}) {
   return mount(NumberField, options)
@@ -66,8 +70,21 @@ const casesLocale = [
   { input: 'es-ES', expected: 'es-ES' },
 ]
 
+const casesValue = [
+  { input: undefined, expected: undefined },
+  { input: null, expected: null },
+  { input: 25, expected: 25 },
+]
+
 describe('NumberField', () => {
   describe('props', () => {
+    describe('value', () => {
+      it.each(casesValue)('pasa value=$input como modelValue=$expected', ({ input, expected }) => {
+        const wrapper = mountNumberField({ props: { value: input as NumberFieldValue } })
+
+        expect(wrapper.getComponent(NumberFieldRoot).props('modelValue')).toBe(expected)
+      })
+    })
     describe('min', () => {
       it.each(casesMin)(
         'pasa min=$input a NumberFieldRoot como $expected',
@@ -151,6 +168,17 @@ describe('NumberField', () => {
           expect(wrapper.getComponent(NumberFieldRoot).props('locale')).toBe(expected)
         },
       )
+    })
+  })
+
+  describe('emits', () => {
+    it('reenvía update:modelValue de NumberFieldRoot como update:value', async () => {
+      const wrapper = mountNumberField({ props: { value: 10 } })
+      const root = wrapper.getComponent(NumberFieldRoot)
+
+      await root.vm.$emit('update:modelValue', 25)
+
+      expect(wrapper.emitted('update:value')).toEqual([[25]])
     })
   })
 })

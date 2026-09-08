@@ -1,6 +1,6 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { NumberFieldRoot } from 'reka-ui'
+import { NumberFieldDecrement, NumberFieldIncrement, NumberFieldRoot } from 'reka-ui'
 
 import {
   NumberField,
@@ -147,6 +147,16 @@ describe('NumberField', () => {
           expect(wrapper.getComponent(NumberFieldRoot).props('disabled')).toBe(expected)
         },
       )
+
+      it.each([
+        { input: true, expected: true },
+        { input: false, expected: false },
+      ])('pasa disabled=$input a increment y decrement', ({ input, expected }) => {
+        const wrapper = mountNumberField({ props: { disabled: input } })
+
+        expect(wrapper.getComponent(NumberFieldIncrement).props('disabled')).toBe(expected)
+        expect(wrapper.getComponent(NumberFieldDecrement).props('disabled')).toBe(expected)
+      })
     })
 
     describe('disableWheelChange', () => {

@@ -82,6 +82,12 @@ const casesReadonly = [
   { input: false, expected: false },
 ]
 
+const casesRequired = [
+  { input: undefined, expected: undefined },
+  { input: true, expected: true },
+  { input: false, expected: false },
+]
+
 const casesValue = [
   { input: undefined, expected: undefined },
   { input: null, expected: null },
@@ -212,6 +218,17 @@ describe('NumberField', () => {
         const wrapper = mountNumberField({ props: { readonly: input } })
 
         expect(wrapper.getComponent(NumberFieldRoot).props('readonly')).toBe(expected)
+      },
+    )
+  })
+
+  describe('required', () => {
+    it.each(casesRequired)(
+      'pasa required=$input a NumberFieldRoot como $expected',
+      ({ input, expected }) => {
+        const wrapper = mountNumberField({ props: { required: input } })
+
+        expect(wrapper.getComponent(NumberFieldRoot).props('required')).toBe(expected)
       },
     )
   })

@@ -69,6 +69,12 @@ const propRows: ApiTableRow[] = [
     default: 'false',
     description: 'Impide modificar el valor del campo.',
   },
+  {
+    name: 'required',
+    type: 'boolean',
+    default: 'false',
+    description: 'Indica que el campo es obligatorio al enviarse el formulario.',
+  },
 ]
 
 const emitRows: ApiTableRow[] = [

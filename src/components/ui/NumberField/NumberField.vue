@@ -28,6 +28,7 @@ const rootProps = computed(() => ({
   locale: props.locale,
   name: props.name,
   readonly: props.readonly,
+  required: props.required,
 }))
 </script>
 

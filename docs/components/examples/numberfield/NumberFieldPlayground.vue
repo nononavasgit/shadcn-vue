@@ -8,6 +8,7 @@ type NumberFieldState = {
   id: string | undefined
   name: string | undefined
   readonly: boolean
+  required: boolean
   value: number | null
   locale: string
   min: number
@@ -22,6 +23,7 @@ const initialState = (): NumberFieldState => ({
   id: undefined,
   name: 'quantity',
   readonly: false,
+  required: false,
   value: 25,
   locale: 'en-US',
   min: numberFieldDefaults.min,
@@ -52,6 +54,7 @@ function generateCode() {
     state.value.name &&
       `  name="${state.value.name.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
     `  :readonly="${state.value.readonly}"`,
+    `  :required="${state.value.required}"`,
     state.value.locale &&
       `  locale="${state.value.locale.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
     `  :min="${state.value.min}"`,
@@ -135,6 +138,9 @@ watch(state, syncFromControls, { deep: true, immediate: true })
         /></label>
         <label class="flex items-center gap-2 text-sm"
           ><input v-model="state.readonly" type="checkbox" /> Readonly</label
+        >
+        <label class="flex items-center gap-2 text-sm"
+          ><input v-model="state.required" type="checkbox" /> Required</label
         >
         <label class="grid gap-1 text-xs"
           >Value<input

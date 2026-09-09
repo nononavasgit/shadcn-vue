@@ -49,7 +49,7 @@ export const numberFieldControlVariants = cva('disabled:opacity-20', {
 })
 
 export const numberFieldInputVariants = cva(
-  'w-20 bg-transparent text-center tabular-nums focus:outline-0',
+  'w-20 bg-transparent text-center tabular-nums focus:outline-0 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
   {
     variants: {
       size: {

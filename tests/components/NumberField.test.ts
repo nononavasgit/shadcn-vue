@@ -244,6 +244,18 @@ describe('NumberField', () => {
         expect(wrapper.getComponent(NumberFieldIncrement).props('disabled')).toBe(expected)
         expect(wrapper.getComponent(NumberFieldDecrement).props('disabled')).toBe(expected)
       })
+
+      it('aplica el estilo disabled al input', () => {
+        const input = mountNumberField({ props: { disabled: true } }).getComponent(NumberFieldInput)
+
+        expect(input.classes()).toEqual(
+          expect.arrayContaining([
+            'disabled:pointer-events-none',
+            'disabled:cursor-not-allowed',
+            'disabled:opacity-50',
+          ]),
+        )
+      })
     })
 
     describe('variant', () => {

@@ -163,6 +163,11 @@ export const componentMeta = [
     description: 'Composicion de una burbuja con reacciones y contenido de pie.',
   },
   {
+    slug: 'number-field',
+    title: 'NumberField',
+    description: 'Campo numérico accesible con controles para incrementar y decrementar su valor.',
+  },
+  {
     slug: 'pagination',
     title: 'Pagination',
     description:

@@ -35,6 +35,7 @@ import LoadingPage from './components/pages/LoadingPage.vue'
 import LinearChartPage from './components/pages/LinearChartPage.vue'
 import MeterGroupPage from './components/pages/MeterGroupPage.vue'
 import MessagePage from './components/pages/MessagePage.vue'
+import NumberFieldPage from './components/pages/NumberFieldPage.vue'
 import PopoverPage from './components/pages/PopoverPage.vue'
 import PaginationPage from './components/pages/PaginationPage.vue'
 import ProgressPage from './components/pages/ProgressPage.vue'
@@ -152,6 +153,11 @@ export const router = createRouter({
       meta: { component: componentMetaBySlug['meter-group'] },
     },
     { path: '/message', component: MessagePage, meta: { component: componentMetaBySlug.message } },
+    {
+      path: '/number-field',
+      component: NumberFieldPage,
+      meta: { component: componentMetaBySlug['number-field'] },
+    },
     { path: '/popover', component: PopoverPage, meta: { component: componentMetaBySlug.popover } },
     {
       path: '/pagination',

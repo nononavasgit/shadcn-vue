@@ -38,6 +38,7 @@ const rootProps = computed(() => {
         size: props.size,
         variant: props.variant,
         color: Boolean(props.color),
+        highlight: props.highlight,
       }),
       attrs.class,
     ),

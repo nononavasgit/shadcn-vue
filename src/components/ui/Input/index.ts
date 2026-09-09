@@ -23,54 +23,98 @@ export const inputVariants = cva('', {
       true: 'focus-within:border-(--input-color) focus-within:ring-(--input-color)/30',
       false: '',
     },
+    highlight: {
+      true: '',
+      false: 'border-input',
+    },
   },
   compoundVariants: [
     {
       variant: 'outline',
-      class:
-        'border-primary/40 text-primary hover:bg-primary/10 active:border-primary/60 active:bg-primary/20',
+      class: 'text-primary',
     },
     {
       variant: 'plain',
-      class: 'text-primary hover:bg-primary/10 active:bg-primary/20',
+      class: 'text-primary',
     },
     {
       variant: 'subtle',
-      class:
-        'border-primary/20 bg-primary/10 text-primary hover:bg-primary/15 active:bg-primary/25',
+      class: 'bg-primary/10 text-primary',
     },
     {
       variant: 'soft',
-      class: 'bg-primary/10 text-primary hover:bg-primary/20 active:bg-primary/30',
+      class: 'bg-primary/10 text-primary',
+    },
+    {
+      highlight: true,
+      variant: 'outline',
+      class: 'border-primary/40',
+    },
+    {
+      highlight: true,
+      variant: 'plain',
+      class: 'border-primary/40',
+    },
+    {
+      highlight: true,
+      variant: 'subtle',
+      class: 'border-primary/20',
+    },
+    {
+      highlight: true,
+      variant: 'soft',
+      class: 'border-primary/40',
     },
     {
       color: true,
       variant: 'outline',
-      class:
-        'border-(--input-color)/40 text-(--input-color) hover:bg-(--input-color)/10 active:border-(--input-color)/60 active:bg-(--input-color)/20',
+      class: 'text-(--input-color)',
     },
     {
       color: true,
       variant: 'plain',
-      class: 'text-(--input-color) hover:bg-(--input-color)/10 active:bg-(--input-color)/20',
+      class: 'text-(--input-color)',
     },
     {
       color: true,
       variant: 'subtle',
-      class:
-        'border-(--input-color)/20 bg-(--input-color)/10 text-(--input-color) hover:bg-(--input-color)/15 active:bg-(--input-color)/25',
+      class: 'bg-(--input-color)/10 text-(--input-color)',
     },
     {
       color: true,
       variant: 'soft',
-      class:
-        'bg-(--input-color)/10 text-(--input-color) hover:bg-(--input-color)/20 active:bg-(--input-color)/30',
+      class: 'bg-(--input-color)/10 text-(--input-color)',
+    },
+    {
+      color: true,
+      highlight: true,
+      variant: 'outline',
+      class: 'border-(--input-color)/40',
+    },
+    {
+      color: true,
+      highlight: true,
+      variant: 'plain',
+      class: 'border-(--input-color)/40',
+    },
+    {
+      color: true,
+      highlight: true,
+      variant: 'subtle',
+      class: 'border-(--input-color)/20',
+    },
+    {
+      color: true,
+      highlight: true,
+      variant: 'soft',
+      class: 'border-(--input-color)/40',
     },
   ],
   defaultVariants: {
     size: 'md',
     variant: 'outline',
     color: false,
+    highlight: false,
   },
 })
 
@@ -86,6 +130,7 @@ export interface InputProps {
   size?: InputSize
   variant?: InputVariant
   color?: string
+  highlight?: boolean
 }
 
 // Emits

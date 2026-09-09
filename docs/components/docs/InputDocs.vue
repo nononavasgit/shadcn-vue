@@ -22,6 +22,12 @@ const propRows: ApiTableRow[] = [
     description: 'Color CSS personalizado para el campo de entrada.',
   },
   {
+    name: 'highlight',
+    type: 'boolean',
+    default: String(inputDefaults.highlight),
+    description: 'Activa el borde resaltado de la variante o del color personalizado.',
+  },
+  {
     name: 'value',
     type: 'string',
     default: inputDefaults.value === '' ? "''" : String(inputDefaults.value),

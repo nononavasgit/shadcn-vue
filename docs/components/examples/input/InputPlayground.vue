@@ -9,6 +9,7 @@ const state = ref({
   size: inputDefaults.size,
   variant: inputDefaults.variant,
   color: '',
+  highlight: inputDefaults.highlight,
   type: 'text',
   placeholder: 'Escribe algo...',
   disabled: false,
@@ -32,6 +33,7 @@ function generateCode() {
     `size="${state.value.size}"`,
     `variant="${state.value.variant}"`,
     state.value.color && `color="${escapeAttribute(state.value.color)}"`,
+    `:highlight="${state.value.highlight}"`,
     `type="${state.value.type}"`,
     state.value.placeholder && `placeholder="${escapeAttribute(state.value.placeholder)}"`,
     state.value.disabled && 'disabled',
@@ -82,6 +84,7 @@ function reset() {
     size: inputDefaults.size,
     variant: inputDefaults.variant,
     color: '',
+    highlight: inputDefaults.highlight,
     type: 'text',
     placeholder: 'Escribe algo...',
     disabled: false,
@@ -142,6 +145,8 @@ watch(state, syncFromControls, { deep: true, immediate: true })
               v-model="state.color"
               class="rounded-md border bg-background px-3 py-2 text-sm"
               placeholder="#ff0000" /></label
+          ><label class="flex items-center gap-2 text-sm"
+            ><input v-model="state.highlight" type="checkbox" /> Highlight</label
           ><label class="grid gap-1 text-xs"
             >Type<select
               v-model="state.type"

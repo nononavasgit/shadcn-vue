@@ -3,4 +3,5 @@ export const inputDefaults = {
   size: 'md' as const,
   variant: 'outline' as const,
   color: undefined,
+  highlight: false,
 }

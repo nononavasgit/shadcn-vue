@@ -10,7 +10,9 @@ import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import { Icon } from '@/components/ui/Icon'
 import { useI18n } from '@/i18n'
+import type { IconSize } from '@/components/ui/Icon'
 import type { NumberFieldProps, NumberFieldValue, NumberFieldSlots } from '.'
+import { numberFieldControlVariants, numberFieldInputVariants, numberFieldVariants } from '.'
 import { numberFieldDefaults } from './defaults'
 
 defineOptions({ inheritAttrs: false })
@@ -20,6 +22,18 @@ const attrs = useAttrs()
 const value = defineModel<NumberFieldValue>('value')
 defineSlots<NumberFieldSlots>()
 const { t } = useI18n()
+
+const iconSize = computed<IconSize>(() => (props.size === 'xl' ? 'lg' : props.size))
+
+const decrementIconProps = computed(() => ({
+  ...props.iconDecrement,
+  size: props.iconDecrement?.size ?? iconSize.value,
+}))
+
+const incrementIconProps = computed(() => ({
+  ...props.iconIncrement,
+  size: props.iconIncrement?.size ?? iconSize.value,
+}))
 
 const rootProps = computed(() => {
   return {
@@ -37,10 +51,7 @@ const rootProps = computed(() => {
     required: props.required,
     step: props.step,
     stepSnapping: props.stepSnapping,
-    class: cn(
-      'mt-1 flex h-9 items-center rounded-lg border bg-white shadow-sm focus-within:border-primary focus-within:ring-3 focus-within:ring-primary/50 hover:bg-stone-50',
-      attrs.class,
-    ),
+    class: cn(numberFieldVariants({ size: props.size }), attrs.class),
     style: attrs.style,
   }
 })
@@ -52,7 +63,7 @@ const decrementProps = computed(() => {
     'aria-label': t('decrement'),
     ...ui,
     disabled: props.disabled,
-    class: cn('p-2 disabled:opacity-20', ui.class),
+    class: cn(numberFieldControlVariants({ size: props.size }), ui.class),
     style: ui.style,
   }
 })
@@ -64,7 +75,7 @@ const incrementProps = computed(() => {
     'aria-label': t('increment'),
     ...ui,
     disabled: props.disabled,
-    class: cn('p-2 disabled:opacity-20', ui.class),
+    class: cn(numberFieldControlVariants({ size: props.size }), ui.class),
     style: ui.style,
   }
 })
@@ -74,23 +85,23 @@ const propsInput = computed(() => {
 
   return {
     ...ui,
-    class: cn('w-20 bg-transparent p-1 text-center tabular-nums focus:outline-0', ui.class),
+    class: cn(numberFieldInputVariants({ size: props.size }), ui.class),
     style: ui.style,
   }
 })
 </script>
 
 <template>
-  <NumberFieldRoot v-bind="rootProps" v-model="value">
+  <NumberFieldRoot v-bind="rootProps" v-model="value" data-test-number-field-root>
     <NumberFieldDecrement v-bind="decrementProps">
       <slot name="decrement">
-        <Icon name="minus" v-bind="props.iconDecrement" />
+        <Icon name="minus" v-bind="decrementIconProps" />
       </slot>
     </NumberFieldDecrement>
     <NumberFieldInput v-bind="propsInput" />
     <NumberFieldIncrement v-bind="incrementProps">
       <slot name="increment">
-        <Icon name="plus" v-bind="props.iconIncrement" />
+        <Icon name="plus" v-bind="incrementIconProps" />
       </slot>
     </NumberFieldIncrement>
   </NumberFieldRoot>

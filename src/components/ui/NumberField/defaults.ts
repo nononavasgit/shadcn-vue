@@ -1,4 +1,5 @@
 export const numberFieldDefaults = {
+  size: 'md' as const,
   min: 0,
   max: 100,
   disabled: false,

@@ -22,6 +22,12 @@ const propRows: ApiTableRow[] = [
     description: 'Valor máximo permitido para el campo numérico.',
   },
   {
+    name: 'size',
+    type: "'xs' | 'sm' | 'md' | 'lg' | 'xl'",
+    default: `'${numberFieldDefaults.size}'`,
+    description: 'Tamaño visual del campo y sus controles.',
+  },
+  {
     name: 'disabled',
     type: 'boolean',
     default: String(numberFieldDefaults.disabled),

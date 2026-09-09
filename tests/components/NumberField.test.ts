@@ -10,9 +10,12 @@ import {
 
 import {
   NumberField,
+  numberFieldDefaults,
+  type NumberFieldSize,
   type NumberFieldProps,
   type NumberFieldValue,
 } from '@/components/ui/NumberField'
+import { Icon, type IconSize } from '@/components/ui/Icon'
 import { i18n } from '@/i18n'
 import { testIconProps } from '../utils/testIconProps'
 import { testAttrs } from '../utils/testAttrs'
@@ -122,6 +125,24 @@ const casesValue = [
   { input: 25, expected: 25 },
 ]
 
+const casesSize = [
+  { input: undefined, expected: { root: 'h-9', control: 'p-2', input: 'p-1' } },
+  { input: 'xs' as const, expected: { root: 'h-7', control: 'p-1', input: 'p-0.5' } },
+  { input: 'sm' as const, expected: { root: 'h-8', control: 'p-1.5', input: 'p-0.5' } },
+  { input: 'md' as const, expected: { root: 'h-9', control: 'p-2', input: 'p-1' } },
+  { input: 'lg' as const, expected: { root: 'h-10', control: 'p-2', input: 'p-1.5' } },
+  { input: 'xl' as const, expected: { root: 'h-11', control: 'p-2.5', input: 'p-1.5' } },
+]
+
+const casesIconSize = [
+  { input: undefined, expected: 'md' as const },
+  { input: 'xs' as const, expected: 'xs' as const },
+  { input: 'sm' as const, expected: 'sm' as const },
+  { input: 'md' as const, expected: 'md' as const },
+  { input: 'lg' as const, expected: 'lg' as const },
+  { input: 'xl' as const, expected: 'lg' as const },
+]
+
 describe('NumberField', () => {
   describe('props', () => {
     describe('value', () => {
@@ -131,6 +152,36 @@ describe('NumberField', () => {
         expect(wrapper.getComponent(NumberFieldRoot).props('modelValue')).toBe(expected)
       })
     })
+
+    describe('size', () => {
+      it.each(casesSize)('renderiza size=$input', ({ input, expected }) => {
+        const wrapper = mountNumberField({ props: { size: input as NumberFieldSize } })
+
+        expect(wrapper.get('[data-test-number-field-root]').classes()).toContain(expected.root)
+        expect(wrapper.getComponent(NumberFieldDecrement).classes()).toContain(expected.control)
+        expect(wrapper.getComponent(NumberFieldIncrement).classes()).toContain(expected.control)
+        expect(wrapper.getComponent(NumberFieldInput).classes()).toContain(expected.input)
+      })
+
+      it('usa md por defecto', () => {
+        const wrapper = mountNumberField()
+
+        expect(wrapper.vm.$props.size).toBe(numberFieldDefaults.size)
+      })
+
+      it.each(casesIconSize)(
+        'hereda size=$input a los iconos como $expected',
+        ({ input, expected }) => {
+          const wrapper = mountNumberField({ props: { size: input as NumberFieldSize } })
+
+          expect(wrapper.findAllComponents(Icon).map((icon) => icon.props('size'))).toEqual([
+            expected,
+            expected,
+          ] as IconSize[])
+        },
+      )
+    })
+
     describe('min', () => {
       it.each(casesMin)(
         'pasa min=$input a NumberFieldRoot como $expected',

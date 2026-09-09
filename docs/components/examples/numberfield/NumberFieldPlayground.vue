@@ -7,6 +7,7 @@ import ComponentPlayground from '../../ComponentPlayground.vue'
 type NumberFieldState = {
   id: string | undefined
   name: string | undefined
+  size: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   readonly: boolean
   required: boolean
   step: number
@@ -25,6 +26,7 @@ type NumberFieldState = {
 const initialState = (): NumberFieldState => ({
   id: undefined,
   name: 'quantity',
+  size: numberFieldDefaults.size,
   readonly: false,
   required: false,
   step: 1,
@@ -59,6 +61,7 @@ function generateCode() {
     state.value.id && `  id="${state.value.id.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
     state.value.name &&
       `  name="${state.value.name.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
+    `  size="${state.value.size}"`,
     `  :readonly="${state.value.readonly}"`,
     `  :required="${state.value.required}"`,
     `  :step="${state.value.step}"`,
@@ -146,6 +149,12 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             class="rounded-md border bg-background px-3 py-2 text-sm"
             placeholder="quantity"
         /></label>
+        <label class="grid gap-1 text-xs"
+          >Size
+          <select v-model="state.size" class="rounded-md border bg-background px-3 py-2 text-sm">
+            <option v-for="size in ['xs', 'sm', 'md', 'lg', 'xl']" :key="size">{{ size }}</option>
+          </select>
+        </label>
         <label class="flex items-center gap-2 text-sm"
           ><input v-model="state.readonly" type="checkbox" /> Readonly</label
         >

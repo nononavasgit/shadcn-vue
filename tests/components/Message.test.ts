@@ -2,6 +2,7 @@ import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
+import { Bubble } from '@/components/ui/Bubble'
 import { Message, type MessageProps } from '@/components/ui/Message'
 import { testAttrs } from '../utils/testAttrs'
 import { testAvatarConfig } from '../utils/testAvatarConfig'
@@ -15,8 +16,8 @@ describe('Message', () => {
   describe('props', () => {
     describe('align', () => {
       it.each([
-        ['start', 'items-start'],
-        ['end', 'items-end'],
+        ['start', 'justify-start'],
+        ['end', 'justify-end'],
       ] as const)('alinea el mensaje a %s', (align, expected) => {
         expect(mountMessage({ props: { align } }).classes()).toContain(expected)
       })
@@ -33,7 +34,7 @@ describe('Message', () => {
           props: { align: 'end', bubble: { align: 'start' } },
         })
 
-        expect(wrapper.getComponent('Bubble').props('align')).toBe('end')
+        expect(wrapper.findComponent(Bubble).props('align')).toBe('end')
       })
     })
 
@@ -50,6 +51,46 @@ describe('Message', () => {
           'Mensaje por defecto',
         )
       })
+
+      it('usa start y permite omitir el contenido', () => {
+        const wrapper = mountMessage()
+
+        expect(wrapper.classes()).toContain('justify-start')
+        expect(wrapper.get('[data-test-bubble-surface]').text()).toBe('')
+      })
+    })
+
+    describe('ui', () => {
+      describe('header', () => {
+        testAttrs({
+          text: 'aplica ui.header al contenedor del slot',
+          id: '#test-component',
+          mount: (attrs) =>
+            mountMessage({
+              props: { ui: { header: () => attrs } },
+              slots: { header: () => h('span', 'Header') },
+            }),
+        })
+      })
+
+      describe('footer', () => {
+        testAttrs({
+          text: 'aplica ui.footer al contenedor del slot',
+          id: '#test-component',
+          mount: (attrs) =>
+            mountMessage({
+              props: { ui: { footer: () => attrs } },
+              slots: { footer: () => h('span', 'Footer') },
+            }),
+        })
+      })
+    })
+  })
+
+  describe('attrs', () => {
+    testAttrs({
+      id: '#test-component',
+      mount: (attrs) => mountMessage({ attrs }),
     })
   })
 
@@ -70,7 +111,7 @@ describe('Message', () => {
         })
 
         expect(wrapper.get('[data-test-message-header]').text()).toBe('Header')
-        expect(wrapper.getComponent('Bubble').exists()).toBe(true)
+        expect(wrapper.findComponent(Bubble).exists()).toBe(true)
       })
     })
 
@@ -99,36 +140,11 @@ describe('Message', () => {
         })
 
         expect(wrapper.get('[data-test-message-footer]').text()).toBe('Footer')
-        expect(wrapper.get('[data-test-message-footer]').element.parentElement).toBe(
-          wrapper.element,
+        expect(wrapper.get('[data-test-message-footer]').element.parentElement?.classList).toContain(
+          'mt-2',
         )
       })
     })
   })
 
-  describe('props.ui', () => {
-    describe('header', () => {
-      testAttrs({
-        text: 'aplica ui.header al contenedor del slot',
-        id: '#test-component',
-        mount: (attrs) =>
-          mountMessage({
-            props: { ui: { header: () => attrs } },
-            slots: { header: () => h('span', 'Header') },
-          }),
-      })
-    })
-
-    describe('footer', () => {
-      testAttrs({
-        text: 'aplica ui.footer al contenedor del slot',
-        id: '#test-component',
-        mount: (attrs) =>
-          mountMessage({
-            props: { ui: { footer: () => attrs } },
-            slots: { footer: () => h('span', 'Footer') },
-          }),
-      })
-    })
-  })
 })

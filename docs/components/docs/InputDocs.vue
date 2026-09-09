@@ -4,6 +4,12 @@ import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 
 const propRows: ApiTableRow[] = [
   {
+    name: 'size',
+    type: "'xs' | 'sm' | 'md' | 'lg' | 'xl'",
+    default: `'${inputDefaults.size}'`,
+    description: 'Tamaño visual del campo de entrada.',
+  },
+  {
     name: 'value',
     type: 'string',
     default: inputDefaults.value === '' ? "''" : String(inputDefaults.value),

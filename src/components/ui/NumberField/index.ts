@@ -96,6 +96,8 @@ export interface NumberFieldProps extends Pick<
 > {
   size?: NumberFieldSize
   variant?: NumberFieldVariant
+  increment?: boolean
+  decrement?: boolean
   iconDecrement?: IconConfig
   iconIncrement?: IconConfig
   ui?: NumberFieldUI

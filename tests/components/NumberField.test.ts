@@ -152,6 +152,18 @@ const casesVariant = [
   { input: 'soft' as const, expected: ['bg-primary/10', 'shadow-none'] },
 ]
 
+const casesIncrement = [
+  { input: undefined, expected: true },
+  { input: true, expected: true },
+  { input: false, expected: false },
+]
+
+const casesDecrement = [
+  { input: undefined, expected: true },
+  { input: true, expected: true },
+  { input: false, expected: false },
+]
+
 describe('NumberField', () => {
   describe('props', () => {
     describe('value', () => {
@@ -247,6 +259,22 @@ describe('NumberField', () => {
         const wrapper = mountNumberField()
 
         expect(wrapper.vm.$props.variant).toBe(numberFieldDefaults.variant)
+      })
+    })
+
+    describe('increment', () => {
+      it.each(casesIncrement)('muestra increment=$input como $expected', ({ input, expected }) => {
+        const wrapper = mountNumberField({ props: { increment: input } })
+
+        expect(wrapper.findComponent(NumberFieldIncrement).exists()).toBe(expected)
+      })
+    })
+
+    describe('decrement', () => {
+      it.each(casesDecrement)('muestra decrement=$input como $expected', ({ input, expected }) => {
+        const wrapper = mountNumberField({ props: { decrement: input } })
+
+        expect(wrapper.findComponent(NumberFieldDecrement).exists()).toBe(expected)
       })
     })
 

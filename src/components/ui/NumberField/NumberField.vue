@@ -93,13 +93,13 @@ const propsInput = computed(() => {
 
 <template>
   <NumberFieldRoot v-bind="rootProps" v-model="value" data-test-number-field-root>
-    <NumberFieldDecrement v-bind="decrementProps">
+    <NumberFieldDecrement v-if="props.decrement" v-bind="decrementProps">
       <slot name="decrement">
         <Icon name="minus" v-bind="decrementIconProps" />
       </slot>
     </NumberFieldDecrement>
     <NumberFieldInput v-bind="propsInput" />
-    <NumberFieldIncrement v-bind="incrementProps">
+    <NumberFieldIncrement v-if="props.increment" v-bind="incrementProps">
       <slot name="increment">
         <Icon name="plus" v-bind="incrementIconProps" />
       </slot>

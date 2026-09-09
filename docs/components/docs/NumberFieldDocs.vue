@@ -34,6 +34,18 @@ const propRows: ApiTableRow[] = [
     description: 'Variante visual del campo numérico.',
   },
   {
+    name: 'increment',
+    type: 'boolean',
+    default: String(numberFieldDefaults.increment),
+    description: 'Muestra el control para incrementar el valor.',
+  },
+  {
+    name: 'decrement',
+    type: 'boolean',
+    default: String(numberFieldDefaults.decrement),
+    description: 'Muestra el control para decrementar el valor.',
+  },
+  {
     name: 'disabled',
     type: 'boolean',
     default: String(numberFieldDefaults.disabled),

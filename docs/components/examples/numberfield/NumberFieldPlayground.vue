@@ -9,6 +9,8 @@ type NumberFieldState = {
   name: string | undefined
   size: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   variant: 'outline' | 'plain' | 'subtle' | 'soft'
+  increment: boolean
+  decrement: boolean
   readonly: boolean
   required: boolean
   step: number
@@ -29,6 +31,8 @@ const initialState = (): NumberFieldState => ({
   name: 'quantity',
   size: numberFieldDefaults.size,
   variant: numberFieldDefaults.variant,
+  increment: numberFieldDefaults.increment,
+  decrement: numberFieldDefaults.decrement,
   readonly: false,
   required: false,
   step: 1,
@@ -65,6 +69,8 @@ function generateCode() {
       `  name="${state.value.name.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
     `  size="${state.value.size}"`,
     `  variant="${state.value.variant}"`,
+    `  :increment="${state.value.increment}"`,
+    `  :decrement="${state.value.decrement}"`,
     `  :readonly="${state.value.readonly}"`,
     `  :required="${state.value.required}"`,
     `  :step="${state.value.step}"`,
@@ -166,6 +172,12 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             </option>
           </select>
         </label>
+        <label class="flex items-center gap-2 text-sm"
+          ><input v-model="state.increment" type="checkbox" /> Mostrar increment</label
+        >
+        <label class="flex items-center gap-2 text-sm"
+          ><input v-model="state.decrement" type="checkbox" /> Mostrar decrement</label
+        >
         <label class="flex items-center gap-2 text-sm"
           ><input v-model="state.readonly" type="checkbox" /> Readonly</label
         >

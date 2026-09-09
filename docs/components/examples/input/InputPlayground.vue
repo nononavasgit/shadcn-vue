@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { CheckIcon, SearchIcon } from '@lucide/vue'
 import { compile, defineComponent, markRaw, ref, shallowRef, watch } from 'vue'
-import { Input as BaseInput } from '@/components/ui/Input'
+import { Input as BaseInput, inputDefaults } from '@/components/ui/Input'
 import ComponentPlayground from '../../ComponentPlayground.vue'
 
 const state = ref({
   value: 'Buscar componentes',
+  size: inputDefaults.size,
+  variant: inputDefaults.variant,
+  color: '',
+  highlight: inputDefaults.highlight,
   type: 'text',
   placeholder: 'Escribe algo...',
   disabled: false,
@@ -26,6 +30,10 @@ function escapeAttribute(value: string) {
 function generateCode() {
   const attrs = [
     'v-model:value="value"',
+    `size="${state.value.size}"`,
+    `variant="${state.value.variant}"`,
+    state.value.color && `color="${escapeAttribute(state.value.color)}"`,
+    `:highlight="${state.value.highlight}"`,
     `type="${state.value.type}"`,
     state.value.placeholder && `placeholder="${escapeAttribute(state.value.placeholder)}"`,
     state.value.disabled && 'disabled',
@@ -73,6 +81,10 @@ function syncFromControls() {
 function reset() {
   state.value = {
     value: 'Buscar componentes',
+    size: inputDefaults.size,
+    variant: inputDefaults.variant,
+    color: '',
+    highlight: inputDefaults.highlight,
     type: 'text',
     placeholder: 'Escribe algo...',
     disabled: false,
@@ -112,6 +124,29 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             >Value<input
               v-model="state.value"
               class="rounded-md border bg-background px-3 py-2 text-sm" /></label
+          ><label class="grid gap-1 text-xs"
+            >Size<select
+              v-model="state.size"
+              class="rounded-md border bg-background px-2 py-2 text-sm"
+            >
+              <option v-for="size in ['xs', 'sm', 'md', 'lg', 'xl']" :key="size">{{ size }}</option>
+            </select></label
+          ><label class="grid gap-1 text-xs"
+            >Variant<select
+              v-model="state.variant"
+              class="rounded-md border bg-background px-2 py-2 text-sm"
+            >
+              <option v-for="variant in ['outline', 'plain', 'subtle', 'soft']" :key="variant">
+                {{ variant }}
+              </option>
+            </select></label
+          ><label class="grid gap-1 text-xs"
+            >Color<input
+              v-model="state.color"
+              class="rounded-md border bg-background px-3 py-2 text-sm"
+              placeholder="#ff0000" /></label
+          ><label class="flex items-center gap-2 text-sm"
+            ><input v-model="state.highlight" type="checkbox" /> Highlight</label
           ><label class="grid gap-1 text-xs"
             >Type<select
               v-model="state.type"

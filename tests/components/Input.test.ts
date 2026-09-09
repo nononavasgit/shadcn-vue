@@ -2,8 +2,10 @@ import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import { Input, type InputProps } from '@/components/ui/Input'
+import { Input, type InputProps, type InputSize, type InputVariant } from '@/components/ui/Input'
+import { inputDefaults } from '@/components/ui/Input/default'
 import { testAttrs } from '../utils/testAttrs'
+import { testColor } from '../utils/testColor'
 
 function mountInput(options: MountingOptions<InputProps> = {}) {
   return mount(Input, options)
@@ -15,6 +17,44 @@ const casesValue = [
   { input: undefined, expected: '' },
 ]
 
+const casesSize = [
+  { input: undefined, expected: ['h-9', 'text-base'] },
+  { input: 'xs' as const, expected: ['h-7', 'text-sm'] },
+  { input: 'sm' as const, expected: ['h-8', 'text-sm'] },
+  { input: 'md' as const, expected: ['h-9', 'text-base'] },
+  { input: 'lg' as const, expected: ['h-10', 'text-lg'] },
+  { input: 'xl' as const, expected: ['h-11', 'text-xl'] },
+]
+
+const casesVariant = [
+  {
+    input: undefined,
+    expected: ['rounded-md', 'border', 'border-input', 'bg-transparent', 'shadow-xs'],
+  },
+  {
+    input: 'outline' as const,
+    expected: ['rounded-md', 'border', 'border-input', 'bg-transparent', 'shadow-xs'],
+  },
+  {
+    input: 'plain' as const,
+    expected: ['rounded-md', 'border-input', 'bg-transparent', 'shadow-none'],
+  },
+  {
+    input: 'subtle' as const,
+    expected: ['rounded-md', 'border', 'border-input', 'bg-primary/10', 'shadow-xs'],
+  },
+  {
+    input: 'soft' as const,
+    expected: ['rounded-md', 'border-input', 'bg-primary/10', 'shadow-none'],
+  },
+]
+
+const casesHighlight = [
+  { input: undefined, expected: 'border-input' },
+  { input: false, expected: 'border-input' },
+  { input: true, expected: 'border-primary/40' },
+]
+
 describe('Input', () => {
   describe('props', () => {
     describe('value', () => {
@@ -22,6 +62,95 @@ describe('Input', () => {
         const root = mountInput({ props: { value: input } }).get('[data-test-input-root]')
 
         expect(root.element.value).toBe(expected)
+      })
+    })
+
+    describe('size', () => {
+      it.each(casesSize)('renderiza size=$input', ({ input, expected }) => {
+        const root = mountInput({ props: { size: input as InputSize } }).get(
+          '[data-test-input-group-root]',
+        )
+
+        expect(root.classes()).toEqual(expect.arrayContaining(expected))
+      })
+
+      it('usa md por defecto', () => {
+        const wrapper = mountInput()
+
+        expect(wrapper.vm.$props.size).toBe(inputDefaults.size)
+      })
+    })
+
+    describe('variant', () => {
+      it.each(casesVariant)('renderiza variant=$input', ({ input, expected }) => {
+        const root = mountInput({ props: { variant: input as InputVariant } }).get(
+          '[data-test-input-group-root]',
+        )
+
+        expect(root.classes()).toEqual(expect.arrayContaining(expected))
+      })
+
+      it('usa outline por defecto', () => {
+        const wrapper = mountInput()
+
+        expect(wrapper.vm.$props.variant).toBe(inputDefaults.variant)
+      })
+
+      it.each(['outline', 'plain', 'subtle', 'soft'] as const)(
+        'no modifica el fondo con hover en variant=%s',
+        (variant) => {
+          const root = mountInput({ props: { variant } }).get('[data-test-input-group-root]')
+
+          expect(root.classes().some((className) => className.startsWith('hover:bg-'))).toBe(false)
+          expect(root.classes().some((className) => className.startsWith('active:bg-'))).toBe(false)
+        },
+      )
+    })
+
+    describe('color', () => {
+      testColor({
+        text: 'renderiza color',
+        id: '[data-test-input-group-root]',
+        varColor: '--input-color',
+        mount: (color) => mountInput({ props: { color } }),
+      })
+
+      it('aplica las clases del color personalizado al root', () => {
+        const root = mountInput({ props: { color: '#ff0000' } }).get('[data-test-input-group-root]')
+
+        expect(root.classes()).toEqual(
+          expect.arrayContaining(['focus-within:border-(--input-color)']),
+        )
+      })
+
+      it('aplica el borde del color personalizado cuando highlight está activo', () => {
+        const root = mountInput({
+          props: { color: '#ff0000', highlight: true },
+        }).get('[data-test-input-group-root]')
+
+        expect(root.classes()).toContain('border-(--input-color)/40')
+      })
+
+      it('mantiene el valor con el color de texto normal', () => {
+        const input = mountInput({ props: { variant: 'soft', color: '#ff0000' } }).get(
+          '[data-test-input-root]',
+        )
+
+        expect(input.classes()).toContain('text-foreground')
+      })
+    })
+
+    describe('highlight', () => {
+      it.each(casesHighlight)('renderiza highlight=$input', ({ input, expected }) => {
+        const root = mountInput({ props: { highlight: input } }).get('[data-test-input-group-root]')
+
+        expect(root.classes()).toContain(expected)
+      })
+
+      it('usa false por defecto', () => {
+        const wrapper = mountInput()
+
+        expect(wrapper.vm.$props.highlight).toBe(inputDefaults.highlight)
       })
     })
   })

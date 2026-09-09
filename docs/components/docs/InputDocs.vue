@@ -4,6 +4,30 @@ import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 
 const propRows: ApiTableRow[] = [
   {
+    name: 'size',
+    type: "'xs' | 'sm' | 'md' | 'lg' | 'xl'",
+    default: `'${inputDefaults.size}'`,
+    description: 'Tamaño visual del campo de entrada.',
+  },
+  {
+    name: 'variant',
+    type: "'outline' | 'plain' | 'subtle' | 'soft'",
+    default: `'${inputDefaults.variant}'`,
+    description: 'Variante visual del campo de entrada.',
+  },
+  {
+    name: 'color',
+    type: 'string',
+    default: 'undefined',
+    description: 'Color CSS personalizado para el campo de entrada.',
+  },
+  {
+    name: 'highlight',
+    type: 'boolean',
+    default: String(inputDefaults.highlight),
+    description: 'Activa el borde resaltado de la variante o del color personalizado.',
+  },
+  {
     name: 'value',
     type: 'string',
     default: inputDefaults.value === '' ? "''" : String(inputDefaults.value),

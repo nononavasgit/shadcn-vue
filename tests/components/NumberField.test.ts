@@ -11,6 +11,7 @@ import {
 import {
   NumberField,
   numberFieldDefaults,
+  type NumberFieldSeverity,
   type NumberFieldSize,
   type NumberFieldVariant,
   type NumberFieldProps,
@@ -152,6 +153,17 @@ const casesVariant = [
   { input: 'soft' as const, expected: ['bg-primary/10', 'shadow-none'] },
 ]
 
+const casesSeverity = [
+  { input: 'primary' as const, expected: 'focus-within:border-primary' },
+  {
+    input: 'secondary' as const,
+    expected: 'focus-within:border-secondary-foreground',
+  },
+  { input: 'warning' as const, expected: 'focus-within:border-warning' },
+  { input: 'success' as const, expected: 'focus-within:border-success' },
+  { input: 'error' as const, expected: 'focus-within:border-error' },
+]
+
 const casesIncrement = [
   { input: undefined, expected: true },
   { input: true, expected: true },
@@ -271,6 +283,51 @@ describe('NumberField', () => {
         const wrapper = mountNumberField()
 
         expect(wrapper.vm.$props.variant).toBe(numberFieldDefaults.variant)
+      })
+    })
+
+    describe('severity', () => {
+      it.each(casesSeverity)('renderiza severity=$input', ({ input, expected }) => {
+        const wrapper = mountNumberField({ props: { severity: input as NumberFieldSeverity } })
+
+        expect(wrapper.get('[data-test-number-field-root]').classes()).toContain(expected)
+      })
+
+      it('usa primary por defecto', () => {
+        const wrapper = mountNumberField()
+
+        expect(wrapper.vm.$props.severity).toBe(numberFieldDefaults.severity)
+      })
+    })
+
+    describe('color', () => {
+      it('aplica el color personalizado al root', () => {
+        const root = mountNumberField({ props: { color: '#ff0000' } }).get(
+          '[data-test-number-field-root]',
+        )
+
+        expect(root.attributes('style')).toContain('--number-field-color: #ff0000')
+        expect(root.attributes('style')).toContain('--number-field-color-foreground: #09090b')
+        expect(root.classes()).toEqual(
+          expect.arrayContaining([
+            'focus-within:border-(--number-field-color)',
+            'text-(--number-field-color)',
+          ]),
+        )
+      })
+
+      it('no aplica estilo personalizado si color no está definido', () => {
+        const root = mountNumberField().get('[data-test-number-field-root]')
+
+        expect(root.attributes('style') ?? '').not.toContain('--number-field-color')
+      })
+
+      it('mantiene el número con el color de texto normal', () => {
+        const input = mountNumberField({
+          props: { severity: 'error', color: '#ff0000' },
+        }).getComponent(NumberFieldInput)
+
+        expect(input.classes()).toContain('text-foreground')
       })
     })
 

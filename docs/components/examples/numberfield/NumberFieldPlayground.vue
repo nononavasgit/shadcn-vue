@@ -9,6 +9,8 @@ type NumberFieldState = {
   name: string | undefined
   size: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   variant: 'outline' | 'plain' | 'subtle' | 'soft'
+  severity: 'primary' | 'secondary' | 'warning' | 'success' | 'error'
+  color: string
   increment: boolean
   decrement: boolean
   readonly: boolean
@@ -31,6 +33,8 @@ const initialState = (): NumberFieldState => ({
   name: 'quantity',
   size: numberFieldDefaults.size,
   variant: numberFieldDefaults.variant,
+  severity: numberFieldDefaults.severity,
+  color: '',
   increment: numberFieldDefaults.increment,
   decrement: numberFieldDefaults.decrement,
   readonly: false,
@@ -69,6 +73,9 @@ function generateCode() {
       `  name="${state.value.name.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
     `  size="${state.value.size}"`,
     `  variant="${state.value.variant}"`,
+    `  severity="${state.value.severity}"`,
+    state.value.color &&
+      `  color="${state.value.color.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
     `  :increment="${state.value.increment}"`,
     `  :decrement="${state.value.decrement}"`,
     `  :readonly="${state.value.readonly}"`,
@@ -172,6 +179,26 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             </option>
           </select>
         </label>
+        <label class="grid gap-1 text-xs"
+          >Severity
+          <select
+            v-model="state.severity"
+            class="rounded-md border bg-background px-3 py-2 text-sm"
+          >
+            <option
+              v-for="severity in ['primary', 'secondary', 'warning', 'success', 'error']"
+              :key="severity"
+            >
+              {{ severity }}
+            </option>
+          </select>
+        </label>
+        <label class="grid gap-1 text-xs"
+          >Color<input
+            v-model="state.color"
+            class="rounded-md border bg-background px-3 py-2 text-sm"
+            placeholder="#ff0000"
+        /></label>
         <label class="flex items-center gap-2 text-sm"
           ><input v-model="state.increment" type="checkbox" /> Mostrar increment</label
         >

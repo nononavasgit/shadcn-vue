@@ -34,6 +34,18 @@ const propRows: ApiTableRow[] = [
     description: 'Variante visual del campo numérico.',
   },
   {
+    name: 'severity',
+    type: "'primary' | 'secondary' | 'warning' | 'success' | 'error'",
+    default: `'${numberFieldDefaults.severity}'`,
+    description: 'Severidad visual del campo numérico.',
+  },
+  {
+    name: 'color',
+    type: 'string',
+    default: 'undefined',
+    description: 'Color CSS personalizado para el campo numérico.',
+  },
+  {
     name: 'increment',
     type: 'boolean',
     default: String(numberFieldDefaults.increment),

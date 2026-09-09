@@ -7,6 +7,7 @@ import {
   NumberFieldRoot,
 } from 'reka-ui'
 import { useUi } from '@/composables/useUi'
+import { useColor } from '@/composables'
 import { cn } from '@/lib/utils'
 import { Icon } from '@/components/ui/Icon'
 import { useI18n } from '@/i18n'
@@ -22,6 +23,10 @@ const attrs = useAttrs()
 const value = defineModel<NumberFieldValue>('value')
 defineSlots<NumberFieldSlots>()
 const { t } = useI18n()
+const { colorStyle } = useColor(
+  computed(() => props.color),
+  'number-field',
+)
 
 const iconSize = computed<IconSize>(() => (props.size === 'xl' ? 'lg' : props.size))
 
@@ -51,8 +56,16 @@ const rootProps = computed(() => {
     required: props.required,
     step: props.step,
     stepSnapping: props.stepSnapping,
-    class: cn(numberFieldVariants({ size: props.size, variant: props.variant }), attrs.class),
-    style: attrs.style,
+    class: cn(
+      numberFieldVariants({
+        size: props.size,
+        variant: props.variant,
+        severity: props.severity,
+        color: Boolean(props.color),
+      }),
+      attrs.class,
+    ),
+    style: [colorStyle.value, attrs.style],
   }
 })
 

@@ -1,6 +1,8 @@
 export const numberFieldDefaults = {
   size: 'md' as const,
   variant: 'outline' as const,
+  severity: 'primary' as const,
+  color: undefined,
   increment: true,
   decrement: true,
   min: 0,

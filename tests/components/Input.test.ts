@@ -2,9 +2,10 @@ import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import { Input, type InputProps, type InputSize } from '@/components/ui/Input'
+import { Input, type InputProps, type InputSize, type InputVariant } from '@/components/ui/Input'
 import { inputDefaults } from '@/components/ui/Input/default'
 import { testAttrs } from '../utils/testAttrs'
+import { testColor } from '../utils/testColor'
 
 function mountInput(options: MountingOptions<InputProps> = {}) {
   return mount(Input, options)
@@ -23,6 +24,29 @@ const casesSize = [
   { input: 'md' as const, expected: ['h-9', 'text-base'] },
   { input: 'lg' as const, expected: ['h-10', 'text-lg'] },
   { input: 'xl' as const, expected: ['h-11', 'text-xl'] },
+]
+
+const casesVariant = [
+  {
+    input: undefined,
+    expected: ['rounded-md', 'border', 'bg-transparent', 'shadow-xs'],
+  },
+  {
+    input: 'outline' as const,
+    expected: ['rounded-md', 'border', 'bg-transparent', 'shadow-xs'],
+  },
+  {
+    input: 'plain' as const,
+    expected: ['rounded-md', 'border-transparent', 'bg-transparent', 'shadow-none'],
+  },
+  {
+    input: 'subtle' as const,
+    expected: ['rounded-md', 'border', 'border-primary/20', 'bg-primary/10', 'shadow-xs'],
+  },
+  {
+    input: 'soft' as const,
+    expected: ['rounded-md', 'border-transparent', 'bg-primary/10', 'shadow-none'],
+  },
 ]
 
 describe('Input', () => {
@@ -48,6 +72,50 @@ describe('Input', () => {
         const wrapper = mountInput()
 
         expect(wrapper.vm.$props.size).toBe(inputDefaults.size)
+      })
+    })
+
+    describe('variant', () => {
+      it.each(casesVariant)('renderiza variant=$input', ({ input, expected }) => {
+        const root = mountInput({ props: { variant: input as InputVariant } }).get(
+          '[data-test-input-group-root]',
+        )
+
+        expect(root.classes()).toEqual(expect.arrayContaining(expected))
+      })
+
+      it('usa outline por defecto', () => {
+        const wrapper = mountInput()
+
+        expect(wrapper.vm.$props.variant).toBe(inputDefaults.variant)
+      })
+    })
+
+    describe('color', () => {
+      testColor({
+        text: 'renderiza color',
+        id: '[data-test-input-group-root]',
+        varColor: '--input-color',
+        mount: (color) => mountInput({ props: { color } }),
+      })
+
+      it('aplica las clases del color personalizado al root', () => {
+        const root = mountInput({ props: { color: '#ff0000' } }).get('[data-test-input-group-root]')
+
+        expect(root.classes()).toEqual(
+          expect.arrayContaining([
+            'focus-within:border-(--input-color)',
+            'border-(--input-color)/40',
+          ]),
+        )
+      })
+
+      it('mantiene el valor con el color de texto normal', () => {
+        const input = mountInput({ props: { variant: 'soft', color: '#ff0000' } }).get(
+          '[data-test-input-root]',
+        )
+
+        expect(input.classes()).toContain('text-foreground')
       })
     })
   })

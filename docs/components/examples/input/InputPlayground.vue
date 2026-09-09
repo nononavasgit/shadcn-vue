@@ -7,6 +7,8 @@ import ComponentPlayground from '../../ComponentPlayground.vue'
 const state = ref({
   value: 'Buscar componentes',
   size: inputDefaults.size,
+  variant: inputDefaults.variant,
+  color: '',
   type: 'text',
   placeholder: 'Escribe algo...',
   disabled: false,
@@ -28,6 +30,8 @@ function generateCode() {
   const attrs = [
     'v-model:value="value"',
     `size="${state.value.size}"`,
+    `variant="${state.value.variant}"`,
+    state.value.color && `color="${escapeAttribute(state.value.color)}"`,
     `type="${state.value.type}"`,
     state.value.placeholder && `placeholder="${escapeAttribute(state.value.placeholder)}"`,
     state.value.disabled && 'disabled',
@@ -76,6 +80,8 @@ function reset() {
   state.value = {
     value: 'Buscar componentes',
     size: inputDefaults.size,
+    variant: inputDefaults.variant,
+    color: '',
     type: 'text',
     placeholder: 'Escribe algo...',
     disabled: false,
@@ -122,6 +128,20 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             >
               <option v-for="size in ['xs', 'sm', 'md', 'lg', 'xl']" :key="size">{{ size }}</option>
             </select></label
+          ><label class="grid gap-1 text-xs"
+            >Variant<select
+              v-model="state.variant"
+              class="rounded-md border bg-background px-2 py-2 text-sm"
+            >
+              <option v-for="variant in ['outline', 'plain', 'subtle', 'soft']" :key="variant">
+                {{ variant }}
+              </option>
+            </select></label
+          ><label class="grid gap-1 text-xs"
+            >Color<input
+              v-model="state.color"
+              class="rounded-md border bg-background px-3 py-2 text-sm"
+              placeholder="#ff0000" /></label
           ><label class="grid gap-1 text-xs"
             >Type<select
               v-model="state.type"

@@ -10,6 +10,18 @@ const propRows: ApiTableRow[] = [
     description: 'Tamaño visual del campo de entrada.',
   },
   {
+    name: 'variant',
+    type: "'outline' | 'plain' | 'subtle' | 'soft'",
+    default: `'${inputDefaults.variant}'`,
+    description: 'Variante visual del campo de entrada.',
+  },
+  {
+    name: 'color',
+    type: 'string',
+    default: 'undefined',
+    description: 'Color CSS personalizado para el campo de entrada.',
+  },
+  {
     name: 'value',
     type: 'string',
     default: inputDefaults.value === '' ? "''" : String(inputDefaults.value),

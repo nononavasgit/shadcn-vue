@@ -9,7 +9,7 @@ export { numberFieldDefaults } from './defaults'
 export type NumberFieldValue = RekaNumberFieldRootProps['modelValue']
 
 export const numberFieldVariants = cva(
-  'mt-1 flex items-center rounded-lg border bg-white shadow-sm focus-within:border-primary focus-within:ring-3 focus-within:ring-primary/50 hover:bg-stone-50',
+  'mt-1 flex items-center focus-within:border-primary focus-within:ring-3 focus-within:ring-primary/50',
   {
     variants: {
       size: {
@@ -19,9 +19,16 @@ export const numberFieldVariants = cva(
         lg: 'h-10 text-lg',
         xl: 'h-11 text-xl',
       },
+      variant: {
+        outline: 'rounded-lg border bg-white shadow-sm hover:bg-stone-50',
+        plain: 'rounded-lg border-transparent bg-transparent shadow-none hover:bg-muted',
+        subtle: 'rounded-lg border-primary/20 bg-primary/10 shadow-sm hover:bg-primary/15',
+        soft: 'rounded-lg bg-primary/10 shadow-none hover:bg-primary/20',
+      },
     },
     defaultVariants: {
       size: 'md',
+      variant: 'outline',
     },
   },
 )
@@ -61,6 +68,7 @@ export const numberFieldInputVariants = cva(
 
 export type NumberFieldVariants = VariantProps<typeof numberFieldVariants>
 export type NumberFieldSize = NonNullable<NumberFieldVariants['size']>
+export type NumberFieldVariant = NonNullable<NumberFieldVariants['variant']>
 
 export type NumberFieldFn<T> = () => T
 
@@ -87,6 +95,7 @@ export interface NumberFieldProps extends Pick<
   | 'stepSnapping'
 > {
   size?: NumberFieldSize
+  variant?: NumberFieldVariant
   iconDecrement?: IconConfig
   iconIncrement?: IconConfig
   ui?: NumberFieldUI

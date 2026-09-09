@@ -51,7 +51,7 @@ const rootProps = computed(() => {
     required: props.required,
     step: props.step,
     stepSnapping: props.stepSnapping,
-    class: cn(numberFieldVariants({ size: props.size }), attrs.class),
+    class: cn(numberFieldVariants({ size: props.size, variant: props.variant }), attrs.class),
     style: attrs.style,
   }
 })

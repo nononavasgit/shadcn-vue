@@ -28,6 +28,12 @@ const propRows: ApiTableRow[] = [
     description: 'Tamaño visual del campo y sus controles.',
   },
   {
+    name: 'variant',
+    type: "'outline' | 'plain' | 'subtle' | 'soft'",
+    default: `'${numberFieldDefaults.variant}'`,
+    description: 'Variante visual del campo numérico.',
+  },
+  {
     name: 'disabled',
     type: 'boolean',
     default: String(numberFieldDefaults.disabled),

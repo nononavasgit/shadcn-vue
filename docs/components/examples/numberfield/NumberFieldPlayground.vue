@@ -8,6 +8,7 @@ type NumberFieldState = {
   id: string | undefined
   name: string | undefined
   size: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+  variant: 'outline' | 'plain' | 'subtle' | 'soft'
   readonly: boolean
   required: boolean
   step: number
@@ -27,6 +28,7 @@ const initialState = (): NumberFieldState => ({
   id: undefined,
   name: 'quantity',
   size: numberFieldDefaults.size,
+  variant: numberFieldDefaults.variant,
   readonly: false,
   required: false,
   step: 1,
@@ -62,6 +64,7 @@ function generateCode() {
     state.value.name &&
       `  name="${state.value.name.replaceAll('&', '&amp;').replaceAll('"', '&quot;')}"`,
     `  size="${state.value.size}"`,
+    `  variant="${state.value.variant}"`,
     `  :readonly="${state.value.readonly}"`,
     `  :required="${state.value.required}"`,
     `  :step="${state.value.step}"`,
@@ -153,6 +156,14 @@ watch(state, syncFromControls, { deep: true, immediate: true })
           >Size
           <select v-model="state.size" class="rounded-md border bg-background px-3 py-2 text-sm">
             <option v-for="size in ['xs', 'sm', 'md', 'lg', 'xl']" :key="size">{{ size }}</option>
+          </select>
+        </label>
+        <label class="grid gap-1 text-xs"
+          >Variant
+          <select v-model="state.variant" class="rounded-md border bg-background px-3 py-2 text-sm">
+            <option v-for="variant in ['outline', 'plain', 'subtle', 'soft']" :key="variant">
+              {{ variant }}
+            </option>
           </select>
         </label>
         <label class="flex items-center gap-2 text-sm"

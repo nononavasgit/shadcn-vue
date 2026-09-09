@@ -12,6 +12,7 @@ import {
   NumberField,
   numberFieldDefaults,
   type NumberFieldSize,
+  type NumberFieldVariant,
   type NumberFieldProps,
   type NumberFieldValue,
 } from '@/components/ui/NumberField'
@@ -143,6 +144,14 @@ const casesIconSize = [
   { input: 'xl' as const, expected: 'lg' as const },
 ]
 
+const casesVariant = [
+  { input: undefined, expected: ['border', 'bg-white', 'shadow-sm'] },
+  { input: 'outline' as const, expected: ['border', 'bg-white', 'shadow-sm'] },
+  { input: 'plain' as const, expected: ['border-transparent', 'bg-transparent', 'shadow-none'] },
+  { input: 'subtle' as const, expected: ['border-primary/20', 'bg-primary/10', 'shadow-sm'] },
+  { input: 'soft' as const, expected: ['bg-primary/10', 'shadow-none'] },
+]
+
 describe('NumberField', () => {
   describe('props', () => {
     describe('value', () => {
@@ -222,6 +231,22 @@ describe('NumberField', () => {
 
         expect(wrapper.getComponent(NumberFieldIncrement).props('disabled')).toBe(expected)
         expect(wrapper.getComponent(NumberFieldDecrement).props('disabled')).toBe(expected)
+      })
+    })
+
+    describe('variant', () => {
+      it.each(casesVariant)('renderiza variant=$input', ({ input, expected }) => {
+        const wrapper = mountNumberField({ props: { variant: input as NumberFieldVariant } })
+
+        expect(wrapper.get('[data-test-number-field-root]').classes()).toEqual(
+          expect.arrayContaining(expected),
+        )
+      })
+
+      it('usa outline por defecto', () => {
+        const wrapper = mountNumberField()
+
+        expect(wrapper.vm.$props.variant).toBe(numberFieldDefaults.variant)
       })
     })
 

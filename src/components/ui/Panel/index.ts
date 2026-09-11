@@ -4,6 +4,7 @@ import type { CollapsibleEmits } from '@/components/ui/Collapsible'
 import type { IconConfig } from '@/components/ui/Icon'
 
 export { default as Panel } from './Panel.vue'
+export { panelDefaults } from './default'
 
 export const panelVariants = cva(
   'overflow-hidden rounded-[4px] border bg-card shadow-[0_1px_1px_rgb(0_0_0/0.05)]',
@@ -55,8 +56,7 @@ export type PanelFn<T> = (context: PanelContext) => T
 
 // UI
 export interface PanelUI {
-  root?: PanelFn<HTMLAttributes>
-  header?: PanelFn<HTMLAttributes>
+  trigger?: PanelFn<HTMLAttributes>
   label?: PanelFn<HTMLAttributes>
   arrows?: PanelFn<HTMLAttributes>
   content?: PanelFn<HTMLAttributes>
@@ -64,7 +64,6 @@ export interface PanelUI {
 
 // Context
 export interface PanelContext {
-  props: Omit<PanelProps, 'ui' | 'icon'>
   open: boolean
 }
 

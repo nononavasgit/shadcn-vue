@@ -17,6 +17,11 @@ export const componentMeta = [
     description: 'Panel expandible accesible con trigger, contenido y estado controlado.',
   },
   {
+    slug: 'panel',
+    title: 'Panel',
+    description: 'Panel expandible accesible con estado controlado y personalización por slots.',
+  },
+  {
     slug: 'alert-dialog',
     title: 'AlertDialog',
     description: 'Dialogo modal para confirmar acciones que requieren una decision explicita.',

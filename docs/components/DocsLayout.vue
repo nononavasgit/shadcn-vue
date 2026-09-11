@@ -3,7 +3,6 @@ import { computed, provide, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import DocsHeader from './DocsHeader.vue'
 import ApiTable, { type ApiTableRow } from './docs/ApiTable.vue'
-import ComponentApiExamples from './docs/ComponentApiExamples.vue'
 import { apiRegistryKey, type ApiRegistry } from './docs/apiRegistry'
 import type { ComponentMeta } from '../config/components'
 
@@ -62,69 +61,5 @@ const installationRows = computed<ApiTableRow[]>(() => {
     </div>
 
     <slot />
-
-    <ComponentApiExamples
-      v-if="
-        component &&
-        ![
-          'linear-chart',
-          'meter-group',
-          'pagination',
-          'select',
-          'time',
-          'tree',
-          'toggle',
-          'accordion',
-          'collapsible',
-          'alert-dialog',
-          'announcer',
-          'attachment',
-          'link',
-          'breadcrumb',
-          'dialog',
-          'input-time',
-          'kbd',
-          'kbd-group',
-          'label',
-          'toast',
-          'icon',
-          'badge',
-          'bubble',
-          'button',
-          'avatar',
-          'separator',
-          'alert',
-          'chip',
-          'button-group',
-          'card',
-          'checkbox',
-          'aspect-ratio',
-          'empty',
-          'field-set',
-          'input',
-          'loading',
-          'scroll-area',
-          'ribbon',
-          'search',
-          'switch',
-          'slider',
-          'splitter',
-          'tabs',
-          'textarea',
-          'progress',
-          'progress-circular',
-          'popover',
-          'stepper',
-          'tag-input',
-          'timeline',
-          'tooltip',
-          'marker',
-          'message',
-          'number-field',
-        ].includes(component.slug)
-      "
-      :component-name="component.title"
-      :import-path="importPath"
-    />
   </div>
 </template>

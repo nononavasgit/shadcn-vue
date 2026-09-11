@@ -4,6 +4,7 @@ import AvatarPage from './components/pages/AvatarPage.vue'
 import AnnouncerPage from './components/pages/AnnouncerPage.vue'
 import AccordionPage from './components/pages/AccordionPage.vue'
 import CollapsiblePage from './components/pages/CollapsiblePage.vue'
+import PanelPage from './components/pages/PanelPage.vue'
 import AlertPage from './components/pages/AlertPage.vue'
 import AlertDialogPage from './components/pages/AlertDialogPage.vue'
 import AspectRatioPage from './components/pages/AspectRatioPage.vue'
@@ -88,6 +89,7 @@ export const router = createRouter({
       component: CollapsiblePage,
       meta: { component: componentMetaBySlug.collapsible },
     },
+    { path: '/panel', component: PanelPage, meta: { component: componentMetaBySlug.panel } },
     { path: '/avatar', component: AvatarPage, meta: { component: componentMetaBySlug.avatar } },
     {
       path: '/announcer',

@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import AvatarPage from './components/pages/AvatarPage.vue'
 import AnnouncerPage from './components/pages/AnnouncerPage.vue'
 import AccordionPage from './components/pages/AccordionPage.vue'
+import CollapsiblePage from './components/pages/CollapsiblePage.vue'
 import AlertPage from './components/pages/AlertPage.vue'
 import AlertDialogPage from './components/pages/AlertDialogPage.vue'
 import AspectRatioPage from './components/pages/AspectRatioPage.vue'
@@ -81,6 +82,11 @@ export const router = createRouter({
       path: '/accordion',
       component: AccordionPage,
       meta: { component: componentMetaBySlug.accordion },
+    },
+    {
+      path: '/collapsible',
+      component: CollapsiblePage,
+      meta: { component: componentMetaBySlug.collapsible },
     },
     { path: '/avatar', component: AvatarPage, meta: { component: componentMetaBySlug.avatar } },
     {

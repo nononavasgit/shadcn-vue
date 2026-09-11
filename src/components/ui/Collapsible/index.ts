@@ -1,28 +1,14 @@
 import type { HTMLAttributes } from 'vue'
-import type {
-  CollapsibleContentProps as RekaCollapsibleContentProps,
-  CollapsibleRootProps as RekaCollapsibleRootProps,
-  CollapsibleTriggerProps as RekaCollapsibleTriggerProps,
-} from 'reka-ui'
+import type { CollapsibleRootProps as RekaCollapsibleRootProps } from 'reka-ui'
 
 export { default as Collapsible } from './Collapsible.vue'
+export { collapsibleDefaults } from './default'
 
 // Props Reka
-export type CollapsibleRootProps = Pick<
-  RekaCollapsibleRootProps,
-  'as' | 'asChild' | 'disabled' | 'unmountOnHide'
->
-export type CollapsibleTriggerProps = Pick<RekaCollapsibleTriggerProps, 'as' | 'asChild'>
-export type CollapsibleContentProps = Pick<
-  RekaCollapsibleContentProps,
-  'as' | 'asChild' | 'forceMount'
->
-
+export type CollapsibleRootProps = Pick<RekaCollapsibleRootProps, 'disabled' | 'unmountOnHide'>
 // Props
 export interface CollapsibleProps extends CollapsibleRootProps {
   open?: boolean
-  trigger?: CollapsibleTriggerProps
-  content?: CollapsibleContentProps
   ui?: CollapsibleUI
 }
 
@@ -31,26 +17,22 @@ export type CollapsibleFn<T> = (context: CollapsibleContext) => T
 
 // UI
 export interface CollapsibleUI {
-  root?: CollapsibleFn<HTMLAttributes>
   trigger?: CollapsibleFn<HTMLAttributes>
   content?: CollapsibleFn<HTMLAttributes>
 }
 
 // Context
 export interface CollapsibleContext {
-  props: Omit<CollapsibleProps, 'ui'>
   open: boolean
 }
 
 // Emits
 export interface CollapsibleEmits {
   'update:open': [value: boolean]
-  valueChange: [value: boolean]
 }
 
 // Slots
 export interface CollapsibleSlots {
   default?(props: CollapsibleContext): unknown
-  trigger?(props: CollapsibleContext): unknown
   content?(props: CollapsibleContext): unknown
 }

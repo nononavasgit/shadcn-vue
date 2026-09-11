@@ -22,7 +22,7 @@ import DocsLayout from '../DocsLayout.vue'
           <pre
             class="overflow-x-auto rounded-lg border bg-muted/40 p-4 text-sm"
           ><code>&lt;script setup lang="ts"&gt;
-import { Icon } from '@nononavas/shadcn-vue/components/ui/Icon'
+import { Icon } from '@nono-cn/nono-ui/components/ui/Icon'
 &lt;/script&gt;
 
 &lt;template&gt;

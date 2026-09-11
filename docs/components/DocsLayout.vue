@@ -28,7 +28,7 @@ const importPath = computed(() => {
           .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
           .join('')
 
-  return '@nononavas/shadcn-vue/components/ui/' + folder
+  return '@nono-cn/nono-ui/components/ui/' + folder
 })
 
 const installationRows = computed<ApiTableRow[]>(() => {

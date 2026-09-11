@@ -32,7 +32,7 @@ watch(
 <template>
   <header class="grid gap-4 border-b pb-4">
     <div class="flex flex-wrap items-center justify-between gap-4">
-      <RouterLink to="/" class="text-sm font-semibold tracking-tight">shadcn-vue</RouterLink>
+      <RouterLink to="/" class="text-sm font-semibold tracking-tight">nono-ui</RouterLink>
 
       <div class="flex items-center gap-2">
         <label class="sr-only" for="docs-language">Idioma</label>

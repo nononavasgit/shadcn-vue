@@ -16,11 +16,11 @@ function option(name) {
 
 function help() {
   console.log(`Uso:
-  shadcn-vue init [opciones]
+  nono-ui init [opciones]
 
 Opciones:
   --cwd <directorio>       Proyecto consumidor
-  --package <nombre>       Paquete real (por defecto: @nononavas/shadcn-vue)
+  --package <nombre>       Paquete real (por defecto: @nono-cn/nono-ui)
   --skip-install           Muestra la configuración sin instalar dependencias`)
 }
 

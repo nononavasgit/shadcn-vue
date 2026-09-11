@@ -1,18 +1,18 @@
 {
-  "name": "@nononavas/shadcn-vue",
+  "name": "@nono-cn/nono-ui",
   "version": "0.3.0",
   "description": "Librería personal de componentes Vue con Reka UI y Tailwind CSS",
   "keywords": [
-    "shadcn-vue",
+    "nono-ui",
     "vue"
   ],
-  "homepage": "https://github.com/nononavasgit/shadcn-vue#readme",
+  "homepage": "https://github.com/nono-cn/nono-ui#readme",
   "bugs": {
-    "url": "https://github.com/nononavasgit/shadcn-vue/issues"
+    "url": "https://github.com/nono-cn/nono-ui/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nononavasgit/shadcn-vue.git"
+    "url": "git+https://github.com/nono-cn/nono-ui.git"
   },
   "license": "ISC",
   "author": "José Antonio Navas",
@@ -74,7 +74,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "cli": "node ./bin/shadcn-vue.mjs"
+    "cli": "node ./bin/nono-ui.mjs"
   },
   "dependencies": {
     "@internationalized/date": "^3.12.3",
@@ -121,6 +121,6 @@
     "**/*.css"
   ],
   "bin": {
-    "shadcn-vue": "./bin/shadcn-vue.mjs"
+    "nono-ui": "./bin/nono-ui.mjs"
   }
 }

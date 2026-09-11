@@ -4,7 +4,7 @@
       <div class="mx-auto grid max-w-5xl gap-8">
         <header class="grid gap-2">
           <p class="font-mono text-xs tracking-wide text-muted-foreground uppercase">
-            @nononavas/shadcn-vue
+            @nono-cn/nono-ui
           </p>
           <h1 class="text-3xl font-semibold">Instalación</h1>
           <p class="max-w-2xl text-sm text-muted-foreground">
@@ -26,7 +26,7 @@
             <h2 class="text-xl font-semibold">2. Instalación</h2>
             <pre
               class="overflow-x-auto rounded-lg border bg-card p-4 text-sm text-card-foreground"
-            ><code>npm install @nononavas/shadcn-vue
+            ><code>npm install @nono-cn/nono-ui
 npm install -D tailwindcss @tailwindcss/vite</code></pre>
           </article>
 
@@ -49,7 +49,7 @@ export default defineConfig({
             </p>
             <pre
               class="overflow-x-auto rounded-lg border bg-card p-4 text-sm text-card-foreground"
-            ><code>@import '@nononavas/shadcn-vue/style.css';</code></pre>
+            ><code>@import '@nono-cn/nono-ui/style.css';</code></pre>
             <p class="text-sm text-muted-foreground">
               En la raíz de la aplicación, envuelve el contenido con
               <code class="rounded bg-muted px-1 py-0.5">ConfigProvider</code>:
@@ -57,7 +57,7 @@ export default defineConfig({
             <pre
               class="overflow-x-auto rounded-lg border bg-card p-4 text-sm text-card-foreground"
             ><code>&lt;script setup lang="ts"&gt;
-import { ConfigProvider } from '@nononavas/shadcn-vue/components/provider'
+import { ConfigProvider } from '@nono-cn/nono-ui/components/provider'
 &lt;/script&gt;
 
 &lt;template&gt;
@@ -72,7 +72,7 @@ import { ConfigProvider } from '@nononavas/shadcn-vue/components/provider'
             <pre
               class="overflow-x-auto rounded-lg border bg-card p-4 text-sm text-card-foreground"
             ><code>&lt;script setup lang="ts"&gt;
-import { Button } from '@nononavas/shadcn-vue/components/ui/Button'
+import { Button } from '@nono-cn/nono-ui/components/ui/Button'
 &lt;/script&gt;
 
 &lt;template&gt;
@@ -93,7 +93,7 @@ import { Button } from '@nononavas/shadcn-vue/components/ui/Button'
             </p>
             <pre
               class="overflow-x-auto rounded-lg border bg-card p-4 text-sm text-card-foreground"
-            ><code>import { setLocale } from '@nononavas/shadcn-vue'
+            ><code>import { setLocale } from '@nono-cn/nono-ui'
 
 setLocale('es')</code></pre>
             <p class="text-sm text-muted-foreground">

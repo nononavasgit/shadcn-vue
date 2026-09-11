@@ -12,6 +12,11 @@ export const componentMeta = [
       'Organiza contenido relacionado en secciones expandibles con soporte single y multiple.',
   },
   {
+    slug: 'collapsible',
+    title: 'Collapsible',
+    description: 'Panel expandible accesible con trigger, contenido y estado controlado.',
+  },
+  {
     slug: 'alert-dialog',
     title: 'AlertDialog',
     description: 'Dialogo modal para confirmar acciones que requieren una decision explicita.',

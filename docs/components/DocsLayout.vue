@@ -75,6 +75,7 @@ const installationRows = computed<ApiTableRow[]>(() => {
           'tree',
           'toggle',
           'accordion',
+          'collapsible',
           'alert-dialog',
           'announcer',
           'attachment',

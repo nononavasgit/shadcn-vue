@@ -201,7 +201,12 @@ function getGroupLabelProps(context: ListboxGroupContext) {
     <ListboxContent v-bind="contentProps" data-test-listbox-content>
       <div v-if="props.loading" v-bind="loadingProps" data-test-listbox-loading>
         <slot name="loading" v-bind="listboxContext">
-          <Icon name="spinner" class="animate-spin" aria-hidden="true" />
+          <Icon
+            name="spinner"
+            class="animate-spin"
+            aria-hidden="true"
+            data-test-listbox-loading-icon
+          />
         </slot>
       </div>
       

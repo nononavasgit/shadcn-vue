@@ -197,6 +197,7 @@ describe('Listbox', () => {
 
         expect(listbox.find('[data-test-listbox-loading]').exists()).toBe(expected)
       })
+
     })
 
     describe('filter', () => {
@@ -231,6 +232,31 @@ describe('Listbox', () => {
         })
 
         expect(listbox.get('[data-test-listbox-no-results]').text()).toBe(expected)
+      })
+    })
+  })
+
+  describe('slots', () => {
+    describe('loading', () => {
+      it('renderiza el spinner por defecto', () => {
+        const listbox = mountListbox(undefined, { props: { loading: true } })
+        const icon = listbox.findComponent('[data-test-listbox-loading-icon]')
+
+        expect(icon.props('name')).toBe('spinner')
+        expect(icon.exists()).toBe(true)
+        expect(icon.classes()).toContain('animate-spin')
+      })
+
+      it('permite sobrescribir el spinner mediante el slot', () => {
+        const listbox = mountListbox(undefined, {
+          props: { loading: true },
+          slots: { loading: 'Cargando opciones personalizadas' },
+        })
+
+        expect(listbox.get('[data-test-listbox-loading]').text()).toBe(
+          'Cargando opciones personalizadas',
+        )
+        expect(listbox.find('[data-test-listbox-loading-icon]').exists()).toBe(false)
       })
     })
   })

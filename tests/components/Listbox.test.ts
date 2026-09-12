@@ -64,6 +64,18 @@ const casesSelectionBehavior = [
   { input: undefined, expected: 'toggle' },
 ]
 
+const casesLoading = [
+  { input: true, expected: true },
+  { input: false, expected: false },
+  { input: undefined, expected: false },
+]
+
+const casesFilter = [
+  { input: true, expected: true },
+  { input: false, expected: false },
+  { input: undefined, expected: false },
+]
+
 const casesName = [
   { input: 'fruits', expected: 'fruits' },
   { input: undefined, expected: undefined },
@@ -165,6 +177,22 @@ describe('Listbox', () => {
         const listbox = mountListbox(undefined, { props: { required: input } })
 
         expect(listbox.getComponent(ListboxRoot).props('required')).toBe(expected)
+      })
+    })
+
+    describe('loading', () => {
+      it.each(casesLoading)('renderiza loading=$input', ({ input, expected }) => {
+        const listbox = mountListbox(undefined, { props: { loading: input } })
+
+        expect(listbox.find('[data-test-listbox-loading]').exists()).toBe(expected)
+      })
+    })
+
+    describe('filter', () => {
+      it.each(casesFilter)('renderiza filter=$input', ({ input, expected }) => {
+        const listbox = mountListbox(undefined, { props: { filter: input } })
+
+        expect(listbox.find('[data-test-listbox-filter]').exists()).toBe(expected)
       })
     })
   })

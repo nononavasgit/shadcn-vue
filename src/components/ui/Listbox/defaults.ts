@@ -1,5 +1,7 @@
 export const listboxDefaults = {
   disabled: false,
+  name: undefined,
+  required: false,
   multiple: false,
   orientation: 'vertical' as const,
   selectionBehavior: 'toggle' as const,

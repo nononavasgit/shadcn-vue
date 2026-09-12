@@ -58,6 +58,23 @@ const casesOrientation = [
   { input: undefined, expected: 'vertical' },
 ]
 
+const casesSelectionBehavior = [
+  { input: 'toggle' as const, expected: 'toggle' },
+  { input: 'replace' as const, expected: 'replace' },
+  { input: undefined, expected: 'toggle' },
+]
+
+const casesName = [
+  { input: 'fruits', expected: 'fruits' },
+  { input: undefined, expected: undefined },
+]
+
+const casesRequired = [
+  { input: true, expected: true },
+  { input: false, expected: false },
+  { input: undefined, expected: false },
+]
+
 describe('Listbox', () => {
   describe('props', () => {
     /** describe('items', () => {
@@ -106,7 +123,6 @@ describe('Listbox', () => {
           expect(listbox.getComponent(ListboxRoot).props('highlightOnHover')).toBe(expected)
         },
       )
-      })
     })
 
     describe('multiple', () => {
@@ -124,4 +140,32 @@ describe('Listbox', () => {
         expect(listbox.getComponent(ListboxRoot).props('orientation')).toBe(expected)
       })
     })
+
+    describe('selectionBehavior', () => {
+      it.each(casesSelectionBehavior)(
+        'pasa selectionBehavior=$input a ListboxRoot',
+        ({ input, expected }) => {
+          const listbox = mountListbox(undefined, { props: { selectionBehavior: input } })
+
+          expect(listbox.getComponent(ListboxRoot).props('selectionBehavior')).toBe(expected)
+        },
+      )
+    })
+
+    describe('name', () => {
+      it.each(casesName)('pasa name=$input a ListboxRoot', ({ input, expected }) => {
+        const listbox = mountListbox(undefined, { props: { name: input } })
+
+        expect(listbox.getComponent(ListboxRoot).props('name')).toBe(expected)
+      })
+    })
+
+    describe('required', () => {
+      it.each(casesRequired)('pasa required=$input a ListboxRoot', ({ input, expected }) => {
+        const listbox = mountListbox(undefined, { props: { required: input } })
+
+        expect(listbox.getComponent(ListboxRoot).props('required')).toBe(expected)
+      })
+    })
+  })
 })

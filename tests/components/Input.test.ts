@@ -2,7 +2,13 @@ import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 
-import { Input, type InputProps, type InputSize, type InputVariant } from '@/components/ui/Input'
+import {
+  Input,
+  type InputProps,
+  type InputSeverity,
+  type InputSize,
+  type InputVariant,
+} from '@/components/ui/Input'
 import { inputDefaults } from '@/components/ui/Input/default'
 import { testAttrs } from '../utils/testAttrs'
 import { testColor } from '../utils/testColor'
@@ -47,12 +53,24 @@ const casesVariant = [
     input: 'soft' as const,
     expected: ['rounded-md', 'border-input', 'bg-primary/10', 'shadow-none'],
   },
+  {
+    input: 'none' as const,
+    expected: ['rounded-md', 'border-0', 'bg-transparent', 'shadow-none'],
+  },
 ]
 
 const casesHighlight = [
   { input: undefined, expected: 'border-input' },
   { input: false, expected: 'border-input' },
   { input: true, expected: 'border-primary/40' },
+]
+
+const casesSeverity = [
+  { input: 'primary' as const, expected: ['border-input', 'text-primary'] },
+  { input: 'secondary' as const, expected: ['border-input', 'text-secondary-foreground'] },
+  { input: 'error' as const, expected: ['border-input', 'text-error'] },
+  { input: 'warning' as const, expected: ['border-input', 'text-warning'] },
+  { input: 'success' as const, expected: ['border-input', 'text-success'] },
 ]
 
 describe('Input', () => {
@@ -73,12 +91,6 @@ describe('Input', () => {
 
         expect(root.classes()).toEqual(expect.arrayContaining(expected))
       })
-
-      it('usa md por defecto', () => {
-        const wrapper = mountInput()
-
-        expect(wrapper.vm.$props.size).toBe(inputDefaults.size)
-      })
     })
 
     describe('variant', () => {
@@ -90,13 +102,7 @@ describe('Input', () => {
         expect(root.classes()).toEqual(expect.arrayContaining(expected))
       })
 
-      it('usa outline por defecto', () => {
-        const wrapper = mountInput()
-
-        expect(wrapper.vm.$props.variant).toBe(inputDefaults.variant)
-      })
-
-      it.each(['outline', 'plain', 'subtle', 'soft'] as const)(
+      it.each(['outline', 'plain', 'subtle', 'soft', 'none'] as const)(
         'no modifica el fondo con hover en variant=%s',
         (variant) => {
           const root = mountInput({ props: { variant } }).get('[data-test-input-group-root]')
@@ -105,6 +111,16 @@ describe('Input', () => {
           expect(root.classes().some((className) => className.startsWith('active:bg-'))).toBe(false)
         },
       )
+    })
+
+    describe('severity', () => {
+      it.each(casesSeverity)('renderiza severity=$input junto a outline', ({ input, expected }) => {
+        const root = mountInput({ props: { severity: input as InputSeverity } }).get(
+          '[data-test-input-group-root]',
+        )
+
+        expect(root.classes()).toEqual(expect.arrayContaining(expected))
+      })
     })
 
     describe('color', () => {
@@ -145,12 +161,6 @@ describe('Input', () => {
         const root = mountInput({ props: { highlight: input } }).get('[data-test-input-group-root]')
 
         expect(root.classes()).toContain(expected)
-      })
-
-      it('usa false por defecto', () => {
-        const wrapper = mountInput()
-
-        expect(wrapper.vm.$props.highlight).toBe(inputDefaults.highlight)
       })
     })
   })

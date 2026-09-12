@@ -16,8 +16,17 @@ export const inputVariants = cva('', {
     variant: {
       outline: 'rounded-md border bg-transparent shadow-xs',
       plain: 'rounded-md border-transparent bg-transparent shadow-none',
+      none: 'rounded-md border-0 bg-transparent shadow-none',
       subtle: 'rounded-md border shadow-xs',
       soft: 'rounded-md border-transparent shadow-none',
+    },
+    severity: {
+      primary: 'focus-within:border-primary focus-within:ring-primary/50',
+      secondary:
+        'focus-within:border-secondary-foreground focus-within:ring-secondary-foreground/20',
+      error: 'focus-within:border-error focus-within:ring-error/30',
+      warning: 'focus-within:border-warning focus-within:ring-warning/30',
+      success: 'focus-within:border-success focus-within:ring-success/30',
     },
     color: {
       true: 'focus-within:border-(--input-color) focus-within:ring-(--input-color)/30',
@@ -29,39 +38,52 @@ export const inputVariants = cva('', {
     },
   },
   compoundVariants: [
-    {
-      variant: 'outline',
-      class: 'text-primary',
-    },
-    {
-      variant: 'plain',
-      class: 'text-primary',
-    },
-    {
-      variant: 'subtle',
-      class: 'bg-primary/10 text-primary',
-    },
-    {
-      variant: 'soft',
-      class: 'bg-primary/10 text-primary',
-    },
+    { variant: 'none', class: 'focus-within:border-0 focus-within:ring-0' },
+    { variant: 'outline', severity: 'primary', class: 'text-primary' },
+    { variant: 'plain', severity: 'primary', class: 'text-primary' },
+    { variant: 'subtle', severity: 'primary', class: 'bg-primary/10 text-primary' },
+    { variant: 'soft', severity: 'primary', class: 'bg-primary/10 text-primary' },
+    { variant: 'outline', severity: 'secondary', class: 'text-secondary-foreground' },
+    { variant: 'plain', severity: 'secondary', class: 'text-secondary-foreground' },
+    { variant: 'subtle', severity: 'secondary', class: 'bg-secondary/60 text-secondary-foreground' },
+    { variant: 'soft', severity: 'secondary', class: 'bg-secondary/60 text-secondary-foreground' },
+    { variant: 'outline', severity: 'error', class: 'text-error' },
+    { variant: 'plain', severity: 'error', class: 'text-error' },
+    { variant: 'subtle', severity: 'error', class: 'bg-error/10 text-error' },
+    { variant: 'soft', severity: 'error', class: 'bg-error/10 text-error' },
+    { variant: 'outline', severity: 'warning', class: 'text-warning' },
+    { variant: 'plain', severity: 'warning', class: 'text-warning' },
+    { variant: 'subtle', severity: 'warning', class: 'bg-warning/10 text-warning' },
+    { variant: 'soft', severity: 'warning', class: 'bg-warning/10 text-warning' },
+    { variant: 'outline', severity: 'success', class: 'text-success' },
+    { variant: 'plain', severity: 'success', class: 'text-success' },
+    { variant: 'subtle', severity: 'success', class: 'bg-success/10 text-success' },
+    { variant: 'soft', severity: 'success', class: 'bg-success/10 text-success' },
+    { severity: 'secondary', highlight: true, class: 'border-secondary-foreground/30' },
+    { severity: 'error', highlight: true, class: 'border-error/40' },
+    { severity: 'warning', highlight: true, class: 'border-warning/40' },
+    { severity: 'success', highlight: true, class: 'border-success/40' },
     {
       highlight: true,
+      severity: 'primary',
       variant: 'outline',
       class: 'border-primary/40',
     },
     {
       highlight: true,
+      severity: 'primary',
       variant: 'plain',
       class: 'border-primary/40',
     },
     {
       highlight: true,
+      severity: 'primary',
       variant: 'subtle',
       class: 'border-primary/20',
     },
     {
       highlight: true,
+      severity: 'primary',
       variant: 'soft',
       class: 'border-primary/40',
     },
@@ -113,6 +135,7 @@ export const inputVariants = cva('', {
   defaultVariants: {
     size: 'md',
     variant: 'outline',
+    severity: 'primary',
     color: false,
     highlight: false,
   },
@@ -121,6 +144,7 @@ export const inputVariants = cva('', {
 export type InputVariants = VariantProps<typeof inputVariants>
 export type InputSize = NonNullable<InputVariants['size']>
 export type InputVariant = NonNullable<InputVariants['variant']>
+export type InputSeverity = NonNullable<InputVariants['severity']>
 
 export type InputValue = string
 
@@ -129,6 +153,7 @@ export interface InputProps {
   value?: InputValue
   size?: InputSize
   variant?: InputVariant
+  severity?: InputSeverity
   color?: string
   highlight?: boolean
 }

@@ -124,11 +124,11 @@ const casesRequired = [
 ]
 
 const casesSeverity = [
-  { input: 'primary' as const, expected: 'focus-within:border-primary' },
-  { input: 'secondary' as const, expected: 'focus-within:border-secondary-foreground' },
-  { input: 'error' as const, expected: 'focus-within:border-error' },
-  { input: 'warning' as const, expected: 'focus-within:border-warning' },
-  { input: 'success' as const, expected: 'focus-within:border-success' },
+  { input: 'primary' as const, expected: 'has-[:focus-visible]:border-primary' },
+  { input: 'secondary' as const, expected: 'has-[:focus-visible]:border-secondary-foreground' },
+  { input: 'error' as const, expected: 'has-[:focus-visible]:border-error' },
+  { input: 'warning' as const, expected: 'has-[:focus-visible]:border-warning' },
+  { input: 'success' as const, expected: 'has-[:focus-visible]:border-success' },
 ]
 
 const casesItemDisabled = [

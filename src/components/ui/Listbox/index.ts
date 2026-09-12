@@ -4,15 +4,13 @@ import type { IconConfig } from '@/components/ui/Icon'
 import type { NormalizeInputProps } from '@/components/ui/Input'
 
 export { default as Listbox } from './Listbox.vue'
+export { listboxDefaults } from './defaults'
 
 export type ListboxValue = string | number
 export type ListboxModelValue = ListboxValue | ListboxValue[] | undefined
 export type ListboxRootProps = Pick<
   RekaListboxRootProps<ListboxValue>,
-  | 'as'
-  | 'asChild'
   | 'by'
-  | 'dir'
   | 'disabled'
   | 'highlightOnHover'
   | 'multiple'
@@ -37,11 +35,13 @@ export interface ListboxGroup {
 }
 
 export interface ListboxProps extends ListboxRootProps {
+  loading?: boolean
   value?: ListboxModelValue
   search?: string
   filter?: boolean
   ignoreFilter?: boolean
-  filterInput?: NormalizeInputProps
+  inputFilter?: NormalizeInputProps
+  iconFilter?: IconConfig
   emptyText?: string
   noResultsText?: string
   items?: ListboxItem[]
@@ -55,10 +55,10 @@ export type ListboxGroupFn<T> = (context: ListboxGroupContext) => T
 
 export interface ListboxUI {
   root?: ListboxFn<HTMLAttributes>
-  filter?: ListboxFn<HTMLAttributes>
   content?: ListboxFn<HTMLAttributes>
   empty?: ListboxFn<HTMLAttributes>
   noResults?: ListboxFn<HTMLAttributes>
+  loading?: ListboxFn<HTMLAttributes>
   group?: ListboxGroupFn<HTMLAttributes>
   groupLabel?: ListboxGroupFn<HTMLAttributes>
   item?: ListboxItemFn<HTMLAttributes>
@@ -67,7 +67,6 @@ export interface ListboxUI {
 }
 
 export interface ListboxContext {
-  props: Omit<ListboxProps, 'ui'>
   value: ListboxModelValue
   search: string
 }
@@ -88,8 +87,6 @@ export interface ListboxGroupContext extends ListboxContext {
 export interface ListboxEmits {
   'update:value': [value: ListboxModelValue]
   'update:search': [value: string]
-  valueChange: [value: ListboxModelValue]
-  searchChange: [value: string]
 }
 
 export type ListboxSlots = {
@@ -100,10 +97,6 @@ export type ListboxSlots = {
   'group-label'?(props: ListboxGroupContext): unknown
   empty?(props: ListboxContext): unknown
   'no-results'?(props: ListboxContext): unknown
+  loading?(props: ListboxContext): unknown
   indicator?(props: ListboxItemContext): unknown
-} & {
-  [name: `item-${string}`]: ((props: ListboxItemContext) => unknown) | undefined
-  [name: `item-leading-${string}`]: ((props: ListboxItemContext) => unknown) | undefined
-  [name: `group-${string}`]: ((props: ListboxGroupContext) => unknown) | undefined
-  [name: `group-label-${string}`]: ((props: ListboxGroupContext) => unknown) | undefined
 }

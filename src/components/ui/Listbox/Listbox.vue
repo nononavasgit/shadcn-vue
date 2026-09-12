@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { computed, useAttrs, watch } from 'vue'
+import { computed, useAttrs } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ListboxContent, ListboxGroup, ListboxGroupLabel, ListboxRoot } from 'reka-ui'
 import { Input } from '@/components/ui/Input'
+import { Icon } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import ListboxOption from './ListboxOption.vue'
+import { listboxDefaults } from './defaults'
 import type {
   ListboxContext,
   ListboxGroupContext,
@@ -16,40 +18,15 @@ import type {
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<ListboxProps>(), {
-  orientation: 'vertical',
-  selectionBehavior: 'toggle',
-  highlightOnHover: true,
-  filter: false,
-  ignoreFilter: false,
-  items: () => [],
-  groups: () => [],
-  ui: undefined,
-})
+const props = withDefaults(defineProps<ListboxProps>(), listboxDefaults)
 defineSlots<ListboxSlots>()
-const emit = defineEmits<{
-  valueChange: [value: ListboxProps['value']]
-  searchChange: [value: string]
-}>()
-
 const attrs = useAttrs()
 const { t } = useI18n()
 const value = defineModel<ListboxProps['value']>('value')
 const search = defineModel<string>('search', { default: '' })
 
-watch(value, (nextValue, previousValue) => {
-  if (nextValue !== previousValue) emit('valueChange', nextValue)
-})
-
-watch(search, (nextValue, previousValue) => {
-  if (nextValue !== previousValue) emit('searchChange', nextValue)
-})
-
 const listboxContext = computed<ListboxContext>(() => {
-  const { ui, ...listboxProps } = props
-  void ui
-
-  return { props: listboxProps, value: value.value, search: search.value }
+  return { value: value.value, search: search.value }
 })
 
 const rootProps = computed(() => {
@@ -57,10 +34,7 @@ const rootProps = computed(() => {
 
   return {
     ...ui,
-    as: props.as,
-    asChild: props.asChild,
     by: props.by,
-    dir: props.dir,
     disabled: props.disabled,
     highlightOnHover: props.highlightOnHover,
     multiple: props.multiple,
@@ -91,18 +65,14 @@ const contentProps = computed(() => {
 })
 
 const filterProps = computed(() => {
-  const ui = useUi(props.ui?.filter, listboxContext.value)
-
   return {
-    ...ui,
-    ...props.filterInput,
-    disabled: props.disabled || props.filterInput?.disabled,
+    ...props.inputFilter,
+    disabled: props.disabled || props.inputFilter?.disabled,
     class: cn(
-      'mb-1 focus-visible:border-input focus-visible:ring-0',
-      props.filterInput?.class,
-      ui.class,
+      'mb-1',
+      props.inputFilter?.class,
     ),
-    style: [props.filterInput?.style, ui.style],
+    style: props.inputFilter?.style,
   }
 })
 
@@ -171,6 +141,17 @@ const noResultsProps = computed(() => {
   }
 })
 
+const loadingProps = computed(() => {
+  const ui = useUi(props.ui?.loading, listboxContext.value)
+  return {
+    ...ui,
+    role: 'status',
+    'aria-live': 'polite',
+    class: cn('grid place-items-center px-2 py-6 text-sm text-muted-foreground', ui.class),
+    style: ui.style,
+  }
+})
+
 function getGroupItemContexts(context: ListboxGroupContext): ListboxItemContext[] {
   return context.group.items.map((item, index) => ({
     ...listboxContext.value,
@@ -202,31 +183,35 @@ function getGroupLabelProps(context: ListboxGroupContext) {
   }
 }
 
-function getGroupSlotNames(context: ListboxGroupContext) {
-  return {
-    group: `group-${context.group.id}` as `group-${string}`,
-    label: `group-label-${context.group.id}` as `group-label-${string}`,
-  }
-}
 </script>
 
 <template>
-  <ListboxRoot v-model="value" v-bind="rootProps" data-slot="listbox">
+  <ListboxRoot v-model="value" v-bind="rootProps" data-test-listbox-root>
     <Input
       v-if="props.filter"
       v-model:value="search"
       v-bind="filterProps"
-      data-slot="listbox-filter"
-    />
+      data-test-listbox-filter
+    >
+      <template v-if="props.iconFilter" #leading>
+        <Icon v-bind="props.iconFilter" />
+      </template>
+    </Input>
 
-    <ListboxContent v-bind="contentProps" data-slot="listbox-content">
-      <div v-if="showEmpty" v-bind="emptyProps" data-slot="listbox-empty">
+    <ListboxContent v-bind="contentProps" data-test-listbox-content>
+      <div v-if="props.loading" v-bind="loadingProps" data-test-listbox-loading>
+        <slot name="loading" v-bind="listboxContext">
+          <Icon name="spinner" class="animate-spin" aria-hidden="true" />
+        </slot>
+      </div>
+      
+      <div v-else-if="showEmpty" v-bind="emptyProps" data-test-listbox-empty>
         <slot name="empty" v-bind="listboxContext">
           {{ props.emptyText ?? t('empty') }}
         </slot>
       </div>
 
-      <div v-else-if="showNoResults" v-bind="noResultsProps" data-slot="listbox-no-results">
+      <div v-else-if="showNoResults" v-bind="noResultsProps" data-test-listbox-no-results>
         <slot name="no-results" v-bind="listboxContext">
           {{ props.noResultsText ?? t('noResults') }}
         </slot>
@@ -238,21 +223,18 @@ function getGroupSlotNames(context: ListboxGroupContext) {
             v-for="groupContext in groupContexts"
             :key="groupContext.group.id"
             v-bind="getGroupProps(groupContext)"
-            data-slot="listbox-group"
+            data-test-listbox-group
           >
-            <slot :name="getGroupSlotNames(groupContext).group" v-bind="groupContext">
-              <slot name="group" v-bind="groupContext">
-                <ListboxGroupLabel
-                  v-if="groupContext.group.label"
-                  v-bind="getGroupLabelProps(groupContext)"
-                  data-slot="listbox-group-label"
-                >
-                  <slot :name="getGroupSlotNames(groupContext).label" v-bind="groupContext">
-                    <slot name="group-label" v-bind="groupContext">
-                      {{ groupContext.group.label }}
-                    </slot>
-                  </slot>
-                </ListboxGroupLabel>
+            <slot name="group" v-bind="groupContext">
+              <ListboxGroupLabel
+                v-if="groupContext.group.label"
+                v-bind="getGroupLabelProps(groupContext)"
+                  data-test-listbox-group-label
+              >
+                <slot name="group-label" v-bind="groupContext">
+                  {{ groupContext.group.label }}
+                </slot>
+              </ListboxGroupLabel>
 
                 <ListboxOption
                   v-for="itemContext in getGroupItemContexts(groupContext)"
@@ -264,7 +246,6 @@ function getGroupSlotNames(context: ListboxGroupContext) {
                     <slot :name="name" v-bind="slotProps" />
                   </template>
                 </ListboxOption>
-              </slot>
             </slot>
           </ListboxGroup>
         </template>

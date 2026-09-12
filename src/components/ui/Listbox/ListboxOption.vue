@@ -43,29 +43,22 @@ const indicatorProps = computed(() => {
 
 const iconProps = computed<IconProps>(() => props.context.item.icon!)
 
-const key = computed(() => props.context.item.id ?? String(props.context.item.value))
-const itemSlot = computed(() => `item-${key.value}` as `item-${string}`)
-const leadingSlot = computed(() => `item-leading-${key.value}` as `item-leading-${string}`)
 </script>
 
 <template>
-  <RekaListboxItem v-bind="itemProps" data-slot="listbox-item">
-    <slot :name="itemSlot" v-bind="context">
-      <slot name="item" v-bind="context">
-        <slot :name="leadingSlot" v-bind="context">
-          <slot name="item-leading" v-bind="context">
-            <Icon v-if="context.item.icon" v-bind="iconProps" data-slot="listbox-item-icon" />
-          </slot>
-        </slot>
-
-        <span v-bind="labelProps">{{ context.item.label }}</span>
-
-        <RekaListboxItemIndicator v-bind="indicatorProps" data-slot="listbox-item-indicator">
-          <slot name="indicator" v-bind="context">
-            <Icon name="check" class="size-4" />
-          </slot>
-        </RekaListboxItemIndicator>
+  <RekaListboxItem v-bind="itemProps" data-test-listbox-item>
+    <slot name="item" v-bind="context">
+      <slot name="item-leading" v-bind="context">
+        <Icon v-if="context.item.icon" v-bind="iconProps" data-test-listbox-item-icon />
       </slot>
+
+      <span v-bind="labelProps">{{ context.item.label }}</span>
+
+      <RekaListboxItemIndicator v-bind="indicatorProps" data-test-listbox-item-indicator>
+        <slot name="indicator" v-bind="context">
+          <Icon name="check" class="size-4" />
+        </slot>
+      </RekaListboxItemIndicator>
     </slot>
   </RekaListboxItem>
 </template>

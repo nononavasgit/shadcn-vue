@@ -35,12 +35,17 @@ const itemProps = computed(() => {
 })
 
 const labelProps = computed(() => {
-  const ui = useUi(props.ui?.label, props.context)
+  const ui = useUi(props.ui?.itemLabel, props.context)
   return { ...ui, class: cn('flex-1', ui.class), style: ui.style }
 })
 
+const itemLeadingProps = computed(() => {
+  const ui = useUi(props.ui?.itemLeading, props.context)
+  return { ...ui, class: cn('flex items-center', ui.class), style: ui.style }
+})
+
 const indicatorProps = computed(() => {
-  const ui = useUi(props.ui?.indicator, props.context)
+  const ui = useUi(props.ui?.itemIndicator, props.context)
   return { ...ui, class: cn('ml-auto flex size-4 items-center justify-center', ui.class) }
 })
 
@@ -51,14 +56,18 @@ const iconProps = computed<IconProps>(() => props.context.item.icon!)
 <template>
   <RekaListboxItem v-bind="itemProps" data-test-listbox-item>
     <slot name="item" v-bind="context">
-      <slot name="item-leading" v-bind="context">
-        <Icon v-if="context.item.icon" v-bind="iconProps" data-test-listbox-item-icon />
-      </slot>
+      <div v-bind="itemLeadingProps" data-test-listbox-item-leading>
+        <slot name="item-leading" v-bind="context">
+          <Icon v-if="context.item.icon" v-bind="iconProps" data-test-listbox-item-icon />
+        </slot>
+      </div>
 
-      <span v-bind="labelProps">{{ context.item.label }}</span>
+      <span v-bind="labelProps" data-test-listbox-item-label>
+        <slot name="item-label" v-bind="context">{{ context.item.label }}</slot>
+      </span>
 
       <RekaListboxItemIndicator v-bind="indicatorProps" data-test-listbox-item-indicator>
-        <slot name="indicator" v-bind="context">
+        <slot name="item-indicator" v-bind="context">
           <Icon name="check" class="size-4" />
         </slot>
       </RekaListboxItemIndicator>

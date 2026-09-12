@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/Input'
 import { i18n } from '@/i18n'
 import { testIconProps } from '../utils/testIconProps'
 import { testInputConfig } from '../utils/testInputConfig'
+import { testAttrs } from '../utils/testAttrs'
 
 Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
   value: vi.fn(),
@@ -14,7 +15,10 @@ Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
 })
 
 const casesItems = {
-  normal: [{ value: 'apple', label: 'Manzana' }, { value: 'banana', label: 'Plátano' }],
+  normal: [
+    { value: 'apple', label: 'Manzana' },
+    { value: 'banana', label: 'Plátano' },
+  ],
   grouped: [{ value: 'apple', label: 'Manzana' }],
   many: Array.from({ length: 50 }, (_, index) => ({
     value: index,
@@ -22,10 +26,7 @@ const casesItems = {
   })),
 }
 
-function mountListbox(
-  items = casesItems.normal,
-  options: MountingOptions<ListboxProps> = {},
-) {
+function mountListbox(items = casesItems.normal, options: MountingOptions<ListboxProps> = {}) {
   return mount(Listbox, {
     ...options,
     global: { plugins: [i18n], ...options.global },
@@ -37,9 +38,9 @@ function mountListbox(
 }
 
 const casesValue = [
-    { input: 'banana', expected: 'banana' },
-    { input: undefined, expected: undefined },
-    { input: ['apple', 'banana'], expected: ['apple', 'banana'] },
+  { input: 'banana', expected: 'banana' },
+  { input: undefined, expected: undefined },
+  { input: ['apple', 'banana'], expected: ['apple', 'banana'] },
 ]
 
 const casesDisabled = [
@@ -137,6 +138,105 @@ const casesGroups = [
 
 describe('Listbox', () => {
   describe('props', () => {
+    describe('ui', () => {
+      describe('root', () => {
+        testAttrs({
+          id: '[data-test-listbox-root]',
+          mount: (attrs) => mountListbox(undefined, { props: { ui: { root: () => attrs } } }),
+        })
+      })
+
+      describe('content', () => {
+        testAttrs({
+          id: '[data-test-listbox-content]',
+          mount: (attrs) => mountListbox(undefined, { props: { ui: { content: () => attrs } } }),
+        })
+      })
+
+      describe('empty', () => {
+        testAttrs({
+          id: '[data-test-listbox-empty]',
+          mount: (attrs) => mountListbox([], { props: { ui: { empty: () => attrs } } }),
+        })
+      })
+
+      describe('noResults', () => {
+        testAttrs({
+          id: '[data-test-listbox-no-results]',
+          mount: (attrs) =>
+            mountListbox(undefined, {
+              props: { filter: true, search: 'missing', ui: { noResults: () => attrs } },
+            }),
+        })
+      })
+
+      describe('loading', () => {
+        testAttrs({
+          id: '[data-test-listbox-loading]',
+          mount: (attrs) =>
+            mountListbox(undefined, { props: { loading: true, ui: { loading: () => attrs } } }),
+        })
+      })
+
+      describe('group', () => {
+        testAttrs({
+          id: '[data-test-listbox-group]',
+          mount: (attrs) =>
+            mountListbox([], {
+              props: {
+                groups: [
+                  { id: 'fruit', label: 'Frutas', items: [{ value: 'apple', label: 'Manzana' }] },
+                ],
+                ui: { group: () => attrs },
+              },
+            }),
+        })
+      })
+
+      describe('groupLabel', () => {
+        testAttrs({
+          id: '[data-test-listbox-group-label]',
+          mount: (attrs) =>
+            mountListbox([], {
+              props: {
+                groups: [
+                  { id: 'fruit', label: 'Frutas', items: [{ value: 'apple', label: 'Manzana' }] },
+                ],
+                ui: { groupLabel: () => attrs },
+              },
+            }),
+        })
+      })
+
+      describe('item', () => {
+        testAttrs({
+          id: '[data-test-listbox-item]',
+          mount: (attrs) => mountListbox(undefined, { props: { ui: { item: () => attrs } } }),
+        })
+      })
+
+      describe('itemLeading', () => {
+        testAttrs({
+          id: '[data-test-listbox-item-leading]',
+          mount: (attrs) => mountListbox(undefined, { props: { ui: { itemLeading: () => attrs } } }),
+        })
+      })
+
+      describe('label', () => {
+        testAttrs({
+          id: '[data-test-listbox-item-label]',
+          mount: (attrs) => mountListbox(undefined, { props: { ui: { itemLabel: () => attrs } } }),
+        })
+      })
+
+      describe('itemIndicator', () => {
+        testAttrs({
+          id: '[data-test-listbox-item-indicator]',
+          mount: (attrs) => mountListbox(undefined, { props: { value: 'apple', ui: { itemIndicator: () => attrs } } }),
+        })
+      })
+    })
+
     describe('items', () => {
       describe('label', () => {
         it('renderiza el label de cada item', () => {
@@ -158,8 +258,7 @@ describe('Listbox', () => {
         testIconProps({
           text: 'renderiza el icon de cada item',
           id: '[data-test-listbox-item-icon]',
-          mount: (icon) =>
-            mountListbox([{ value: 'apple', label: 'Manzana', icon }]),
+          mount: (icon) => mountListbox([{ value: 'apple', label: 'Manzana', icon }]),
         })
       })
 
@@ -170,16 +269,18 @@ describe('Listbox', () => {
           expect(listbox.getComponent(RekaListboxItem).props('disabled')).toBe(expected)
         })
       })
-
     })
 
     describe('groups', () => {
-      it.each(casesGroups)('renderiza los grupos recibidos', ({ input, expectedGroups, expectedItems }) => {
-        const listbox = mountListbox(casesItems.normal, { props: { groups: input } })
+      it.each(casesGroups)(
+        'renderiza los grupos recibidos',
+        ({ input, expectedGroups, expectedItems }) => {
+          const listbox = mountListbox(casesItems.normal, { props: { groups: input } })
 
-        expect(listbox.findAll('[data-test-listbox-group]')).toHaveLength(expectedGroups)
-        expect(listbox.findAll('[data-test-listbox-item]')).toHaveLength(expectedItems)
-      })
+          expect(listbox.findAll('[data-test-listbox-group]')).toHaveLength(expectedGroups)
+          expect(listbox.findAll('[data-test-listbox-item]')).toHaveLength(expectedItems)
+        },
+      )
 
       describe('label', () => {
         it('renderiza el label del grupo', () => {
@@ -321,30 +422,36 @@ describe('Listbox', () => {
     })
 
     describe('size', () => {
-      it.each(casesSize)('aplica size=$input a cada opción y al Input de filtro', ({ input, expected }) => {
-        const listbox = mountListbox(undefined, {
-          props: { size: input, filter: true },
-        })
+      it.each(casesSize)(
+        'aplica size=$input a cada opción y al Input de filtro',
+        ({ input, expected }) => {
+          const listbox = mountListbox(undefined, {
+            props: { size: input, filter: true },
+          })
 
-        expect(listbox.findAll('[data-test-listbox-item]')[0].classes()).toContain(expected)
-        const filterInput = listbox
-          .findAllComponents(Input)
-          .find((inputComponent) => inputComponent.find('[data-test-listbox-filter]').exists())
-        expect(filterInput.props('size')).toBe(input ?? 'md')
-      })
+          expect(listbox.findAll('[data-test-listbox-item]')[0].classes()).toContain(expected)
+          const filterInput = listbox
+            .findAllComponents(Input)
+            .find((inputComponent) => inputComponent.find('[data-test-listbox-filter]').exists())
+          expect(filterInput.props('size')).toBe(input ?? 'md')
+        },
+      )
 
-      it.each(casesSize)('aplica size=$input a loading, empty y no-results', ({ input, expected }) => {
-        const loading = mountListbox([], { props: { size: input, loading: true } })
-        expect(loading.get('[data-test-listbox-loading]').classes()).toContain(expected)
+      it.each(casesSize)(
+        'aplica size=$input a loading, empty y no-results',
+        ({ input, expected }) => {
+          const loading = mountListbox([], { props: { size: input, loading: true } })
+          expect(loading.get('[data-test-listbox-loading]').classes()).toContain(expected)
 
-        const empty = mountListbox([], { props: { size: input } })
-        expect(empty.get('[data-test-listbox-empty]').classes()).toContain(expected)
+          const empty = mountListbox([], { props: { size: input } })
+          expect(empty.get('[data-test-listbox-empty]').classes()).toContain(expected)
 
-        const noResults = mountListbox(undefined, {
-          props: { size: input, filter: true, search: 'inexistente' },
-        })
-        expect(noResults.get('[data-test-listbox-no-results]').classes()).toContain(expected)
-      })
+          const noResults = mountListbox(undefined, {
+            props: { size: input, filter: true, search: 'inexistente' },
+          })
+          expect(noResults.get('[data-test-listbox-no-results]').classes()).toContain(expected)
+        },
+      )
     })
 
     describe('loading', () => {
@@ -353,7 +460,6 @@ describe('Listbox', () => {
 
         expect(listbox.find('[data-test-listbox-loading]').exists()).toBe(expected)
       })
-
     })
 
     describe('filter', () => {
@@ -382,8 +488,7 @@ describe('Listbox', () => {
       testIconProps({
         text: 'renderiza iconFilter en el leading del filtro',
         id: '[data-test-listbox-icon-filter]',
-        mount: (iconFilter) =>
-          mountListbox(undefined, { props: { filter: true, iconFilter } }),
+        mount: (iconFilter) => mountListbox(undefined, { props: { filter: true, iconFilter } }),
       })
     })
 
@@ -409,8 +514,7 @@ describe('Listbox', () => {
       testInputConfig({
         text: 'pasa inputFilter al Input del filtro',
         id: '[data-test-listbox-filter]',
-        mount: (inputFilter) =>
-          mountListbox(undefined, { props: { filter: true, inputFilter } }),
+        mount: (inputFilter) => mountListbox(undefined, { props: { filter: true, inputFilter } }),
       })
     })
   })
@@ -513,6 +617,16 @@ describe('Listbox', () => {
       })
     })
 
+    describe('item-leading', () => {
+      it('sobrescribe el contenido anterior al label mediante el slot', () => {
+        const listbox = mountListbox([{ value: 'apple', label: 'Manzana' }], {
+          slots: { 'item-leading': 'Leading personalizado' },
+        })
+
+        expect(listbox.get('[data-test-listbox-item]').text()).toContain('Leading personalizado')
+      })
+    })
+
     describe('item', () => {
       it('sobrescribe el contenido de cada item', () => {
         const listbox = mountListbox([{ value: 'apple', label: 'Manzana' }], {
@@ -520,6 +634,29 @@ describe('Listbox', () => {
         })
 
         expect(listbox.get('[data-test-listbox-item]').text()).toBe('Item personalizado')
+      })
+    })
+
+    describe('item-label', () => {
+      it('sobrescribe el label mediante el slot', () => {
+        const listbox = mountListbox([{ value: 'apple', label: 'Manzana' }], {
+          slots: { 'item-label': 'Etiqueta personalizada' },
+        })
+
+        expect(listbox.get('[data-test-listbox-item-label]').text()).toBe('Etiqueta personalizada')
+      })
+    })
+
+    describe('item-indicator', () => {
+      it('sobrescribe el indicador mediante el slot', () => {
+        const listbox = mountListbox([{ value: 'apple', label: 'Manzana' }], {
+          props: { value: 'apple' },
+          slots: { 'item-indicator': 'Indicador personalizado' },
+        })
+
+        expect(listbox.get('[data-test-listbox-item-indicator]').text()).toContain(
+          'Indicador personalizado',
+        )
       })
     })
   })

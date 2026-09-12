@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ListboxContent, ListboxGroup, ListboxGroupLabel, ListboxRoot } from 'reka-ui'
+import { ListboxContent, ListboxGroup, ListboxGroupLabel, ListboxRoot, ListboxFilter } from 'reka-ui'
 import { Input } from '@/components/ui/Input'
 import { Icon } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
@@ -61,7 +61,7 @@ const contentProps = computed(() => {
   return {
     ...attrs,
     ...ui,
-    class: cn('outline-none', ui.class),
+    class: cn(props.filter && 'border-t', 'outline-none', ui.class),
     style: ui.style,
   }
 })
@@ -69,6 +69,7 @@ const contentProps = computed(() => {
 const filterProps = computed(() => {
   return {
     ...props.inputFilter,
+    variant: props.inputFilter?.variant ?? 'none',
     size: props.inputFilter?.size ?? props.size,
     disabled: props.disabled || props.inputFilter?.disabled,
     class: cn(
@@ -89,7 +90,6 @@ function filterItems(items: ListboxItemContext['item'][]) {
 
 const itemContexts = computed<ListboxItemContext[]>(() =>
   filterItems(props.items).map((item, index) => ({
-    ...listboxContext.value,
     item,
     index,
     selected: Array.isArray(value.value)
@@ -103,7 +103,6 @@ const groupContexts = computed<ListboxGroupContext[]>(() =>
     .map((group) => ({ ...group, items: filterItems(group.items) }))
     .filter((group) => group.items.length)
     .map((group, index) => ({
-      ...listboxContext.value,
       group,
       index,
     })),
@@ -157,11 +156,9 @@ const loadingProps = computed(() => {
 
 function getGroupItemContexts(context: ListboxGroupContext): ListboxItemContext[] {
   return context.group.items.map((item, index) => ({
-    ...listboxContext.value,
     item,
     index,
     group: context.group,
-    groupIndex: context.index,
     selected: Array.isArray(value.value)
       ? value.value.some((selectedValue) => Object.is(selectedValue, item.value))
       : Object.is(value.value, item.value),
@@ -190,10 +187,10 @@ function getGroupLabelProps(context: ListboxGroupContext) {
 
 <template>
   <ListboxRoot v-model="value" v-bind="rootProps" data-test-listbox-root>
+  <ListboxFilter v-model:value="search" as-child>
     <Input
       v-if="props.filter"
       v-bind="filterProps"
-      v-model:value="search"
       data-test-listbox-filter
     >
       <template v-if="props.iconFilter || $slots['filter-leading']" #leading>
@@ -204,6 +201,7 @@ function getGroupLabelProps(context: ListboxGroupContext) {
         </div>
       </template>
     </Input>
+    </ListboxFilter>
 
     <ListboxContent v-bind="contentProps" data-test-listbox-content>
       <div v-if="props.loading" v-bind="loadingProps" data-test-listbox-loading>

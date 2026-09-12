@@ -79,8 +79,9 @@ export interface ListboxUI {
   group?: ListboxGroupFn<HTMLAttributes>
   groupLabel?: ListboxGroupFn<HTMLAttributes>
   item?: ListboxItemFn<HTMLAttributes>
-  label?: ListboxItemFn<HTMLAttributes>
-  indicator?: ListboxItemFn<HTMLAttributes>
+  itemLeading?: ListboxItemFn<HTMLAttributes>
+  itemLabel?: ListboxItemFn<HTMLAttributes>
+  itemIndicator?: ListboxItemFn<HTMLAttributes>
 }
 
 export interface ListboxContext {
@@ -88,15 +89,14 @@ export interface ListboxContext {
   search: string
 }
 
-export interface ListboxItemContext extends ListboxContext {
+export interface ListboxItemContext {
   item: ListboxItem
   index: number
   selected: boolean
   group?: ListboxGroup
-  groupIndex?: number
 }
 
-export interface ListboxGroupContext extends ListboxContext {
+export interface ListboxGroupContext {
   group: ListboxGroup
   index: number
 }
@@ -108,11 +108,12 @@ export interface ListboxEmits {
 
 export type ListboxSlots = {
   item?(props: ListboxItemContext): unknown
+  'item-label'?(props: ListboxItemContext): unknown
   'item-leading'?(props: ListboxItemContext): unknown
   'group-label'?(props: ListboxGroupContext): unknown
   empty?(props: ListboxContext): unknown
   'no-results'?(props: ListboxContext): unknown
   loading?(props: ListboxContext): unknown
   'filter-leading'?(props: ListboxContext): unknown
-  indicator?(props: ListboxItemContext): unknown
+  'item-indicator'?(props: ListboxItemContext): unknown
 }

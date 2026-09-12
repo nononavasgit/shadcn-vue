@@ -56,7 +56,32 @@ const propRows: ApiTableRow[] = [
   { name: 'noResultsText', type: 'string', default: 'undefined', description: 'Texto cuando no hay resultados.' },
   {
     name: 'ui',
-    type: '{ root?: () => HTMLAttributes; content?: (context: ListboxContext) => HTMLAttributes; empty?: (context: ListboxContext) => HTMLAttributes; noResults?: (context: ListboxContext) => HTMLAttributes; loading?: (context: ListboxContext) => HTMLAttributes; group?: (context: ListboxGroupContext) => HTMLAttributes; groupLabel?: (context: ListboxGroupContext) => HTMLAttributes; item?: (context: ListboxItemContext) => HTMLAttributes; label?: (context: ListboxItemContext) => HTMLAttributes; indicator?: (context: ListboxItemContext) => HTMLAttributes }',
+    type: '{ root?: (context: ListboxContext) => HTMLAttributes; content?: (context: ListboxContext) => HTMLAttributes; empty?: (context: ListboxContext) => HTMLAttributes; noResults?: (context: ListboxContext) => HTMLAttributes; loading?: (context: ListboxContext) => HTMLAttributes; group?: (context: ListboxGroupContext) => HTMLAttributes; groupLabel?: (context: ListboxGroupContext) => HTMLAttributes; item?: (context: ListboxItemContext) => HTMLAttributes; itemLeading?: (context: ListboxItemContext) => HTMLAttributes; itemLabel?: (context: ListboxItemContext) => HTMLAttributes; itemIndicator?: (context: ListboxItemContext) => HTMLAttributes }',
+    typeParts: [
+      { text: '{ root?: (context: ' },
+      { text: 'ListboxContext', link: '#listbox-context' },
+      { text: ') => HTMLAttributes; content?: (context: ' },
+      { text: 'ListboxContext', link: '#listbox-context' },
+      { text: ') => HTMLAttributes; empty?: (context: ' },
+      { text: 'ListboxContext', link: '#listbox-context' },
+      { text: ') => HTMLAttributes; noResults?: (context: ' },
+      { text: 'ListboxContext', link: '#listbox-context' },
+      { text: ') => HTMLAttributes; loading?: (context: ' },
+      { text: 'ListboxContext', link: '#listbox-context' },
+      { text: ') => HTMLAttributes; group?: (context: ' },
+      { text: 'ListboxGroupContext', link: '#listbox-group-context' },
+      { text: ') => HTMLAttributes; groupLabel?: (context: ' },
+      { text: 'ListboxGroupContext', link: '#listbox-group-context' },
+      { text: ') => HTMLAttributes; item?: (context: ' },
+      { text: 'ListboxItemContext', link: '#listbox-item-context' },
+      { text: ') => HTMLAttributes; itemLeading?: (context: ' },
+      { text: 'ListboxItemContext', link: '#listbox-item-context' },
+      { text: ') => HTMLAttributes; itemLabel?: (context: ' },
+      { text: 'ListboxItemContext', link: '#listbox-item-context' },
+      { text: ') => HTMLAttributes; itemIndicator?: (context: ' },
+      { text: 'ListboxItemContext', link: '#listbox-item-context' },
+      { text: ') => HTMLAttributes }' },
+    ],
     default: 'undefined',
     description: 'Personalización dinámica de las partes internas.',
   },
@@ -153,7 +178,13 @@ const slotRows: ApiTableRow[] = [
     description: 'Añade contenido antes del texto de todas las opciones.',
   },
   {
-    name: 'indicator',
+    name: 'item-label',
+    type: 'ListboxItemContext',
+    typeLink: '#listbox-item-context',
+    description: 'Personaliza la etiqueta de cada opción.',
+  },
+  {
+    name: 'item-indicator',
     type: 'ListboxItemContext',
     typeLink: '#listbox-item-context',
     description: 'Personaliza el indicador de selección.',
@@ -180,18 +211,14 @@ const slotRows: ApiTableRow[] = [
 
 const contextRows: ApiTableRow[] = [
   { name: 'value', type: 'string | number | (string | number)[] | undefined', description: 'Valor actualmente seleccionado.' },
-  {
-    name: 'open',
-    type: 'boolean',
-    description: 'Indica si el contenido está abierto.',
-  },
+  { name: 'search', type: 'string', description: 'Texto de búsqueda actual.' },
 ]
 
 const itemContextRows: ApiTableRow[] = [
   { name: 'item', type: 'ListboxItem', typeLink: '#listbox-item', description: 'Opción actual.' },
   { name: 'index', type: 'number', description: 'Índice de la opción.' },
   { name: 'selected', type: 'boolean', description: 'Indica si la opción está seleccionada.' },
-  { name: 'group', type: 'ListboxGroup', typeLink: '#listbox-group', description: 'Grupo padre.' },
+  { name: 'group', type: 'ListboxGroup | undefined', typeLink: '#listbox-group', description: 'Grupo padre, cuando la opción pertenece a un grupo.' },
 ]
 
 const groupContextRows: ApiTableRow[] = [

@@ -70,22 +70,31 @@ const filterProps = computed(() => {
   return {
     ...props.inputFilter,
     variant: props.inputFilter?.variant ?? 'none',
+    placeholder: props.inputFilter?.placeholder ?? t('searchPlaceholder'),
     size: props.inputFilter?.size ?? props.size,
     disabled: props.disabled || props.inputFilter?.disabled,
     class: cn(
-      'mb-1',
+      'm-0',
       props.inputFilter?.class,
     ),
     style: props.inputFilter?.style,
   }
 })
 
-const normalizedSearch = computed(() => search.value.trim().toLocaleLowerCase())
+function normalized(value: string) {
+  return value
+    .trim()
+    .toLocaleLowerCase()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+}
+
+const normalizedSearch = computed(() => normalized(search.value))
 
 function filterItems(items: ListboxItemContext['item'][]) {
   if (!props.filter || props.ignoreFilter || !normalizedSearch.value) return items
 
-  return items.filter((item) => item.label.toLocaleLowerCase().includes(normalizedSearch.value))
+  return items.filter((item) => normalized(item.label).includes(normalizedSearch.value))
 }
 
 const itemContexts = computed<ListboxItemContext[]>(() =>

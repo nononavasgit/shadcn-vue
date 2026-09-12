@@ -6,6 +6,7 @@ export default {
   continue: 'Continuar',
   loading: 'Cargando',
   commandPlaceholder: 'Buscar un comando...',
+  searchPlaceholder: 'Buscar...',
   noResults: 'No se encontraron resultados.',
   empty: 'No hay opciones disponibles.',
   decrement: 'Disminuir',

@@ -30,8 +30,6 @@ type ListboxState = {
   itemLabelSlot: boolean
   indicatorSlot: boolean
   groupLabelSlot: boolean
-  scrollUpSlot: boolean
-  scrollDownSlot: boolean
   attrs: boolean
 }
 
@@ -61,8 +59,6 @@ const initialState = (): ListboxState => ({
   itemLabelSlot: false,
   indicatorSlot: false,
   groupLabelSlot: false,
-  scrollUpSlot: false,
-  scrollDownSlot: false,
   attrs: false,
 })
 
@@ -147,7 +143,7 @@ function generateSlots() {
     )
   if (state.value.indicatorSlot)
     slots.push(
-      '  <template #indicator>',
+      '  <template #item-indicator>',
       '    <span class="text-primary" aria-hidden="true">✓</span>',
       '  </template>',
     )
@@ -155,18 +151,6 @@ function generateSlots() {
     slots.push(
       '  <template #group-label="{ group }">',
       '    <span class="font-semibold text-primary">{{ group.label }}</span>',
-      '  </template>',
-    )
-  if (state.value.scrollUpSlot)
-    slots.push(
-      '  <template #scroll-up>',
-      '    <span class="text-xs text-primary" aria-hidden="true">↑ Más arriba</span>',
-      '  </template>',
-    )
-  if (state.value.scrollDownSlot)
-    slots.push(
-      '  <template #scroll-down>',
-      '    <span class="text-xs text-primary" aria-hidden="true">↓ Más abajo</span>',
       '  </template>',
     )
   return slots
@@ -196,7 +180,7 @@ function generateCode() {
       ? `:groups='${JSON.stringify(groups)}'`
       : `:items='${JSON.stringify(state.value.data === 'long' ? longItems : items)}'`,
     state.value.ui &&
-      `:ui="{ root: () => ({ class: 'relative' }), content: () => ({ class: 'border-primary' }), loading: () => ({ class: 'text-primary' }), group: ({ group }) => ({ class: group.label === 'Frutas' ? 'bg-muted/30' : undefined }), groupLabel: () => ({ class: 'font-semibold' }), item: ({ selected }) => ({ class: selected ? 'font-semibold' : undefined }), label: () => ({ class: 'text-sm' }), indicator: ({ selected }) => ({ class: selected ? 'text-primary' : undefined }) }"`,
+      `:ui="{ root: () => ({ class: 'relative' }), content: () => ({ class: 'border-primary' }), loading: () => ({ class: 'text-primary' }), group: ({ group }) => ({ class: group.label === 'Frutas' ? 'bg-muted/30' : undefined }), groupLabel: () => ({ class: 'font-semibold' }), item: ({ selected }) => ({ class: selected ? 'font-semibold' : undefined }), itemLabel: () => ({ class: 'text-sm' }), itemIndicator: ({ selected }) => ({ class: selected ? 'text-primary' : undefined }) }"`,
     state.value.invalid && 'aria-invalid="true"',
     state.value.attrs && 'aria-label="Selecciona una opción"',
     '@update:value="handleValueUpdate"',
@@ -360,13 +344,9 @@ watch(state, syncFromControls, { deep: true, immediate: true })
           ><label class="flex items-center gap-2 text-sm"
             ><input v-model="state.itemLabelSlot" type="checkbox" /> item-label</label
           ><label class="flex items-center gap-2 text-sm"
-            ><input v-model="state.indicatorSlot" type="checkbox" /> indicator</label
+            ><input v-model="state.indicatorSlot" type="checkbox" /> item-indicator</label
           ><label class="flex items-center gap-2 text-sm"
             ><input v-model="state.groupLabelSlot" type="checkbox" /> group-label</label
-          ><label class="flex items-center gap-2 text-sm"
-            ><input v-model="state.scrollUpSlot" type="checkbox" /> scroll-up</label
-          ><label class="flex items-center gap-2 text-sm"
-            ><input v-model="state.scrollDownSlot" type="checkbox" /> scroll-down</label
           >
         </fieldset>
       </div>

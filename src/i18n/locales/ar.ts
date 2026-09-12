@@ -6,6 +6,7 @@ export default {
   continue: 'متابعة',
   loading: 'جارٍ التحميل',
   commandPlaceholder: 'ابحث عن أمر...',
+  searchPlaceholder: 'بحث...',
   noResults: 'لم يتم العثور على نتائج.',
   empty: 'لا توجد خيارات متاحة.',
   decrement: 'إنقاص',

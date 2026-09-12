@@ -52,6 +52,7 @@ const inputProps = computed(() => {
     ...attrs,
     class: cn(
       'flex h-full w-full min-w-0 flex-1 border-0 bg-transparent px-3 py-1 text-foreground outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:ring-0 disabled:pointer-events-none disabled:cursor-not-allowed',
+      slots.leading && 'pl-0',
       attrs.class,
     ),
     style: [attrs.style],

@@ -218,6 +218,12 @@ export const componentMeta = [
       'Selector accesible basado en Reka UI con items, grupos, placeholder y slots contextuales.',
   },
   {
+    slug: 'listbox',
+    title: 'Listbox',
+    description:
+      'Lista de opciones accesible con selección simple o múltiple, grupos, filtrado y slots contextuales.',
+  },
+  {
     slug: 'search',
     title: 'Search',
     description: 'Formulario semántico para agrupar controles y acciones de búsqueda.',

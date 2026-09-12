@@ -46,6 +46,7 @@ import RibbonPage from './components/pages/RibbonPage.vue'
 import ScrollAreaPage from './components/pages/ScrollAreaPage.vue'
 import SearchPage from './components/pages/SearchPage.vue'
 import SelectPage from './components/pages/SelectPage.vue'
+import ListboxPage from './components/pages/ListboxPage.vue'
 import SeparatorPage from './components/pages/SeparatorPage.vue'
 import SliderPage from './components/pages/SliderPage.vue'
 import SplitterPage from './components/pages/SplitterPage.vue'
@@ -190,6 +191,7 @@ export const router = createRouter({
     },
     { path: '/search', component: SearchPage, meta: { component: componentMetaBySlug.search } },
     { path: '/select', component: SelectPage, meta: { component: componentMetaBySlug.select } },
+    { path: '/listbox', component: ListboxPage, meta: { component: componentMetaBySlug.listbox } },
     {
       path: '/separator',
       component: SeparatorPage,

@@ -2,6 +2,20 @@
 import { inputDefaults } from '@/components/ui/Input/default'
 import ApiTable, { type ApiTableRow } from './ApiTable.vue'
 
+const inputConfigRows: ApiTableRow[] = [
+  {
+    name: 'InputConfig',
+    type: 'InputProps & InputEmits & HTMLAttributes & HTMLEvents',
+    typeParts: [
+      { text: 'InputProps', link: '#input-props' },
+      { text: ' & ' },
+      { text: 'InputEmits', link: '#input-emits' },
+      { text: ' & HTMLAttributes & HTMLEvents' },
+    ],
+    description: 'Configuración completa del input, sus atributos y eventos HTML.',
+  },
+]
+
 const propRows: ApiTableRow[] = [
   {
     name: 'size',
@@ -78,10 +92,11 @@ const exposeRows: ApiTableRow[] = []
     </header>
 
     <div class="grid gap-4">
-      <ApiTable title="Props" :rows="propRows" />
-      <ApiTable title="Emits" :rows="emitRows" />
+      <ApiTable id="input-props" title="Props" :rows="propRows" />
+      <ApiTable id="input-emits" title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="exposeRows" empty-text="Este componente no expone metodos." />
+      <ApiTable id="input-config" title="InputConfig" :rows="inputConfigRows" />
     </div>
   </section>
 </template>

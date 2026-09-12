@@ -4,6 +4,7 @@ export interface Messages {
   continue: string
   loading: string
   commandPlaceholder: string
+  searchPlaceholder: string
   noResults: string
   empty: string
   decrement: string

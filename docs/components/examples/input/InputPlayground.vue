@@ -8,6 +8,7 @@ const state = ref({
   value: 'Buscar componentes',
   size: inputDefaults.size,
   variant: inputDefaults.variant,
+  severity: inputDefaults.severity,
   color: '',
   highlight: inputDefaults.highlight,
   type: 'text',
@@ -32,6 +33,7 @@ function generateCode() {
     'v-model:value="value"',
     `size="${state.value.size}"`,
     `variant="${state.value.variant}"`,
+    `severity="${state.value.severity}"`,
     state.value.color && `color="${escapeAttribute(state.value.color)}"`,
     `:highlight="${state.value.highlight}"`,
     `type="${state.value.type}"`,
@@ -83,6 +85,7 @@ function reset() {
     value: 'Buscar componentes',
     size: inputDefaults.size,
     variant: inputDefaults.variant,
+    severity: inputDefaults.severity,
     color: '',
     highlight: inputDefaults.highlight,
     type: 'text',
@@ -136,8 +139,17 @@ watch(state, syncFromControls, { deep: true, immediate: true })
               v-model="state.variant"
               class="rounded-md border bg-background px-2 py-2 text-sm"
             >
-              <option v-for="variant in ['outline', 'plain', 'subtle', 'soft']" :key="variant">
+              <option v-for="variant in ['outline', 'plain', 'subtle', 'soft', 'none']" :key="variant">
                 {{ variant }}
+              </option>
+            </select></label
+          ><label class="grid gap-1 text-xs"
+            >Severity<select
+              v-model="state.severity"
+              class="rounded-md border bg-background px-2 py-2 text-sm"
+            >
+              <option v-for="severity in ['primary', 'secondary', 'error', 'warning', 'success']" :key="severity">
+                {{ severity }}
               </option>
             </select></label
           ><label class="grid gap-1 text-xs"

@@ -82,12 +82,6 @@ const itemRows: ApiTableRow[] = [
     default: 'false',
     description: 'Impide seleccionar la opción.',
   },
-  {
-    name: 'textValue',
-    type: 'string',
-    default: 'undefined',
-    description: 'Texto alternativo usado por el typeahead de Reka.',
-  },
 ]
 
 const groupRows: ApiTableRow[] = [

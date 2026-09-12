@@ -1,6 +1,6 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { ListboxRoot } from 'reka-ui'
+import { ListboxItem as RekaListboxItem, ListboxRoot } from 'reka-ui'
 
 import { Listbox, type ListboxProps } from '@/components/ui/Listbox'
 import { Input } from '@/components/ui/Input'
@@ -106,26 +106,49 @@ const casesRequired = [
   { input: undefined, expected: false },
 ]
 
+const casesItemDisabled = [
+  { input: true, expected: true },
+  { input: false, expected: false },
+  { input: undefined, expected: undefined },
+]
+
 describe('Listbox', () => {
   describe('props', () => {
-    /** describe('items', () => {
-      it.each([
-        { name: 'items normales', items: casesItems.normal, expected: 2 },
-        { name: 'muchos items', items: casesItems.many, expected: 50 },
-      ])('renderiza $name', ({ items, expected }) => {
-        const listbox = mountListbox(items)
+    describe('items', () => {
+      describe('label', () => {
+        it('renderiza el label de cada item', () => {
+          const listbox = mountListbox([{ value: 'apple', label: 'Manzana' }])
 
-        expect(listbox.findAll('[data-test-listbox-item]')).toHaveLength(expected)
-      })
-
-      it('renderiza items por grupo', () => {
-        const listbox = mountListbox(casesItems.grouped, {
-          props: { groups: [{ id: 'fruits', label: 'Frutas', items: casesItems.grouped }] },
+          expect(listbox.get('[data-test-listbox-item]').text()).toContain('Manzana')
         })
-
-        expect(listbox.findAll('[data-test-listbox-item]')).toHaveLength(1)
       })
-    })**/
+
+      describe('value', () => {
+        it('pasa value de cada item a ListboxItem', () => {
+          const listbox = mountListbox([{ value: 'apple', label: 'Manzana' }])
+
+          expect(listbox.getComponent(RekaListboxItem).props('value')).toBe('apple')
+        })
+      })
+
+      describe('icon', () => {
+        testIconProps({
+          text: 'renderiza el icon de cada item',
+          id: '[data-test-listbox-item-icon]',
+          mount: (icon) =>
+            mountListbox([{ value: 'apple', label: 'Manzana', icon }]),
+        })
+      })
+
+      describe('disabled', () => {
+        it.each(casesItemDisabled)('pasa disabled=$input a ListboxItem', ({ input, expected }) => {
+          const listbox = mountListbox([{ value: 'apple', label: 'Manzana', disabled: input }])
+
+          expect(listbox.getComponent(RekaListboxItem).props('disabled')).toBe(expected)
+        })
+      })
+
+    })
 
     describe('value', () => {
       it.each(casesValue)('pasa value=$input a ListboxRoot', ({ input, expected }) => {

@@ -4,6 +4,7 @@ import { ListboxRoot } from 'reka-ui'
 
 import { Listbox, type ListboxProps } from '@/components/ui/Listbox'
 import { i18n } from '@/i18n'
+import { testIconProps } from '../utils/testIconProps'
 
 const casesItems = {
   normal: [{ value: 'apple', label: 'Manzana' }, { value: 'banana', label: 'Plátano' }],
@@ -193,6 +194,15 @@ describe('Listbox', () => {
         const listbox = mountListbox(undefined, { props: { filter: input } })
 
         expect(listbox.find('[data-test-listbox-filter]').exists()).toBe(expected)
+      })
+    })
+
+    describe('iconFilter', () => {
+      testIconProps({
+        text: 'renderiza iconFilter en el leading del filtro',
+        id: '[data-test-listbox-icon-filter]',
+        mount: (iconFilter) =>
+          mountListbox(undefined, { props: { filter: true, iconFilter } }),
       })
     })
   })

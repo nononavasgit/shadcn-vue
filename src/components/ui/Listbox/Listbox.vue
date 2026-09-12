@@ -194,7 +194,7 @@ function getGroupLabelProps(context: ListboxGroupContext) {
       data-test-listbox-filter
     >
       <template v-if="props.iconFilter" #leading>
-        <Icon v-bind="props.iconFilter" />
+        <Icon v-bind="props.iconFilter" data-test-listbox-icon-filter />
       </template>
     </Input>
 

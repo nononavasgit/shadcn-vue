@@ -40,6 +40,24 @@ const casesDisabled = [
   { input: undefined, expected: false },
 ]
 
+const casesHighlightOnHover = [
+  { input: true, expected: true },
+  { input: false, expected: false },
+  { input: undefined, expected: true },
+]
+
+const casesMultiple = [
+  { input: true, expected: true },
+  { input: false, expected: false },
+  { input: undefined, expected: false },
+]
+
+const casesOrientation = [
+  { input: 'vertical' as const, expected: 'vertical' },
+  { input: 'horizontal' as const, expected: 'horizontal' },
+  { input: undefined, expected: 'vertical' },
+]
+
 describe('Listbox', () => {
   describe('props', () => {
     /** describe('items', () => {
@@ -78,5 +96,32 @@ describe('Listbox', () => {
         expect(listbox.getComponent(ListboxRoot).props('disabled')).toBe(expected)
       })
     })
-  })
+
+    describe('highlightOnHover', () => {
+      it.each(casesHighlightOnHover)(
+        'pasa highlightOnHover=$input a ListboxRoot',
+        ({ input, expected }) => {
+          const listbox = mountListbox(undefined, { props: { highlightOnHover: input } })
+
+          expect(listbox.getComponent(ListboxRoot).props('highlightOnHover')).toBe(expected)
+        },
+      )
+      })
+    })
+
+    describe('multiple', () => {
+      it.each(casesMultiple)('pasa multiple=$input a ListboxRoot', ({ input, expected }) => {
+        const listbox = mountListbox(undefined, { props: { multiple: input } })
+
+        expect(listbox.getComponent(ListboxRoot).props('multiple')).toBe(expected)
+      })
+    })
+
+    describe('orientation', () => {
+      it.each(casesOrientation)('pasa orientation=$input a ListboxRoot', ({ input, expected }) => {
+        const listbox = mountListbox(undefined, { props: { orientation: input } })
+
+        expect(listbox.getComponent(ListboxRoot).props('orientation')).toBe(expected)
+      })
+    })
 })

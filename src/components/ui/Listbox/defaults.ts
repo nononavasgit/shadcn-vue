@@ -1,5 +1,6 @@
 export const listboxDefaults = {
   disabled: false,
+  multiple: false,
   orientation: 'vertical' as const,
   selectionBehavior: 'toggle' as const,
   highlightOnHover: true,

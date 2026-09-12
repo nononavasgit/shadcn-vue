@@ -37,6 +37,7 @@ const rootProps = computed(() => {
       inputVariants({
         size: props.size,
         variant: props.variant,
+        severity: props.severity,
         color: Boolean(props.color),
         highlight: props.highlight,
       }),

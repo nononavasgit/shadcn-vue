@@ -25,9 +25,15 @@ const propRows: ApiTableRow[] = [
   },
   {
     name: 'variant',
-    type: "'outline' | 'plain' | 'subtle' | 'soft'",
+    type: "'outline' | 'plain' | 'subtle' | 'soft' | 'none'",
     default: `'${inputDefaults.variant}'`,
     description: 'Variante visual del campo de entrada.',
+  },
+  {
+    name: 'severity',
+    type: "'primary' | 'secondary' | 'error' | 'warning' | 'success'",
+    default: `'${inputDefaults.severity}'`,
+    description: 'Severidad visual del campo de entrada.',
   },
   {
     name: 'color',

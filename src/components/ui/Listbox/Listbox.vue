@@ -234,8 +234,7 @@ function getGroupLabelProps(context: ListboxGroupContext) {
             v-bind="getGroupProps(groupContext)"
             data-test-listbox-group
           >
-            <slot name="group" v-bind="groupContext">
-              <ListboxGroupLabel
+            <ListboxGroupLabel
                 v-if="groupContext.group.label"
                 v-bind="getGroupLabelProps(groupContext)"
                   data-test-listbox-group-label
@@ -243,8 +242,7 @@ function getGroupLabelProps(context: ListboxGroupContext) {
                 <slot name="group-label" v-bind="groupContext">
                   {{ groupContext.group.label }}
                 </slot>
-              </ListboxGroupLabel>
-
+            </ListboxGroupLabel>
                 <ListboxOption
                   v-for="itemContext in getGroupItemContexts(groupContext)"
                   :key="itemContext.item.id ?? String(itemContext.item.value)"
@@ -255,7 +253,6 @@ function getGroupLabelProps(context: ListboxGroupContext) {
                     <slot :name="name" v-bind="slotProps" />
                   </template>
                 </ListboxOption>
-            </slot>
           </ListboxGroup>
         </template>
 

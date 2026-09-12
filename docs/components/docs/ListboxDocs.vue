@@ -135,18 +135,6 @@ const slotRows: ApiTableRow[] = [
     description: 'Personaliza el contenido mostrado mientras el Listbox está cargando.',
   },
   {
-    name: 'value',
-    type: 'ListboxContext',
-    typeLink: '#listbox-context',
-    description: 'Personaliza el valor mostrado en el trigger.',
-  },
-  {
-    name: 'icon',
-    type: 'ListboxContext',
-    typeLink: '#listbox-context',
-    description: 'Reemplaza el icono de apertura.',
-  },
-  {
     name: 'item',
     type: 'ListboxItemContext',
     typeLink: '#listbox-item-context',

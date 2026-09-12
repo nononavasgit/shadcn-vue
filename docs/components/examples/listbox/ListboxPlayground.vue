@@ -23,8 +23,6 @@ type ListboxState = {
   ui: boolean
   invalid: boolean
   loadingSlot: boolean
-  valueSlot: boolean
-  iconSlot: boolean
   iconFilterSlot: boolean
   itemSlot: boolean
   itemLeadingSlot: boolean
@@ -55,8 +53,6 @@ const initialState = (): ListboxState => ({
   ui: false,
   invalid: false,
   loadingSlot: false,
-  valueSlot: false,
-  iconSlot: false,
   iconFilterSlot: false,
   itemSlot: false,
   itemLeadingSlot: false,
@@ -116,18 +112,6 @@ function generateSlots() {
     slots.push(
       '  <template #loading>',
       '    <span class="text-xs text-muted-foreground">Cargando opciones...</span>',
-      '  </template>',
-    )
-  if (state.value.valueSlot)
-    slots.push(
-      '  <template #value="{ value }">',
-      '    <span class="font-medium text-primary">Seleccionado: {{ value }}</span>',
-      '  </template>',
-    )
-  if (state.value.iconSlot)
-    slots.push(
-      '  <template #icon>',
-      '    <span class="text-xs text-primary" aria-hidden="true">⌄</span>',
       '  </template>',
     )
   if (state.value.iconFilterSlot)
@@ -355,10 +339,6 @@ watch(state, syncFromControls, { deep: true, immediate: true })
           </p>
           <label class="flex items-center gap-2 text-sm"
             ><input v-model="state.loadingSlot" type="checkbox" /> loading</label
-          ><label class="flex items-center gap-2 text-sm"
-            ><input v-model="state.valueSlot" type="checkbox" /> value</label
-          ><label class="flex items-center gap-2 text-sm"
-            ><input v-model="state.iconSlot" type="checkbox" /> icon</label
           ><label class="flex items-center gap-2 text-sm"
             ><input v-model="state.itemSlot" type="checkbox" /> item</label
           ><label class="flex items-center gap-2 text-sm"

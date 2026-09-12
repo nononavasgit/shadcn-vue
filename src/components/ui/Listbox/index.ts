@@ -93,7 +93,6 @@ export type ListboxSlots = {
   default?(props: ListboxContext): unknown
   item?(props: ListboxItemContext): unknown
   'item-leading'?(props: ListboxItemContext): unknown
-  group?(props: ListboxGroupContext): unknown
   'group-label'?(props: ListboxGroupContext): unknown
   empty?(props: ListboxContext): unknown
   'no-results'?(props: ListboxContext): unknown

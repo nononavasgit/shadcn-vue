@@ -1,6 +1,5 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
-import { h } from 'vue'
+import { describe, expect, it, vi } from 'vitest'
 import { ListboxItem as RekaListboxItem, ListboxRoot } from 'reka-ui'
 
 import { Listbox, type ListboxProps } from '@/components/ui/Listbox'
@@ -8,6 +7,11 @@ import { Input } from '@/components/ui/Input'
 import { i18n } from '@/i18n'
 import { testIconProps } from '../utils/testIconProps'
 import { testInputConfig } from '../utils/testInputConfig'
+
+Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+  value: vi.fn(),
+  writable: true,
+})
 
 const casesItems = {
   normal: [{ value: 'apple', label: 'Manzana' }, { value: 'banana', label: 'Plátano' }],
@@ -161,23 +165,6 @@ describe('Listbox', () => {
     })
 
     describe('groups', () => {
-      describe('id', () => {
-        it('expone el id del grupo en el contexto del slot', () => {
-          const listbox = mountListbox([], {
-            props: {
-              groups: [{ id: 'fruits', label: 'Frutas', items: casesItems.grouped }],
-            },
-            slots: {
-              group: ({ group }) => h('div', { 'data-test-group-id': group.id }, group.label),
-            },
-          })
-
-          expect(listbox.get('[data-test-group-id]').attributes('data-test-group-id')).toBe(
-            'fruits',
-          )
-        })
-      })
-
       it.each(casesGroups)('renderiza los grupos recibidos', ({ input, expectedGroups, expectedItems }) => {
         const listbox = mountListbox(casesItems.normal, { props: { groups: input } })
 
@@ -388,6 +375,43 @@ describe('Listbox', () => {
         id: '[data-test-listbox-filter]',
         mount: (inputFilter) =>
           mountListbox(undefined, { props: { filter: true, inputFilter } }),
+      })
+    })
+  })
+
+  describe('emits', () => {
+    describe('update:value', () => {
+      it('emite el valor seleccionado', async () => {
+        const onUpdateValue = vi.fn()
+        const listbox = mountListbox(undefined, {
+          props: { 'onUpdate:value': onUpdateValue },
+        })
+
+        listbox.getComponent(ListboxRoot).vm.$emit('update:modelValue', 'apple')
+        await listbox.vm.$nextTick()
+
+        expect(onUpdateValue).toHaveBeenCalledTimes(1)
+        expect(onUpdateValue).toHaveBeenCalledWith('apple')
+      })
+    })
+
+    describe('update:search', () => {
+      it('emite el texto de búsqueda actualizado', async () => {
+        const onUpdateSearch = vi.fn()
+        const listbox = mountListbox(undefined, {
+          props: { filter: true, 'onUpdate:search': onUpdateSearch },
+        })
+
+        const filterInput = listbox
+          .findAllComponents(Input)
+          .find((inputComponent) => inputComponent.find('[data-test-listbox-filter]').exists())
+
+        if (!filterInput) throw new Error('Expected Listbox filter Input')
+        filterInput.vm.$emit('update:value', 'ban')
+        await listbox.vm.$nextTick()
+
+        expect(onUpdateSearch).toHaveBeenCalledTimes(1)
+        expect(onUpdateSearch).toHaveBeenCalledWith('ban')
       })
     })
   })

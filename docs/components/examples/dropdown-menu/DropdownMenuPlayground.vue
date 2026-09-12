@@ -84,8 +84,7 @@ watch(state, syncFromControls, { deep: true, immediate: true })
           <label class="flex items-center gap-2 text-sm"
             ><input v-model="state.modal" type="checkbox" /> Modal</label
           ><label class="flex items-center gap-2 text-sm"
-            ><input v-model="state.disabled" type="checkbox" /> Disabled</label
-          >
+            ><input v-model="state.disabled" type="checkbox" /> Disabled</label>
         </fieldset>
         <fieldset class="grid gap-3">
           <legend class="mb-1 text-sm font-semibold">Contenido y atributos</legend>

@@ -1,7 +1,7 @@
 import { h } from 'vue'
 import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { DropdownMenuRoot, DropdownMenuTrigger } from 'reka-ui'
+import { DropdownMenuPortal, DropdownMenuRoot, DropdownMenuTrigger } from 'reka-ui'
 
 import { DropdownMenu, type DropdownMenuProps } from '@/components/ui/DropdownMenu'
 
@@ -50,6 +50,7 @@ describe('DropdownMenu', () => {
         const wrapper = mountDropdownMenu({ props: { disabled: input } })
 
         expect(wrapper.getComponent(DropdownMenuTrigger).props('disabled')).toBe(expected)
+        expect(wrapper.getComponent(DropdownMenuPortal).props('disabled')).toBe(expected)
       })
     })
   })

@@ -19,7 +19,7 @@ const propRows: ApiTableRow[] = [
     name: 'disabled',
     type: 'boolean',
     default: String(dropdownMenuDefaults.disabled),
-    description: 'Deshabilita el trigger.',
+    description: 'Deshabilita el menú y su trigger.',
   },
 ]
 const emitRows: ApiTableRow[] = [

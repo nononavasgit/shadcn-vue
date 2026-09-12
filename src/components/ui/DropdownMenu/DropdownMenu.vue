@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { DropdownMenuRoot, DropdownMenuTrigger } from 'reka-ui'
+import { DropdownMenuPortal, DropdownMenuRoot, DropdownMenuTrigger } from 'reka-ui'
 import { cn } from '@/lib/utils'
 import type { DropdownMenuEmits, DropdownMenuProps, DropdownMenuSlots } from '.'
 import { dropdownMenuDefaults } from './default'
@@ -15,20 +15,18 @@ const open = defineModel<boolean>('open', { default: false })
 const rootProps = computed(() => ({ modal: props.modal }))
 const triggerProps = computed(() => ({
   disabled: props.disabled,
-  class: cn(
-    '',
-  ),
+  class: cn(''),
+}))
+const portalProps = computed(() => ({
+  disabled: props.disabled,
 }))
 </script>
 
 <template>
   <DropdownMenuRoot v-bind="rootProps" v-model:open="open" data-test-dropdown-menu-root>
-    <DropdownMenuTrigger
-      v-bind="triggerProps"
-      as-child
-      data-test-dropdown-menu-trigger
-    >
+    <DropdownMenuTrigger v-bind="triggerProps" as-child data-test-dropdown-menu-trigger>
       <slot></slot>
     </DropdownMenuTrigger>
+    <DropdownMenuPortal v-bind="portalProps" />
   </DropdownMenuRoot>
 </template>

@@ -11,6 +11,7 @@ export const listboxDefaults = {
   loading: false,
   filter: false,
   ignoreFilter: false,
+  virtualize: false,
   items: () => [],
   groups: () => [],
   ui: undefined,

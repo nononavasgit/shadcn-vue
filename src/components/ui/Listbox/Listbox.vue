@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ListboxContent, ListboxGroup, ListboxGroupLabel, ListboxRoot, ListboxFilter } from 'reka-ui'
+import { ListboxContent, ListboxGroup, ListboxGroupLabel, ListboxRoot, ListboxFilter, ListboxVirtualizer } from 'reka-ui'
 import { Input } from '@/components/ui/Input'
 import { Icon } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
@@ -64,7 +64,12 @@ const contentProps = computed(() => {
   return {
     ...attrs,
     ...ui,
-    class: cn(props.filter && 'border-t', 'outline-none', ui.class),
+    class: cn(
+      props.filter && 'border-t',
+      props.virtualize && 'max-h-80 overflow-auto',
+      'outline-none',
+      ui.class,
+    ),
     style: ui.style,
   }
 })
@@ -270,6 +275,25 @@ function getGroupLabelProps(context: ListboxGroupContext) {
                 </ListboxOption>
           </ListboxGroup>
         </template>
+
+        <ListboxVirtualizer
+          v-else-if="props.virtualize"
+          v-slot="{ option }"
+          :options="itemContexts"
+          :estimate-size="props.virtualizerConfig?.estimateSize ?? 32"
+          :overscan="props.virtualizerConfig?.overscan ?? 12"
+          :text-content="(option) => option.item.label"
+        >
+          <ListboxOption
+            :context="option"
+            :ui="props.ui"
+            :size="props.size"
+          >
+            <template v-for="(_, name) in $slots" #[name]="slotProps">
+              <slot :name="name" v-bind="slotProps" />
+            </template>
+          </ListboxOption>
+        </ListboxVirtualizer>
 
         <template v-else>
           <ListboxOption

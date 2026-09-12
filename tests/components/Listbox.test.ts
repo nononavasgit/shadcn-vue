@@ -1,6 +1,6 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
-import { ListboxItem as RekaListboxItem, ListboxRoot } from 'reka-ui'
+import { ListboxItem as RekaListboxItem, ListboxRoot, ListboxVirtualizer } from 'reka-ui'
 
 import { Listbox, type ListboxProps } from '@/components/ui/Listbox'
 import { Input } from '@/components/ui/Input'
@@ -121,6 +121,17 @@ const casesRequired = [
   { input: true, expected: true },
   { input: false, expected: false },
   { input: undefined, expected: false },
+]
+
+const casesVirtualize = [
+  { input: undefined, expected: false },
+  { input: false, expected: false },
+  { input: true, expected: true },
+]
+
+const casesVirtualizerConfig = [
+  { input: undefined, expected: { estimateSize: 32, overscan: 12 } },
+  { input: { estimateSize: 48, overscan: 20 }, expected: { estimateSize: 48, overscan: 20 } },
 ]
 
 const casesSeverity = [
@@ -528,6 +539,28 @@ describe('Listbox', () => {
 
         expect(filter).not.toHaveBeenCalled()
         useFilterSpy.mockRestore()
+      })
+    })
+
+    describe('virtualize', () => {
+      it.each(casesVirtualize)('renderiza virtualize=$input', ({ input, expected }) => {
+        const listbox = mountListbox(undefined, { props: { virtualize: input } })
+
+        expect(listbox.findComponent(ListboxVirtualizer).exists()).toBe(expected)
+      })
+    })
+
+    describe('virtualizerConfig', () => {
+      it.each(casesVirtualizerConfig)('usa virtualizerConfig=$input', ({ input, expected }) => {
+        const listbox = mountListbox(undefined, {
+          props: { virtualize: true, virtualizerConfig: input },
+        })
+        const virtualizer = listbox.getComponent(ListboxVirtualizer)
+
+        expect({
+          estimateSize: virtualizer.props('estimateSize'),
+          overscan: virtualizer.props('overscan'),
+        }).toEqual(expected)
       })
     })
 

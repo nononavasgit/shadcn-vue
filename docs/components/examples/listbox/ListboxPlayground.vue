@@ -22,6 +22,9 @@ type ListboxState = {
   filterMode: 'contains' | 'startWith' | 'endWith'
   filterSensitivity: 'base' | 'accent' | 'case' | 'variant'
   ignoreFilter: boolean
+  virtualize: boolean
+  virtualizerEstimateSize: number
+  virtualizerOverscan: number
   emptyText: string
   noResultsText: string
   ui: boolean
@@ -54,6 +57,9 @@ const initialState = (): ListboxState => ({
   filterMode: 'contains',
   filterSensitivity: 'base',
   ignoreFilter: false,
+  virtualize: false,
+  virtualizerEstimateSize: 32,
+  virtualizerOverscan: 12,
   emptyText: 'No hay opciones',
   noResultsText: 'Sin resultados',
   ui: false,
@@ -100,7 +106,7 @@ const groups = [
   },
 ]
 
-const longItems = Array.from({ length: 24 }, (_, index) => ({
+const longItems = Array.from({ length: 10000 }, (_, index) => ({
   value: index + 1,
   label: `Opción larga ${index + 1}`,
 }))
@@ -180,6 +186,8 @@ function generateCode() {
     `:filter="${state.value.filter}"`,
     `:filter-config="{ mode: '${state.value.filterMode}', sensitivity: '${state.value.filterSensitivity}' }"`,
     `:ignore-filter="${state.value.ignoreFilter}"`,
+    `:virtualize="${state.value.virtualize}"`,
+    `:virtualizer-config="{ estimateSize: ${state.value.virtualizerEstimateSize}, overscan: ${state.value.virtualizerOverscan} }"`,
     `:input-filter="{ placeholder: 'Buscar...' }"`,
     `:icon-filter="{ name: 'search' }"`,
     `empty-text="${escapeAttribute(state.value.emptyText)}"`,
@@ -347,6 +355,12 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             </select></label
           ><label class="flex items-center gap-2 text-sm"
             ><input v-model="state.ignoreFilter" type="checkbox" /> Ignore filter</label
+          ><label class="flex items-center gap-2 text-sm"
+            ><input v-model="state.virtualize" type="checkbox" /> Virtualize</label
+          ><label class="grid gap-1 text-xs"
+            >Estimate size<input v-model.number="state.virtualizerEstimateSize" type="number" min="1" class="rounded-md border bg-background px-3 py-2 text-sm" /></label
+          ><label class="grid gap-1 text-xs"
+            >Overscan<input v-model.number="state.virtualizerOverscan" type="number" min="0" class="rounded-md border bg-background px-3 py-2 text-sm" /></label
           ><label class="flex items-center gap-2 text-sm"
             ><input v-model="state.invalid" type="checkbox" /> aria-invalid</label
           ><label class="flex items-center gap-2 text-sm"

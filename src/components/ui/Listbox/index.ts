@@ -36,6 +36,12 @@ export interface ListboxFilterConfig {
   sensitivity?: FilterSensitivity
 }
 
+export interface ListboxVirtualizerConfig {
+  overscan?: number
+  estimateSize?: number | ((index: number) => number)
+}
+
+
 export type ListboxValue = string | number
 export type ListboxModelValue = ListboxValue | ListboxValue[] | undefined
 export type ListboxRootProps = Pick<
@@ -72,6 +78,8 @@ export interface ListboxProps extends ListboxRootProps {
   search?: string
   filter?: boolean
   filterConfig?: ListboxFilterConfig
+  virtualize?: boolean
+  virtualizerConfig?: ListboxVirtualizerConfig
   ignoreFilter?: boolean
   inputFilter?: NormalizeInputProps
   iconFilter?: IconConfig

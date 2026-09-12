@@ -61,7 +61,9 @@ const propRows: ApiTableRow[] = [
   { name: 'name', type: 'string', default: 'undefined', description: 'Nombre del control para formularios.' },
   { name: 'search', type: 'string', default: "''", description: 'Texto de búsqueda controlado.' },
   { name: 'filter', type: 'boolean', default: 'false', description: 'Activa el filtro de opciones.' },
-  { name: 'filterConfig', type: '{ mode?: FilterMode; sensitivity?: FilterSensitivity }', default: 'undefined', description: 'Configuración del criterio de filtrado.' },
+  { name: 'filterConfig', type: 'ListboxFilterConfig', typeLink: '#listbox-filter-config', default: 'undefined', description: 'Configuración del criterio de filtrado.' },
+  { name: 'virtualize', type: 'boolean', default: 'false', description: 'Activa la virtualización de items con estimateSize 32 y overscan 12.' },
+  { name: 'virtualizerConfig', type: 'ListboxVirtualizerConfig', typeLink: '#listbox-virtualizer-config', default: 'undefined', description: 'Personaliza la configuración de la virtualización.' },
   { name: 'ignoreFilter', type: 'boolean', default: 'false', description: 'Muestra el filtro sin aplicarlo.' },
   { name: 'inputFilter', type: 'InputConfig', typeLink: '/input#input-config', default: 'undefined', description: 'Props del Input de filtro.' },
   { name: 'emptyText', type: 'string', default: 'undefined', description: 'Texto para una lista sin opciones.' },
@@ -226,6 +228,16 @@ const contextRows: ApiTableRow[] = [
   { name: 'search', type: 'string', description: 'Texto de búsqueda actual.' },
 ]
 
+const filterConfigRows: ApiTableRow[] = [
+  { name: 'mode', type: 'FilterMode', default: 'contains', description: 'Criterio usado para filtrar las opciones.' },
+  { name: 'sensitivity', type: 'FilterSensitivity', default: 'base', description: 'Sensibilidad de la comparación.' },
+]
+
+const virtualizerConfigRows: ApiTableRow[] = [
+  { name: 'overscan', type: 'number', default: '12', description: 'Número de items renderizados fuera del área visible.' },
+  { name: 'estimateSize', type: 'number | ((index: number) => number)', default: '32', description: 'Tamaño estimado en píxeles de cada item.' },
+]
+
 const itemContextRows: ApiTableRow[] = [
   { name: 'item', type: 'ListboxItem', typeLink: '#listbox-item', description: 'Opción actual.' },
   { name: 'index', type: 'number', description: 'Índice de la opción.' },
@@ -253,6 +265,8 @@ const groupContextRows: ApiTableRow[] = [
       <ApiTable title="Props" :rows="propRows" />
       <ApiTable id="listbox-item" title="ListboxItem" :rows="itemRows" />
       <ApiTable id="listbox-group" title="ListboxGroup" :rows="groupRows" />
+      <ApiTable id="listbox-filter-config" title="ListboxFilterConfig" :rows="filterConfigRows" />
+      <ApiTable id="listbox-virtualizer-config" title="ListboxVirtualizerConfig" :rows="virtualizerConfigRows" />
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="[]" empty-text="Este componente no expone metodos." />

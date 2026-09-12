@@ -158,6 +158,14 @@ const casesGroups = [
 ]
 
 describe('Listbox', () => {
+  describe('attrs', () => {
+    testAttrs({
+      text: 'reenvía atributos arbitrarios al ListboxContent de Reka UI',
+      id: '[data-test-listbox-content]',
+      mount: (attrs) => mountListbox(undefined, { attrs }),
+    })
+  })
+
   describe('props', () => {
     describe('ui', () => {
       describe('root', () => {
@@ -239,7 +247,8 @@ describe('Listbox', () => {
       describe('itemLeading', () => {
         testAttrs({
           id: '[data-test-listbox-item-leading]',
-          mount: (attrs) => mountListbox(undefined, { props: { ui: { itemLeading: () => attrs } } }),
+          mount: (attrs) =>
+            mountListbox(undefined, { props: { ui: { itemLeading: () => attrs } } }),
         })
       })
 
@@ -253,7 +262,10 @@ describe('Listbox', () => {
       describe('itemIndicator', () => {
         testAttrs({
           id: '[data-test-listbox-item-indicator]',
-          mount: (attrs) => mountListbox(undefined, { props: { value: 'apple', ui: { itemIndicator: () => attrs } } }),
+          mount: (attrs) =>
+            mountListbox(undefined, {
+              props: { value: 'apple', ui: { itemIndicator: () => attrs } },
+            }),
         })
       })
     })
@@ -519,7 +531,11 @@ describe('Listbox', () => {
         })
 
         expect(useFilterSpy).toHaveBeenLastCalledWith(
-          expect.objectContaining({ mode: 'startWith', sensitivity: 'accent', getText: expect.any(Function) }),
+          expect.objectContaining({
+            mode: 'startWith',
+            sensitivity: 'accent',
+            getText: expect.any(Function),
+          }),
         )
         useFilterSpy.mockRestore()
       })
@@ -614,6 +630,58 @@ describe('Listbox', () => {
   })
 
   describe('emits', () => {
+    describe('select', () => {
+      it('reenvía el evento de selección de una opción', async () => {
+        const onSelect = vi.fn()
+        const listbox = mountListbox(undefined, { props: { onSelect } })
+        const event = new CustomEvent('select', {
+          detail: { value: 'apple', originalEvent: new PointerEvent('pointerdown') },
+        })
+
+        listbox.getComponent(RekaListboxItem).vm.$emit('select', event)
+        await listbox.vm.$nextTick()
+
+        expect(onSelect).toHaveBeenCalledTimes(1)
+        expect(onSelect).toHaveBeenCalledWith(event)
+      })
+
+      it('reenvía el evento de selección de una opción agrupada', async () => {
+        const onSelect = vi.fn()
+        const listbox = mountListbox([], {
+          props: {
+            groups: [{ id: 'fruits', label: 'Frutas', items: casesItems.grouped }],
+            onSelect,
+          },
+        })
+        const event = new CustomEvent('select', {
+          detail: { value: 'apple', originalEvent: new PointerEvent('pointerdown') },
+        })
+
+        listbox.getComponent(RekaListboxItem).vm.$emit('select', event)
+        await listbox.vm.$nextTick()
+
+        expect(onSelect).toHaveBeenCalledWith(event)
+      })
+    })
+
+    describe.each([
+      ['entryFocus', new CustomEvent('entryFocus')],
+      ['highlight', { ref: document.createElement('div'), value: 'apple' }],
+      ['leave', new Event('mouseleave')],
+    ])('%s', (eventName, payload) => {
+      it('reenvía el evento de Reka UI', async () => {
+        const listener = vi.fn()
+        const listbox = mountListbox(undefined, { props: { [
+          `on${eventName.charAt(0).toUpperCase()}${eventName.slice(1)}`
+        ]: listener } })
+
+        listbox.getComponent(ListboxRoot).vm.$emit(eventName, payload)
+        await listbox.vm.$nextTick()
+
+        expect(listener).toHaveBeenCalledWith(payload)
+      })
+    })
+
     describe('update:value', () => {
       it('emite el valor seleccionado', async () => {
         const onUpdateValue = vi.fn()
@@ -752,6 +820,59 @@ describe('Listbox', () => {
           'Indicador personalizado',
         )
       })
+    })
+  })
+
+  describe('context contract', () => {
+    it('listboxContext', () => {
+      const root = vi.fn(() => ({}))
+      const content = vi.fn(() => ({}))
+
+      mountListbox(undefined, {
+        props: { value: 'apple', search: 'man', ui: { root, content } },
+      })
+
+      expect(root).toHaveBeenCalledWith({ value: 'apple', search: 'man' })
+      expect(content).toHaveBeenCalledWith({ value: 'apple', search: 'man' })
+    })
+
+    it('listboxItemContext', () => {
+      const item = vi.fn(() => ({}))
+      const itemSlot = vi.fn(() => 'Item')
+
+      mountListbox([{ value: 'apple', label: 'Manzana' }], {
+        props: { value: 'apple', ui: { item } },
+        slots: { item: itemSlot },
+      })
+
+      const expected = {
+        item: { value: 'apple', label: 'Manzana' },
+        index: 0,
+        selected: true,
+      }
+      expect(item).toHaveBeenCalledWith(expected)
+      expect(itemSlot).toHaveBeenCalledWith({ ...expected, ref_for: true })
+    })
+
+    it('listboxGroupContext', () => {
+      const group = vi.fn(() => ({}))
+      const groupLabel = vi.fn(() => ({}))
+      const groupLabelSlot = vi.fn(() => 'Grupo')
+      const groupData = {
+        id: 'fruits',
+        label: 'Frutas',
+        items: [{ value: 'apple', label: 'Manzana' }],
+      }
+
+      mountListbox([], {
+        props: { groups: [groupData], ui: { group, groupLabel } },
+        slots: { 'group-label': groupLabelSlot },
+      })
+
+      const expected = { group: groupData, index: 0 }
+      expect(group).toHaveBeenCalledWith(expected)
+      expect(groupLabel).toHaveBeenCalledWith(expected)
+      expect(groupLabelSlot).toHaveBeenCalledWith({ ...expected, ref_for: true })
     })
   })
 })

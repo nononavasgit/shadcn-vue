@@ -19,12 +19,16 @@ export const listboxVariants = cva('', {
     },
     severity: {
       primary: 'has-[:focus-visible]:border-primary has-[:focus-visible]:ring-primary/50',
-      secondary: 'has-[:focus-visible]:border-secondary-foreground has-[:focus-visible]:ring-secondary-foreground/20',
+      secondary:
+        'has-[:focus-visible]:border-secondary-foreground has-[:focus-visible]:ring-secondary-foreground/20',
       error: 'has-[:focus-visible]:border-error has-[:focus-visible]:ring-error/30',
       warning: 'has-[:focus-visible]:border-warning has-[:focus-visible]:ring-warning/30',
       success: 'has-[:focus-visible]:border-success has-[:focus-visible]:ring-success/30',
     },
-    color: { true: 'has-[:focus-visible]:border-(--listbox-color) has-[:focus-visible]:ring-(--listbox-color)/30', false: '' },
+    color: {
+      true: 'has-[:focus-visible]:border-(--listbox-color) has-[:focus-visible]:ring-(--listbox-color)/30',
+      false: '',
+    },
   },
   defaultVariants: { size: 'md', severity: 'primary', color: false },
 })
@@ -41,9 +45,13 @@ export interface ListboxVirtualizerConfig {
   estimateSize?: number | ((index: number) => number)
 }
 
-
 export type ListboxValue = string | number
 export type ListboxModelValue = ListboxValue | ListboxValue[] | undefined
+export type ListboxSelectEvent = CustomEvent<{
+  originalEvent: PointerEvent
+  value?: ListboxValue
+}>
+export type ListboxHighlightPayload = { ref: HTMLElement; value: ListboxValue } | undefined
 export type ListboxRootProps = Pick<
   RekaListboxRootProps<ListboxValue>,
   | 'disabled'
@@ -128,6 +136,10 @@ export interface ListboxGroupContext {
 export interface ListboxEmits {
   'update:value': [value: ListboxModelValue]
   'update:search': [value: string]
+  select: [event: ListboxSelectEvent]
+  entryFocus: [event: CustomEvent]
+  highlight: [payload: ListboxHighlightPayload]
+  leave: [event: Event]
 }
 
 export type ListboxSlots = {

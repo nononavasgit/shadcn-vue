@@ -52,22 +52,100 @@ const propRows: ApiTableRow[] = [
     default: '[]',
     description: 'Grupos de opciones. Cuando tiene contenido, sustituye a items.',
   },
-  { name: 'multiple', type: 'boolean', default: 'false', description: 'Permite seleccionar varias opciones.' },
-  { name: 'orientation', type: 'vertical | horizontal', default: 'vertical', description: 'Orientación de la lista.' },
-  { name: 'selectionBehavior', type: 'toggle | replace', default: 'toggle', description: 'Comportamiento de la selección.' },
-  { name: 'highlightOnHover', type: 'boolean', default: 'true', description: 'Resalta la opción bajo el puntero.' },
-  { name: 'loading', type: 'boolean', default: 'false', description: 'Muestra el estado de carga en lugar del contenido.' },
-  { name: 'required', type: 'boolean', default: 'false', description: 'Indica que la selección es obligatoria.' },
-  { name: 'name', type: 'string', default: 'undefined', description: 'Nombre del control para formularios.' },
+  {
+    name: 'multiple',
+    type: 'boolean',
+    default: 'false',
+    description: 'Permite seleccionar varias opciones.',
+  },
+  {
+    name: 'orientation',
+    type: 'vertical | horizontal',
+    default: 'vertical',
+    description: 'Orientación de la lista.',
+  },
+  {
+    name: 'selectionBehavior',
+    type: 'toggle | replace',
+    default: 'toggle',
+    description: 'Comportamiento de la selección.',
+  },
+  {
+    name: 'highlightOnHover',
+    type: 'boolean',
+    default: 'true',
+    description: 'Resalta la opción bajo el puntero.',
+  },
+  {
+    name: 'loading',
+    type: 'boolean',
+    default: 'false',
+    description: 'Muestra el estado de carga en lugar del contenido.',
+  },
+  {
+    name: 'required',
+    type: 'boolean',
+    default: 'false',
+    description: 'Indica que la selección es obligatoria.',
+  },
+  {
+    name: 'name',
+    type: 'string',
+    default: 'undefined',
+    description: 'Nombre del control para formularios.',
+  },
   { name: 'search', type: 'string', default: "''", description: 'Texto de búsqueda controlado.' },
-  { name: 'filter', type: 'boolean', default: 'false', description: 'Activa el filtro de opciones.' },
-  { name: 'filterConfig', type: 'ListboxFilterConfig', typeLink: '#listbox-filter-config', default: 'undefined', description: 'Configuración del criterio de filtrado.' },
-  { name: 'virtualize', type: 'boolean', default: 'false', description: 'Activa la virtualización de items con estimateSize 32 y overscan 12.' },
-  { name: 'virtualizerConfig', type: 'ListboxVirtualizerConfig', typeLink: '#listbox-virtualizer-config', default: 'undefined', description: 'Personaliza la configuración de la virtualización.' },
-  { name: 'ignoreFilter', type: 'boolean', default: 'false', description: 'Muestra el filtro sin aplicarlo.' },
-  { name: 'inputFilter', type: 'InputConfig', typeLink: '/input#input-config', default: 'undefined', description: 'Props del Input de filtro.' },
-  { name: 'emptyText', type: 'string', default: 'undefined', description: 'Texto para una lista sin opciones.' },
-  { name: 'noResultsText', type: 'string', default: 'undefined', description: 'Texto cuando no hay resultados.' },
+  {
+    name: 'filter',
+    type: 'boolean',
+    default: 'false',
+    description: 'Activa el filtro de opciones.',
+  },
+  {
+    name: 'filterConfig',
+    type: 'ListboxFilterConfig',
+    typeLink: '#listbox-filter-config',
+    default: 'undefined',
+    description: 'Configuración del criterio de filtrado.',
+  },
+  {
+    name: 'virtualize',
+    type: 'boolean',
+    default: 'false',
+    description: 'Activa la virtualización de items con estimateSize 32 y overscan 12.',
+  },
+  {
+    name: 'virtualizerConfig',
+    type: 'ListboxVirtualizerConfig',
+    typeLink: '#listbox-virtualizer-config',
+    default: 'undefined',
+    description: 'Personaliza la configuración de la virtualización.',
+  },
+  {
+    name: 'ignoreFilter',
+    type: 'boolean',
+    default: 'false',
+    description: 'Muestra el filtro sin aplicarlo.',
+  },
+  {
+    name: 'inputFilter',
+    type: 'InputConfig',
+    typeLink: '/input#input-config',
+    default: 'undefined',
+    description: 'Props del Input de filtro.',
+  },
+  {
+    name: 'emptyText',
+    type: 'string',
+    default: 'undefined',
+    description: 'Texto para una lista sin opciones.',
+  },
+  {
+    name: 'noResultsText',
+    type: 'string',
+    default: 'undefined',
+    description: 'Texto cuando no hay resultados.',
+  },
   {
     name: 'ui',
     type: '{ root?: (context: ListboxContext) => HTMLAttributes; content?: (context: ListboxContext) => HTMLAttributes; empty?: (context: ListboxContext) => HTMLAttributes; noResults?: (context: ListboxContext) => HTMLAttributes; loading?: (context: ListboxContext) => HTMLAttributes; group?: (context: ListboxGroupContext) => HTMLAttributes; groupLabel?: (context: ListboxGroupContext) => HTMLAttributes; item?: (context: ListboxItemContext) => HTMLAttributes; itemLeading?: (context: ListboxItemContext) => HTMLAttributes; itemLabel?: (context: ListboxItemContext) => HTMLAttributes; itemIndicator?: (context: ListboxItemContext) => HTMLAttributes }',
@@ -164,6 +242,32 @@ const emitRows: ApiTableRow[] = [
     default: '-',
     description: 'Actualiza el texto de búsqueda.',
   },
+  {
+    name: 'select',
+    type: '[event: ListboxSelectEvent]',
+    typeLink: '#listbox-select-event',
+    default: '-',
+    description:
+      'Se emite cuando el usuario selecciona una opción e incluye el evento original y su valor.',
+  },
+  {
+    name: 'entryFocus',
+    type: '[event: CustomEvent<any>]',
+    default: '-',
+    description: 'Se emite cuando el contenedor recibe el foco y puede cancelarse con preventDefault().',
+  },
+  {
+    name: 'highlight',
+    type: '[payload: { ref: HTMLElement; value: string | number } | undefined]',
+    default: '-',
+    description: 'Se emite cuando cambia la opción resaltada.',
+  },
+  {
+    name: 'leave',
+    type: '[event: Event]',
+    default: '-',
+    description: 'Se emite cuando el puntero abandona el contenedor.',
+  },
 ]
 
 const slotRows: ApiTableRow[] = [
@@ -224,25 +328,67 @@ const slotRows: ApiTableRow[] = [
 ]
 
 const contextRows: ApiTableRow[] = [
-  { name: 'value', type: 'string | number | (string | number)[] | undefined', description: 'Valor actualmente seleccionado.' },
+  {
+    name: 'value',
+    type: 'string | number | (string | number)[] | undefined',
+    description: 'Valor actualmente seleccionado.',
+  },
   { name: 'search', type: 'string', description: 'Texto de búsqueda actual.' },
 ]
 
 const filterConfigRows: ApiTableRow[] = [
-  { name: 'mode', type: 'FilterMode', default: 'contains', description: 'Criterio usado para filtrar las opciones.' },
-  { name: 'sensitivity', type: 'FilterSensitivity', default: 'base', description: 'Sensibilidad de la comparación.' },
+  {
+    name: 'mode',
+    type: 'FilterMode',
+    default: 'contains',
+    description: 'Criterio usado para filtrar las opciones.',
+  },
+  {
+    name: 'sensitivity',
+    type: 'FilterSensitivity',
+    default: 'base',
+    description: 'Sensibilidad de la comparación.',
+  },
 ]
 
 const virtualizerConfigRows: ApiTableRow[] = [
-  { name: 'overscan', type: 'number', default: '12', description: 'Número de items renderizados fuera del área visible.' },
-  { name: 'estimateSize', type: 'number | ((index: number) => number)', default: '32', description: 'Tamaño estimado en píxeles de cada item.' },
+  {
+    name: 'overscan',
+    type: 'number',
+    default: '12',
+    description: 'Número de items renderizados fuera del área visible.',
+  },
+  {
+    name: 'estimateSize',
+    type: 'number | ((index: number) => number)',
+    default: '32',
+    description: 'Tamaño estimado en píxeles de cada item.',
+  },
+]
+
+const selectEventRows: ApiTableRow[] = [
+  {
+    name: 'originalEvent',
+    type: 'PointerEvent',
+    description: 'Evento de puntero que originó la selección.',
+  },
+  {
+    name: 'value',
+    type: 'string | number | undefined',
+    description: 'Valor de la opción seleccionada.',
+  },
 ]
 
 const itemContextRows: ApiTableRow[] = [
   { name: 'item', type: 'ListboxItem', typeLink: '#listbox-item', description: 'Opción actual.' },
   { name: 'index', type: 'number', description: 'Índice de la opción.' },
   { name: 'selected', type: 'boolean', description: 'Indica si la opción está seleccionada.' },
-  { name: 'group', type: 'ListboxGroup | undefined', typeLink: '#listbox-group', description: 'Grupo padre, cuando la opción pertenece a un grupo.' },
+  {
+    name: 'group',
+    type: 'ListboxGroup | undefined',
+    typeLink: '#listbox-group',
+    description: 'Grupo padre, cuando la opción pertenece a un grupo.',
+  },
 ]
 
 const groupContextRows: ApiTableRow[] = [
@@ -266,7 +412,12 @@ const groupContextRows: ApiTableRow[] = [
       <ApiTable id="listbox-item" title="ListboxItem" :rows="itemRows" />
       <ApiTable id="listbox-group" title="ListboxGroup" :rows="groupRows" />
       <ApiTable id="listbox-filter-config" title="ListboxFilterConfig" :rows="filterConfigRows" />
-      <ApiTable id="listbox-virtualizer-config" title="ListboxVirtualizerConfig" :rows="virtualizerConfigRows" />
+      <ApiTable
+        id="listbox-virtualizer-config"
+        title="ListboxVirtualizerConfig"
+        :rows="virtualizerConfigRows"
+      />
+      <ApiTable id="listbox-select-event" title="ListboxSelectEvent" :rows="selectEventRows" />
       <ApiTable title="Emits" :rows="emitRows" />
       <ApiTable title="Slots" type-label="slotProps" :show-default="false" :rows="slotRows" />
       <ApiTable title="Expose" :rows="[]" empty-text="Este componente no expone metodos." />
@@ -276,5 +427,3 @@ const groupContextRows: ApiTableRow[] = [
     </div>
   </section>
 </template>
-
-

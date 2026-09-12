@@ -1,5 +1,6 @@
 import { mount, type MountingOptions } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { h } from 'vue'
 import { ListboxItem as RekaListboxItem, ListboxRoot } from 'reka-ui'
 
 import { Listbox, type ListboxProps } from '@/components/ui/Listbox'
@@ -112,6 +113,15 @@ const casesItemDisabled = [
   { input: undefined, expected: undefined },
 ]
 
+const casesGroups = [
+  { input: [], expectedGroups: 0, expectedItems: 2 },
+  {
+    input: [{ id: 'fruits', label: 'Frutas', items: [{ value: 'apple', label: 'Manzana' }] }],
+    expectedGroups: 1,
+    expectedItems: 1,
+  },
+]
+
 describe('Listbox', () => {
   describe('props', () => {
     describe('items', () => {
@@ -148,6 +158,98 @@ describe('Listbox', () => {
         })
       })
 
+    })
+
+    describe('groups', () => {
+      describe('id', () => {
+        it('expone el id del grupo en el contexto del slot', () => {
+          const listbox = mountListbox([], {
+            props: {
+              groups: [{ id: 'fruits', label: 'Frutas', items: casesItems.grouped }],
+            },
+            slots: {
+              group: ({ group }) => h('div', { 'data-test-group-id': group.id }, group.label),
+            },
+          })
+
+          expect(listbox.get('[data-test-group-id]').attributes('data-test-group-id')).toBe(
+            'fruits',
+          )
+        })
+      })
+
+      it.each(casesGroups)('renderiza los grupos recibidos', ({ input, expectedGroups, expectedItems }) => {
+        const listbox = mountListbox(casesItems.normal, { props: { groups: input } })
+
+        expect(listbox.findAll('[data-test-listbox-group]')).toHaveLength(expectedGroups)
+        expect(listbox.findAll('[data-test-listbox-item]')).toHaveLength(expectedItems)
+      })
+
+      describe('label', () => {
+        it('renderiza el label del grupo', () => {
+          const listbox = mountListbox([], {
+            props: {
+              groups: [{ id: 'fruits', label: 'Frutas', items: casesItems.grouped }],
+            },
+          })
+
+          expect(listbox.get('[data-test-listbox-group-label]').text()).toBe('Frutas')
+        })
+      })
+
+      describe('items', () => {
+        it('pasa value del item agrupado a ListboxItem', () => {
+          const listbox = mountListbox([], {
+            props: {
+              groups: [{ id: 'fruits', label: 'Frutas', items: casesItems.grouped }],
+            },
+          })
+
+          expect(listbox.getComponent(RekaListboxItem).props('value')).toBe('apple')
+        })
+
+        it('renderiza label del item agrupado', () => {
+          const listbox = mountListbox([], {
+            props: {
+              groups: [{ id: 'fruits', label: 'Frutas', items: casesItems.grouped }],
+            },
+          })
+
+          expect(listbox.get('[data-test-listbox-item]').text()).toContain('Manzana')
+        })
+
+        it('renderiza icon del item agrupado', () => {
+          const listbox = mountListbox([], {
+            props: {
+              groups: [
+                {
+                  id: 'fruits',
+                  label: 'Frutas',
+                  items: [{ value: 'apple', label: 'Manzana', icon: { name: 'save' } }],
+                },
+              ],
+            },
+          })
+
+          expect(listbox.find('[data-test-listbox-item-icon]').exists()).toBe(true)
+        })
+
+        it('pasa disabled del item agrupado a ListboxItem', () => {
+          const listbox = mountListbox([], {
+            props: {
+              groups: [
+                {
+                  id: 'fruits',
+                  label: 'Frutas',
+                  items: [{ value: 'apple', label: 'Manzana', disabled: true }],
+                },
+              ],
+            },
+          })
+
+          expect(listbox.getComponent(RekaListboxItem).props('disabled')).toBe(true)
+        })
+      })
     })
 
     describe('value', () => {

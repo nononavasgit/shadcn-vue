@@ -86,6 +86,12 @@ const itemRows: ApiTableRow[] = [
 
 const groupRows: ApiTableRow[] = [
   {
+    name: 'id',
+    type: 'string | number',
+    required: true,
+    description: 'Identificador único del grupo usado como clave de renderizado.',
+  },
+  {
     name: 'label',
     type: 'string',
     required: true,

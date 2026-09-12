@@ -17,11 +17,20 @@ export const listboxVariants = cva('', {
       lg: 'min-h-10 text-lg',
       xl: 'min-h-11 text-xl',
     },
+    severity: {
+      primary: 'focus-within:border-primary focus-within:ring-primary/50',
+      secondary: 'focus-within:border-secondary-foreground focus-within:ring-secondary-foreground/20',
+      error: 'focus-within:border-error focus-within:ring-error/30',
+      warning: 'focus-within:border-warning focus-within:ring-warning/30',
+      success: 'focus-within:border-success focus-within:ring-success/30',
+    },
+    color: { true: 'focus-within:border-(--listbox-color) focus-within:ring-(--listbox-color)/30', false: '' },
   },
-  defaultVariants: { size: 'md' },
+  defaultVariants: { size: 'md', severity: 'primary', color: false },
 })
 
 export type ListboxSize = NonNullable<VariantProps<typeof listboxVariants>['size']>
+export type ListboxSeverity = NonNullable<VariantProps<typeof listboxVariants>['severity']>
 
 export type ListboxValue = string | number
 export type ListboxModelValue = ListboxValue | ListboxValue[] | undefined
@@ -52,6 +61,8 @@ export interface ListboxGroup {
 
 export interface ListboxProps extends ListboxRootProps {
   size?: ListboxSize
+  severity?: ListboxSeverity
+  color?: string
   loading?: boolean
   value?: ListboxModelValue
   search?: string

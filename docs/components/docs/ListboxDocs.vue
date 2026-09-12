@@ -21,6 +21,18 @@ const propRows: ApiTableRow[] = [
     description: 'Tamaño visual del Listbox.',
   },
   {
+    name: 'severity',
+    type: 'primary | secondary | error | warning | success',
+    default: 'primary',
+    description: 'Color semántico del borde y anillo de foco.',
+  },
+  {
+    name: 'color',
+    type: 'string',
+    default: 'undefined',
+    description: 'Color personalizado del borde y anillo de foco.',
+  },
+  {
     name: 'loading',
     type: 'boolean',
     default: 'false',

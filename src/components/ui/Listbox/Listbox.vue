@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/Input'
 import { Icon } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
 import { useFilter } from '@/composables/useFilter'
+import { useColor } from '@/composables/useColor'
 import { cn } from '@/lib/utils'
 import ListboxOption from './ListboxOption.vue'
 import { listboxDefaults } from './defaults'
@@ -27,6 +28,7 @@ const attrs = useAttrs()
 const { t } = useI18n()
 const value = defineModel<ListboxProps['value']>('value')
 const search = defineModel<string>('search', { default: '' })
+const { colorStyle } = useColor(() => props.color, 'listbox')
 
 const listboxContext = computed<ListboxContext>(() => {
   return { value: value.value, search: search.value }
@@ -45,14 +47,14 @@ const rootProps = computed(() => {
     required: props.required,
     selectionBehavior: props.selectionBehavior,
     class: cn(
-      'min-w-40 overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md transition-[color,box-shadow] focus-within:border-primary focus-within:ring-3 focus-within:ring-primary/50',
+      'min-w-40 overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md transition-[color,box-shadow]',
       (attrs['aria-invalid'] === true || attrs['aria-invalid'] === 'true') &&
         'border-destructive ring-3 ring-destructive/20 focus-within:border-destructive focus-within:ring-destructive/20 dark:ring-destructive/40 dark:focus-within:ring-destructive/40',
-      listboxVariants({ size: props.size }),
+      listboxVariants({ size: props.size, severity: props.severity, color: Boolean(props.color) }),
       attrs.class,
       ui.class,
     ),
-    style: [attrs.style, ui.style],
+    style: [colorStyle.value, attrs.style, ui.style],
   }
 })
 
@@ -71,6 +73,8 @@ const filterProps = computed(() => {
   return {
     ...props.inputFilter,
     variant: props.inputFilter?.variant ?? 'none',
+    severity: props.inputFilter?.severity ?? props.severity,
+    color: props.inputFilter?.color ?? props.color,
     placeholder: props.inputFilter?.placeholder ?? t('searchPlaceholder'),
     size: props.inputFilter?.size ?? props.size,
     disabled: props.disabled || props.inputFilter?.disabled,

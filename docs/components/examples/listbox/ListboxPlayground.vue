@@ -9,6 +9,8 @@ type ListboxState = {
   data: 'items' | 'groups' | 'long'
   disabled: boolean
   size: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+  severity: 'primary' | 'secondary' | 'error' | 'warning' | 'success'
+  color: string
   multiple: boolean
   orientation: 'vertical' | 'horizontal'
   selectionBehavior: 'toggle' | 'replace'
@@ -38,6 +40,8 @@ const initialState = (): ListboxState => ({
   data: 'items',
   disabled: false,
   size: 'md',
+  severity: 'primary',
+  color: '',
   multiple: false,
   orientation: 'vertical',
   selectionBehavior: 'toggle',
@@ -161,6 +165,8 @@ function generateCode() {
     'v-model:value="value"',
     `:disabled="${state.value.disabled}"`,
     `size="${state.value.size}"`,
+    `severity="${state.value.severity}"`,
+    state.value.color && `color="${escapeAttribute(state.value.color)}"`,
     `:loading="${state.value.loading}"`,
     `:multiple="${state.value.multiple}"`,
     `orientation="${state.value.orientation}"`,
@@ -285,6 +291,18 @@ watch(state, syncFromControls, { deep: true, immediate: true })
               <option value="lg">lg</option>
               <option value="xl">xl</option>
             </select></label
+          >
+          <label class="grid gap-1 text-xs"
+            >Severity<select v-model="state.severity" class="rounded-md border bg-background px-3 py-2 text-sm">
+              <option value="primary">Primary</option>
+              <option value="secondary">Secondary</option>
+              <option value="error">Error</option>
+              <option value="warning">Warning</option>
+              <option value="success">Success</option>
+            </select></label
+          >
+          <label class="grid gap-1 text-xs"
+            >Color<input v-model="state.color" placeholder="#6366f1" class="rounded-md border bg-background px-3 py-2 text-sm" /></label
           >
           <label class="grid gap-1 text-xs"
             >Valor inicial

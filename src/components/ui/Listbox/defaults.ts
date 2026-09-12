@@ -1,5 +1,6 @@
 export const listboxDefaults = {
   size: 'md' as const,
+  severity: 'primary' as const,
   disabled: false,
   name: undefined,
   required: false,

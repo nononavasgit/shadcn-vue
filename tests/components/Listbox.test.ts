@@ -9,6 +9,7 @@ import { testIconProps } from '../utils/testIconProps'
 import { testInputConfig } from '../utils/testInputConfig'
 import { testAttrs } from '../utils/testAttrs'
 import * as filterComposable from '@/composables/useFilter'
+import { testColor } from '../utils/testColor'
 
 Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
   value: vi.fn(),
@@ -120,6 +121,14 @@ const casesRequired = [
   { input: true, expected: true },
   { input: false, expected: false },
   { input: undefined, expected: false },
+]
+
+const casesSeverity = [
+  { input: 'primary' as const, expected: 'focus-within:border-primary' },
+  { input: 'secondary' as const, expected: 'focus-within:border-secondary-foreground' },
+  { input: 'error' as const, expected: 'focus-within:border-error' },
+  { input: 'warning' as const, expected: 'focus-within:border-warning' },
+  { input: 'success' as const, expected: 'focus-within:border-success' },
 ]
 
 const casesItemDisabled = [
@@ -419,6 +428,25 @@ describe('Listbox', () => {
         const listbox = mountListbox(undefined, { props: { required: input } })
 
         expect(listbox.getComponent(ListboxRoot).props('required')).toBe(expected)
+      })
+    })
+
+    describe('severity', () => {
+      it.each(casesSeverity)('renderiza severity=$input', ({ input, expected }) => {
+        const root = mountListbox(undefined, { props: { severity: input } }).get(
+          '[data-test-listbox-root]',
+        )
+
+        expect(root.classes()).toContain(expected)
+      })
+    })
+
+    describe('color', () => {
+      testColor({
+        text: 'renderiza color personalizado',
+        id: '[data-test-listbox-root]',
+        varColor: '--listbox-color',
+        mount: (color) => mountListbox(undefined, { props: { color } }),
       })
     })
 

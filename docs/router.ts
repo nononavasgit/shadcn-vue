@@ -60,6 +60,7 @@ import TogglePage from './components/pages/TogglePage.vue'
 import TreePage from './components/pages/TreePage.vue'
 import TextareaPage from './components/pages/TextareaPage.vue'
 import TooltipPage from './components/pages/TooltipPage.vue'
+import DropdownMenuPage from './components/pages/DropdownMenuPage.vue'
 import { componentMetaBySlug } from './config/components'
 
 export const router = createRouter({
@@ -235,5 +236,10 @@ export const router = createRouter({
       meta: { component: componentMetaBySlug.textarea },
     },
     { path: '/tooltip', component: TooltipPage, meta: { component: componentMetaBySlug.tooltip } },
+    {
+      path: '/dropdown-menu',
+      component: DropdownMenuPage,
+      meta: { component: componentMetaBySlug['dropdown-menu'] },
+    },
   ],
 })

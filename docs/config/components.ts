@@ -6,6 +6,11 @@ export interface ComponentMeta {
 
 export const componentMeta = [
   {
+    slug: 'dropdown-menu',
+    title: 'DropdownMenu',
+    description: 'Trigger accesible para un menú desplegable basado en Reka UI.',
+  },
+  {
     slug: 'accordion',
     title: 'Accordion',
     description:

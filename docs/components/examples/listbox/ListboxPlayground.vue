@@ -9,7 +9,6 @@ type ListboxState = {
   data: 'items' | 'groups' | 'long'
   disabled: boolean
   size: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-  by: string
   multiple: boolean
   orientation: 'vertical' | 'horizontal'
   selectionBehavior: 'toggle' | 'replace'
@@ -18,6 +17,7 @@ type ListboxState = {
   name: string
   search: string
   filter: boolean
+  filterMode: 'contains' | 'startWith' | 'endWith'
   ignoreFilter: boolean
   emptyText: string
   noResultsText: string
@@ -38,7 +38,6 @@ const initialState = (): ListboxState => ({
   data: 'items',
   disabled: false,
   size: 'md',
-  by: '',
   multiple: false,
   orientation: 'vertical',
   selectionBehavior: 'toggle',
@@ -47,6 +46,7 @@ const initialState = (): ListboxState => ({
   name: 'frutas',
   search: '',
   filter: false,
+  filterMode: 'contains',
   ignoreFilter: false,
   emptyText: 'No hay opciones',
   noResultsText: 'Sin resultados',
@@ -162,7 +162,6 @@ function generateCode() {
     `:disabled="${state.value.disabled}"`,
     `size="${state.value.size}"`,
     `:loading="${state.value.loading}"`,
-    `:by="${state.value.by || undefined}"`,
     `:multiple="${state.value.multiple}"`,
     `orientation="${state.value.orientation}"`,
     `selection-behavior="${state.value.selectionBehavior}"`,
@@ -171,6 +170,7 @@ function generateCode() {
     `name="${escapeAttribute(state.value.name)}"`,
     `v-model:search="search"`,
     `:filter="${state.value.filter}"`,
+    `filter-mode="${state.value.filterMode}"`,
     `:ignore-filter="${state.value.ignoreFilter}"`,
     `:input-filter="{ placeholder: 'Buscar...' }"`,
     `:icon-filter="{ name: 'search' }"`,
@@ -312,6 +312,12 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             ><input v-model="state.required" type="checkbox" /> Required</label
           ><label class="flex items-center gap-2 text-sm"
             ><input v-model="state.filter" type="checkbox" /> Filter</label
+          ><label class="grid gap-1 text-xs"
+            >Filter mode<select v-model="state.filterMode" class="rounded-md border bg-background px-3 py-2 text-sm">
+              <option value="contains">Contains</option>
+              <option value="startWith">Starts with</option>
+              <option value="endWith">Ends with</option>
+            </select></label
           ><label class="flex items-center gap-2 text-sm"
             ><input v-model="state.ignoreFilter" type="checkbox" /> Ignore filter</label
           ><label class="flex items-center gap-2 text-sm"

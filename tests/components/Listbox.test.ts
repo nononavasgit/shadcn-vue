@@ -8,6 +8,7 @@ import { i18n } from '@/i18n'
 import { testIconProps } from '../utils/testIconProps'
 import { testInputConfig } from '../utils/testInputConfig'
 import { testAttrs } from '../utils/testAttrs'
+import * as filterComposable from '@/composables/useFilter'
 
 Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
   value: vi.fn(),
@@ -467,6 +468,36 @@ describe('Listbox', () => {
         const listbox = mountListbox(undefined, { props: { filter: input } })
 
         expect(listbox.find('[data-test-listbox-filter]').exists()).toBe(expected)
+      })
+    })
+
+    describe('filterMode', () => {
+      it('pasa filterMode a useFilter', () => {
+        const useFilterSpy = vi.spyOn(filterComposable, 'useFilter')
+
+        mountListbox(undefined, { props: { filterMode: 'contains' } })
+
+        expect(useFilterSpy).toHaveBeenLastCalledWith(
+          expect.objectContaining({ mode: 'contains', getText: expect.any(Function) }),
+        )
+        useFilterSpy.mockRestore()
+      })
+    })
+
+    describe('ignoreFilter', () => {
+      it('no ejecuta el filtro cuando está activo', () => {
+        const filter = vi.fn()
+        const useFilterSpy = vi.spyOn(filterComposable, 'useFilter').mockReturnValue({
+          filter,
+          normalized: (value: string) => value,
+        })
+
+        mountListbox(undefined, {
+          props: { filter: true, ignoreFilter: true, search: 'ana' },
+        })
+
+        expect(filter).not.toHaveBeenCalled()
+        useFilterSpy.mockRestore()
       })
     })
 

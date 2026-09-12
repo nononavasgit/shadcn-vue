@@ -5,6 +5,7 @@ import { ListboxContent, ListboxGroup, ListboxGroupLabel, ListboxRoot, ListboxFi
 import { Input } from '@/components/ui/Input'
 import { Icon } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
+import { useFilter } from '@/composables/useFilter'
 import { cn } from '@/lib/utils'
 import ListboxOption from './ListboxOption.vue'
 import { listboxDefaults } from './defaults'
@@ -12,6 +13,7 @@ import type {
   ListboxContext,
   ListboxGroupContext,
   ListboxItemContext,
+  ListboxItem,
   ListboxProps,
   ListboxSlots,
 } from '.'
@@ -35,7 +37,6 @@ const rootProps = computed(() => {
 
   return {
     ...ui,
-    by: props.by,
     disabled: props.disabled,
     highlightOnHover: props.highlightOnHover,
     multiple: props.multiple,
@@ -81,20 +82,17 @@ const filterProps = computed(() => {
   }
 })
 
-function normalized(value: string) {
-  return value
-    .trim()
-    .toLocaleLowerCase()
-    .normalize('NFD')
-    .replace(/\p{Diacritic}/gu, '')
-}
+const { filter, normalized } = useFilter<ListboxItem>({
+  mode: props.filterMode,
+  getText: (item) => item.label,
+})
 
 const normalizedSearch = computed(() => normalized(search.value))
 
 function filterItems(items: ListboxItemContext['item'][]) {
   if (!props.filter || props.ignoreFilter || !normalizedSearch.value) return items
 
-  return items.filter((item) => normalized(item.label).includes(normalizedSearch.value))
+  return filter(items, search.value)
 }
 
 const itemContexts = computed<ListboxItemContext[]>(() =>

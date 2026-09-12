@@ -165,12 +165,6 @@ const slotRows: ApiTableRow[] = [
     description: 'Personaliza las etiquetas de los grupos.',
   },
   {
-    name: 'default',
-    type: 'ListboxContext',
-    typeLink: '#listbox-context',
-    description: 'Personaliza el contenido completo de la lista.',
-  },
-  {
     name: 'empty',
     type: 'ListboxContext',
     typeLink: '#listbox-context',

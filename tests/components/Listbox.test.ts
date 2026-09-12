@@ -512,5 +512,15 @@ describe('Listbox', () => {
         expect(listbox.find('[data-test-listbox-icon-filter]').exists()).toBe(false)
       })
     })
+
+    describe('item', () => {
+      it('sobrescribe el contenido de cada item', () => {
+        const listbox = mountListbox([{ value: 'apple', label: 'Manzana' }], {
+          slots: { item: 'Item personalizado' },
+        })
+
+        expect(listbox.get('[data-test-listbox-item]').text()).toBe('Item personalizado')
+      })
+    })
   })
 })

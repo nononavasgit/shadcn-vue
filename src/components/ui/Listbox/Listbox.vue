@@ -229,7 +229,7 @@ function getGroupLabelProps(context: ListboxGroupContext) {
         </slot>
       </div>
 
-      <slot v-else v-bind="listboxContext">
+      <template v-else>
         <template v-if="usesGroups">
           <ListboxGroup
             v-for="groupContext in groupContexts"
@@ -273,7 +273,7 @@ function getGroupLabelProps(context: ListboxGroupContext) {
             </template>
           </ListboxOption>
         </template>
-      </slot>
+      </template>
     </ListboxContent>
   </ListboxRoot>
 </template>

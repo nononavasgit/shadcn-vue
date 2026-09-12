@@ -107,7 +107,6 @@ export interface ListboxEmits {
 }
 
 export type ListboxSlots = {
-  default?(props: ListboxContext): unknown
   item?(props: ListboxItemContext): unknown
   'item-leading'?(props: ListboxItemContext): unknown
   'group-label'?(props: ListboxGroupContext): unknown

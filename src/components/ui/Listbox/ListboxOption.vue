@@ -17,6 +17,9 @@ const props = defineProps<{
   size?: ListboxSize
 }>()
 defineSlots<ListboxSlots>()
+const emit = defineEmits<{
+  select: [event: CustomEvent]
+}>()
 
 const itemProps = computed(() => {
   const ui = useUi(props.ui?.item, props.context)
@@ -50,11 +53,10 @@ const indicatorProps = computed(() => {
 })
 
 const iconProps = computed<IconProps>(() => props.context.item.icon!)
-
 </script>
 
 <template>
-  <RekaListboxItem v-bind="itemProps" data-test-listbox-item>
+  <RekaListboxItem v-bind="itemProps" data-test-listbox-item @select="emit('select', $event)">
     <slot name="item" v-bind="context">
       <div v-bind="itemLeadingProps" data-test-listbox-item-leading>
         <slot name="item-leading" v-bind="context">

@@ -201,6 +201,10 @@ function generateCode() {
     state.value.attrs && 'aria-label="Selecciona una opción"',
     '@update:value="handleValueUpdate"',
     '@update:search="handleSearchUpdate"',
+    '@select="handleSelect"',
+    '@entry-focus="handleEntryFocus"',
+    '@highlight="handleHighlight"',
+    '@leave="handleLeave"',
   ].filter(Boolean)
   const slots = generateSlots()
   const opening = `<Listbox\n  ${props.join('\n  ')}`
@@ -214,6 +218,22 @@ function handleValueUpdate(value: string | number | undefined) {
 
 function handleSearchUpdate(search: string) {
   eventLog.value = `update:search · ${search}`
+}
+
+function handleSelect(event: CustomEvent<{ value?: string | number }>) {
+  eventLog.value = `select · ${event.detail.value ?? 'undefined'}`
+}
+
+function handleEntryFocus() {
+  eventLog.value = 'entryFocus'
+}
+
+function handleHighlight(payload: { value: string | number } | undefined) {
+  eventLog.value = `highlight · ${payload?.value ?? 'undefined'}`
+}
+
+function handleLeave() {
+  eventLog.value = 'leave'
 }
 
 function applyCode() {
@@ -235,6 +255,10 @@ function applyCode() {
           search: ref(state.value.search),
           handleValueUpdate,
           handleSearchUpdate,
+          handleSelect,
+          handleEntryFocus,
+          handleHighlight,
+          handleLeave,
         }),
         render,
       }),
@@ -294,7 +318,10 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             </select>
           </label>
           <label class="grid gap-1 text-xs"
-            >Size<select v-model="state.size" class="rounded-md border bg-background px-3 py-2 text-sm">
+            >Size<select
+              v-model="state.size"
+              class="rounded-md border bg-background px-3 py-2 text-sm"
+            >
               <option value="xs">xs</option>
               <option value="sm">sm</option>
               <option value="md">md</option>
@@ -303,7 +330,10 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             </select></label
           >
           <label class="grid gap-1 text-xs"
-            >Severity<select v-model="state.severity" class="rounded-md border bg-background px-3 py-2 text-sm">
+            >Severity<select
+              v-model="state.severity"
+              class="rounded-md border bg-background px-3 py-2 text-sm"
+            >
               <option value="primary">Primary</option>
               <option value="secondary">Secondary</option>
               <option value="error">Error</option>
@@ -312,8 +342,11 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             </select></label
           >
           <label class="grid gap-1 text-xs"
-            >Color<input v-model="state.color" placeholder="#6366f1" class="rounded-md border bg-background px-3 py-2 text-sm" /></label
-          >
+            >Color<input
+              v-model="state.color"
+              placeholder="#6366f1"
+              class="rounded-md border bg-background px-3 py-2 text-sm"
+          /></label>
           <label class="grid gap-1 text-xs"
             >Valor inicial
             <select v-model="state.value" class="rounded-md border bg-background px-3 py-2 text-sm">
@@ -323,11 +356,39 @@ watch(state, syncFromControls, { deep: true, immediate: true })
               <option value="help">help</option>
             </select>
           </label>
-          <label class="grid gap-1 text-xs">Name<input v-model="state.name" class="rounded-md border bg-background px-3 py-2 text-sm" /></label>
-          <label class="grid gap-1 text-xs">Empty text<input v-model="state.emptyText" class="rounded-md border bg-background px-3 py-2 text-sm" /></label>
-          <label class="grid gap-1 text-xs">No results text<input v-model="state.noResultsText" class="rounded-md border bg-background px-3 py-2 text-sm" /></label>
-          <label class="grid gap-1 text-xs">Orientation<select v-model="state.orientation" class="rounded-md border bg-background px-3 py-2 text-sm"><option value="vertical">Vertical</option><option value="horizontal">Horizontal</option></select></label>
-          <label class="grid gap-1 text-xs">Selection behavior<select v-model="state.selectionBehavior" class="rounded-md border bg-background px-3 py-2 text-sm"><option value="toggle">Toggle</option><option value="replace">Replace</option></select></label>
+          <label class="grid gap-1 text-xs"
+            >Name<input
+              v-model="state.name"
+              class="rounded-md border bg-background px-3 py-2 text-sm"
+          /></label>
+          <label class="grid gap-1 text-xs"
+            >Empty text<input
+              v-model="state.emptyText"
+              class="rounded-md border bg-background px-3 py-2 text-sm"
+          /></label>
+          <label class="grid gap-1 text-xs"
+            >No results text<input
+              v-model="state.noResultsText"
+              class="rounded-md border bg-background px-3 py-2 text-sm"
+          /></label>
+          <label class="grid gap-1 text-xs"
+            >Orientation<select
+              v-model="state.orientation"
+              class="rounded-md border bg-background px-3 py-2 text-sm"
+            >
+              <option value="vertical">Vertical</option>
+              <option value="horizontal">Horizontal</option>
+            </select></label
+          >
+          <label class="grid gap-1 text-xs"
+            >Selection behavior<select
+              v-model="state.selectionBehavior"
+              class="rounded-md border bg-background px-3 py-2 text-sm"
+            >
+              <option value="toggle">Toggle</option>
+              <option value="replace">Replace</option>
+            </select></label
+          >
           <label class="flex items-center gap-2 text-sm"
             ><input v-model="state.disabled" type="checkbox" /> Disabled</label
           ><label class="flex items-center gap-2 text-sm"
@@ -341,13 +402,19 @@ watch(state, syncFromControls, { deep: true, immediate: true })
           ><label class="flex items-center gap-2 text-sm"
             ><input v-model="state.filter" type="checkbox" /> Filter</label
           ><label class="grid gap-1 text-xs"
-            >Filter mode<select v-model="state.filterMode" class="rounded-md border bg-background px-3 py-2 text-sm">
+            >Filter mode<select
+              v-model="state.filterMode"
+              class="rounded-md border bg-background px-3 py-2 text-sm"
+            >
               <option value="contains">Contains</option>
               <option value="startWith">Starts with</option>
               <option value="endWith">Ends with</option>
             </select></label
           ><label class="grid gap-1 text-xs"
-            >Sensitivity<select v-model="state.filterSensitivity" class="rounded-md border bg-background px-3 py-2 text-sm">
+            >Sensitivity<select
+              v-model="state.filterSensitivity"
+              class="rounded-md border bg-background px-3 py-2 text-sm"
+            >
               <option value="base">Base</option>
               <option value="accent">Accent</option>
               <option value="case">Case</option>
@@ -358,9 +425,17 @@ watch(state, syncFromControls, { deep: true, immediate: true })
           ><label class="flex items-center gap-2 text-sm"
             ><input v-model="state.virtualize" type="checkbox" /> Virtualize</label
           ><label class="grid gap-1 text-xs"
-            >Estimate size<input v-model.number="state.virtualizerEstimateSize" type="number" min="1" class="rounded-md border bg-background px-3 py-2 text-sm" /></label
+            >Estimate size<input
+              v-model.number="state.virtualizerEstimateSize"
+              type="number"
+              min="1"
+              class="rounded-md border bg-background px-3 py-2 text-sm" /></label
           ><label class="grid gap-1 text-xs"
-            >Overscan<input v-model.number="state.virtualizerOverscan" type="number" min="0" class="rounded-md border bg-background px-3 py-2 text-sm" /></label
+            >Overscan<input
+              v-model.number="state.virtualizerOverscan"
+              type="number"
+              min="0"
+              class="rounded-md border bg-background px-3 py-2 text-sm" /></label
           ><label class="flex items-center gap-2 text-sm"
             ><input v-model="state.invalid" type="checkbox" /> aria-invalid</label
           ><label class="flex items-center gap-2 text-sm"
@@ -400,5 +475,3 @@ watch(state, syncFromControls, { deep: true, immediate: true })
     </template>
   </ComponentPlayground>
 </template>
-
-

@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ListboxContent, ListboxGroup, ListboxGroupLabel, ListboxRoot, ListboxFilter, ListboxVirtualizer } from 'reka-ui'
+import {
+  ListboxContent,
+  ListboxGroup,
+  ListboxGroupLabel,
+  ListboxRoot,
+  ListboxFilter,
+  ListboxVirtualizer,
+} from 'reka-ui'
 import { Input } from '@/components/ui/Input'
 import { Icon } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
@@ -17,6 +24,7 @@ import type {
   ListboxItem,
   ListboxProps,
   ListboxSlots,
+  ListboxEmits,
 } from '.'
 import { listboxVariants } from '.'
 
@@ -24,6 +32,7 @@ defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<ListboxProps>(), listboxDefaults)
 defineSlots<ListboxSlots>()
+const emit = defineEmits<ListboxEmits>()
 const attrs = useAttrs()
 const { t } = useI18n()
 const value = defineModel<ListboxProps['value']>('value')
@@ -68,9 +77,10 @@ const contentProps = computed(() => {
       props.filter && 'border-t',
       props.virtualize && 'max-h-80 overflow-auto',
       'outline-none',
+      attrs.class,
       ui.class,
     ),
-    style: ui.style,
+    style: [attrs.style, ui.style],
   }
 })
 
@@ -83,10 +93,7 @@ const filterProps = computed(() => {
     placeholder: props.inputFilter?.placeholder ?? t('searchPlaceholder'),
     size: props.inputFilter?.size ?? props.size,
     disabled: props.disabled || props.inputFilter?.disabled,
-    class: cn(
-      'm-0',
-      props.inputFilter?.class,
-    ),
+    class: cn('m-0', props.inputFilter?.class),
     style: props.inputFilter?.style,
   }
 })
@@ -144,7 +151,11 @@ const emptyProps = computed(() => {
     role: 'status',
     'aria-live': 'polite',
     ...ui,
-    class: cn('px-2 py-6 text-center text-sm text-muted-foreground', listboxVariants({ size: props.size }), ui.class),
+    class: cn(
+      'px-2 py-6 text-center text-sm text-muted-foreground',
+      listboxVariants({ size: props.size }),
+      ui.class,
+    ),
     style: ui.style,
   }
 })
@@ -155,7 +166,11 @@ const noResultsProps = computed(() => {
     role: 'status',
     'aria-live': 'polite',
     ...ui,
-    class: cn('px-2 py-6 text-center text-sm text-muted-foreground', listboxVariants({ size: props.size }), ui.class),
+    class: cn(
+      'px-2 py-6 text-center text-sm text-muted-foreground',
+      listboxVariants({ size: props.size }),
+      ui.class,
+    ),
     style: ui.style,
   }
 })
@@ -166,7 +181,11 @@ const loadingProps = computed(() => {
     ...ui,
     role: 'status',
     'aria-live': 'polite',
-    class: cn('grid place-items-center px-2 py-6 text-sm text-muted-foreground', listboxVariants({ size: props.size }), ui.class),
+    class: cn(
+      'grid place-items-center px-2 py-6 text-sm text-muted-foreground',
+      listboxVariants({ size: props.size }),
+      ui.class,
+    ),
     style: ui.style,
   }
 })
@@ -199,26 +218,27 @@ function getGroupLabelProps(context: ListboxGroupContext) {
     style: ui.style,
   }
 }
-
 </script>
 
 <template>
-  <ListboxRoot v-model="value" v-bind="rootProps" data-test-listbox-root>
-  <ListboxFilter v-if="props.filter" v-model:value="search" as-child>
-    <Input
-      v-bind="filterProps"
-      data-test-listbox-filter
-    >
-      <template v-if="props.iconFilter || $slots['filter-leading']" #leading>
-        <div data-test-listbox-filter-leading>
-          <slot name="filter-leading" v-bind="listboxContext">
-            <Icon v-bind="props.iconFilter" data-test-listbox-icon-filter />
-          </slot>
-        </div>
-      </template>
-    </Input>
-    
-    
+  <ListboxRoot
+    v-model="value"
+    v-bind="rootProps"
+    data-test-listbox-root
+    @entry-focus="emit('entryFocus', $event)"
+    @highlight="emit('highlight', $event)"
+    @leave="emit('leave', $event)"
+  >
+    <ListboxFilter v-if="props.filter" v-model:value="search" as-child>
+      <Input v-bind="filterProps" data-test-listbox-filter>
+        <template v-if="props.iconFilter || $slots['filter-leading']" #leading>
+          <div data-test-listbox-filter-leading>
+            <slot name="filter-leading" v-bind="listboxContext">
+              <Icon v-bind="props.iconFilter" data-test-listbox-icon-filter />
+            </slot>
+          </div>
+        </template>
+      </Input>
     </ListboxFilter>
 
     <ListboxContent v-bind="contentProps" data-test-listbox-content>
@@ -232,7 +252,7 @@ function getGroupLabelProps(context: ListboxGroupContext) {
           />
         </slot>
       </div>
-      
+
       <div v-else-if="showEmpty" v-bind="emptyProps" data-test-listbox-empty>
         <slot name="empty" v-bind="listboxContext">
           {{ props.emptyText ?? t('empty') }}
@@ -254,25 +274,26 @@ function getGroupLabelProps(context: ListboxGroupContext) {
             data-test-listbox-group
           >
             <ListboxGroupLabel
-                v-if="groupContext.group.label"
-                v-bind="getGroupLabelProps(groupContext)"
-                  data-test-listbox-group-label
-              >
-                <slot name="group-label" v-bind="groupContext">
-                  {{ groupContext.group.label }}
-                </slot>
+              v-if="groupContext.group.label"
+              v-bind="getGroupLabelProps(groupContext)"
+              data-test-listbox-group-label
+            >
+              <slot name="group-label" v-bind="groupContext">
+                {{ groupContext.group.label }}
+              </slot>
             </ListboxGroupLabel>
-                <ListboxOption
-                  v-for="itemContext in getGroupItemContexts(groupContext)"
-                  :key="itemContext.item.id ?? String(itemContext.item.value)"
-                  :context="itemContext"
-                  :ui="props.ui"
-                  :size="props.size"
-                >
-                  <template v-for="(_, name) in $slots" #[name]="slotProps">
-                    <slot :name="name" v-bind="slotProps" />
-                  </template>
-                </ListboxOption>
+            <ListboxOption
+              v-for="itemContext in getGroupItemContexts(groupContext)"
+              :key="itemContext.item.id ?? String(itemContext.item.value)"
+              :context="itemContext"
+              :ui="props.ui"
+              :size="props.size"
+              @select="emit('select', $event)"
+            >
+              <template v-for="(_, name) in $slots" #[name]="slotProps">
+                <slot :name="name" v-bind="slotProps" />
+              </template>
+            </ListboxOption>
           </ListboxGroup>
         </template>
 
@@ -288,6 +309,7 @@ function getGroupLabelProps(context: ListboxGroupContext) {
             :context="option"
             :ui="props.ui"
             :size="props.size"
+            @select="emit('select', $event)"
           >
             <template v-for="(_, name) in $slots" #[name]="slotProps">
               <slot :name="name" v-bind="slotProps" />
@@ -302,6 +324,7 @@ function getGroupLabelProps(context: ListboxGroupContext) {
             :context="itemContext"
             :ui="props.ui"
             :size="props.size"
+            @select="emit('select', $event)"
           >
             <template v-for="(_, name) in $slots" #[name]="slotProps">
               <slot :name="name" v-bind="slotProps" />

@@ -20,12 +20,12 @@ function mountListbox(
   options: MountingOptions<ListboxProps> = {},
 ) {
   return mount(Listbox, {
+    ...options,
     global: { plugins: [i18n], ...options.global },
     props: {
       items,
       ...options.props,
     },
-    ...options,
   })
 }
 
@@ -75,6 +75,16 @@ const casesFilter = [
   { input: true, expected: true },
   { input: false, expected: false },
   { input: undefined, expected: false },
+]
+
+const casesEmptyText = [
+  { input: 'No hay frutas', expected: 'No hay frutas' },
+  { input: undefined, expected: i18n.global.t('empty') },
+]
+
+const casesNoResultsText = [
+  { input: 'No coincide ninguna fruta', expected: 'No coincide ninguna fruta' },
+  { input: undefined, expected: i18n.global.t('noResults') },
 ]
 
 const casesName = [
@@ -203,6 +213,24 @@ describe('Listbox', () => {
         id: '[data-test-listbox-icon-filter]',
         mount: (iconFilter) =>
           mountListbox(undefined, { props: { filter: true, iconFilter } }),
+      })
+    })
+
+    describe('emptyText', () => {
+      it.each(casesEmptyText)('renderiza emptyText=$input', ({ input, expected }) => {
+        const listbox = mountListbox([], { props: { emptyText: input } })
+
+        expect(listbox.get('[data-test-listbox-empty]').text()).toBe(expected)
+      })
+    })
+
+    describe('noResultsText', () => {
+      it.each(casesNoResultsText)('renderiza noResultsText=$input', ({ input, expected }) => {
+        const listbox = mountListbox(undefined, {
+          props: { filter: true, search: 'inexistente', noResultsText: input },
+        })
+
+        expect(listbox.get('[data-test-listbox-no-results]').text()).toBe(expected)
       })
     })
   })

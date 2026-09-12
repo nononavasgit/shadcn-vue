@@ -25,6 +25,7 @@ type ListboxState = {
   loadingSlot: boolean
   valueSlot: boolean
   iconSlot: boolean
+  iconFilterSlot: boolean
   itemSlot: boolean
   itemLeadingSlot: boolean
   itemLabelSlot: boolean
@@ -56,6 +57,7 @@ const initialState = (): ListboxState => ({
   loadingSlot: false,
   valueSlot: false,
   iconSlot: false,
+  iconFilterSlot: false,
   itemSlot: false,
   itemLeadingSlot: false,
   itemLabelSlot: false,
@@ -126,6 +128,12 @@ function generateSlots() {
     slots.push(
       '  <template #icon>',
       '    <span class="text-xs text-primary" aria-hidden="true">⌄</span>',
+      '  </template>',
+    )
+  if (state.value.iconFilterSlot)
+    slots.push(
+      '  <template #filter-leading>',
+      '    <span class="text-primary" aria-hidden="true">⌕</span>',
       '  </template>',
     )
   if (state.value.itemSlot)
@@ -355,6 +363,8 @@ watch(state, syncFromControls, { deep: true, immediate: true })
             ><input v-model="state.itemSlot" type="checkbox" /> item</label
           ><label class="flex items-center gap-2 text-sm"
             ><input v-model="state.itemLeadingSlot" type="checkbox" /> item-leading</label
+          ><label class="flex items-center gap-2 text-sm"
+            ><input v-model="state.iconFilterSlot" type="checkbox" /> filter-leading</label
           ><label class="flex items-center gap-2 text-sm"
             ><input v-model="state.itemLabelSlot" type="checkbox" /> item-label</label
           ><label class="flex items-center gap-2 text-sm"

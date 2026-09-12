@@ -98,5 +98,6 @@ export type ListboxSlots = {
   empty?(props: ListboxContext): unknown
   'no-results'?(props: ListboxContext): unknown
   loading?(props: ListboxContext): unknown
+  'filter-leading'?(props: ListboxContext): unknown
   indicator?(props: ListboxItemContext): unknown
 }

@@ -259,5 +259,42 @@ describe('Listbox', () => {
         expect(listbox.find('[data-test-listbox-loading-icon]').exists()).toBe(false)
       })
     })
+
+    describe('empty', () => {
+      it('permite sobrescribir emptyText mediante el slot', () => {
+        const listbox = mountListbox([], {
+          slots: { empty: 'Lista vacía personalizada' },
+        })
+
+        expect(listbox.get('[data-test-listbox-empty]').text()).toBe('Lista vacía personalizada')
+      })
+    })
+
+    describe('no-results', () => {
+      it('permite sobrescribir noResultsText mediante el slot', () => {
+        const listbox = mountListbox(undefined, {
+          props: { filter: true, search: 'inexistente' },
+          slots: { 'no-results': 'Sin coincidencias personalizadas' },
+        })
+
+        expect(listbox.get('[data-test-listbox-no-results]').text()).toBe(
+          'Sin coincidencias personalizadas',
+        )
+      })
+    })
+
+    describe('filter-leading', () => {
+      it('sobrescribe el iconFilter mediante el slot', () => {
+        const listbox = mountListbox(undefined, {
+          props: { filter: true, iconFilter: { name: 'search' } },
+          slots: { 'filter-leading': 'Leading personalizado' },
+        })
+
+        expect(listbox.get('[data-test-listbox-filter-leading]').text()).toBe(
+          'Leading personalizado',
+        )
+        expect(listbox.find('[data-test-listbox-icon-filter]').exists()).toBe(false)
+      })
+    })
   })
 })

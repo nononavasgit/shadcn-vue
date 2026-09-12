@@ -193,8 +193,12 @@ function getGroupLabelProps(context: ListboxGroupContext) {
       v-bind="filterProps"
       data-test-listbox-filter
     >
-      <template v-if="props.iconFilter" #leading>
-        <Icon v-bind="props.iconFilter" data-test-listbox-icon-filter />
+      <template v-if="props.iconFilter || $slots['filter-leading']" #leading>
+        <div data-test-listbox-filter-leading>
+          <slot name="filter-leading" v-bind="listboxContext">
+            <Icon v-bind="props.iconFilter" data-test-listbox-icon-filter />
+          </slot>
+        </div>
       </template>
     </Input>
 

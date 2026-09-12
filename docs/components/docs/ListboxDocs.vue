@@ -46,7 +46,6 @@ const propRows: ApiTableRow[] = [
   { name: 'filter', type: 'boolean', default: 'false', description: 'Activa el filtro de opciones.' },
   { name: 'ignoreFilter', type: 'boolean', default: 'false', description: 'Muestra el filtro sin aplicarlo.' },
   { name: 'inputFilter', type: 'NormalizeInputProps', default: 'undefined', description: 'Props del Input de filtro.' },
-  { name: 'iconFilter', type: 'IconConfig', typeLink: '/icon#icon-config', default: 'undefined', description: 'Icono mostrado en el slot leading del filtro.' },
   { name: 'emptyText', type: 'string', default: 'undefined', description: 'Texto para una lista sin opciones.' },
   { name: 'noResultsText', type: 'string', default: 'undefined', description: 'Texto cuando no hay resultados.' },
   {
@@ -123,6 +122,12 @@ const emitRows: ApiTableRow[] = [
 ]
 
 const slotRows: ApiTableRow[] = [
+  {
+    name: 'filter-leading',
+    type: 'ListboxContext',
+    typeLink: '#listbox-context',
+    description: 'Sustituye el icono mostrado en el filtro.',
+  },
   {
     name: 'loading',
     type: 'ListboxContext',

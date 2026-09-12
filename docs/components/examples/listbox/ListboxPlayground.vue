@@ -8,6 +8,7 @@ type ListboxState = {
   value: string
   data: 'items' | 'groups' | 'long'
   disabled: boolean
+  size: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   by: string
   multiple: boolean
   orientation: 'vertical' | 'horizontal'
@@ -38,6 +39,7 @@ const initialState = (): ListboxState => ({
   value: 'apple',
   data: 'items',
   disabled: false,
+  size: 'md',
   by: '',
   multiple: false,
   orientation: 'vertical',
@@ -174,6 +176,7 @@ function generateCode() {
   const props = [
     'v-model:value="value"',
     `:disabled="${state.value.disabled}"`,
+    `size="${state.value.size}"`,
     `:loading="${state.value.loading}"`,
     `:by="${state.value.by || undefined}"`,
     `:multiple="${state.value.multiple}"`,
@@ -290,6 +293,15 @@ watch(state, syncFromControls, { deep: true, immediate: true })
               <option value="long">Lista larga</option>
             </select>
           </label>
+          <label class="grid gap-1 text-xs"
+            >Size<select v-model="state.size" class="rounded-md border bg-background px-3 py-2 text-sm">
+              <option value="xs">xs</option>
+              <option value="sm">sm</option>
+              <option value="md">md</option>
+              <option value="lg">lg</option>
+              <option value="xl">xl</option>
+            </select></label
+          >
           <label class="grid gap-1 text-xs"
             >Valor inicial
             <select v-model="state.value" class="rounded-md border bg-background px-3 py-2 text-sm">

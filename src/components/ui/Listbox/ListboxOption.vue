@@ -8,11 +8,13 @@ import { Icon } from '@/components/ui/Icon'
 import { useUi } from '@/composables/useUi'
 import { cn } from '@/lib/utils'
 import type { IconProps } from '@/components/ui/Icon'
-import type { ListboxItemContext, ListboxSlots, ListboxUI } from '.'
+import type { ListboxItemContext, ListboxSize, ListboxSlots, ListboxUI } from '.'
+import { listboxVariants } from '.'
 
 const props = defineProps<{
   context: ListboxItemContext
   ui?: ListboxUI
+  size?: ListboxSize
 }>()
 defineSlots<ListboxSlots>()
 
@@ -25,6 +27,7 @@ const itemProps = computed(() => {
     disabled: props.context.item.disabled,
     class: cn(
       'relative flex w-full cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground',
+      listboxVariants({ size: props.size }),
       ui.class,
     ),
     style: ui.style,

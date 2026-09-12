@@ -105,6 +105,15 @@ const casesName = [
   { input: undefined, expected: undefined },
 ]
 
+const casesSize = [
+  { input: 'xs' as const, expected: 'min-h-7' },
+  { input: 'sm' as const, expected: 'min-h-8' },
+  { input: 'md' as const, expected: 'min-h-9' },
+  { input: 'lg' as const, expected: 'min-h-10' },
+  { input: 'xl' as const, expected: 'min-h-11' },
+  { input: undefined, expected: 'min-h-9' },
+]
+
 const casesRequired = [
   { input: true, expected: true },
   { input: false, expected: false },
@@ -308,6 +317,33 @@ describe('Listbox', () => {
         const listbox = mountListbox(undefined, { props: { required: input } })
 
         expect(listbox.getComponent(ListboxRoot).props('required')).toBe(expected)
+      })
+    })
+
+    describe('size', () => {
+      it.each(casesSize)('aplica size=$input a cada opción y al Input de filtro', ({ input, expected }) => {
+        const listbox = mountListbox(undefined, {
+          props: { size: input, filter: true },
+        })
+
+        expect(listbox.findAll('[data-test-listbox-item]')[0].classes()).toContain(expected)
+        const filterInput = listbox
+          .findAllComponents(Input)
+          .find((inputComponent) => inputComponent.find('[data-test-listbox-filter]').exists())
+        expect(filterInput.props('size')).toBe(input ?? 'md')
+      })
+
+      it.each(casesSize)('aplica size=$input a loading, empty y no-results', ({ input, expected }) => {
+        const loading = mountListbox([], { props: { size: input, loading: true } })
+        expect(loading.get('[data-test-listbox-loading]').classes()).toContain(expected)
+
+        const empty = mountListbox([], { props: { size: input } })
+        expect(empty.get('[data-test-listbox-empty]').classes()).toContain(expected)
+
+        const noResults = mountListbox(undefined, {
+          props: { size: input, filter: true, search: 'inexistente' },
+        })
+        expect(noResults.get('[data-test-listbox-no-results]').classes()).toContain(expected)
       })
     })
 

@@ -1,10 +1,26 @@
 import type { HTMLAttributes } from 'vue'
+import { cva, type VariantProps } from 'class-variance-authority'
 import type { ListboxRootProps as RekaListboxRootProps } from 'reka-ui'
 import type { IconConfig } from '@/components/ui/Icon'
 import type { NormalizeInputProps } from '@/components/ui/Input'
 
 export { default as Listbox } from './Listbox.vue'
 export { listboxDefaults } from './defaults'
+
+export const listboxVariants = cva('', {
+  variants: {
+    size: {
+      xs: 'min-h-7 text-sm',
+      sm: 'min-h-8 text-sm',
+      md: 'min-h-9 text-base',
+      lg: 'min-h-10 text-lg',
+      xl: 'min-h-11 text-xl',
+    },
+  },
+  defaultVariants: { size: 'md' },
+})
+
+export type ListboxSize = NonNullable<VariantProps<typeof listboxVariants>['size']>
 
 export type ListboxValue = string | number
 export type ListboxModelValue = ListboxValue | ListboxValue[] | undefined
@@ -35,6 +51,7 @@ export interface ListboxGroup {
 }
 
 export interface ListboxProps extends ListboxRootProps {
+  size?: ListboxSize
   loading?: boolean
   value?: ListboxModelValue
   search?: string

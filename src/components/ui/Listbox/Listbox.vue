@@ -15,6 +15,7 @@ import type {
   ListboxProps,
   ListboxSlots,
 } from '.'
+import { listboxVariants } from '.'
 
 defineOptions({ inheritAttrs: false })
 
@@ -46,6 +47,7 @@ const rootProps = computed(() => {
       'min-w-40 overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md transition-[color,box-shadow] focus-within:border-primary focus-within:ring-3 focus-within:ring-primary/50',
       (attrs['aria-invalid'] === true || attrs['aria-invalid'] === 'true') &&
         'border-destructive ring-3 ring-destructive/20 focus-within:border-destructive focus-within:ring-destructive/20 dark:ring-destructive/40 dark:focus-within:ring-destructive/40',
+      listboxVariants({ size: props.size }),
       attrs.class,
       ui.class,
     ),
@@ -67,6 +69,7 @@ const contentProps = computed(() => {
 const filterProps = computed(() => {
   return {
     ...props.inputFilter,
+    size: props.inputFilter?.size ?? props.size,
     disabled: props.disabled || props.inputFilter?.disabled,
     class: cn(
       'mb-1',
@@ -125,7 +128,7 @@ const emptyProps = computed(() => {
     role: 'status',
     'aria-live': 'polite',
     ...ui,
-    class: cn('px-2 py-6 text-center text-sm text-muted-foreground', ui.class),
+    class: cn('px-2 py-6 text-center text-sm text-muted-foreground', listboxVariants({ size: props.size }), ui.class),
     style: ui.style,
   }
 })
@@ -136,7 +139,7 @@ const noResultsProps = computed(() => {
     role: 'status',
     'aria-live': 'polite',
     ...ui,
-    class: cn('px-2 py-6 text-center text-sm text-muted-foreground', ui.class),
+    class: cn('px-2 py-6 text-center text-sm text-muted-foreground', listboxVariants({ size: props.size }), ui.class),
     style: ui.style,
   }
 })
@@ -147,7 +150,7 @@ const loadingProps = computed(() => {
     ...ui,
     role: 'status',
     'aria-live': 'polite',
-    class: cn('grid place-items-center px-2 py-6 text-sm text-muted-foreground', ui.class),
+    class: cn('grid place-items-center px-2 py-6 text-sm text-muted-foreground', listboxVariants({ size: props.size }), ui.class),
     style: ui.style,
   }
 })
@@ -248,6 +251,7 @@ function getGroupLabelProps(context: ListboxGroupContext) {
                   :key="itemContext.item.id ?? String(itemContext.item.value)"
                   :context="itemContext"
                   :ui="props.ui"
+                  :size="props.size"
                 >
                   <template v-for="(_, name) in $slots" #[name]="slotProps">
                     <slot :name="name" v-bind="slotProps" />
@@ -262,6 +266,7 @@ function getGroupLabelProps(context: ListboxGroupContext) {
             :key="itemContext.item.id ?? String(itemContext.item.value)"
             :context="itemContext"
             :ui="props.ui"
+            :size="props.size"
           >
             <template v-for="(_, name) in $slots" #[name]="slotProps">
               <slot :name="name" v-bind="slotProps" />

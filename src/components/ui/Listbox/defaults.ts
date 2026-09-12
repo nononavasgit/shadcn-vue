@@ -1,4 +1,5 @@
 export const listboxDefaults = {
+  size: 'md' as const,
   disabled: false,
   name: undefined,
   required: false,

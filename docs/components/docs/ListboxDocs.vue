@@ -15,6 +15,12 @@ const propRows: ApiTableRow[] = [
     description: 'Deshabilita el trigger y la interacción con las opciones.',
   },
   {
+    name: 'size',
+    type: 'xs | sm | md | lg | xl',
+    default: 'md',
+    description: 'Tamaño visual del Listbox.',
+  },
+  {
     name: 'loading',
     type: 'boolean',
     default: 'false',
@@ -45,7 +51,7 @@ const propRows: ApiTableRow[] = [
   { name: 'search', type: 'string', default: "''", description: 'Texto de búsqueda controlado.' },
   { name: 'filter', type: 'boolean', default: 'false', description: 'Activa el filtro de opciones.' },
   { name: 'ignoreFilter', type: 'boolean', default: 'false', description: 'Muestra el filtro sin aplicarlo.' },
-  { name: 'inputFilter', type: 'NormalizeInputProps', default: 'undefined', description: 'Props del Input de filtro.' },
+  { name: 'inputFilter', type: 'InputConfig', typeLink: '/input#input-config', default: 'undefined', description: 'Props del Input de filtro.' },
   { name: 'emptyText', type: 'string', default: 'undefined', description: 'Texto para una lista sin opciones.' },
   { name: 'noResultsText', type: 'string', default: 'undefined', description: 'Texto cuando no hay resultados.' },
   {
@@ -147,12 +153,6 @@ const slotRows: ApiTableRow[] = [
     description: 'Añade contenido antes del texto de todas las opciones.',
   },
   {
-    name: 'item-label',
-    type: 'ListboxItemContext',
-    typeLink: '#listbox-item-context',
-    description: 'Personaliza la etiqueta de todas las opciones.',
-  },
-  {
     name: 'indicator',
     type: 'ListboxItemContext',
     typeLink: '#listbox-item-context',
@@ -165,10 +165,22 @@ const slotRows: ApiTableRow[] = [
     description: 'Personaliza las etiquetas de los grupos.',
   },
   {
-    name: 'scroll-up / scroll-down',
+    name: 'default',
     type: 'ListboxContext',
     typeLink: '#listbox-context',
-    description: 'Personaliza los botones de scroll del viewport.',
+    description: 'Personaliza el contenido completo de la lista.',
+  },
+  {
+    name: 'empty',
+    type: 'ListboxContext',
+    typeLink: '#listbox-context',
+    description: 'Personaliza el estado sin opciones.',
+  },
+  {
+    name: 'no-results',
+    type: 'ListboxContext',
+    typeLink: '#listbox-context',
+    description: 'Personaliza el estado sin resultados.',
   },
 ]
 

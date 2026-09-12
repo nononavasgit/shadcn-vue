@@ -3,8 +3,10 @@ import { describe, expect, it } from 'vitest'
 import { ListboxRoot } from 'reka-ui'
 
 import { Listbox, type ListboxProps } from '@/components/ui/Listbox'
+import { Input } from '@/components/ui/Input'
 import { i18n } from '@/i18n'
 import { testIconProps } from '../utils/testIconProps'
+import { testInputConfig } from '../utils/testInputConfig'
 
 const casesItems = {
   normal: [{ value: 'apple', label: 'Manzana' }, { value: 'banana', label: 'Plátano' }],
@@ -75,6 +77,12 @@ const casesFilter = [
   { input: true, expected: true },
   { input: false, expected: false },
   { input: undefined, expected: false },
+]
+
+const casesSearch = [
+  { input: 'ban', expected: 'ban' },
+  { input: '', expected: '' },
+  { input: undefined, expected: '' },
 ]
 
 const casesEmptyText = [
@@ -208,6 +216,20 @@ describe('Listbox', () => {
       })
     })
 
+    describe('search', () => {
+      it.each(casesSearch)('pasa search=$input al Input del filtro', ({ input, expected }) => {
+        const listbox = mountListbox(undefined, {
+          props: { filter: true, search: input },
+        })
+
+        const filterInput = listbox
+          .findAllComponents(Input)
+          .find((inputComponent) => inputComponent.find('[data-test-listbox-filter]').exists())
+
+        expect(filterInput.props('value')).toBe(expected)
+      })
+    })
+
     describe('iconFilter', () => {
       testIconProps({
         text: 'renderiza iconFilter en el leading del filtro',
@@ -232,6 +254,15 @@ describe('Listbox', () => {
         })
 
         expect(listbox.get('[data-test-listbox-no-results]').text()).toBe(expected)
+      })
+    })
+
+    describe('inputFilter', () => {
+      testInputConfig({
+        text: 'pasa inputFilter al Input del filtro',
+        id: '[data-test-listbox-filter]',
+        mount: (inputFilter) =>
+          mountListbox(undefined, { props: { filter: true, inputFilter } }),
       })
     })
   })

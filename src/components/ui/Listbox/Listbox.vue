@@ -189,8 +189,8 @@ function getGroupLabelProps(context: ListboxGroupContext) {
   <ListboxRoot v-model="value" v-bind="rootProps" data-test-listbox-root>
     <Input
       v-if="props.filter"
-      v-model:value="search"
       v-bind="filterProps"
+      v-model:value="search"
       data-test-listbox-filter
     >
       <template v-if="props.iconFilter || $slots['filter-leading']" #leading>

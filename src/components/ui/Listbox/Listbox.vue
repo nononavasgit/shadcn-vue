@@ -198,9 +198,8 @@ function getGroupLabelProps(context: ListboxGroupContext) {
 
 <template>
   <ListboxRoot v-model="value" v-bind="rootProps" data-test-listbox-root>
-  <ListboxFilter v-model:value="search" as-child>
+  <ListboxFilter v-if="props.filter" v-model:value="search" as-child>
     <Input
-      v-if="props.filter"
       v-bind="filterProps"
       data-test-listbox-filter
     >
@@ -212,6 +211,8 @@ function getGroupLabelProps(context: ListboxGroupContext) {
         </div>
       </template>
     </Input>
+    
+    
     </ListboxFilter>
 
     <ListboxContent v-bind="contentProps" data-test-listbox-content>

@@ -10,7 +10,6 @@ export const listboxDefaults = {
   highlightOnHover: true,
   loading: false,
   filter: false,
-  filterMode: 'contains' as const,
   ignoreFilter: false,
   items: () => [],
   groups: () => [],

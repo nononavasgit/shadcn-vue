@@ -20,6 +20,7 @@ type ListboxState = {
   search: string
   filter: boolean
   filterMode: 'contains' | 'startWith' | 'endWith'
+  filterSensitivity: 'base' | 'accent' | 'case' | 'variant'
   ignoreFilter: boolean
   emptyText: string
   noResultsText: string
@@ -51,6 +52,7 @@ const initialState = (): ListboxState => ({
   search: '',
   filter: false,
   filterMode: 'contains',
+  filterSensitivity: 'base',
   ignoreFilter: false,
   emptyText: 'No hay opciones',
   noResultsText: 'Sin resultados',
@@ -176,7 +178,7 @@ function generateCode() {
     `name="${escapeAttribute(state.value.name)}"`,
     `v-model:search="search"`,
     `:filter="${state.value.filter}"`,
-    `filter-mode="${state.value.filterMode}"`,
+    `:filter-config="{ mode: '${state.value.filterMode}', sensitivity: '${state.value.filterSensitivity}' }"`,
     `:ignore-filter="${state.value.ignoreFilter}"`,
     `:input-filter="{ placeholder: 'Buscar...' }"`,
     `:icon-filter="{ name: 'search' }"`,
@@ -335,6 +337,13 @@ watch(state, syncFromControls, { deep: true, immediate: true })
               <option value="contains">Contains</option>
               <option value="startWith">Starts with</option>
               <option value="endWith">Ends with</option>
+            </select></label
+          ><label class="grid gap-1 text-xs"
+            >Sensitivity<select v-model="state.filterSensitivity" class="rounded-md border bg-background px-3 py-2 text-sm">
+              <option value="base">Base</option>
+              <option value="accent">Accent</option>
+              <option value="case">Case</option>
+              <option value="variant">Variant</option>
             </select></label
           ><label class="flex items-center gap-2 text-sm"
             ><input v-model="state.ignoreFilter" type="checkbox" /> Ignore filter</label

@@ -87,7 +87,8 @@ const filterProps = computed(() => {
 })
 
 const { filter, normalized } = useFilter<ListboxItem>({
-  mode: props.filterMode,
+  mode: props.filterConfig?.mode,
+  sensitivity: props.filterConfig?.sensitivity,
   getText: (item) => item.label,
 })
 

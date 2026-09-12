@@ -61,7 +61,7 @@ const propRows: ApiTableRow[] = [
   { name: 'name', type: 'string', default: 'undefined', description: 'Nombre del control para formularios.' },
   { name: 'search', type: 'string', default: "''", description: 'Texto de búsqueda controlado.' },
   { name: 'filter', type: 'boolean', default: 'false', description: 'Activa el filtro de opciones.' },
-  { name: 'filterMode', type: 'contains | startWith | endWith', default: 'contains', description: 'Criterio usado para filtrar las opciones.' },
+  { name: 'filterConfig', type: '{ mode?: FilterMode; sensitivity?: FilterSensitivity }', default: 'undefined', description: 'Configuración del criterio de filtrado.' },
   { name: 'ignoreFilter', type: 'boolean', default: 'false', description: 'Muestra el filtro sin aplicarlo.' },
   { name: 'inputFilter', type: 'InputConfig', typeLink: '/input#input-config', default: 'undefined', description: 'Props del Input de filtro.' },
   { name: 'emptyText', type: 'string', default: 'undefined', description: 'Texto para una lista sin opciones.' },

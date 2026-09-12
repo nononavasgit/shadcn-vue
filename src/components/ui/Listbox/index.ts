@@ -3,7 +3,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import type { ListboxRootProps as RekaListboxRootProps } from 'reka-ui'
 import type { IconConfig } from '@/components/ui/Icon'
 import type { NormalizeInputProps } from '@/components/ui/Input'
-import type { FilterMode } from '@/composables/useFilter'
+import type { FilterMode, FilterSensitivity } from '@/composables/useFilter'
 
 export { default as Listbox } from './Listbox.vue'
 export { listboxDefaults } from './defaults'
@@ -31,6 +31,10 @@ export const listboxVariants = cva('', {
 
 export type ListboxSize = NonNullable<VariantProps<typeof listboxVariants>['size']>
 export type ListboxSeverity = NonNullable<VariantProps<typeof listboxVariants>['severity']>
+export interface ListboxFilterConfig {
+  mode?: FilterMode
+  sensitivity?: FilterSensitivity
+}
 
 export type ListboxValue = string | number
 export type ListboxModelValue = ListboxValue | ListboxValue[] | undefined
@@ -67,7 +71,7 @@ export interface ListboxProps extends ListboxRootProps {
   value?: ListboxModelValue
   search?: string
   filter?: boolean
-  filterMode?: FilterMode
+  filterConfig?: ListboxFilterConfig
   ignoreFilter?: boolean
   inputFilter?: NormalizeInputProps
   iconFilter?: IconConfig

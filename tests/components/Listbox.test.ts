@@ -499,14 +499,16 @@ describe('Listbox', () => {
       })
     })
 
-    describe('filterMode', () => {
-      it('pasa filterMode a useFilter', () => {
+    describe('filterConfig', () => {
+      it('pasa filterConfig a useFilter', () => {
         const useFilterSpy = vi.spyOn(filterComposable, 'useFilter')
 
-        mountListbox(undefined, { props: { filterMode: 'contains' } })
+        mountListbox(undefined, {
+          props: { filterConfig: { mode: 'startWith', sensitivity: 'accent' } },
+        })
 
         expect(useFilterSpy).toHaveBeenLastCalledWith(
-          expect.objectContaining({ mode: 'contains', getText: expect.any(Function) }),
+          expect.objectContaining({ mode: 'startWith', sensitivity: 'accent', getText: expect.any(Function) }),
         )
         useFilterSpy.mockRestore()
       })

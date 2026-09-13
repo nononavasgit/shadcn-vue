@@ -7,6 +7,10 @@ const initialState = () => ({
   open: false,
   modal: true,
   disabled: false,
+  align: 'center',
+  side: 'bottom',
+  sideOffset: 0,
+  loop: false,
   customSlot: false,
   attrs: false,
 })
@@ -22,12 +26,16 @@ function generateCode() {
     'v-model:open="open"',
     !state.value.modal && ':modal="false"',
     state.value.disabled && ':disabled="true"',
+    state.value.align !== 'center' && `align="${state.value.align}"`,
+    state.value.side !== 'bottom' && `side="${state.value.side}"`,
+    state.value.sideOffset !== 0 && `:side-offset="${state.value.sideOffset}"`,
+    state.value.loop && ':loop="true"',
     state.value.attrs && 'aria-label="Opciones" class="border-primary"',
   ].filter(Boolean)
   const slot = state.value.customSlot
     ? '\n  <button type="button" class="rounded-full border p-2" aria-label="Opciones">☰</button>\n'
     : '\n  <button type="button" class="inline-flex h-[35px] w-[35px] items-center justify-center rounded-full border bg-white text-grass11 shadow-sm outline-none hover:bg-stone-50 focus:shadow-[0_0_0_2px] focus:shadow-black" aria-label="Opciones">☰</button>\n'
-  return `<DropdownMenu${props.length ? `\n  ${props.join('\n  ')}` : ''}>${slot}</DropdownMenu>`
+  return `<DropdownMenu${props.length ? `\n  ${props.join('\n  ')}` : ''}>${slot}\n  <template #content>\n    <div class="grid min-w-40 gap-1 rounded-md border bg-white p-1 text-sm shadow-md">\n      <button type="button" class="rounded px-2 py-1 text-left hover:bg-stone-100">Perfil</button>\n      <button type="button" class="rounded px-2 py-1 text-left hover:bg-stone-100">Configuración</button>\n    </div>\n  </template>\n</DropdownMenu>`
 }
 
 function applyCode() {
@@ -84,7 +92,29 @@ watch(state, syncFromControls, { deep: true, immediate: true })
           <label class="flex items-center gap-2 text-sm"
             ><input v-model="state.modal" type="checkbox" /> Modal</label
           ><label class="flex items-center gap-2 text-sm"
-            ><input v-model="state.disabled" type="checkbox" /> Disabled</label>
+            ><input v-model="state.disabled" type="checkbox" /> Disabled</label
+          >
+          <label class="flex items-center gap-2 text-sm"
+            >Alineación
+            <select v-model="state.align">
+              <option>start</option>
+              <option>center</option>
+              <option>end</option>
+            </select></label
+          ><label class="flex items-center gap-2 text-sm"
+            >Lado
+            <select v-model="state.side">
+              <option>top</option>
+              <option>right</option>
+              <option>bottom</option>
+              <option>left</option>
+            </select></label
+          ><label class="flex items-center gap-2 text-sm"
+            >Offset
+            <input v-model.number="state.sideOffset" class="w-16 border" type="number" /></label
+          ><label class="flex items-center gap-2 text-sm"
+            ><input v-model="state.loop" type="checkbox" /> Loop</label
+          >
         </fieldset>
         <fieldset class="grid gap-3">
           <legend class="mb-1 text-sm font-semibold">Contenido y atributos</legend>

@@ -21,6 +21,92 @@ const propRows: ApiTableRow[] = [
     default: String(dropdownMenuDefaults.disabled),
     description: 'Deshabilita el menú y su trigger.',
   },
+  ...[
+    [
+      'align',
+      '"start" | "center" | "end"',
+      dropdownMenuDefaults.align,
+      'Alineación respecto al trigger.',
+    ],
+    [
+      'alignFlip',
+      'boolean',
+      dropdownMenuDefaults.alignFlip,
+      'Invierte la alineación en colisiones.',
+    ],
+    ['alignOffset', 'number', dropdownMenuDefaults.alignOffset, 'Desplazamiento de alineación.'],
+    [
+      'arrowPadding',
+      'number',
+      dropdownMenuDefaults.arrowPadding,
+      'Separación respecto a los bordes.',
+    ],
+    [
+      'avoidCollisions',
+      'boolean',
+      dropdownMenuDefaults.avoidCollisions,
+      'Evita salir del viewport.',
+    ],
+    ['collisionBoundary', 'Element | null | Array<Element | null>', '[]', 'Límite de colisión.'],
+    [
+      'collisionPadding',
+      'number | Partial<Record<Side, number>>',
+      dropdownMenuDefaults.collisionPadding,
+      'Margen de colisión.',
+    ],
+    [
+      'disableUpdateOnLayoutShift',
+      'boolean',
+      dropdownMenuDefaults.disableUpdateOnLayoutShift,
+      'Desactiva actualizaciones por cambios de layout.',
+    ],
+    ['forceMount', 'boolean', '-', 'Fuerza el montaje del contenido.'],
+    [
+      'hideShiftedArrow',
+      'boolean',
+      dropdownMenuDefaults.hideShiftedArrow,
+      'Oculta la flecha descentrada.',
+    ],
+    [
+      'hideWhenDetached',
+      'boolean',
+      dropdownMenuDefaults.hideWhenDetached,
+      'Oculta el contenido si el trigger no es visible.',
+    ],
+    ['loop', 'boolean', dropdownMenuDefaults.loop, 'Navegación circular con teclado.'],
+    [
+      'positionStrategy',
+      '"absolute" | "fixed"',
+      dropdownMenuDefaults.positionStrategy,
+      'Estrategia de posicionamiento.',
+    ],
+    [
+      'prioritizePosition',
+      'boolean',
+      dropdownMenuDefaults.prioritizePosition,
+      'Prioriza mantenerlo dentro del viewport.',
+    ],
+    [
+      'side',
+      '"top" | "right" | "bottom" | "left"',
+      dropdownMenuDefaults.side,
+      'Lado preferido del trigger.',
+    ],
+    ['sideFlip', 'boolean', dropdownMenuDefaults.sideFlip, 'Invierte el lado en colisiones.'],
+    ['sideOffset', 'number', dropdownMenuDefaults.sideOffset, 'Distancia al trigger.'],
+    ['sticky', '"partial" | "always"', dropdownMenuDefaults.sticky, 'Comportamiento sticky.'],
+    [
+      'updatePositionStrategy',
+      '"optimized" | "always"',
+      dropdownMenuDefaults.updatePositionStrategy,
+      'Estrategia de actualización.',
+    ],
+  ].map(([name, type, defaultValue, description]) => ({
+    name,
+    type,
+    default: String(defaultValue),
+    description,
+  })),
 ]
 const emitRows: ApiTableRow[] = [
   {
@@ -29,6 +115,13 @@ const emitRows: ApiTableRow[] = [
     default: '-',
     description: 'Actualiza el estado controlado.',
   },
+  ...[
+    ['closeAutoFocus', 'event: Event', 'Gestiona el foco al cerrar.'],
+    ['escapeKeyDown', 'event: KeyboardEvent', 'Se emite al pulsar Escape.'],
+    ['focusOutside', 'event: FocusOutsideEvent', 'Se emite al recibir foco fuera.'],
+    ['interactOutside', 'event: PointerDownOutsideEvent', 'Se emite al interactuar fuera.'],
+    ['pointerDownOutside', 'event: PointerDownOutsideEvent', 'Se emite al pulsar fuera.'],
+  ].map(([name, type, description]) => ({ name, type, default: '-', description })),
 ]
 const slotRows: ApiTableRow[] = [
   {
@@ -36,6 +129,12 @@ const slotRows: ApiTableRow[] = [
     type: 'never',
     default: 'Icon menu',
     description: 'Contenido opcional del trigger.',
+  },
+  {
+    name: 'content',
+    type: 'never',
+    default: 'Opciones del menú',
+    description: 'Contenido del menú desplegable.',
   },
 ]
 </script>

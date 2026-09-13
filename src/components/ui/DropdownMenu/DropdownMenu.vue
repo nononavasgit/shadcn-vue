@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { DropdownMenuPortal, DropdownMenuRoot, DropdownMenuTrigger } from 'reka-ui'
+import {
+  DropdownMenuContent,
+  DropdownMenuPortal,
+  DropdownMenuRoot,
+  DropdownMenuTrigger,
+} from 'reka-ui'
 import { cn } from '@/lib/utils'
 import type { DropdownMenuEmits, DropdownMenuProps, DropdownMenuSlots } from '.'
 import { dropdownMenuDefaults } from './default'
@@ -20,6 +25,35 @@ const triggerProps = computed(() => ({
 const portalProps = computed(() => ({
   disabled: props.disabled,
 }))
+const contentProps = computed(() => ({
+  align: props.align,
+  alignFlip: props.alignFlip,
+  alignOffset: props.alignOffset,
+  arrowPadding: props.arrowPadding,
+  avoidCollisions: props.avoidCollisions,
+  collisionBoundary: props.collisionBoundary,
+  collisionPadding: props.collisionPadding,
+  disableUpdateOnLayoutShift: props.disableUpdateOnLayoutShift,
+  forceMount: props.forceMount,
+  hideShiftedArrow: props.hideShiftedArrow,
+  hideWhenDetached: props.hideWhenDetached,
+  loop: props.loop,
+  positionStrategy: props.positionStrategy,
+  prioritizePosition: props.prioritizePosition,
+  side: props.side,
+  sideFlip: props.sideFlip,
+  sideOffset: props.sideOffset,
+  sticky: props.sticky,
+  updatePositionStrategy: props.updatePositionStrategy,
+  onCloseAutoFocus: (event: DropdownMenuEmits['closeAutoFocus'][0]) =>
+    emit('closeAutoFocus', event),
+  onEscapeKeyDown: (event: DropdownMenuEmits['escapeKeyDown'][0]) => emit('escapeKeyDown', event),
+  onFocusOutside: (event: DropdownMenuEmits['focusOutside'][0]) => emit('focusOutside', event),
+  onInteractOutside: (event: DropdownMenuEmits['interactOutside'][0]) =>
+    emit('interactOutside', event),
+  onPointerDownOutside: (event: DropdownMenuEmits['pointerDownOutside'][0]) =>
+    emit('pointerDownOutside', event),
+}))
 </script>
 
 <template>
@@ -27,6 +61,10 @@ const portalProps = computed(() => ({
     <DropdownMenuTrigger v-bind="triggerProps" as-child data-test-dropdown-menu-trigger>
       <slot></slot>
     </DropdownMenuTrigger>
-    <DropdownMenuPortal v-bind="portalProps" />
+    <DropdownMenuPortal v-bind="portalProps">
+      <DropdownMenuContent v-bind="contentProps" data-test-dropdown-menu-content>
+        <slot name="content" />
+      </DropdownMenuContent>
+    </DropdownMenuPortal>
   </DropdownMenuRoot>
 </template>
